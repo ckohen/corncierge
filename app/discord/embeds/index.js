@@ -1,0 +1,21 @@
+'use strict';
+
+const embeds = {};
+
+embeds.message = require('./message');
+embeds.whisper = require('./whisper');
+embeds.streamUp = require('./streamUp');
+embeds.memberAdd = require('./memberAdd');
+embeds.streamDown = require('./streamDown');
+embeds.memberRemove = require('./memberRemove');
+embeds.play = require('./play');
+embeds.queue = require('./queue');
+embeds.songSearch = require('./songSearch');
+embeds.videoEmbed = require('./videoEmbed');
+embeds.userChange = require('./userChange');
+embeds.roleChange = require('./roleChange');
+embeds.userBanChange = require('./userBanChange');
+embeds.messageEdit = require('./messageEdit');
+embeds.messageRemove = require('./messageRemove');
+
+module.exports = embeds;
