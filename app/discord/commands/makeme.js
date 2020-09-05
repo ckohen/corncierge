@@ -1,5 +1,3 @@
-// TODO create a welcome message in the onboarding channel that directs user to use the command !iam <baseRole> and go to <welcomeChannel in discord
-
 module.exports = {
 	name: 'makeme',
 	description: 'makeme [The role you would like to add]',
@@ -8,7 +6,7 @@ module.exports = {
 	async run(socket, message, args) {
         args = args.join(' ');
         // "{<channelName1>":["<validRole1>", "<validRole2>", etc...] <channelName2>:["validRole1", "validRole2", etc...]}
-        let channelName = {"get-in-here": ["member"], "role-assign": ['twitch ping', 'youtube ping']};
+        let channelName = {"role-call": ["kart gang", "golf bois", "vc gang", "among us lads"]};
 
         // If a role from a valid channel is typed in that channel add the role to the user
         if (channelName[message.channel.name]) {
@@ -37,6 +35,8 @@ module.exports = {
 
                 let role = message.guild.roles.find(roles => roles.name.toLowerCase() === roleName.toLowerCase()); // Find the role within the discord server
                 member.addRole(role); // Add the role requested
+
+                socket.app.log.out('info', module, 'Added ' + role.name + " to " + member.user.username);
 
                 // Notify user of role addition
                 roleName = roleName.charAt(0).toUpperCase() + roleName.substring(1);

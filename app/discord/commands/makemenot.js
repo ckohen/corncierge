@@ -6,7 +6,7 @@ module.exports = {
 	async run(socket, message, args) {
         args = args.join(' ');
         // "{<channelName1>":["<validRole1>", "<validRole2>", etc...] <channelName2>:["validRole1", "validRole2", etc...]}
-        let channelName = {"role-assign": ["twitch ping", "youtube ping"]};
+        let channelName = {"role-call": ["kart gang", "golf bois", "vc gang", "among us lads"]};
 
         // if a role from a valid channel is typed in that channel remove the role from the user
         if (channelName[message.channel.name]) {
@@ -27,6 +27,8 @@ module.exports = {
 
                 let role = message.guild.roles.find(roles => roles.name.toLowerCase() === roleName.toLowerCase()); // Find the role within the discord server
                 member.removeRole(role); // Remove the role requested
+
+                socket.app.log.out('info', module, 'Removed ' + role.name + " from " + member.user.username);
 
                 // Notify user of role removal
                 roleName = roleName.charAt(0).toUpperCase() + roleName.substring(1);
