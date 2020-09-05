@@ -11,7 +11,7 @@ exports.up = (db) => db.createTable('commands', {
   locked: { type: 'boolean', unsigned: true, notNull: true, defaultValue: 0 },
   prefix: {type: 'boolean', unsigned: true, notNull: true, defaultValue: 1},
   count: {type: `bigint`, unsinged: true, notNUll: true, defaultValue: 0},
-  restriction: {type: 'string', length: 65, notNull: false, defaultValue: 'everyone'},
+  restriction: {type: 'string', length: 45, notNull: false, defaultValue: 'everyone'},
   created_at: { type: 'timestamp', notNull: false, defaultValue: null },
   updated_at: { type: 'timestamp', notNull: false, defaultValue: null },
   deleted_at: { type: 'timestamp', notNull: false, defaultValue: null },
