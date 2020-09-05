@@ -9,6 +9,14 @@ module.exports = (socket, message) => {
 
   const { commandPrefix } = socket.app.options.discord;
 
+  // Delete all messages except specified messages in tracker channels
+  if (message.channel.name === "fall-guys-tracker") {
+    if (!message.content.startsWith("!addwin") && !message.content.startsWith("!setwins")) {
+      message.delete();
+      return;
+    }
+  }
+
   // Check for commands
   if (!message.content.startsWith(commandPrefix)) return;
 
