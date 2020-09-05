@@ -17,5 +17,6 @@ embeds.roleChange = require('./roleChange');
 embeds.userBanChange = require('./userBanChange');
 embeds.messageEdit = require('./messageEdit');
 embeds.messageRemove = require('./messageRemove');
+embeds.fallWins = require('./fallWins');
 
 module.exports = embeds;
