@@ -12,6 +12,12 @@ commands.makeme = require('./makeme');
 commands.makemenot = require('./makemenot');
 commands.setstatus = require('./setstatus');
 commands.twitch = require('./twitch');
+commands.color = require('./color');
+commands.addwin = require('./addwin');
+commands.setwins = require('./setwins');
+commands.muteall = require('./muteall');
+commands.unmuteall = require('./unmuteall');
+commands.moveall = require('./moveall');
 
 function concat(obj, variable) {
     for(let key of Object.keys(obj)) {
