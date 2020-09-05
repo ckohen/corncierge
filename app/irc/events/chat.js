@@ -41,17 +41,33 @@ module.exports = (socket, channel, user, messageRaw, self) => {
    }
 
   // Check for existing commands
-  const command = socket.commands.get(input);
+  let command = socket.commands.get(input);
 
-  if (!command) return;
+  if (!command) {
+    if (message.indexOf("bonk") > -1) {
+      command = socket.commands.get("bonk-0");
+    } else {
+      return;
+    }
+  }
+
+  if (command.level === "broadcaster" && !isBroadcaster) {
+    return;
+  }
+
+  if (command.level === "moderator" && !isPrivileged) {
+    return;
+  }
+
+  if (command.level === "vip" && !(isPrivileged || isVip)) {
+    return;
+  }
 
   if (isPrivileged || isVip) {
     // Handle immediately if user is privileged or VIP
     handlers.command(socket, channel, user, command, input, args, isBroadcaster, isPrivileged, isVip);
     return;
   }
-
-  if (command.level = "moderator")
 
   // Throttle command usage
   socket.throttle.rateLimit(input, (err, limited) => {
