@@ -2,13 +2,13 @@
 
 module.exports = (socket, before, after) => {
   const role = after.guild.roles.find((item) => item.name === 'Voice');
-  if (!role) return;
 
   if (after.voiceChannelID !== null) {
     if (after.user.bot && !after.deaf) {
       after.setDeaf(true);
       return;
     }
+    if (!role) return;
     after.addRole(role).catch((err) => {
       socket.app.log.out('error', module, err);
     });
@@ -23,6 +23,7 @@ module.exports = (socket, before, after) => {
     return;
   }
   
+  if (!role) return;
   after.removeRole(role).catch((err) => {
     socket.app.log.out('error', module, err);
   });
