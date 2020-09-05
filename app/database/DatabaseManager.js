@@ -81,7 +81,7 @@ class DatabaseManager {
    */
   getIrcCommands() {
     return this.query(
-      'SELECT id, LOWER(input) as input, method, output, locked, prefix, count, restriction FROM `commands` WHERE `deleted_at` IS NULL',
+      'SELECT id, LOWER(input) as input, method, output, locked, prefix, count, restriction as level FROM `commands` WHERE `deleted_at` IS NULL',
     );
   }
 
@@ -134,6 +134,56 @@ class DatabaseManager {
     return this.query(
       'UPDATE `commands` SET `restriction` = ?, `updated_at` = NOW() WHERE `id` = ?',
       [restriction, id],
+    );
+  }
+
+  /**
+   * Add an IRC command.
+   * @param {number} id
+   * @param {number} count
+   * @returns {Promise}
+   */
+  addFallWin(id, count) {
+    return this.query(
+      'INSERT INTO `fallwins` (id, count) VALUES (?, ?)',
+      [id, count],
+    );
+  }
+
+  /**
+   * Edit Fall Guys Wins
+   * @param {number} id
+   * @param {string} wins
+   * @returns {Promise}
+   */
+  editFallWins(id, wins) {
+    return this.query(
+      'UPDATE `fallwins` SET `count` = ? WHERE `id` = ?',
+      [wins, id],
+    );
+  }
+
+    /**
+   * Get all Fall Guys Win data
+   * @returns {Promise}
+   */
+  getFallWins() {
+    return this.query(
+      'SELECT id, count FROM `fallwins`',
+    );
+  }
+
+
+/**
+   * add a setting.
+   * @param {string} name
+   * @param {string} value
+   * @returns {Promise}
+   */
+  addSetting(name, value) {
+    return this.query(
+      'INSERT INTO `settings` (name, value) VALUES (?, ?)',
+      [name, value],
     );
   }
 
