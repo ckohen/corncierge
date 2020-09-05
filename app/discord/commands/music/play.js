@@ -225,7 +225,9 @@ function playSong(queue, message, socket) {
                 )
                 .on('start', function () {
                     socket.musicData.songDispatcher = dispatcher;
+                    connection.player.streamingData.pausedTime = 0;
                     dispatcher.setVolume(socket.musicData.volume);
+                    dispatcher.setBitrate(192);
                     videoEmbed = socket.getEmbed('play', [queue]);
                     if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);``
                     // Comment out to disable auto notify on next song
