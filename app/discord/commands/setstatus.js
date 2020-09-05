@@ -16,7 +16,7 @@ module.exports = {
 
         const [actionRaw, typeRaw, ...statusRaw] = args;
         const action = actionRaw ? actionRaw.toLowerCase() : null;
-        const type = typeRaw ? typeRaw.toUpperCase() : null;
+        let type = typeRaw ? typeRaw.toUpperCase() : null;
         const status = statusRaw ? statusRaw.length > 0
             ? statusRaw.join(' ').trim() : null : null;
 
@@ -41,12 +41,19 @@ module.exports = {
         let failure = null;
         let success = null;
 
+
         switch (action) {
             case 'add':
             case 'edit':
                 // Change status
                 data = [status, type];
-                success = `Changed status to \`${type} ${status}\``;
+
+                // Discord automatically adds "to" to the listening status type
+                if (type === "LISTENING") {
+                    type = "LISTENING TO";
+                }
+                
+                success = `Changed status to \`${type.charAt(0)}${type.substring(1).toLowerCase()} ${status}\``;
                 failure = 'Couldn\'t change status';
                 break;
 
@@ -62,14 +69,14 @@ module.exports = {
         }
 
         try {
-            await socket.driver.user.setActivity(data[0] || null, {type: data[1] || null});
+            await socket.driver.user.setActivity(data[0] || null, { type: data[1] || null });
             await socket.app.database[method]("discord_activity", data[0]);
             await socket.app.database[method]("discord_activity_type", data[1]);
-          } catch (err) {
+        } catch (err) {
             socket.app.log.out('error', module, err);
             return respond(failure);
-          }
-      
-          return send(success);
+        }
+
+        return send(success);
     },
 };
