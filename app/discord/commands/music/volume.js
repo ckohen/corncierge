@@ -4,7 +4,7 @@ module.exports = {
       aliases: ['change-volume'],
       description: 'Adjust song volume',
       role: 'DJ',
-      usage: '<volume: 1-200>',
+      usage: '[volume: 1-200]',
 
   async run(socket, message, args) {
     wantedVolume = Number(args[0]);

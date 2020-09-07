@@ -6,11 +6,9 @@ module.exports = {
     permissions: 'MANAGE_ROLES',
     aliases: ['rm'],
     usage: [
-        '',
         '(add|remove) <#channel> <@role> [<@role> <@role> etc..] [makeme|makemenot]',
-        'remove <#channel>',
-        'remove <#channel> <role(not mentioned, e.g. if deleted)>',
-        'list <#channel>'
+        'remove <#channel> [role(not mentioned, e.g. if deleted)]',
+        '[list] [#channel]'
     ],
 
     async run(socket, message, args) {

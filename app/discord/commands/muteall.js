@@ -5,7 +5,7 @@ module.exports = {
     description: 'Mutes all members in a channel (auto-unmute after)',
     usage: [
         '',
-        '<delay before auto-unmute or 0>'
+        '[delay before auto-unmute or 0 for indefinte]'
     ],
 
     async run(socket, message, args) {

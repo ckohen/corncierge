@@ -7,8 +7,7 @@ module.exports = {
     name: 'setwins',
     description: 'setwins [number] [specific user]',
     usage: [
-        '<number>',
-        '<number> <target user>'
+        '<number> [target user]'
     ],
     async run(socket, message, args) {
 

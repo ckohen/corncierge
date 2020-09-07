@@ -7,8 +7,8 @@ const { usage } = require.main.require('./app/util/helpers');
 module.exports = {
   channel: 'commandManagement',
   usage: [
-    '<command>',
-    '<page>'
+    '[command]',
+    '[page]'
   ],
   aliases: ['twitchlist', 'twitch-list', 'twitch-commands', 'list-commands', 'command-list', 'irc-commands'],
 

@@ -7,8 +7,7 @@ module.exports = {
     name: 'addwin',
     description: 'addwin [specific user]',
     usage: [
-        '',
-        '<target user>'
+        '[target user]'
     ],
     async run(socket, message, args) {
         args = args.join(' ');
