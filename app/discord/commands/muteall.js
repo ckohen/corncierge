@@ -25,12 +25,18 @@ module.exports = {
 
         // Count muted users
         let count = voiceChannel.members.size;
+        if (voiceChannel.members)
 
         // Mute members
         await voiceChannel.members.forEach(async function (member) {
-            member.setMute(true).catch((err) => {
-                socket.app.log.out('error', module, err);
-            });
+            if (!member.user.bot && !(member == message.member)) {
+                member.setMute(true).catch((err) => {
+                    socket.app.log.out('error', module, err);
+                });
+            } 
+            else {
+                count -= 1;
+            }
         });
 
         let confMsg = await message.channel.send("Muted " + count + " users in " + voiceChannel);
