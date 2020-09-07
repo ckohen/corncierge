@@ -66,6 +66,98 @@ class DatabaseManager {
   }
 
   /**
+   * Get role manager settings.
+   * @returns {Promise}
+   */
+  getRoleManager() {
+    return this.query('SELECT guildID, addRoles, removeRoles FROM `rolemanager`');
+  }
+
+  /**
+   * Add a guild to the rolemanager
+   * @param {string} id
+   * @returns {Promise}
+   */
+  addRoleManager(id) {
+    return this.query(
+      'INSERT INTO `rolemanager` (guildID, addRoles, removeRoles) VALUES (?, \'{}\', \'{}\')',
+      [id],
+    );
+  }
+
+  /**
+   * Remove a guild from the rolemanager
+   * @param {string} id
+   * @returns {Promise}
+   */
+  deleteRoleManager(id) {
+    return this.query(
+      'DELETE FROM `rolemanager` WHERE `guildID` = ?',
+      [id],
+    );
+  }
+
+  /**
+   * Edit the role manager for a guild.
+   * @param {string} id
+   * @param {Object} addRoles
+   * @param {Object} removeRoles
+   * @returns {Promise}
+   */
+  editRoleManager(id, addRoles, removeRoles) {
+    return this.query(
+      'UPDATE `rolemanager` SET `addRoles` = ?, `removeRoles` = ? WHERE `guildID` = ?',
+      [JSON.stringify(addRoles), JSON.stringify(removeRoles), id]
+      );
+  }
+
+    /**
+   * Get color manager settings.
+   * @returns {Promise}
+   */
+  getColorManager() {
+    return this.query('SELECT guildID, roles, snowflakes FROM `colormanager`');
+  }
+
+  /**
+   * Add a guild to the rolemanager
+   * @param {string} id
+   * @returns {Promise}
+   */
+  addColorManager(id) {
+    return this.query(
+      'INSERT INTO `colormanager` (guildID, roles, snowflakes) VALUES (?, \'{}\', \'[]\')',
+      [id],
+    );
+  }
+
+   /**
+   * Remove a guild from the colormanager
+   * @param {string} id
+   * @returns {Promise}
+   */
+  deleteColorManager(id) {
+    return this.query(
+      'DELETE FROM `colormanager` WHERE `guildID` = ?',
+      [id],
+    );
+  }
+
+  /**
+   * Edit the role manager for a guild.
+   * @param {string} id
+   * @param {Object} roles
+   * @param {Object Array} snowflakes
+   * @returns {Promise}
+   */
+  editColorManager(id, roles, snowflakes) {
+    return this.query(
+      'UPDATE `colormanager` SET `roles` = ?, `snowflakes` = ? WHERE `guildID` = ?',
+      [JSON.stringify(roles), JSON.stringify(snowflakes), id]
+      );
+  }
+
+  /**
    * Get all IRC moderation filters.
    * @returns {Promise}
    */
