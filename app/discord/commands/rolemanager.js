@@ -164,6 +164,9 @@ module.exports = {
 
         // Create base embed
         let msg = socket.getEmbed('rolemanager', [message.member]);
+        if (channels.length < 1) {
+            return message.channel.send("**No roles specified yet**", msg);
+        }
         // Variables for counting to limt
         let fields = 0;
         let lines = 0;
