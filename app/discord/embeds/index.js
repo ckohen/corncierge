@@ -20,5 +20,6 @@ embeds.messageRemove = require('./messageRemove');
 embeds.fallWins = require('./fallWins');
 embeds.rolemanager = require('./rolemanager');
 embeds.colormanager = require('./colormanager');
+embeds.welcome = require('./welcome');
 
 module.exports = embeds;
