@@ -18,6 +18,8 @@ commands.setwins = require('./setwins');
 commands.muteall = require('./muteall');
 commands.unmuteall = require('./unmuteall');
 commands.moveall = require('./moveall');
+commands.rolemanager = require('./rolemanager');
+commands.colormanager = require('./colormanager');
 
 function concat(obj, variable) {
     for(let key of Object.keys(obj)) {
