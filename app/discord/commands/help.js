@@ -6,11 +6,14 @@ const { parseZone } = require('moment');
 const { usage } = require.main.require('./app/util/helpers');
 
 module.exports = {
-  usage: '<command>',
+  usage: [
+    '[command type]',
+    'legacy [command] (This lists all commands across all servers in a very ugly code block)'
+  ],
   aliases: ['?'],
 
   run(socket, message, [command]) {
-    const { commandPrefix } = socket.app.options.discord;
+    const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
     if (command) {
       if (command.charAt(0) === commandPrefix) {
         command = command.substring(1);

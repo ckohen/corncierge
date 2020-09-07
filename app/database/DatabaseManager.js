@@ -158,6 +158,51 @@ class DatabaseManager {
   }
 
   /**
+   * Get prefixes.
+   * @returns {Promise}
+   */
+  getPrefixes() {
+    return this.query('SELECT guildID, prefix FROM `prefixes`');
+  }
+
+  /**
+   * Add a guild to prefixes
+   * @param {string} id
+   * @returns {Promise}
+   */
+  addPrefix(id) {
+    return this.query(
+      'INSERT INTO `prefixes` (guildID, prefix) VALUES (?, \'!\')',
+      [id],
+    );
+  }
+
+   /**
+   * Remove a guild from prefixes
+   * @param {string} id
+   * @returns {Promise}
+   */
+  deletePrefix(id) {
+    return this.query(
+      'DELETE FROM `prefixes` WHERE `guildID` = ?',
+      [id],
+    );
+  }
+
+  /**
+   * Edit the prefix for a guild
+   * @param {string} id
+   * @param {string} prefix
+   * @returns {Promise}
+   */
+  editPrefix(id, prefix) {
+    return this.query(
+      'UPDATE `prefixes` SET `prefix` = ? WHERE `guildID` = ?',
+      [prefix, id]
+      );
+  }
+
+  /**
    * Get all IRC moderation filters.
    * @returns {Promise}
    */

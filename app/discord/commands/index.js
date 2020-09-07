@@ -20,6 +20,7 @@ commands.unmuteall = require('./unmuteall');
 commands.moveall = require('./moveall');
 commands.rolemanager = require('./rolemanager');
 commands.colormanager = require('./colormanager');
+commands.prefix = require('./prefix');
 
 function concat(obj, variable) {
     for(let key of Object.keys(obj)) {

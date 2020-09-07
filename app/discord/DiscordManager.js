@@ -65,6 +65,8 @@ class DiscordManager extends Socket {
 
     this.roleManager = new Collection();
 
+    this.prefixes = new Collection();
+
     this.musicData = {
       queue: [],
       isPlaying: false,
@@ -93,6 +95,11 @@ class DiscordManager extends Socket {
     await this.app.database.getColorManager().then((all) => {
       this.colorManager.clear();
       collect(this.colorManager, all, "guildID", false);
+    });
+
+    await this.app.database.getPrefixes().then((all) => {
+      this.prefixes.clear();
+      collect(this.prefixes, all, "guildID", false);
     });
 
     this.musicData.volume = Number(this.app.settings.get(`discord_music_volume`));

@@ -7,10 +7,10 @@ module.exports = (socket, message) => {
   // React only in guild text channels
   if (message.channel.type !== 'text') return;
 
-  const { commandPrefix } = socket.app.options.discord;
+  const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
 
   // Delete all messages except specified messages in tracker channels
-  if (message.channel.name === "fall-guys-tracker") {
+  if (message.channel.name === "fall-guys-tracker" && socket.isGuild(message.guild.id, 'platicorn')) {
     if (!message.content.startsWith("!addwin") && !message.content.startsWith("!setwins")) {
       message.delete();
       return;
