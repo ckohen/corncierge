@@ -25,7 +25,7 @@ module.exports = {
             userIds = users.keyArray();
             
             if (userIds.includes(String(target.id))) {
-                let count = users.get(target.id).count
+                let count = users.get(target.id).count;
                 count = count + 1;
                 users.get(target.id).count = count;
                 await socket.app.database.editFallWins(target.id, count)
@@ -42,13 +42,16 @@ module.exports = {
                 .filter((line) => line);
 
 
-            let msg = socket.getEmbed("fallWins", [])
-            if (lines.length > 200) {
-                for (j = 1; j <= Math.ceil(lines.length / 200); j++) {
-                    let sublines = lines.slice((j - 1) * 200, j * 200);
+            let msg = socket.getEmbed("fallWins", []);
+            await message.guild.channels.get('746158018416214156').bulkDelete(100);
+            if (lines.length > 500) {
+                for (j = 1; j <= Math.ceil(lines.length / 500); j++) {
+                    let sublines = lines.slice((j - 1) * 500, j * 500);
                     for (i = 1; i <= Math.ceil(sublines.length / 20); i++) {
                         msg.addField("User List", sublines.slice((i - 1) * 20, i * 20).join("\n"));
                     }
+                    await message.guild.channels.get('746158018416214156').send(msg);
+                    let msg = socket.getEmbed("fallWins", []);
                 }
             }
             else if (lines.length > 20) {
@@ -60,7 +63,6 @@ module.exports = {
                 msg.addField("User List", lines.join("\n"));
             }
             
-            await message.guild.channels.get('746158018416214156').bulkDelete(100);
             await message.guild.channels.get('746158018416214156').send(msg)
 
             let confmsg = await message.channel.send(`Win was added for user ${target.displayName}`);
