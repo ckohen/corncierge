@@ -5,21 +5,18 @@ module.exports = {
     usage: '<color-role-name>',
     async run(socket, message, args) {
         args = args.join(' ');
-        // "{<channelName1>":["<validRole1>", "<validRole2>", etc...] <channelName2>:["validRole1", "validRole2", etc...]}
-        let channelName = {
-            "role-call": ["neon green", "light green", "green", "dark purple", "purple", "reeses", "beige", "orange",
-                "sky", "dark blue", "neon blue", "hot pink", "pink", "orchid", "light yellow", "yellow", "red", "redder", "remove"]
-        };
 
-        let colorSnowflakes = ['606592812812730535', '590430544190504960', '577416768944078857', '716163993466830868',
-            '606592355742646282', '637497588681277451', '669715209115402261', '660328424287764480',
-            '712577083322400770', '593666243140124674', '606592928306954250', '637497769149595660',
-            '609806342026166442', '712150139367849994', '718309477849366598', '630587419720417290',
-            '588450216500527114', '591837797359419395'];
+        // Get the current guild from the colorManager
+        let guild = socket.colorManager.get(String(message.guild.id));
+        // A list of key value pairs with channels and available roles
+        let channelName = guild.roles;
 
+        // An array of snowflakes for all the available color roles to remove all color roles before assigning a new one
+        let colorSnowflakes = guild.snowflakes;
+        
         // If a role from a valid channel is typed in that channel add the role to the user
-        if (channelName[message.channel.name]) {
-            roleAssign(channelName[message.channel.name]);
+        if (channelName[String(message.channel.id)]) {
+            roleAssign(channelName[String(message.channel.id)]);
         }
         else {
             message.delete(); // Delete the message
