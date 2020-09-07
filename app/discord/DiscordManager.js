@@ -112,6 +112,16 @@ class DiscordManager extends Socket {
     return id === this.app.settings.get(`discord_channel_${key}`);
   }
 
+    /**
+   * Test a guild ID against the setting for the given key
+   * @param {number} id
+   * @param {string} key
+   * @returns {boolean}
+   */
+  isGuild(id, key) {
+    return id === this.app.settings.get(`discord_guild_${key}`);
+  }
+
   /**
    * Get the channel for the given slug.
    * @param {string} slug
