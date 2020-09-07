@@ -30,6 +30,9 @@ module.exports = (socket, message) => {
 
   if (!handler) return;
 
+   // Check for guild constraints
+   if (handler.guild && !socket.isGuild(message.guild.id, handler.guild)) return;
+
   // Check for channel constraints
   if (handler.channel && !socket.isChannel(message.channel.id, handler.channel)) return;
 
