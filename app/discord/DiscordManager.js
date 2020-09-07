@@ -1,6 +1,7 @@
 'use strict';
 
 const { Client, Collection } = require('discord.js');
+const { collect } = require('../util/helpers');
 
 const embeds = require('./embeds');
 const events = require('./events');
@@ -8,6 +9,7 @@ const Socket = require('../Socket');
 const commands = require('./commands');
 const Composer = require('./Composer');
 const messages = require('./messages');
+const { role } = require('./commands/music/leave');
 
 /**
  * Discord manager for the application.
@@ -58,6 +60,11 @@ class DiscordManager extends Socket {
      * @type {Collection<string, Object>}
      */
     this.commands = new Collection();
+
+    this.colorManager = new Collection();
+
+    this.roleManager = new Collection();
+
     this.musicData = {
       queue: [],
       isPlaying: false,
@@ -71,13 +78,25 @@ class DiscordManager extends Socket {
    * Initialize the manager.
    * @returns {Promise}
    */
-  init() {
+  async init() {
     this.attach();
 
     Object.entries(commands).forEach(([command, handler]) => {
       this.commands.set(command, handler);
     });
+
+    await this.app.database.getRoleManager().then((all) => {
+      this.roleManager.clear();
+      collect(this.roleManager, all, "guildID", false);
+    });
+
+    await this.app.database.getColorManager().then((all) => {
+      this.colorManager.clear();
+      collect(this.colorManager, all, "guildID", false);
+    });
+
     this.musicData.volume = Number(this.app.settings.get(`discord_music_volume`));
+
     return this.driver.login(this.app.options.discord.token).catch((err) => {
       this.app.log.out('error', module, `Login: ${err}`);
     });
@@ -109,8 +128,15 @@ class DiscordManager extends Socket {
    * @returns {?Promise<Webhook>}
    */
   getWebhook(slug) {
-    const uri = this.app.settings.get(`discord_webhook_${slug}`);
-    return this.driver.fetchWebhook(...uri.split('/'));
+    let uri;
+    try {
+      uri = this.app.settings.get(`discord_webhook_${slug}`);
+      this.driver.fetchWebhook(...uri.split('/'));
+    }
+    catch {
+      return Promise.resolve(false);
+    }
+    return this.driver.fetchWebhook(...uri.split('/'));;
   }
 
   /**
