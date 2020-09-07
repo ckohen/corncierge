@@ -25,6 +25,5 @@ module.exports = {
     purple: 0x8000FF,
 
   },
-  commandPrefix: '!',
   token: process.env.DISCORD_TOKEN,
 };
