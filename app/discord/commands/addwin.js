@@ -3,6 +3,7 @@ const { Collection } = require('discord.js');
 const plural = require('pluralize');
 
 module.exports = {
+    guild: 'platicorn',
     name: 'addwin',
     description: 'addwin [specific user]',
     usage: [
