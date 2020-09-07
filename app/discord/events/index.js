@@ -13,5 +13,7 @@ events.guildBanAdd = require('./guildBanAdd');
 events.guildBanRemove = require('./guildBanRemove');
 events.messageUpdate = require('./messageUpdate');
 events.messageDelete = require('./messageDelete');
+events.guildCreate = require('./guildCreate');
+events.guildDelete = require('./guildDelete');
 
 module.exports = events;
