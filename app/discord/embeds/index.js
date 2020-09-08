@@ -21,5 +21,6 @@ embeds.fallWins = require('./fallWins');
 embeds.rolemanager = require('./rolemanager');
 embeds.colormanager = require('./colormanager');
 embeds.welcome = require('./welcome');
+embeds.help = require('./help');
 
 module.exports = embeds;
