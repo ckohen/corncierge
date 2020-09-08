@@ -11,7 +11,7 @@ module.exports = (socket, message) => {
 
   // Delete all messages except specified messages in tracker channels
   if (message.channel.name === "fall-guys-tracker" && socket.isGuild(message.guild.id, 'platicorn')) {
-    if (!message.content.startsWith("!addwin") && !message.content.startsWith("!setwins")) {
+    if (!message.content.startsWith(commandPrefix + "addwin") && !message.content.startsWith(commandPrefix + "setwins")) {
       message.delete();
       return;
     }
