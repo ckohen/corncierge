@@ -8,7 +8,7 @@ module.exports = {
     aliases: ['cm'],
     usage: [
         '',
-        '(add|remove) <@role> [<@role> <@role> etc..]',
+        '(add|remove) <@role> [@role @role etc..]',
         'remove <role(not mentioned, e.g. if deleted)>',
         'channel <#channel>',
         '[list]'
