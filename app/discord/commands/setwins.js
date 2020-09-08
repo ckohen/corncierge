@@ -20,6 +20,8 @@ module.exports = {
 
             let users = new Collection();
 
+            const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+
             await socket.app.database.getFallWins().then((all) => {
                 users.clear();
                 collect(users, all, "id", false);
@@ -42,7 +44,7 @@ module.exports = {
                 .filter((line) => line);
 
 
-            let msg = socket.getEmbed("fallWins", [])
+            let msg = socket.getEmbed("fallWins", [commandPrefix])
             await message.guild.channels.get('746158018416214156').bulkDelete(100);
             if (lines.length > 500) {
                 for (j = 1; j <= Math.ceil(lines.length / 500); j++) {
@@ -51,7 +53,7 @@ module.exports = {
                         msg.addField("User List", sublines.slice((i - 1) * 20, i * 20).join("\n"));
                     }
                     await message.guild.channels.get('746158018416214156').send(msg);
-                    let msg = socket.getEmbed("fallWins", []);
+                    let msg = socket.getEmbed("fallWins", [commandPrefix]);
                 }
             }
             else if (lines.length > 20) {

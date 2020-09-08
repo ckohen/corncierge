@@ -12,6 +12,7 @@ module.exports = {
     ],
 
     async run(socket, message, args) {
+        const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
         const routines = ['add', 'remove', 'list'];
 
         const [methodRaw, channelRaw, roleRaw, ...extraArgs] = args;
@@ -161,7 +162,7 @@ module.exports = {
         }
 
         // Create base embed
-        let msg = socket.getEmbed('rolemanager', [message.member]);
+        let msg = socket.getEmbed('rolemanager', [message.member, commandPrefix]);
         if (channels.length < 1) {
             return message.channel.send("**No roles specified yet**", msg);
         }
@@ -203,13 +204,13 @@ module.exports = {
 
             // Compile the full list
             if (bothRoles.length > 0) {
-                compiledRoles = compiledRoles.concat("`!makeme` *and* `!makemenot`", bothRoles);
+                compiledRoles = compiledRoles.concat("`" + commandPrefix + "makeme` *and* `" + commandPrefix + "makemenot`", bothRoles);
             }
             if (addRoles.length > 0) {
-                compiledRoles = compiledRoles.concat("`!makeme` *only*", addRoles);
+                compiledRoles = compiledRoles.concat("`" + commandPrefix + "makeme` *only*", addRoles);
             }
             if (removeRoles.length > 0) {
-                compiledRoles = compiledRoles.concat("`!makemenot` *only*", removeRoles);
+                compiledRoles = compiledRoles.concat("`" + commandPrefix + "makemenot` *only*", removeRoles);
             }
             // Create and send embeds
             if (compiledRoles.length > 40) {
@@ -221,7 +222,7 @@ module.exports = {
                     else {
                         fields = 0;
                         message.channel.send(msg);
-                        msg = socket.getEmbed('rolemanager', [message.member]);
+                        msg = socket.getEmbed('rolemanager', [message.member, commandPrefix]);
                     }
                 }
             }

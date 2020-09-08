@@ -15,6 +15,7 @@ module.exports = {
     ],
 
     async run(socket, message, args) {
+        const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
         const routines = ['add', 'remove', 'channel', 'list'];
 
         const [methodRaw, chroleRaw, ...extraArgs] = args;
@@ -68,7 +69,7 @@ module.exports = {
             case 'add':
                 // There must be a channel first
                 if (Object.keys(guild.roles).length < 1) {
-                    return message.reply("Please specify a color change channel using `!colormanager channel <#channel>` first")
+                    return message.reply("Please specify a color change channel using `" + commandPrefix + "colormanager channel <#channel>` first")
                 }
 
                 if (roleNames.length < 1) {
@@ -83,7 +84,7 @@ module.exports = {
             case 'remove':
                 // There must be a channel first
                 if (Object.keys(guild.roles).length < 1) {
-                    return message.reply("Please specify a color change channel using `!colormanager channel <#channel>` first")
+                    return message.reply("Please specify a color change channel using `" + commandPrefix + "colormanager channel <#channel>` first")
                 }
 
                 if (roleNames.length < 1) {
@@ -135,7 +136,7 @@ module.exports = {
         let channels = Object.keys(guild.roles);
 
         // Create base embed
-        let msg = socket.getEmbed('colormanager', [message.member]);
+        let msg = socket.getEmbed('colormanager', [message.member, commandPrefix]);
         if (channels.length < 1) {
             return message.channel.send("**No channel specified yet**", msg);
         }
@@ -167,7 +168,7 @@ module.exports = {
                     else {
                         fields = 0;
                         message.channel.send(msg);
-                        msg = socket.getEmbed('colormanager', [message.member]);
+                        msg = socket.getEmbed('colormanager', [message.member, commandPrefix]);
                     }
                 }
             }
