@@ -180,6 +180,7 @@ module.exports = {
             outRoles = [];
         });
 
+        msg.addField("Remove Color", "remove", true)
         message.channel.send(msg);
 
         function modifyRoles(existingRoles, add = true) {
