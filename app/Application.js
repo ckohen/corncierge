@@ -99,7 +99,7 @@ class Application {
 
     this.pubsub.init();
     this.discord.init();
-    this.obs.init();
+    //this.obs.init();
 
     this.log.out('info', module, 'Boot complete');
   }
