@@ -1,5 +1,3 @@
-const { role } = require("./music/leave");
-
 module.exports = {
     name: 'rolemanager',
     description: 'Allows server admins to change self-assingable roles',

@@ -1,8 +1,6 @@
 'use strict';
 
 const { Collection } = require('discord.js');
-const { parseZone } = require('moment');
-
 const { usage } = require.main.require('./app/util/helpers');
 
 module.exports = {

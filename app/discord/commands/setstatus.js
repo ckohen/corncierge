@@ -1,7 +1,5 @@
 'use strict';
 
-const { NULL } = require("mysql2/lib/constants/types");
-
 module.exports = {
     channel: 'console',
     aliases: ['setactivity', 'activity', 'setgame'],

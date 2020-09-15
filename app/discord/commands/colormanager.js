@@ -1,6 +1,3 @@
-const { role } = require("./music/leave");
-const messages = require("../messages");
-
 module.exports = {
     name: 'colormanager',
     description: 'Allows server admins to change self-assingable color roles',
