@@ -58,7 +58,8 @@ module.exports = {
             });
         }
 
-        roles = roles.filter(role => role);
+        let botHighest = message.guild.me.roles.highest;
+        roles = roles.filter(role => role.comparePositionTo(botHighest) < 0);
 
         let roleNames = [];
         roles.forEach(role => roleNames.push(role.name.toLowerCase()));
@@ -73,7 +74,7 @@ module.exports = {
                 }
 
                 if (roleNames.length < 1) {
-                    return message.reply("Please provide at least one role to add");
+                    return message.reply("Please provide at least one valid role to add. *The bot must have a higher role than all roles it is assigning!*");
                 }
 
                 // Edit channel and snowflakes
