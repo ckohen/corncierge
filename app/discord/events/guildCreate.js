@@ -2,7 +2,7 @@
 
 const { collect } = require('../../util/helpers');
 
-module.exports = (socket, guild) => {
+module.exports = async (socket, guild) => {
     socket.app.log.out('info', module, "Joined new server: " + guild.name)
 
     // Add new guild to role and color managers
