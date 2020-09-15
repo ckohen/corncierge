@@ -27,9 +27,9 @@ module.exports = {
             // If roleName is a valid role within the channel
             if (validRoles.indexOf(roleName) > -1) {
 
-                let role = message.guild.roles.find(roles => roles.name.toLowerCase() === roleName.toLowerCase()); // Find the role within the discord server
+                let role = message.guild.roles.cache.find(roles => roles.name.toLowerCase() === roleName.toLowerCase()); // Find the role within the discord server
                 try {
-                    member.removeRole(role); // Remove the role requested
+                    member.roles.remove(role); // Remove the role requested
                     roleAssigned = true;
                 }
                 catch (err) {

@@ -27,7 +27,7 @@ module.exports = {
 };
 
 function playbackBar(sock, video) {
-  const passedTimeInMS = sock.musicData.songDispatcher.time;
+  const passedTimeInMS = sock.musicData.songDispatcher.streamTime - sock.musicData.songDispatcher.pausedTime;
   const passedTimeInMSObj = {
     seconds: Math.floor((passedTimeInMS / 1000) % 60),
     minutes: Math.floor((passedTimeInMS / (1000 * 60)) % 60),

@@ -8,7 +8,7 @@ module.exports = {
 
   async run(socket, message, args) {
     wantedVolume = Number(args[0]);
-    const voiceChannel = message.member.voiceChannel;
+    const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.reply('Join a channel and try again');
 
     if (

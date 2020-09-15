@@ -1,30 +1,34 @@
 'use strict';
 
 module.exports = (socket, before, after) => {
-  const role = after.guild.roles.find((item) => item.name === 'Voice');
+  const role = after.guild.roles.cache.find((item) => item.name === 'Voice');
 
-  if (after.voiceChannelID !== null) {
-    if (after.user.bot && !after.deaf) {
+  if (after.channelID !== null) {
+    if (after.member.user.id == socket.driver.user.id && !after.selfDeaf) {
+      after.setSelfDeaf(true);
+      return;
+    }
+    if (after.member.user.bot && !after.deaf) {
       after.setDeaf(true);
       return;
     }
     if (!role) return;
-    after.addRole(role).catch((err) => {
+    after.member.roles.add(role).catch((err) => {
       socket.app.log.out('error', module, err);
     });
     return;
   }
 
-  if (after.user.bot &&
+  if (after.member.user.bot &&
     socket.musicData.songDispatcher &&
-    after.user.id == socket.driver.user.id) {
+    after.member.user.id == socket.driver.user.id) {
       socket.musicData.queue.length = 0;
       socket.musicData.songDispatcher.end();
     return;
   }
   
   if (!role) return;
-  after.removeRole(role).catch((err) => {
+  after.roles.remove(role).catch((err) => {
     socket.app.log.out('error', module, err);
   });
 };

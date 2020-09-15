@@ -40,19 +40,19 @@ module.exports = {
             }
 
             let lines = users
-                .map((item, name) => `${message.guild.members.get(name)}: ${plural('win', item.count, true)}!`)
+                .map((item, name) => `${message.guild.members.cache.get(name)}: ${plural('win', item.count, true)}!`)
                 .filter((line) => line);
 
 
             let msg = socket.getEmbed("fallWins", [commandPrefix])
-            await message.guild.channels.get('746158018416214156').bulkDelete(100);
+            await message.guild.channels.cache.get('746158018416214156').bulkDelete(100);
             if (lines.length > 500) {
                 for (j = 1; j <= Math.ceil(lines.length / 500); j++) {
                     let sublines = lines.slice((j - 1) * 500, j * 500);
                     for (i = 1; i <= Math.ceil(sublines.length / 20); i++) {
                         msg.addField("User List", sublines.slice((i - 1) * 20, i * 20).join("\n"));
                     }
-                    await message.guild.channels.get('746158018416214156').send(msg);
+                    await message.guild.channels.cache.get('746158018416214156').send(msg);
                     let msg = socket.getEmbed("fallWins", [commandPrefix]);
                 }
             }
@@ -65,14 +65,14 @@ module.exports = {
                 msg.addField("User List", lines.join("\n"));
             }
 
-            await message.guild.channels.get('746158018416214156').send(msg)
+            await message.guild.channels.cache.get('746158018416214156').send(msg)
 
             let confmsg = await message.channel.send(`Win count was set to ${updatedCount} for user ${target.displayName}`);
             if (message.channel.name !== "fall-guys-tracker") {
                 message.delete();
             }
             // deletes command and response messages after 3 seconds
-            setTimeout(function () { confmsg.delete(); }, 3000);
+            confmsg.delete({timeout: 3000});
         }
 
         let validNumber
@@ -86,7 +86,7 @@ module.exports = {
         let member;
         if (user) {
             try {
-                member = message.guild.members.find(members => members.user.username.toLowerCase() === user.toLowerCase());
+                member = message.guild.members.cache.find(members => members.user.username.toLowerCase() === user.toLowerCase());
             }
             catch {
                 member = false;
@@ -103,13 +103,13 @@ module.exports = {
             else {
                 let confmsg = await message.reply("Please specify a user using their actual discord name (not their nickname)");
                 message.delete();
-                setTimeout(function () { confmsg.delete(); }, 3000);
+                confmsg.delete({timeout: 3000});
             }
         }
         else {
             let confmsg = await message.reply("Please specify a win count (>0)!");
                 message.delete();
-                setTimeout(function () { confmsg.delete(); }, 3000);
+                confmsg.delete({timeout: 3000});
         }
 
     },

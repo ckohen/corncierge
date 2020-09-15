@@ -37,8 +37,8 @@ module.exports = (socket, message) => {
   if (handler.channel && !socket.isChannel(message.channel.id, handler.channel)) return;
 
   // Check for role constraints
-  if (handler.role && !message.member.roles.some((role) => role.name === handler.role)) {
-    if (!message.member.hasPermission("MANAGE_ROLES", false, true, true)) {
+  if (handler.role && !message.member.roles.cache.some((role) => role.name === handler.role)) {
+    if (!message.member.hasPermission("MANAGE_ROLES")) {
       message.channel.send(`You're not allowed to do that, ${message.author}.`).catch((err) => {
         socket.app.log.out('error', module, err);
       });

@@ -23,6 +23,6 @@ module.exports = {
     }).catch((err) => {
       socket.app.log.out('error', module, err);
     });
-    socket.sendWebhook('clear', '**' + message.member.displayName + '** cleared **' + amount + '** line(s) in ' + message.channel + '.');
+    socket.sendWebhook('clear', '**' + message.member.displayName + '** cleared **' + amount + `** line(s) in ${message.channel}.`);
     },
 };

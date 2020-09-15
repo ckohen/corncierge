@@ -28,7 +28,7 @@ module.exports = {
 
         // Check for actual channel
         if (channelRaw && channelRaw.startsWith('<#') && channelRaw.endsWith('>')) {
-            channel = message.guild.channels.get(channelRaw.slice(2, -1));
+            channel = message.guild.channels.cache.get(channelRaw.slice(2, -1));
         }
         else if (channelRaw) {
             return message.reply("Please specify a valid channel");
@@ -36,14 +36,14 @@ module.exports = {
 
         // Check for actual role
         if (roleRaw && roleRaw.startsWith('<@&') && roleRaw.endsWith('>')) {
-            roles[0] = message.guild.roles.get(roleRaw.slice(3, -1));
+            roles[0] = message.guild.roles.cache.get(roleRaw.slice(3, -1));
         }
 
         // Check for extra roles and specifying makeme or makemenot only
         if (extraArgs) {
             extraArgs.forEach(elem => {
                 if (elem.startsWith('<@&') && elem.endsWith('>')) {
-                    roles.push(message.guild.roles.get(elem.slice(3, -1)));
+                    roles.push(message.guild.roles.cache.get(elem.slice(3, -1)));
                 }
             });
             if (extraArgs[extraArgs.length - 1] == "makeme" || extraArgs[extraArgs.length - 1] == "makemenot") {
@@ -94,7 +94,7 @@ module.exports = {
                             roleString = roleRaw + " " + extraArgs.join(" ");
                         }
 
-                        let role = message.guild.roles.find(roles => roles.name.toLowerCase() === roleString.toLowerCase());
+                        let role = message.guild.roles.cache.find(roles => roles.name.toLowerCase() === roleString.toLowerCase());
                         if (role) {
                             roleNames.push(roleString);
                             guild.addRoles[String(channel.id)] = await modifyRoles(guild.addRoles[String(channel.id)], false);
@@ -118,7 +118,7 @@ module.exports = {
                         delete guild.removeRoles[String(channel.id)];
                     }
                     await socket.app.database.editRoleManager(String(message.guild.id), guild.addRoles, guild.removeRoles);
-                    return message.channel.send("Deleted " + channel + " from role manager");
+                    return message.channel.send(`Deleted ${channel} from role manager`);
                 }
 
                 // Check if user specified to only remove from makeme
@@ -179,11 +179,11 @@ module.exports = {
         // Loop through each channel found
         channels.forEach(channelID => {
             lines = 0;
-            channelObj = message.guild.channels.get(channelID);
+            channelObj = message.guild.channels.cache.get(channelID);
             // Get role objects so discord can embed properly
             if (guild.addRoles[channelID]) {
                 guild.addRoles[channelID].forEach(role => {
-                    roleObj = message.guild.roles.find(roles => roles.name.toLowerCase() === role.toLowerCase());
+                    roleObj = message.guild.roles.cache.find(roles => roles.name.toLowerCase() === role.toLowerCase());
                     // Add roles in both list to the both array
                     if (!guild.removeRoles[channelID] || guild.removeRoles[channelID].indexOf(role) > -1) {
                         bothRoles.push(roleObj);
@@ -195,7 +195,7 @@ module.exports = {
             }
             if (guild.removeRoles[channelID]) {
                 guild.removeRoles[channelID].forEach(role => {
-                    roleObj = message.guild.roles.find(roles => roles.name.toLowerCase() === role.toLowerCase());
+                    roleObj = message.guild.roles.cache.find(roles => roles.name.toLowerCase() === role.toLowerCase());
                     if (!guild.addRoles[channelID] || guild.addRoles[channelID].indexOf(role) < 0) {
                         removeRoles.push(roleObj);
                     }

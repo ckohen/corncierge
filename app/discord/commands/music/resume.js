@@ -5,7 +5,7 @@ module.exports = {
   description: 'Resume the current paused song',
 
   async run(socket, message) {
-    var voiceChannel = message.member.voiceChannel;
+    var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.reply('Join a channel and try again');
 
     if (

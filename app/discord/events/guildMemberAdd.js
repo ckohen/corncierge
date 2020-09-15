@@ -8,7 +8,7 @@ module.exports = (socket, member) => {
   socket.sendWebhook(
     'userJoin',
     socket.getEmbed('memberAdd', [
-      member.user.defaultAvatarURL,
+      member.user.displayAvatarURL(),
       member, member.user.tag, created,
       member.user.id,
     ]),

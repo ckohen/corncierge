@@ -32,15 +32,15 @@ module.exports = {
             let rollAssigned = false;
 
             if (validRoles.indexOf(roleName) > -1) {
-                await member.removeRoles(colorSnowflakes); // Remove all predefined colors *Does not remove specialty colors*
+                await member.roles.remove(colorSnowflakes); // Remove all predefined colors *Does not remove specialty colors*
                 if (roleName === "remove") {
                     message.channel.send(`Your color has been removed, ${member}`)
 
                     socket.app.log.out('info', module, 'Removed ' + member.user.username + "'s color");
                 }
                 else {
-                    let role = message.guild.roles.find(roles => roles.name.toLowerCase() === roleName.toLowerCase()); // Find the role within the discord server
-                    await member.addRole(role); // Add the role requested
+                    let role = message.guild.roles.cache.find(roles => roles.name.toLowerCase() === roleName.toLowerCase()); // Find the role within the discord server
+                    await member.roles.add(role); // Add the role requested
 
                     socket.app.log.out('info', module, 'Changed ' + member.user.username + "'s color to " + role.name);
 

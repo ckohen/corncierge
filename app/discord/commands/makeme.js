@@ -27,9 +27,9 @@ module.exports = {
 
             if (validRoles.indexOf(roleName) > -1) {
 
-                let role = message.guild.roles.find(roles => roles.name.toLowerCase() === roleName.toLowerCase()); // Find the role within the discord server
+                let role = message.guild.roles.cache.find(roles => roles.name.toLowerCase() === roleName.toLowerCase()); // Find the role within the discord server
                 try {
-                    member.addRole(role); // Add the role requested
+                    member.roles.add(role); // Add the role requested
                     rollAssigned = true;
                 }
                 catch (err) {

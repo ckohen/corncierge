@@ -9,13 +9,13 @@ module.exports = {
     async run(socket, message, args) {
 
         // Check if voice channel
-        const voiceChannel = message.member.voiceChannel;
+        const voiceChannel = message.member.voice.channel;
         if (!voiceChannel) return message.reply('Join a channel and try again');
 
         args = args.join(' ');
 
         // Check for new channel
-        let newChannel = await message.member.guild.channels.find(channel => channel.name.toLowerCase() === args.toLowerCase() && channel.type === "voice");
+        let newChannel = await message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === args.toLowerCase() && channel.type === "voice");
 
         let confMsg;
 
@@ -23,7 +23,7 @@ module.exports = {
         if (newChannel) {
             // Move members
             voiceChannel.members.forEach(member => {
-                member.setVoiceChannel(newChannel).catch((err) => {
+                member.voice.setChannel(newChannel).catch((err) => {
                     socket.app.log.out('error', module, err);
                 });
             });
@@ -33,6 +33,6 @@ module.exports = {
             confMsg = await message.reply(args + " is not a valid voice channel!");
         }
         message.delete()
-        setTimeout(function () { confMsg.delete(); }, 3000);
+        confMsg.delete({timeout: 3000});
     }
 };
