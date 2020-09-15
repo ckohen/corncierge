@@ -7,18 +7,18 @@ module.exports = (socket, before, after) => {
             ["Nickname", after, before.displayName, after.displayName]
         ));
     }
-    if (!before.roles.equals(after.roles)) {
+    if (!before.roles.cache.equals(after.roles.cache)) {
         let roleChanged;
         let rolesChanged;
         let type;
-        if (before.roles.array().length > after.roles.array().length) {
+        if (before.roles.cache.array().length > after.roles.cache.array().length) {
             //Role Removed
-            rolesChanged = before.roles.filter(role => testRole(role, after.roles));
+            rolesChanged = before.roles.cache.filter(role => testRole(role, after.roles.cache));
             type = "removed";
         }
         else {
             //Role added
-            rolesChanged = after.roles.filter(role => testRole(role, before.roles));
+            rolesChanged = after.roles.cache.filter(role => testRole(role, before.roles.cache));
             type = "added";
         }
         roleChanged = rolesChanged.array()[0];

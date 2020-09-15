@@ -76,7 +76,7 @@ module.exports = {
         case "moderation":
           msg.addField("About", "There are not a ton of moderation commands at this time, however, the ones provided do have a unique applciation that discord does not give users direct access to.");
           msg.addField("Voice based commands", "`" + commandPrefix + "moveall [channel]` **->** moves all users in your voice channel to a new voice channel (not mentioned).\n\n`" + commandPrefix + "muteall [time]` **->** mutes all users in your voice channel except you and bots for the time specified in seconds, or 15 seconds if no time is specified. To prevent auto-unmute, specify time as `0`.\n\n`" + commandPrefix + "unmuteall` **->** unmutes all users in your voice channel.");
-          msg.addField("Text based commands", "`" + commandPrefix + "clear <amount:1-100>` **->** clears the number of messages specified in the channel the command was sent in. Note: this will sometimes fail if the messages are very old, wait 30 seconds and try again.");
+          msg.addField("Text based commands", "`" + commandPrefix + "clear <amount:1-100>` **->** clears the number of messages specified in the channel the command was sent in. Note: discord does not allow bots to delete messages older than 2 weeks at the moment.");
           msg.addField("Permissions", "Each command requires the same permission as if you were manually doing the desired action.");
           msg.addField("Special Note", "The `moveall` command can act differently depending on the bot and user permissions. In order to move people out of a channel, the bot must have the `Move Members` permission. This works as expected, however, if the bot does not have permission to connect to the new voice channel, it will only move members that can connect to the new channel. This can be used to move only mods to a mod only channel, but it could also be undesireable. If the bot has the connect permission in the new channel, everyone will be moved.");
           break;
@@ -84,20 +84,20 @@ module.exports = {
           msg.addField("About", "While the commands exist for using this bot as a music bot, due to network restraints, they are currently disabled.")
           break;
         case "donate":
-          msg.addField("Thank You!", "Thank you for considering donating. Donations of any size are greatly appreciated. If you have any feature requests, you will have priority. You will also get first access when the music commands are being rolled out.")
-          msg.addBlankField();
-          msg.addField("Donation Link", "<https://www.paypal.me/corncierge>")
+          msg.addField("Thank You!", "Thank you for considering donating. Donations of any size are greatly appreciated. If you have any feature requests, you will have priority. You will also get first access when the music commands are being rolled out.");
+          msg.addField('\u200b','\u200b');
+          msg.addField("Donation Link", "<https://www.paypal.me/corncierge>");
           break;
         default:
           msg.setDescription("Here is a list of all help categories, to see a list of commands for each category, use `" + commandPrefix + "help <category>`");
           msg.addField("Rolemanager", "The basic format for adding roles to the rolemanager is `" + commandPrefix + "rolemanager add #channel @role`. There are many more detailed options listed in `" + commandPrefix + "help rolemanager`", true);
           msg.addField("Colormanager", "The basic format for color management is `" + commandPrefix + "colormanager channel #channel`, then `" + commandPrefix + "colormanager add @role`. There are many more detailed options listed in `" + commandPrefix + "help colormanager`", true)
-          msg.addBlankField();
+          msg.addField('\u200b','\u200b');
           msg.addField("Moderation", "The moderation commands allow you to clear a certain numbers of messages, move members in your voice channel, and toggle everyones mute status, more detail in `" + commandPrefix + "help moderation`", true);
           msg.addField("Prefix", "You are able to change the prefix for all commands", true);
-          msg.addBlankField();
+          msg.addField('\u200b','\u200b');
           msg.addField("Music", "Unfortunately, music commands have not been enabled on this server, they are still a WIP.", true);
-          msg.addBlankField();
+          msg.addField('\u200b','\u200b');
           msg.addField("Donate", "Thanks for using corncierge, if you would like to donate to support, you can do that here: <https://www.paypal.me/corncierge>. Thank you!", true);
           msg.addField("Invite", "If you want to add this bot to your server, head on over to <https://www.corncierge.com> (or use `" + commandPrefix + "invite`)");
       }

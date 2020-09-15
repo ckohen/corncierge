@@ -6,7 +6,7 @@ module.exports = {
   role: 'DJ',
 
   async run(socket, message) {
-    var voiceChannel = message.member.voiceChannel;
+    var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
       message.reply('Join a channel and try again');
       return;

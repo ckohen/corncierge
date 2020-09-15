@@ -17,7 +17,7 @@ module.exports = {
 
     async run(socket, message, args) {
         query = args.join(' ');
-        const voiceChannel = message.member.voiceChannel;
+        const voiceChannel = message.member.voice.channel;
         if (!voiceChannel) return message.reply('Join a channel and try again');
 
         youtube = new discordYoutube(socket.app.options.youtube.token);
@@ -217,7 +217,7 @@ function playSong(queue, message, socket) {
         .join()
         .then(function (connection) {
             const dispatcher = connection
-                .playStream(
+                .play(
                     ytdl(queue[0].url, {
                         quality: 'highestaudio',
                         highWaterMark: 1024 * 1024 * 10
@@ -225,7 +225,7 @@ function playSong(queue, message, socket) {
                 )
                 .on('start', function () {
                     socket.musicData.songDispatcher = dispatcher;
-                    connection.player.streamingData.pausedTime = 0;
+                    dispatcher.pausedTime = 0;
                     dispatcher.setVolume(socket.musicData.volume);
                     dispatcher.setBitrate(192);
                     videoEmbed = socket.getEmbed('play', [queue]);
@@ -235,15 +235,15 @@ function playSong(queue, message, socket) {
                     socket.musicData.nowPlaying = queue[0];
                     return queue.shift();
                 })
-                .on('end', function () {
+                .on('finish', function () {
                     if (queue.length >= 1) {
                         return playSong(queue, message, socket);
                     } else {
                         socket.musicData.isPlaying = false;
                         socket.musicData.nowPlaying = null;
                         socket.musicData.songDispatcher = null;
-                        if (message.guild.me.voiceChannel) {
-                            return message.guild.me.voiceChannel.leave();
+                        if (message.guild.me.voice.channel) {
+                            return message.guild.me.voice.channel.leave();
                         }
                     }
                 })
@@ -254,12 +254,12 @@ function playSong(queue, message, socket) {
                     socket.musicData.isPlaying = false;
                     socket.musicData.nowPlaying = null;
                     socket.musicData.songDispatcher = null;
-                    return message.guild.me.voiceChannel.leave();
+                    return message.guild.me.voice.channel.leave();
                 });
         })
         .catch(function (e) {
             console.error(e);
-            return message.guild.me.voiceChannel.leave();
+            return message.guild.me.voice.channel.leave();
         });
 }
 

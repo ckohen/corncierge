@@ -35,7 +35,7 @@ module.exports = {
         if (method == "channel") {
             // Check for actual channel
             if (chroleRaw && chroleRaw.startsWith('<#') && chroleRaw.endsWith('>')) {
-                channel = message.guild.channels.get(chroleRaw.slice(2, -1));
+                channel = message.guild.channels.cache.get(chroleRaw.slice(2, -1));
             }
             else if (chroleRaw) {
                 return message.reply("Please specify a valid channel");
@@ -44,7 +44,7 @@ module.exports = {
         else {
             // Check for actual role
             if (chroleRaw && chroleRaw.startsWith('<@&') && chroleRaw.endsWith('>')) {
-                roles[0] = message.guild.roles.get(chroleRaw.slice(3, -1));
+                roles[0] = message.guild.roles.cache.get(chroleRaw.slice(3, -1));
             }
             channel = Object.keys(guild.roles)[0];
         }
@@ -53,7 +53,7 @@ module.exports = {
         if (extraArgs) {
             extraArgs.forEach(elem => {
                 if (elem.startsWith('<@&') && elem.endsWith('>')) {
-                    roles.push(message.guild.roles.get(elem.slice(3, -1)));
+                    roles.push(message.guild.roles.cache.get(elem.slice(3, -1)));
                 }
             });
         }
@@ -96,7 +96,7 @@ module.exports = {
                             roleString = chroleRaw + " " + extraArgs.join(" ");
                         }
 
-                        let role = message.guild.roles.find(roles => roles.name.toLowerCase() === roleString.toLowerCase());
+                        let role = message.guild.roles.cache.find(roles => roles.name.toLowerCase() === roleString.toLowerCase());
                         if (role) {
                             roleNames.push(roleString);
                             roleSnowflakes.push(role.id);
@@ -150,11 +150,11 @@ module.exports = {
         // Loop through each channel found
         channels.forEach(channelID => {
             lines = 0;
-            channelObj = message.guild.channels.get(channelID);
+            channelObj = message.guild.channels.cache.get(channelID);
 
             // Get role objects so discord can embed properly
             guild.snowflakes.forEach(id => {
-                roleObj = message.guild.roles.get(id);
+                roleObj = message.guild.roles.cache.get(id);
                 outRoles.push(roleObj);
             });
 

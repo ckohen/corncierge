@@ -1,6 +1,6 @@
 'use strict';
 
-const { Client, Collection } = require('discord.js');
+const { Client, Collection, MessageEmbed } = require('discord.js');
 const { collect } = require('../util/helpers');
 
 const embeds = require('./embeds');
@@ -9,7 +9,6 @@ const Socket = require('../Socket');
 const commands = require('./commands');
 const Composer = require('./Composer');
 const messages = require('./messages');
-const { role } = require('./commands/music/leave');
 
 /**
  * Discord manager for the application.
@@ -136,7 +135,7 @@ class DiscordManager extends Socket {
    */
   getChannel(slug) {
     const id = this.app.settings.get(`discord_channel_${slug}`);
-    return this.driver.channels.get(id);
+    return this.driver.channels.cache.get(id);
   }
 
   /**
@@ -194,7 +193,7 @@ class DiscordManager extends Socket {
    * Send a message with the given content and embed.
    * @param {string} slug
    * @param {string|RichEmbed} content
-   * @param {MessageOptions|Attachment|RichEmbed} [embed]
+   * @param {MessageOptions|Attachment|MessageEmbed} [embed]
    */
   sendMessage(slug, content, embed) {
     const channel = this.getChannel(slug);
@@ -213,7 +212,7 @@ class DiscordManager extends Socket {
    * Send a webhook with the given content and embed.
    * @param {string} slug
    * @param {string|RichEmbed} content
-   * @param {WebhookMessageOptions|Attachment|RichEmbed} [embed]
+   * @param {WebhookMessageOptions|Attachment|MessageEmbed} [embed]
    */
   sendWebhook(slug, content, embed) {
     this.getWebhook(slug).then((webhook) => {

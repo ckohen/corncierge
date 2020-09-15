@@ -15,8 +15,8 @@ module.exports = (socket, guild) => {
     infoChannel.send(msg);
 
     function getFirstSendable() {
-        return guild.channels.filter(chan => chan.type === "text" && 
-            chan.permissionsFor(guild.client.user).has("SEND_MESSAGES"))
+        return guild.channels.cache.filter(chan => chan.type === "text" && 
+            chan.permissionsFor(guild.client.user).has(["SEND_MESSAGES", "VIEW_CHANNEL"]))
         .sort((a, b) => a.position - b.position)
         .first();
     }
