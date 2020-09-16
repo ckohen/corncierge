@@ -22,5 +22,6 @@ embeds.rolemanager = require('./rolemanager');
 embeds.colormanager = require('./colormanager');
 embeds.welcome = require('./welcome');
 embeds.help = require('./help');
+embeds.rooms = require('./rooms');
 
 module.exports = embeds;

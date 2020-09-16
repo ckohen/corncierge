@@ -66,6 +66,8 @@ class DiscordManager extends Socket {
 
     this.prefixes = new Collection();
 
+    this.rooms = new Collection();
+
     this.musicData = {
       queue: [],
       isPlaying: false,
