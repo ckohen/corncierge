@@ -30,7 +30,7 @@ module.exports = {
         // Mute members
         await voiceChannel.members.forEach(async function (member) {
             if (!member.user.bot && !(member == message.member)) {
-                member.setMute(true).catch((err) => {
+                member.voice.setMute(true).catch((err) => {
                     socket.app.log.out('error', module, err);
                 });
             } 
@@ -47,7 +47,7 @@ module.exports = {
         if (newCount !== 0) {
             setTimeout(function () {
                 voiceChannel.members.forEach(member => {
-                    member.setMute(false).catch((err) => {
+                    member.voice.setMute(false).catch((err) => {
                         socket.app.log.out('error', module, err);
                     });
                 });

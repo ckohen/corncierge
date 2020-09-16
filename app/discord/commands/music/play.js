@@ -274,7 +274,7 @@ function constructSongObj(video, voiceChannel, user) {
         thumbnail: video.thumbnails.high.url,
         voiceChannel,
         memberDisplayName: user.username,
-        memberAvatar: user.avatarURL
+        memberAvatar: user.displayAvatarURL()
     };
 }
 
