@@ -159,32 +159,32 @@ module.exports = {
                 // Mentioned user or user
                 member = String(message.member.id);
                 if (extraArgs[0]) {
-                    member = message.mentions.members ? String(message.mentions.members.first().id) : false;
+                    member = extraArgs[0].indexOf("<@") == 0 ? String(message.mentions.members.first().id) : false;
                     if (!member) {
-                        member = message.guild.members.cache.find(member => member.user.username.toLowerCase() === extraArgs.join(' ').toLowerCase());
+                        member = message.guild.members.cache.find(member => member.user.username.toLowerCase() === extraArgs.join(' ').toLowerCase()).id;
                     }
                 }
 
                 if (!member) {
                     return message.reply(`That is not a valid member of the server!`)
                 }
+                // Find the room and determine whether they are a player or waiting
                 let playing = true;
                 room = rooms.find(room => room.players.indexOf(member) > -1);
-                if (typeof room == 'undefined' || rooms == null) {
+                if (typeof room == 'undefined' || room == null) {
                     playing = false;
                     room = rooms.find(room => room.waiting.indexOf(member) > -1);
-                    if (typeof room == 'undefined' || rooms == null) {
+                    if (typeof room == 'undefined' || room == null) {
                         room = false;
                         return message.reply(`That member is not currently in a room!`);
                     }
-                    break;
                 }
                 // Check Permissions for forced leave
                 if (extraArgs[0] && String(message.member.id) != room.owner && !message.member.permissions.any(["MANAGE_CHANNELS", "MANAGE_MESSAGES", "MOVE_MEMBERS", "MANAGE_ROLES"])) {
                     return message.reply("Only the owner of a room and admins/mods can force users to leave!");
                 }
                 // Transfer ownership to next player in list
-                if (member = room.owner) {
+                if (member == room.owner) {
                     if (room.players.length > 1) {
                         room.owner = room.players[1];
                         let newOwner = message.guild.members.cache.get(room.owner);
