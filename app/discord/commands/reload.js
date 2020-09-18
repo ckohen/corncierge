@@ -4,7 +4,7 @@ const plural = require('pluralize');
 const cache = require('memory-cache');
 
 module.exports = {
-  channels: 'console',
+  channel: 'console',
 
   async run(socket, message) {
     const { irc, log, settings } = socket.app;
