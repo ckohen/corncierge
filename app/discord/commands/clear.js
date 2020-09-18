@@ -23,6 +23,11 @@ module.exports = {
     }).catch((err) => {
       socket.app.log.out('error', module, err);
     });
-    socket.sendWebhook('clear', '**' + message.member.displayName + '** cleared **' + amount + `** line(s) in ${message.channel}.`);
-    },
+    if (socket.isGuild(message.guild.id, 'platicorn')) {
+      socket.sendWebhook('clear', '**' + message.member.displayName + '** cleared **' + amount + `** line(s) in ${message.channel}.`);
+    }
+    else if (message.guild.id === "756319910191300778") {
+      socket.sendMessage('helpLogs', '**' + message.member.displayName + '** cleared **' + amount + `** line(s) in ${message.channel}.`,);
+    }
+  },
 };
