@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  channel: 'console',
+  channels: 'console',
 
   async run(socket, message) {
     socket.app.log.out('info', module, 'Reboot instruct received');

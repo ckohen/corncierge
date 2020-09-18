@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    channel: 'console',
+    channels: 'console',
     aliases: ['setactivity', 'activity', 'setgame'],
     usage: [
         '(add|edit) <type: PLAYING, LISTENING, WATCHING, STREAMING> <activity>',

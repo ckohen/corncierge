@@ -5,7 +5,7 @@ const cache = require('memory-cache');
 const { humanBytes, humanDuration } = require.main.require('./app/util/helpers');
 
 module.exports = {
-  channel: 'console',
+  channels: 'console',
 
   run(socket, message) {
     const { irc, settings } = socket.app;
