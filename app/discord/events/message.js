@@ -30,11 +30,14 @@ module.exports = (socket, message) => {
 
   if (!handler) return;
 
-   // Check for guild constraints
-   if (handler.guild && !socket.isGuild(message.guild.id, handler.guild)) return;
+  // Check for guild constraints
+  if (handler.guild && !socket.isGuild(message.guild.id, handler.guild)) return;
 
   // Check for channel constraints
-  if (handler.channel && !socket.isChannel(message.channel.id, handler.channel)) return;
+  if (handler.channel) {
+    let valid = socket.app.settings.get(`discord_channels_${handler.channel}`).split(",");
+    if (valid.indexOf(message.channel.id) < 0) return;
+  }
 
   // Check for role constraints
   if (handler.role && !message.member.roles.cache.some((role) => role.name === handler.role)) {
