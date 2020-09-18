@@ -35,7 +35,7 @@ module.exports = (socket, message) => {
 
   // Check for channel constraints
   if (handler.channel) {
-    let valid = socket.app.settings.get(`discord_channels_${handler.channel}`).split(",");
+    let valid = socket.app.settings.get(`discord_channel_${handler.channel}`).split(",");
     if (valid.indexOf(message.channel.id) < 0) return;
   }
 
