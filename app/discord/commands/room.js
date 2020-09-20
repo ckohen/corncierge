@@ -27,7 +27,7 @@ module.exports = {
             return message.reply('Specify a valid room management option!');
         }
 
-        //  A list of key value pairs with room ids and 
+        //  A list of key value pairs with room ids and their associated room
         let rooms = socket.rooms.get(String(message.guild.id));
 
         if (typeof rooms == 'undefined' || rooms == null) {
