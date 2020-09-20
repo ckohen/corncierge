@@ -28,7 +28,7 @@ module.exports = (socket, before, after) => {
   }
   
   if (!role) return;
-  after.roles.remove(role).catch((err) => {
+  after.member.roles.remove(role).catch((err) => {
     socket.app.log.out('error', module, err);
   });
 };
