@@ -23,6 +23,7 @@ commands.colormanager = require('./colormanager');
 commands.prefix = require('./prefix');
 commands.invite = require('./invite');
 commands.room = require('./room');
+commands.randommove = require('./randommove');
 
 function concat(obj, variable) {
     for(let key of Object.keys(obj)) {

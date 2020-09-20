@@ -68,6 +68,8 @@ class DiscordManager extends Socket {
 
     this.rooms = new Collection();
 
+    this.randomSettings = new Collection();
+
     this.musicData = {
       queue: [],
       isPlaying: false,
