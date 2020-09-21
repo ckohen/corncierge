@@ -98,10 +98,18 @@ class Application {
     await Promise.all([this.irc.init(), this.setSettings()]);
 
     this.pubsub.init();
-    this.discord.init();
+    await this.discord.init();
     this.obs.init();
 
     this.log.out('info', module, 'Boot complete');
+    process.send('ready');
+  }
+
+  async end(code) {
+    await this.pubsub.driver.close();
+    await this.discord.driver.destroy();
+    await this.obs.driver.disconnect();
+    process.exit(code);
   }
 
   /**

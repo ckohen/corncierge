@@ -11,6 +11,6 @@ module.exports = {
     });
 
     // Reboot
-    process.exit(0);
+    socket.app.end(0);
   },
 };
