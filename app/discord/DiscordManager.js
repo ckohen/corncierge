@@ -70,13 +70,7 @@ class DiscordManager extends Socket {
 
     this.randomSettings = new Collection();
 
-    this.musicData = {
-      queue: [],
-      isPlaying: false,
-      nowPlaying: null,
-      songDispatcher: null,
-      volume: 0,
-    };
+    this.musicData = new Collection();
   }
 
   /**
@@ -110,7 +104,11 @@ class DiscordManager extends Socket {
       collect(this.randomSettings, all, "guildID", false);
     });
 
-    this.musicData.volume = Number(this.app.settings.get(`discord_music_volume`));
+    await this.app.database.getVolume().then((volumes) => {
+      volumes.forEach((volume) => {
+        this.musicData.set(volume.guildID, {queue: [], isPlaying: false, nowPlaying: null, songDispatcher: null, volume: Number(volume.volume)})
+      });
+    });
 
     return this.driver.login(this.app.options.discord.token).catch((err) => {
       this.app.log.out('error', module, `Login: ${err}`);

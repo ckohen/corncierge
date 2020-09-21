@@ -9,7 +9,8 @@ module.exports = async (socket, guild) => {
   await socket.app.database.addColorManager(String(guild.id));
   await socket.app.database.addRoleManager(String(guild.id));
   await socket.app.database.addPrefix(String(guild.id));
-  await socket.app.database.addRnadom(String(guild.id));
+  await socket.app.database.addRandom(String(guild.id));
+  await socket.app.database.addVolume(String(guild.id));
 
   // Re-cache managers
   await socket.app.database.getRoleManager().then((all) => {
@@ -32,6 +33,11 @@ module.exports = async (socket, guild) => {
     collect(this.randomSettings, all, "guildID", false);
   });
 
+  await this.app.database.getVolume().then((volumes) => {
+    volumes.forEach((volume) => {
+      this.musicData.set(volume.guildID, {queue: [], isPlaying: false, nowPlaying: null, songDispatcher: null, volume: Number(volume.volume)})
+    });
+  });
 
   // Send info message in system channel
 

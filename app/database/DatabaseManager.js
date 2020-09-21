@@ -108,13 +108,13 @@ class DatabaseManager {
     return this.query(
       'UPDATE `rolemanager` SET `addRoles` = ?, `removeRoles` = ? WHERE `guildID` = ?',
       [JSON.stringify(addRoles), JSON.stringify(removeRoles), id]
-      );
+    );
   }
 
-    /**
-   * Get color manager settings.
-   * @returns {Promise}
-   */
+  /**
+ * Get color manager settings.
+ * @returns {Promise}
+ */
   getColorManager() {
     return this.query('SELECT guildID, roles, snowflakes FROM `colormanager`');
   }
@@ -131,11 +131,11 @@ class DatabaseManager {
     );
   }
 
-   /**
-   * Remove a guild from the colormanager
-   * @param {string} id
-   * @returns {Promise}
-   */
+  /**
+  * Remove a guild from the colormanager
+  * @param {string} id
+  * @returns {Promise}
+  */
   deleteColorManager(id) {
     return this.query(
       'DELETE FROM `colormanager` WHERE `guildID` = ?',
@@ -154,7 +154,7 @@ class DatabaseManager {
     return this.query(
       'UPDATE `colormanager` SET `roles` = ?, `snowflakes` = ? WHERE `guildID` = ?',
       [JSON.stringify(roles), JSON.stringify(snowflakes), id]
-      );
+    );
   }
 
   /**
@@ -177,11 +177,11 @@ class DatabaseManager {
     );
   }
 
-   /**
-   * Remove a guild from prefixes
-   * @param {string} id
-   * @returns {Promise}
-   */
+  /**
+  * Remove a guild from prefixes
+  * @param {string} id
+  * @returns {Promise}
+  */
   deletePrefix(id) {
     return this.query(
       'DELETE FROM `prefixes` WHERE `guildID` = ?',
@@ -199,11 +199,11 @@ class DatabaseManager {
     return this.query(
       'UPDATE `prefixes` SET `prefix` = ? WHERE `guildID` = ?',
       [prefix, id]
-      );
+    );
   }
 
   /**
-   * Get prefixes.
+   * Get random channel data.
    * @returns {Promise}
    */
   getRandom() {
@@ -211,7 +211,7 @@ class DatabaseManager {
   }
 
   /**
-   * Add a guild to prefixes
+   * Add a guild to random channels
    * @param {string} id
    * @returns {Promise}
    */
@@ -222,11 +222,11 @@ class DatabaseManager {
     );
   }
 
-   /**
-   * Remove a guild from prefixes
-   * @param {string} id
-   * @returns {Promise}
-   */
+  /**
+  * Remove a guild from random channels
+  * @param {string} id
+  * @returns {Promise}
+  */
   deleteRandom(id) {
     return this.query(
       'DELETE FROM `randomchannels` WHERE `guildID` = ?',
@@ -235,7 +235,7 @@ class DatabaseManager {
   }
 
   /**
-   * Edit the prefix for a guild
+   * Edit the random channels for a guild
    * @param {string} id
    * @param {string} toChannel
    * @param {string} fromChannel
@@ -245,7 +245,52 @@ class DatabaseManager {
     return this.query(
       'UPDATE `randomchannels` SET `to` = ?, `from` = ? WHERE `guildID` = ?',
       [toChannel, fromChannel, id]
-      );
+    );
+  }
+
+  /**
+   * Get volume data.
+   * @returns {Promise}
+   */
+  getVolume() {
+    return this.query('SELECT guildID, volume FROM `volumes`');
+  }
+
+  /**
+ * Add a guild to volumes
+ * @param {string} id
+ * @returns {Promise}
+ */
+  addVolume(id) {
+    return this.query(
+      'INSERT INTO `volumes` (guildID, volume) VALUES (?, \'1\',)',
+      [id],
+    );
+  }
+
+  /**
+  * Remove a guild from volumes
+  * @param {string} id
+  * @returns {Promise}
+  */
+  deleteVolume(id) {
+    return this.query(
+      'DELETE FROM `volumes` WHERE `guildID` = ?',
+      [id],
+    );
+  }
+
+  /**
+   * Edit the volume for a guild
+   * @param {string} id
+   * @param {string} volume
+   * @returns {Promise}
+   */
+  editVolume(id, volume) {
+    return this.query(
+      'UPDATE `volumes` SET `volume` = ? WHERE `guildID` = ?',
+      [volume, id]
+    );
   }
 
   /**
@@ -346,10 +391,10 @@ class DatabaseManager {
     );
   }
 
-    /**
-   * Get all Fall Guys Win data
-   * @returns {Promise}
-   */
+  /**
+ * Get all Fall Guys Win data
+ * @returns {Promise}
+ */
   getFallWins() {
     return this.query(
       'SELECT id, count FROM `fallwins`',
@@ -357,12 +402,12 @@ class DatabaseManager {
   }
 
 
-/**
-   * add a setting.
-   * @param {string} name
-   * @param {string} value
-   * @returns {Promise}
-   */
+  /**
+     * add a setting.
+     * @param {string} name
+     * @param {string} value
+     * @returns {Promise}
+     */
   addSetting(name, value) {
     return this.query(
       'INSERT INTO `settings` (name, value) VALUES (?, ?)',

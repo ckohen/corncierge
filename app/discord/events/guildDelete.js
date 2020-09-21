@@ -8,4 +8,5 @@ module.exports = (socket, guild) => {
     socket.app.database.deleteRoleManager(String(guild.id));
     socket.app.database.deletePrefix(String(guild.id));
     socket.app.database.deleteRandom(String(guild.id));
+    socket.app.database.deleteVolume(String(guild.id));
 };
