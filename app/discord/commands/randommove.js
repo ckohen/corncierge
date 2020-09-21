@@ -27,7 +27,8 @@ module.exports = {
         let settings = socket.randomSettings.get(String(message.guild.id));
 
         if (typeof settings == 'undefined' || settings == null) {
-            socket.randomSettings.set(String(message.guild.id), { id: String(message.guild.id), to: "", from: "" });
+            socket.randomSettings.set(String(message.guild.id), { guildID: String(message.guild.id), to: "", from: "" });
+            await socket.app.database.addRandom(String(message.guild.id));
             settings = socket.randomSettings.get(String(message.guild.id));
         }
 
@@ -45,9 +46,11 @@ module.exports = {
                 // Remove channel if the requested channel does not exist
                 if ((typeof editChannel == 'undefined' || editChannel == null)) {
                     settings.to = "";
+                    await socket.app.database.editRandom(String(message.guild.id), settings.to, settings.from);
                     return message.reply('There is no longer a permanent random move **to** channel set!');
                 }
                 settings.to = String(editChannel.id);
+                await socket.app.database.editRandom(String(message.guild.id), settings.to, settings.from);
                 return message.reply(`Permanent random move **to** channel is now ${editChannel.name}`);
             case 'from':
                 // Find the channel if it exists and store it
@@ -55,9 +58,11 @@ module.exports = {
                 // Remove channel if the requested channel does not exist
                 if ((typeof editChannel == 'undefined' || editChannel == null)) {
                     settings.from = "";
+                    await socket.app.database.editRandom(String(message.guild.id), settings.to, settings.from);
                     return message.reply('There is no longer a permanent random move **from** channel set!');
                 }
                 settings.from = String(editChannel.id);
+                await socket.app.database.editRandom(String(message.guild.id), settings.to, settings.from);
                 return message.reply(`Permanent random move **from** channel is now ${editChannel.name}`);
             case 'move':
                 num = Number(methodRaw);

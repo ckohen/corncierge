@@ -203,6 +203,52 @@ class DatabaseManager {
   }
 
   /**
+   * Get prefixes.
+   * @returns {Promise}
+   */
+  getRandom() {
+    return this.query('SELECT * FROM `randomchannels`');
+  }
+
+  /**
+   * Add a guild to prefixes
+   * @param {string} id
+   * @returns {Promise}
+   */
+  addRandom(id) {
+    return this.query(
+      'INSERT INTO `randomchannels` (guildID, to, from) VALUES (?, \'\', \'\')',
+      [id],
+    );
+  }
+
+   /**
+   * Remove a guild from prefixes
+   * @param {string} id
+   * @returns {Promise}
+   */
+  deleteRandom(id) {
+    return this.query(
+      'DELETE FROM `randomchannels` WHERE `guildID` = ?',
+      [id],
+    );
+  }
+
+  /**
+   * Edit the prefix for a guild
+   * @param {string} id
+   * @param {string} toChannel
+   * @param {string} fromChannel
+   * @returns {Promise}
+   */
+  editRandom(id, toChannel, fromChannel) {
+    return this.query(
+      'UPDATE `randomchannels` SET `to` = ?, `from` = ? WHERE `guildID` = ?',
+      [toChannel, fromChannel, id]
+      );
+  }
+
+  /**
    * Get all IRC moderation filters.
    * @returns {Promise}
    */

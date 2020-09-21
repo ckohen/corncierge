@@ -9,6 +9,7 @@ module.exports = async (socket, guild) => {
   await socket.app.database.addColorManager(String(guild.id));
   await socket.app.database.addRoleManager(String(guild.id));
   await socket.app.database.addPrefix(String(guild.id));
+  await socket.app.database.addRnadom(String(guild.id));
 
   // Re-cache managers
   await socket.app.database.getRoleManager().then((all) => {
@@ -24,6 +25,11 @@ module.exports = async (socket, guild) => {
   await socket.app.database.getPrefixes().then((all) => {
     socket.prefixes.clear();
     collect(socket.prefixes, all, "guildID", false);
+  });
+
+  await this.app.database.getRandom().then((all) => {
+    this.randomSettings.clear();
+    collect(this.randomSettings, all, "guildID", false);
   });
 
 

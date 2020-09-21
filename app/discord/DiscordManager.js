@@ -105,6 +105,11 @@ class DiscordManager extends Socket {
       collect(this.prefixes, all, "guildID", false);
     });
 
+    await this.app.database.getRandom().then((all) => {
+      this.randomSettings.clear();
+      collect(this.randomSettings, all, "guildID", false);
+    });
+
     this.musicData.volume = Number(this.app.settings.get(`discord_music_volume`));
 
     return this.driver.login(this.app.options.discord.token).catch((err) => {
