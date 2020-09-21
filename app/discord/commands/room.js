@@ -157,17 +157,19 @@ module.exports = {
                 break;
             case "leave":
                 // Mentioned user or user
-                member = String(message.member.id);
+                member = message.member;
                 if (extraArgs[0]) {
-                    member = extraArgs[0].indexOf("<@") == 0 ? String(message.mentions.members.first().id) : false;
+                    member = extraArgs[0].indexOf("<@") == 0 ? String(message.mentions.members.first()) : false;
                     if (!member) {
-                        member = message.guild.members.cache.find(member => member.user.username.toLowerCase() === extraArgs.join(' ').toLowerCase()).id;
+                        member = message.guild.members.cache.find(member => member.user.username.toLowerCase() === extraArgs.join(' ').toLowerCase());
                     }
                 }
 
                 if (!member) {
-                    return message.reply(`That is not a valid member of the server!`)
-                }
+                    return message.reply(`${extraArgs.join(' ')} is not a valid member of the server!`);
+                } 
+                member = String(member.id);
+                
                 // Find the room and determine whether they are a player or waiting
                 let playing = true;
                 room = rooms.find(room => room.players.indexOf(member) > -1);
