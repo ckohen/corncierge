@@ -1,4 +1,4 @@
-const { collect } = require('../../util/helpers');
+const { collect } = require('../../../util/helpers');
 const { Collection } = require('discord.js');
 const plural = require('pluralize');
 
