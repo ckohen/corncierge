@@ -1,8 +1,17 @@
 'use strict';
 
-module.exports = (socket, message) => {
+module.exports = async (socket, message) => {
   // Ignore bots
   if (message.author.bot) return;
+
+  if (message.partial) {
+    try {
+      await message.fetch();
+    }
+    catch {
+      return socket.app.log.out('info', module, "Could not get partial message: " + message.id);
+    }
+  }
 
   // React only in guild text channels
   if (message.channel.type !== 'text') return;

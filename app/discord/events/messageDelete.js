@@ -1,6 +1,10 @@
 'use strict';
 
 module.exports = (socket, message) => {
+    if (message.partial) {
+        return socket.app.log.out('info', module, "Recieved partial message in delete event: " + message.id);
+    }
+
     if (message.author.bot) {
         return;
     }

@@ -1,6 +1,23 @@
 'use strict';
 
-module.exports = (socket, before, after) => {
+module.exports = async (socket, before, after) => {
+    if (before.partial) {
+        try {
+            await before.fetch();
+        }
+        catch {
+            return socket.app.log.out('info', module, "Could not get partial message: " + before.id);
+        }
+    }
+    if (after.partial) {
+        try {
+            await after.fetch();
+        }
+        catch {
+            return socket.app.log.out('info', module, "Could not get partial message: " + after.id);
+        }
+    }
+
     if (before.content === after.content) {
         return;
     }
