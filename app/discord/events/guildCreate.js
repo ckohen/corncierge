@@ -8,6 +8,7 @@ module.exports = async (socket, guild) => {
   // Add new guild to role and color managers
   await socket.app.database.addColorManager(String(guild.id));
   await socket.app.database.addRoleManager(String(guild.id));
+  await socket.app.database.addReactionRoles(String(guild.id));
   await socket.app.database.addPrefix(String(guild.id));
   await socket.app.database.addRandom(String(guild.id));
   await socket.app.database.addVolume(String(guild.id));
@@ -21,6 +22,11 @@ module.exports = async (socket, guild) => {
   await socket.app.database.getColorManager().then((all) => {
     socket.colorManager.clear();
     collect(socket.colorManager, all, "guildID", false);
+  });
+
+  await this.app.database.getReactionRoles().then((all) => {
+    this.reactionRoles.clear();
+    collect(this.reactionRoles, all, "guildID", false);
   });
 
   await socket.app.database.getPrefixes().then((all) => {

@@ -52,7 +52,7 @@ class DiscordManager extends Socket {
      * The Discord driver.
      * @type {Client}
      */
-    this.driver = new Client();
+    this.driver = new Client(this.app.options.discord.options);
 
     /**
      * The commands for the socket, mapped by input.
@@ -63,6 +63,8 @@ class DiscordManager extends Socket {
     this.colorManager = new Collection();
 
     this.roleManager = new Collection();
+
+    this.reactionRoles = new Collection();
 
     this.prefixes = new Collection();
 
@@ -92,6 +94,11 @@ class DiscordManager extends Socket {
     await this.app.database.getColorManager().then((all) => {
       this.colorManager.clear();
       collect(this.colorManager, all, "guildID", false);
+    });
+
+    await this.app.database.getReactionRoles().then((all) => {
+      this.reactionRoles.clear();
+      collect(this.reactionRoles, all, "guildID", false);
     });
 
     await this.app.database.getPrefixes().then((all) => {

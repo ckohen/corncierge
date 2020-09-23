@@ -158,6 +158,53 @@ class DatabaseManager {
   }
 
   /**
+* Get color manager settings.
+* @returns {Promise}
+*/
+  getReactionRoles() {
+    return this.query('SELECT guildID, channelID, messageID, roles FROM `reactionroles`');
+  }
+
+  /**
+   * Add a guild to the rolemanager
+   * @param {string} id
+   * @returns {Promise}
+   */
+  addReactionRoles(id) {
+    return this.query(
+      'INSERT INTO `reactionroles` (guildID, channelID, messageID, roles) VALUES (?, \'\', \'\', \'{}\')',
+      [id],
+    );
+  }
+
+  /**
+  * Remove a guild from the colormanager
+  * @param {string} id
+  * @returns {Promise}
+  */
+  deleteReactionRoles(id) {
+    return this.query(
+      'DELETE FROM `reactionroles` WHERE `guildID` = ?',
+      [id],
+    );
+  }
+
+  /**
+   * Edit the role manager for a guild.
+   * @param {string} id
+   * @param {string} channelID
+   * @param {string} messageID
+   * @param {Object} roles
+   * @returns {Promise}
+   */
+  editReactionRoles(id, channelID, messageID, roles) {
+    return this.query(
+      'UPDATE `reactionroles` SET `channelID` = ?, `messageID` = ?, `roles` = ? WHERE `guildID` = ?',
+      [channelID, messageID, JSON.stringify(roles), id]
+    );
+  }
+
+  /**
    * Get prefixes.
    * @returns {Promise}
    */
