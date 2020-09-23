@@ -159,7 +159,7 @@ module.exports = {
                 // Mentioned user or user
                 member = message.member;
                 if (extraArgs[0]) {
-                    member = extraArgs[0].indexOf("<@") == 0 ? String(message.mentions.members.first()) : false;
+                    member = extraArgs[0].indexOf("<@") == 0 ? message.mentions.members.first() : false;
                     if (!member) {
                         member = message.guild.members.cache.find(member => member.user.username.toLowerCase() === extraArgs.join(' ').toLowerCase());
                     }
