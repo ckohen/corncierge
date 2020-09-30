@@ -18,6 +18,10 @@ module.exports = async (socket, before, after) => {
         }
     }
 
+    if (before.author.bot) {
+        return;
+    }
+
     if (before.content === after.content) {
         return;
     }
