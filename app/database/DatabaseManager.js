@@ -87,6 +87,51 @@ class DatabaseManager {
   }
 
   /**
+   * Get rooms.
+   * @returns {Promise}
+   */
+  getRooms() {
+    return this.query('SELECT guildRoomID, data FROM `rooms`');
+  }
+
+  /**
+   * Add a room to the rooom manager
+   * @param {string} id
+   * @returns {Promise}
+   */
+  addRoom(id) {
+    return this.query(
+      'INSERT INTO `rooms` (guildRoomID, data) VALUES (?, \'{}\')',
+      [id],
+    );
+  }
+
+  /**
+   * Remove a room from the room manager
+   * @param {string} id
+   * @returns {Promise}
+   */
+  deleteRoom(id) {
+    return this.query(
+      'DELETE FROM `rooms` WHERE `guildRoomID` = ?',
+      [id],
+    );
+  }
+
+  /**
+   * Edit a room.
+   * @param {string} id
+   * @param {Object} data
+   * @returns {Promise}
+   */
+  editRoom(id, data) {
+    return this.query(
+      'UPDATE `rooms` SET `data` = ? WHERE `guildRoomID` = ?',
+      [JSON.stringify(data), id]
+    );
+  }
+
+  /**
    * Get role manager settings.
    * @returns {Promise}
    */

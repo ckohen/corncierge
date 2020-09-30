@@ -57,8 +57,9 @@ module.exports = {
                 // Find the earliest available id
                 for (i = 1; i < 26; i++) {
                     if (!rooms.has(String(i))) {
-                        // Creat the new room
+                        // Create the new room
                         rooms.set(String(i), { id: String(i), name: extraArgs.join(' ').substring(0, 30), owner: String(message.member.id), playerCount: 10, code: null, players: [String(message.member.id)], waiting: [] });
+                        socket.app.database.addRoom(message.guild.id + '-' + String(i));
                         break;
                     }
                 }
@@ -136,6 +137,7 @@ module.exports = {
                     return message.reply("Only the owner of a room and admins/mods can remove it!");
                 }
                 // Delete the room
+                socket.app.database.deleteRoom(message.guild.id + '-' + room.id);
                 rooms.delete(room.id);
                 break;
             case "join":
@@ -195,8 +197,9 @@ module.exports = {
                     }
                     // Delete the room if there is no new possible owner
                     else {
-                        rooms.delete(room.id)
-                        return message.reply(`You were the last player in ${room.name}, it has been deleted.`)
+                        socket.app.database.deleteRoom(message.guild.id + '-' + room.id);
+                        rooms.delete(room.id);
+                        return message.reply(`You were the last player in ${room.name}, it has been deleted.`);
                     }
                 }
                 else {
@@ -328,13 +331,15 @@ module.exports = {
         let lines = 0;
         let owner;
         if (room) {
+            // Update databse
+            socket.app.database.editRoom(message.guild.id + '-' + room.id, room);
             // Store discord's copy of the owner
             owner = message.guild.members.cache.get(room.owner);
             // Change the default description to be more acdurate for a single room
             msg.setDescription(`Join this room by typing \`${commandPrefix}room join ${room.id}\`. See a list of all rooms by typing \`${commandPrefix}room list all\``);
             // Add Room name and code (if applicable)
             if (room.code) {
-                msg.addField(`Room Name`, `${room.name} *with code* \`${room.code}\``);
+                msg.addField(`Room Name`, `${room.name} \n**Current code**: \`${room.code}\``);
             }
             else {
                 msg.addField("Room Name", `${room.name}`)
@@ -368,16 +373,17 @@ module.exports = {
             let fields = 1;
             // Loop through room list and add to arrays
             rooms.each(room => {
+                socket.app.database.editRoom(message.guild.id + '-' + room.id, room);
                 lines += 1;
                 owner = message.guild.members.cache.get(room.owner);
                 if (lines < 11) {
-                    set1.push(`${room.id} => __${room.name}__\nOwned by ${owner.user.username}, Playing: ${room.players.length}/${room.playerCount}, Waiting: ${room.waiting.length}`)
+                    set1.push(`**ID**: ${room.id}, **Name**: ${room.name}\nOwned by ${owner.user.username}, Playing: ${room.players.length}/${room.playerCount}, Waiting: ${room.waiting.length}`)
                 }
                 else if (lines < 21) {
-                    set2.push(`${room.id} => __${room.name}__\nOwned by ${owner.user.username}, Playing: ${room.players.length}/${room.playerCount}, Waiting: ${room.waiting.length}`)
+                    set2.push(`**ID**: ${room.id}, **Name**: ${room.name}\nOwned by ${owner.user.username}, Playing: ${room.players.length}/${room.playerCount}, Waiting: ${room.waiting.length}`)
                 }
                 else {
-                    set3.push(`${room.id} => __${room.name}__\nOwned by ${owner.user.username}, Playing: ${room.players.length}/${room.playerCount}, Waiting: ${room.waiting.length}`)
+                    set3.push(`**ID**: ${room.id}, **Name**: ${room.name}\nOwned by ${owner.user.username}, Playing: ${room.players.length}/${room.playerCount}, Waiting: ${room.waiting.length}`)
                 }
             });
 
