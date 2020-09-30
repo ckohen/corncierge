@@ -9,6 +9,7 @@ const LogManager = require('./log/LogManager');
 const PubSubManager = require('./pubsub/PubSubManager');
 const DiscordManager = require('./discord/DiscordManager');
 const OBSManager = require('./obs/OBSManager');
+const HTTPManager = require('./http/HTTPManager');
 const DatabaseManager = require('./database/DatabaseManager');
 
 /**
@@ -61,6 +62,13 @@ class Application {
     this.settings = new Collection();
 
     /**
+     * The streaming settings for the application, mapped by name.
+     * @type {Collection<string, Object>}
+     * @private
+     */
+    this.streaming = new Collection();
+
+    /**
      * The PubSub manager for the application.
      * @type {PubSubManager}
      * @private
@@ -81,12 +89,26 @@ class Application {
      */
     this.obs = new OBSManager(this);
 
+     /**
+     * The HTTP Server manager for the application.
+     * @type {HTTPManager}
+     * @private
+     */
+    this.http = new HTTPManager(this);
+
     /**
      * The database manager for the application.
      * @type {DatabaseManager}
      * @private
      */
     this.database = new DatabaseManager(this);
+
+    /**
+     * True when intentionally ending the application so subapplications do not restart
+     * @type {Boolean}
+     * @private
+     */
+    this.ending = false;
   }
 
   /**
@@ -95,20 +117,24 @@ class Application {
    */
   async boot() {
     // Run tasks in parallel to avoid serial delays
-    await Promise.all([this.irc.init(), this.setSettings()]);
+    await Promise.all([this.irc.init(), this.setSettings(), this.setStreaming()]);
 
     this.pubsub.init();
     await this.discord.init();
-    this.obs.init();
+    await this.http.init();
+    //this.obs.init();
 
     this.log.out('info', module, 'Boot complete');
     process.send('ready');
   }
 
   async end(code) {
+    this.ending = true;
+    await this.irc.driver.disconnect();
     await this.pubsub.driver.close();
     await this.discord.driver.destroy();
-    await this.obs.driver.disconnect();
+    await this.http.driver.close();
+    //await this.obs.driver.disconnect();
     process.exit(code);
   }
 
@@ -137,6 +163,19 @@ class Application {
       .then((all) => collect(this.settings, all, 'name', null, 'value'))
       .catch((err) => {
         this.log.fatal('critical', module, `Settings: ${err}`);
+      });
+  }
+
+  /**
+   * Cache all database streaming settings for the application.
+   * @returns {Promise}
+   * @private
+   */
+  setStreaming() {
+    return this.database.getStreaming()
+      .then((all) => collect(this.streaming, all, 'name', null))
+      .catch((err) => {
+        this.log.fatal('critical', module, `Streaming Settings: ${err}`);
       });
   }
 }

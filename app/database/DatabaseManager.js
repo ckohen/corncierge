@@ -65,6 +65,27 @@ class DatabaseManager {
     return this.query('SELECT name, value FROM `settings`');
   }
 
+   /**
+   * Get streaming settings.
+   * @returns {Promise}
+   */
+  getStreaming() {
+    return this.query('SELECT name, channel, role, lastMessage FROM `streaming`');
+  }
+
+   /**
+   * Updates streaming last message.
+   * @param {string} key
+   * @param {string} messageID
+   * @returns {Promise}
+   */
+  editStreaming(key, messageID) {
+    return this.query(
+      'UPDATE `streaming` SET `lastMessage` = ? WHERE `name` = ?', 
+      [messageID, key],
+    );
+  }
+
   /**
    * Get role manager settings.
    * @returns {Promise}
