@@ -54,6 +54,23 @@ class ApiManager extends Request {
   }
 
   /**
+   * Get the channel for the specfied user's channel ID.
+   * @param {String} user
+   * @param {Function} callback
+   */
+    async userChannel(user, callback) {
+    try {
+      this.get(`users?login=${user}`, {}, (userObj) => {
+        let id = userObj.users[0]._id;
+        this.get(`channels/${id}`, {}, callback);
+      });
+    }
+    catch {
+      callback(false);
+    }
+  }
+
+  /**
    * Get a follow object for the given user ID.
    * @param {number} userId
    * @returns {Promise<Request>}
