@@ -148,7 +148,7 @@ class DiscordManager extends Socket {
    * @returns {?Channel}
    */
   getChannel(slug) {
-    const id = this.app.settings.get(`discord_channel_${slug}`);
+    const id = this.app.settings.get(`discord_channel_${slug}`).split(',')[0];
     return this.driver.channels.cache.get(id);
   }
 
