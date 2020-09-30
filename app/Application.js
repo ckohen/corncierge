@@ -130,11 +130,16 @@ class Application {
 
   async end(code) {
     this.ending = true;
-    await this.irc.driver.disconnect();
-    await this.pubsub.driver.close();
-    await this.discord.driver.destroy();
-    await this.http.driver.close();
-    //await this.obs.driver.disconnect();
+    try {
+      await this.irc.driver.disconnect();
+      await this.pubsub.driver.close();
+      await this.discord.driver.destroy();
+      await this.http.driver.close();
+      //await this.obs.driver.disconnect();
+    }
+    catch {
+      ;
+    }
     process.exit(code);
   }
 
