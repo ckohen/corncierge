@@ -10,7 +10,7 @@ module.exports = (socket, before, after) => {
 
     }
     if (!before.roles.cache.equals(after.roles.cache)) {
-        let roleChanged;
+        let roleChanged = "";
         let rolesChanged;
         let type;
         if (before.roles.cache.array().length > after.roles.cache.array().length) {
@@ -21,10 +21,15 @@ module.exports = (socket, before, after) => {
         else {
             //Role added
             rolesChanged = after.roles.cache.filter(role => testRole(role, before.roles.cache));
+            rolesChanged = rolesChanged.filter(role => ignoreRoles(role));
             type = "added";
         }
-        roleChanged = rolesChanged.array()[0];
-        if (roleChanged.name === 'Voice') {
+        rolesChanged.forEach(role => {
+            if (role.name !== 'Voice') {
+                roleChanged += `${role}`;
+            }
+        });
+        if (!roleChanged) {
             return;
         }
         embed = socket.getEmbed('roleChange', [after, roleChanged, type]);
@@ -49,6 +54,16 @@ module.exports = (socket, before, after) => {
         }
         else {
             return true;
+        }
+    }
+
+    function ignoreRoles(role) {
+        let ignoredRoles = ["140254897479090176", "581396312914919424"];
+        if (ignoredRoles.indexOf(role.id) < 0) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
 };
