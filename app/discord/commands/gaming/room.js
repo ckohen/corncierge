@@ -137,8 +137,10 @@ module.exports = {
                     return message.reply("Only the owner of a room and admins/mods can remove it!");
                 }
                 // Delete the room
+                message.channel.send(`Room ${room.id}: **${room.name}** has been successfully removed, the new list of rooms can be found below.`);
                 socket.app.database.deleteRoom(message.guild.id + '-' + room.id);
                 rooms.delete(room.id);
+                room = false;
                 break;
             case "join":
                 // Check if the room exists
