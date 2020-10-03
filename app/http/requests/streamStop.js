@@ -1,11 +1,12 @@
 'use strict';
 const { Message } = require('discord.js');
+const helpers = require('../../util/helpers');
 const cache = require('memory-cache');
 
 module.exports = async (socket, url, headers) => {
-    if (cache.get('video.stream.down') !== null) return;
     // Different handling for different users
     let user = headers.user;
+    if (cache.get(`video.stream.down.${user}`) !== null) return;
 
     // Ignore empty or default users
     if (!user || user == "default") {
@@ -47,10 +48,10 @@ module.exports = async (socket, url, headers) => {
             }
         });
 
-        cache.del('stream.uptime');
-    });
+        cache.del(`stream.uptime.${user}`);
+    }, user);
 
     // Throttle additional events
     const tenSec = 10000;
-    cache.put('video.stream.down', 'trigger', tenSec);
+    cache.put(`video.stream.down.${user}`, 'trigger', tenSec);
 };
