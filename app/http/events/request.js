@@ -8,7 +8,7 @@ module.exports = (socket, request, response) => {
 
     // Ignore when the url path is not base
     if (request.url != "/") {
-        console.log(request.url);
+        socket.app.log.out("info", module, "No page available for URL: " + request.url);
         return response.end();
     }
 
