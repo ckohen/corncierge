@@ -320,7 +320,7 @@ class DatabaseManager {
    * @returns {Promise}
    */
   getRandom() {
-    return this.query('SELECT * FROM `randomchannels`');
+    return this.query('SELECT guildID, toChannel, fromChannel FROM `randomchannels`');
   }
 
   /**
@@ -330,7 +330,7 @@ class DatabaseManager {
    */
   addRandom(id) {
     return this.query(
-      'INSERT INTO `randomchannels` (guildID, to, from) VALUES (?, \'\', \'\')',
+      'INSERT INTO `randomchannels` (guildID, toChannel, fromChannel) VALUES (?, \'\', \'\')',
       [id],
     );
   }
@@ -356,7 +356,7 @@ class DatabaseManager {
    */
   editRandom(id, toChannel, fromChannel) {
     return this.query(
-      'UPDATE `randomchannels` SET `to` = ?, `from` = ? WHERE `guildID` = ?',
+      'UPDATE `randomchannels` SET `toChannel` = ?, `fromChannel` = ? WHERE `guildID` = ?',
       [toChannel, fromChannel, id]
     );
   }

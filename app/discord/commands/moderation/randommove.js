@@ -27,7 +27,7 @@ module.exports = {
         let settings = socket.randomSettings.get(String(message.guild.id));
 
         if (typeof settings == 'undefined' || settings == null) {
-            socket.randomSettings.set(String(message.guild.id), { guildID: String(message.guild.id), to: "", from: "" });
+            socket.randomSettings.set(String(message.guild.id), { guildID: String(message.guild.id), toChannel: "", fromChannel: "" });
             await socket.app.database.addRandom(String(message.guild.id));
             settings = socket.randomSettings.get(String(message.guild.id));
         }
@@ -45,33 +45,33 @@ module.exports = {
                 editChannel = message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === args.join(' ').toLowerCase());
                 // Remove channel if the requested channel does not exist
                 if ((typeof editChannel == 'undefined' || editChannel == null)) {
-                    settings.to = "";
-                    await socket.app.database.editRandom(String(message.guild.id), settings.to, settings.from);
+                    settings.toChannel = "";
+                    await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
                     return message.reply('There is no longer a permanent random move **to** channel set!');
                 }
-                settings.to = String(editChannel.id);
-                await socket.app.database.editRandom(String(message.guild.id), settings.to, settings.from);
+                settings.toChannel = String(editChannel.id);
+                await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
                 return message.reply(`Permanent random move **to** channel is now ${editChannel.name}`);
             case 'from':
                 // Find the channel if it exists and store it
                 editChannel = message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === args.join(' ').toLowerCase());
                 // Remove channel if the requested channel does not exist
                 if ((typeof editChannel == 'undefined' || editChannel == null)) {
-                    settings.from = "";
-                    await socket.app.database.editRandom(String(message.guild.id), settings.to, settings.from);
+                    settings.fromChannel = "";
+                    await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
                     return message.reply('There is no longer a permanent random move **from** channel set!');
                 }
-                settings.from = String(editChannel.id);
-                await socket.app.database.editRandom(String(message.guild.id), settings.to, settings.from);
+                settings.fromChannel = String(editChannel.id);
+                await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
                 return message.reply(`Permanent random move **from** channel is now ${editChannel.name}`);
             case 'move':
                 num = Number(methodRaw);
-                if (settings.to.length > 0) {
-                    newChannel = await message.member.guild.channels.cache.get(settings.to);
+                if (settings.toChannel.length > 0) {
+                    newChannel = await message.member.guild.channels.cache.get(settings.toChannel);
                     toChannel = `Stored, change with \`${commandPrefix}randmove to <channel>\`,`;
                 }
-                if (settings.from.length > 0) {
-                    voiceChannel = await message.member.guild.channels.cache.get(settings.from);
+                if (settings.fromChannel.length > 0) {
+                    voiceChannel = await message.member.guild.channels.cache.get(settings.fromChannel);
                     fromChannel = `Stored, change with \`${commandPrefix}randmove from <channel>\`,`;
                 }
                 // Move users in curent channel
