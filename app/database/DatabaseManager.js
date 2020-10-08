@@ -376,7 +376,7 @@ class DatabaseManager {
  */
   addVolume(id) {
     return this.query(
-      'INSERT INTO `volumes` (guildID, volume) VALUES (?, \'1\',)',
+      'INSERT INTO `volumes` (guildID, volume) VALUES (?, \'1\')',
       [id],
     );
   }
