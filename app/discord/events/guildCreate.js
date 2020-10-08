@@ -14,36 +14,7 @@ module.exports = async (socket, guild) => {
   await socket.app.database.addVolume(String(guild.id));
 
   // Re-cache managers
-  await socket.app.database.getRoleManager().then((all) => {
-    socket.roleManager.clear();
-    collect(socket.roleManager, all, "guildID", false);
-  });
-
-  await socket.app.database.getColorManager().then((all) => {
-    socket.colorManager.clear();
-    collect(socket.colorManager, all, "guildID", false);
-  });
-
-  await this.app.database.getReactionRoles().then((all) => {
-    this.reactionRoles.clear();
-    collect(this.reactionRoles, all, "guildID", false);
-  });
-
-  await socket.app.database.getPrefixes().then((all) => {
-    socket.prefixes.clear();
-    collect(socket.prefixes, all, "guildID", false);
-  });
-
-  await this.app.database.getRandom().then((all) => {
-    this.randomSettings.clear();
-    collect(this.randomSettings, all, "guildID", false);
-  });
-
-  await this.app.database.getVolume().then((volumes) => {
-    volumes.forEach((volume) => {
-      this.musicData.set(volume.guildID, {queue: [], isPlaying: false, nowPlaying: null, songDispatcher: null, volume: Number(volume.volume)})
-    });
-  });
+  await socket.setCache();
 
   // Send info message in system channel
 
