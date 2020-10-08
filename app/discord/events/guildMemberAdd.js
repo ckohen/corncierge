@@ -16,7 +16,10 @@ module.exports = (socket, member) => {
   else if (member.guild.id === "756319910191300778") {
     socket.sendMessage('helpLogs', embed,);
   }
-  else if (member.guild.id === "140230462940381184") {
+  else if (socket.isGuild(member.guild.id, 'ckohen')) {
     setTimeout(function() { member.roles.add("140254897479090176")}, 300000);
+  }
+  else if (socket.isGuild(member.guild.id, 'daytone')) {
+    member.roles.add("763669126752895026");
   }
 };
