@@ -146,7 +146,6 @@ module.exports = {
                         if (oldMsg) {
                             oldMsg.delete();
                         }
-                        message.delete();
                         confirmMsg.delete();
                     }
                 }
@@ -222,6 +221,7 @@ module.exports = {
             guild.messageID = String(reactionMsg.id);
             guild.channelID = String(reactionMsg.channel.id);
             socket.app.database.editReactionRoles(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
+            message.delete();
         }
 
         async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
