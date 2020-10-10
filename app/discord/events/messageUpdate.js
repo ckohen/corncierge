@@ -3,7 +3,7 @@
 module.exports = async (socket, before, after) => {
     if (before.partial) {
         try {
-            await before.fetch();
+            before = await before.fetch();
         }
         catch {
             return socket.app.log.out('info', module, "Could not get partial message: " + before.id);
@@ -18,7 +18,7 @@ module.exports = async (socket, before, after) => {
         }
     }
 
-    if (before.author.bot) {
+    if (after.author.bot) {
         return;
     }
 
