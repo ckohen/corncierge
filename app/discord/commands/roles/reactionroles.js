@@ -94,28 +94,30 @@ module.exports = {
                     return message.reply(`${printableEmote} is not currently being used for reaction roles!`);
                 }
                 else {
+                    let deleted = false;
                     delete guild.roles[String(emote)];
                     if (Object.keys(guild.roles).length < 1) {
                         let reactionsMsg = await socket.driver.channels.cache.get(guild.channelID).messages.fetch(guild.messageID).catch(err => { });;
-                        if (reactionsMsg) {
+                        if (reactionsMsg && (reactionsMsg.author.id == bot.id)) {
                             reactionsMsg.delete();
+                            guild.channelID = "";
+                            guild.messageID = "";
+                            deleted = true;
                         }
-                        guild.channelID = "";
-                        guild.messageID = "";
                     }
                     await socket.app.database.editReactionRoles(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
-                    return message.reply(`Deleted ${printableEmote} and associated roles from reaction roles.`);
+                    return message.reply(`Deleted ${printableEmote} and associated roles from reaction roles.` + (deleted ? "There are no more reactions roles left, the reaction message has been deleted." : ""));
                 }
                 break;
             case 'create':
                 // Check for appropriate permissions
                 if (!message.channel.permissionsFor(bot).has(['ADD_REACTIONS', 'SEND_MESSAGES', 'VIEW_CHANNEL', 'USE_EXTERNAL_EMOJIS', 'READ_MESSAGE_HISTORY'])) {
-                    message.reply("Unable to generate reaction roles here. Please make sure that I have permission to `Add Reactions` and `Use External Emoji`").then(msg => {msg.delete({timeout: 5000})});
+                    message.reply("Unable to generate reaction roles here. Please make sure that I have permission to `Add Reactions` and `Use External Emoji`").then(msg => { msg.delete({ timeout: 5000 }) });
                     message.delete();
                     return;
                 }
                 if (emojis.length < 1) {
-                    message.reply("There are no reaction roles yet!").then(msg => {msg.delete({timeout: 5000})});
+                    message.reply("There are no reaction roles yet!").then(msg => { msg.delete({ timeout: 5000 }) });
                     message.delete();
                     return;
                 }
@@ -137,7 +139,7 @@ module.exports = {
                     // Find the emote id or name depending on if the emote is custom or not
                     reaction = collected.first();
                     if (reaction.emoji.name === '❌') {
-                        message.reply('Cancelled!').then(msg => {msg.delete({timeout: 5000})});
+                        message.reply('Cancelled!').then(msg => { msg.delete({ timeout: 5000 }) });
                         message.delete();
                         confirmMsg.delete();
                         return;
@@ -155,7 +157,7 @@ module.exports = {
             case 'update':
                 // Check that there is an existing message
                 if (!guild.messageID) {
-                    message.reply("There is no reaction role message yet, unable to update it!").then(msg => {msg.delete({timeout: 5000})});
+                    message.reply("There is no reaction role message yet, unable to update it!").then(msg => { msg.delete({ timeout: 5000 }) });
                     message.delete();
                     return;
                 }
@@ -163,7 +165,7 @@ module.exports = {
                 // Check to make sure the message still exists
                 let oldMsg = await socket.driver.channels.cache.get(guild.channelID).messages.fetch(guild.messageID).catch(err => { });;
                 if (!oldMsg) {
-                    message.reply("The reaction role message has been deleted, unable to update it!").then(msg => {msg.delete({timeout: 5000})});
+                    message.reply("The reaction role message has been deleted, unable to update it!").then(msg => { msg.delete({ timeout: 5000 }) });
                     guild.messageID = "";
                     guild.channelID = "";
                     socket.app.database.editReactionRoles(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
@@ -174,7 +176,7 @@ module.exports = {
                 // Check for appropriate permissions
                 let chan = await socket.driver.channels.cache.get(guild.channelID);
                 if (!chan.permissionsFor(bot).has(['ADD_REACTIONS', 'SEND_MESSAGES', 'VIEW_CHANNEL', 'USE_EXTERNAL_EMOJIS', 'READ_MESSAGE_HISTORY'])) {
-                    message.reply("Unable to update reaction roles message, Please make sure that I have permission to `Add Reactions` and `Use External Emoji`").then(msg => {msg.delete({timeout: 5000})});
+                    message.reply("Unable to update reaction roles message, Please make sure that I have permission to `Add Reactions` and `Use External Emoji`").then(msg => { msg.delete({ timeout: 5000 }) });
                     message.delete();
                     return;
                 }
@@ -187,7 +189,7 @@ module.exports = {
                     let reacted = true;
                     let collected = await confirmMsg.awaitReactions((reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id, { max: 1, time: 60000, errors: ['time'] })
                         .catch(err => {
-                            message.reply("Not a valid reaction, cancelling!").then(msg => {msg.delete({timeout: 5000})});
+                            message.reply("Not a valid reaction, cancelling!").then(msg => { msg.delete({ timeout: 5000 }) });
                             message.delete().then(msg => { confirmMsg.delete().then(confMsg => reacted = false) });
                         });
                     if (!reacted) {
@@ -197,7 +199,7 @@ module.exports = {
                     // Find the emote id or name depending on if the emote is custom or not
                     reaction = collected.first();
                     if (reaction.emoji.name === '❌') {
-                        message.reply('Cancelled!').then(msg => {msg.delete({timeout: 5000})});
+                        message.reply('Cancelled!').then(msg => { msg.delete({ timeout: 5000 }) });
                         message.delete();
                         confirmMsg.delete();
                         return;
@@ -277,12 +279,36 @@ module.exports = {
         }
         let reactionMsg;
         if (!update) {
+            // Send the message
             reactionMsg = await message.channel.send(msg);
         }
         else {
-            reactionMsg = await update.edit(msg);
+            // If the message was sent by the bot, update the embed, otherwise just use the authors message.
+            if (update.author == bot) {
+                reactionMsg = await update.edit(msg);
+            }
+            else {
+                reactionMsg = update;
+            }
+        }
+        if (update) {
+            // Remove reactions that are no longer used.
+            reactionMsg.reactions.cache.forEach(reaction => {
+                // Find the emote id or name depending on if the emote is custom or not
+                let parsedEmote;
+                if (!reaction.emoji.id) {
+                    parsedEmote = reaction.emoji.name;
+                }
+                else {
+                    parsedEmote = reaction.emoji.id;
+                }
+                if (emojis.indexOf(String(parsedEmote)) < 0) {
+                    reaction.remove();
+                }
+            });
         }
         if (create) {
+            // Add reactions to the message
             for (emoteID of emojis) {
                 reactionMsg.react(emoteID);
             }
@@ -326,7 +352,7 @@ module.exports = {
                     printableEmote = Number(emoteID) ? await sock.driver.emojis.cache.get(emoteID) : emoteID;
                     printableEmojis.push(printableEmote);
                 }
-                embed.addField("Current Reactions",printableEmojis.join(' '));
+                embed.addField("Current Reactions", printableEmojis.join(' '));
                 emoteMsg = await initiator.channel.send(embed);
                 for (emoteID of emojis) {
                     emoteMsg.react(emoteID);
