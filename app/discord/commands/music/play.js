@@ -207,8 +207,8 @@ module.exports = {
                 );
             });
 
-            
-          
+
+
     },
 
 };
@@ -231,7 +231,7 @@ function playSong(queue, message, socket) {
                     dispatcher.setVolume(musicData.volume);
                     dispatcher.setBitrate(192);
                     videoEmbed = socket.getEmbed('play', [queue]);
-                    if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);``
+                    if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title); ``
                     // Comment out to disable auto notify on next song
                     message.channel.send(videoEmbed);
                     musicData.nowPlaying = queue[0];
@@ -250,13 +250,17 @@ function playSong(queue, message, socket) {
                     }
                 })
                 .on('error', function (e) {
-                    message.reply('Cannot play song');
+                    message.reply(`Cannot play song \`${queue[0].title}\`, skipping`);
                     console.error(e);
-                    musicData.queue.length = 0;
-                    musicData.isPlaying = false;
-                    musicData.nowPlaying = null;
-                    musicData.songDispatcher = null;
-                    return message.guild.me.voice.channel.leave();
+                    if (queue.length >= 1) {
+                        queue.shift();
+                        return playSong(queue, message, socket);
+                    } else {
+                        musicData.isPlaying = false;
+                        musicData.nowPlaying = null;
+                        musicData.songDispatcher = null;
+                        return message.guild.me.voice.channel.leave();
+                    }
                 });
         })
         .catch(function (e) {
@@ -282,10 +286,8 @@ function constructSongObj(video, voiceChannel, user) {
 
 // prettier-ignore
 function formatDuration(durationObj) {
-    const duration = `${durationObj.hours ? (durationObj.hours + ':') : ''}${
-        durationObj.minutes ? durationObj.minutes : '00'
-        }:${
-        (durationObj.seconds < 10)
+    const duration = `${durationObj.hours ? (durationObj.hours + ':') : ''}${durationObj.minutes ? durationObj.minutes : '00'
+        }:${(durationObj.seconds < 10)
             ? ('0' + durationObj.seconds)
             : (durationObj.seconds
                 ? durationObj.seconds
