@@ -6,7 +6,7 @@ module.exports = async (socket, before, after) => {
             before = await before.fetch();
         }
         catch {
-            return socket.app.log.out('info', module, "Could not get partial message: " + before.id);
+            return socket.app.log.out('debug', module, "Could not get partial message: " + before.id);
         }
     }
     if (after.partial) {
@@ -14,7 +14,7 @@ module.exports = async (socket, before, after) => {
             await after.fetch();
         }
         catch {
-            return socket.app.log.out('info', module, "Could not get partial message: " + after.id);
+            return socket.app.log.out('debug', module, "Could not get partial message: " + after.id);
         }
     }
 

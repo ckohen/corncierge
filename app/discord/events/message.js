@@ -9,7 +9,7 @@ module.exports = async (socket, message) => {
       await message.fetch();
     }
     catch {
-      return socket.app.log.out('info', module, "Could not get partial message: " + message.id);
+      return socket.app.log.out('debug', module, "Could not get partial message: " + message.id);
     }
   }
 
