@@ -49,7 +49,7 @@ class LogManager {
         }),
         new wn.transports.File({
           handleExceptions: true,
-          filename: 'logs/app.log',
+          filename: this.opts.log.outputFile,
           level: this.opts.log.maxLevel,
         }),
       ],
