@@ -127,7 +127,7 @@ class DatabaseManager {
   editRoom(id, data) {
     return this.query(
       'UPDATE `rooms` SET `data` = ? WHERE `guildRoomID` = ?',
-      [JSON.stringify(data), id]
+      [data, id]
     );
   }
 
@@ -173,7 +173,7 @@ class DatabaseManager {
   editRoleManager(id, addRoles, removeRoles) {
     return this.query(
       'UPDATE `rolemanager` SET `addRoles` = ?, `removeRoles` = ? WHERE `guildID` = ?',
-      [JSON.stringify(addRoles), JSON.stringify(removeRoles), id]
+      [addRoles, removeRoles, id]
     );
   }
 
@@ -219,7 +219,7 @@ class DatabaseManager {
   editColorManager(id, roles, snowflakes) {
     return this.query(
       'UPDATE `colormanager` SET `roles` = ?, `snowflakes` = ? WHERE `guildID` = ?',
-      [JSON.stringify(roles), JSON.stringify(snowflakes), id]
+      [roles, snowflakes, id]
     );
   }
 
@@ -266,7 +266,7 @@ class DatabaseManager {
   editReactionRoles(id, channelID, messageID, roles) {
     return this.query(
       'UPDATE `reactionroles` SET `channelID` = ?, `messageID` = ?, `roles` = ? WHERE `guildID` = ?',
-      [channelID, messageID, JSON.stringify(roles), id]
+      [channelID, messageID, roles, id]
     );
   }
 
