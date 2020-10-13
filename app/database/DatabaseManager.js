@@ -91,7 +91,7 @@ class DatabaseManager {
    * @returns {Promise}
    */
   getRooms() {
-    return this.query('SELECT guildRoomID, data FROM `rooms`');
+    return this.query('SELECT guildRoomID, JSON_QUERY(data, \'$\') as data FROM `rooms`');
   }
 
   /**
@@ -127,7 +127,7 @@ class DatabaseManager {
   editRoom(id, data) {
     return this.query(
       'UPDATE `rooms` SET `data` = ? WHERE `guildRoomID` = ?',
-      [data, id]
+      [JSON.stringify(data), id]
     );
   }
 
@@ -136,7 +136,7 @@ class DatabaseManager {
    * @returns {Promise}
    */
   getRoleManager() {
-    return this.query('SELECT guildID, addRoles, removeRoles FROM `rolemanager`');
+    return this.query('SELECT guildID, JSON_QUERY(addRoles, \'$\') as addRoles, JSON_QUERY(removeRoles, \'$\') as removeRoles FROM `rolemanager`');
   }
 
   /**
@@ -173,7 +173,7 @@ class DatabaseManager {
   editRoleManager(id, addRoles, removeRoles) {
     return this.query(
       'UPDATE `rolemanager` SET `addRoles` = ?, `removeRoles` = ? WHERE `guildID` = ?',
-      [addRoles, removeRoles, id]
+      [JSON.stringify(addRoles), JSON.stringify(removeRoles), id]
     );
   }
 
@@ -182,7 +182,7 @@ class DatabaseManager {
  * @returns {Promise}
  */
   getColorManager() {
-    return this.query('SELECT guildID, roles, snowflakes FROM `colormanager`');
+    return this.query('SELECT guildID, JSON_QUERY(roles, \'$\') as roles, JSON_QUERY(snowflakes, \'$\') as snowflakes FROM `colormanager`');
   }
 
   /**
@@ -210,7 +210,7 @@ class DatabaseManager {
   }
 
   /**
-   * Edit the role manager for a guild.
+   * Edit the color role manager for a guild.
    * @param {string} id
    * @param {Object} roles
    * @param {Object Array} snowflakes
@@ -219,20 +219,20 @@ class DatabaseManager {
   editColorManager(id, roles, snowflakes) {
     return this.query(
       'UPDATE `colormanager` SET `roles` = ?, `snowflakes` = ? WHERE `guildID` = ?',
-      [roles, snowflakes, id]
+      [JSON.stringify(roles), JSON.stringify(snowflakes), id]
     );
   }
 
   /**
-* Get color manager settings.
+* Get reaction manager settings.
 * @returns {Promise}
 */
   getReactionRoles() {
-    return this.query('SELECT guildID, channelID, messageID, roles FROM `reactionroles`');
+    return this.query('SELECT guildID, channelID, messageID, JSON_QUERY(roles, \'$\') as roles FROM `reactionroles`');
   }
 
   /**
-   * Add a guild to the rolemanager
+   * Add a guild to the reactionmanager
    * @param {string} id
    * @returns {Promise}
    */
@@ -244,7 +244,7 @@ class DatabaseManager {
   }
 
   /**
-  * Remove a guild from the colormanager
+  * Remove a guild from the reactionmanager
   * @param {string} id
   * @returns {Promise}
   */
@@ -256,7 +256,7 @@ class DatabaseManager {
   }
 
   /**
-   * Edit the role manager for a guild.
+   * Edit the reaction role manager for a guild.
    * @param {string} id
    * @param {string} channelID
    * @param {string} messageID
@@ -266,7 +266,7 @@ class DatabaseManager {
   editReactionRoles(id, channelID, messageID, roles) {
     return this.query(
       'UPDATE `reactionroles` SET `channelID` = ?, `messageID` = ?, `roles` = ? WHERE `guildID` = ?',
-      [channelID, messageID, roles, id]
+      [channelID, messageID, JSON.stringify(roles), id]
     );
   }
 
