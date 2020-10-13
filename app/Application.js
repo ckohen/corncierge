@@ -125,7 +125,10 @@ class Application {
     //this.obs.init();
 
     this.log.out('info', module, 'Boot complete');
-    process.send('ready');
+    // Send "Ready" to parent if it exists
+    if (typeof process.send === "function") {
+      process.send('ready');
+    }
   }
 
   async end(code) {
