@@ -63,7 +63,10 @@ module.exports = {
             return message.reply(`Please provide a valid role to add or use \`${commandPrefix}autorole remove\` to remove the autorole. *The bot must have a higher role than the role it is assigning!*`);
         }
 
-        let roleSnowflake = role.id;
+        let roleSnowflake;
+        if (role) {
+            roleSnowflake = role.id;
+        }
 
         switch (method) {
             case 'set':
