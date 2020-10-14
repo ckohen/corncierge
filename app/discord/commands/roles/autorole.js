@@ -97,7 +97,7 @@ module.exports = {
             let minutes = (Math.floor(delay / 60));
             let seconds = (Math.round(delay % 60));
             delay = (minutes > 1 ? minutes + " minutes" : minutes > 0 ? minutes + " minute" : "")
-            delay = (delay == "" ? "" : delay) + (seconds > 1 ? " and " + seconds + " seconds" : seconds > 0 ? " and " + seconds + " second" : "");
+            delay = (delay == "" ? (seconds > 1 ? seconds + " seconds" : seconds > 0 ? seconds + " second" : "") : delay + (seconds > 1 ? " and " + seconds + " seconds" : seconds > 0 ? " and " + seconds + " second" : ""));
             if (delay == "") {
                 delay = "no";
             }
