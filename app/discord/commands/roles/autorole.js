@@ -34,25 +34,23 @@ module.exports = {
         // Check for time specification
         if (extraArgs) {
             extraArgs.forEach(elem => {
-                if (Number(elem)) {
-                    // Parameter "m" means minutes
-                    if (elem.slice(-1) == "m") {
-                        time = Number(elem.slice(0, -1));
-                        // Convert time to minutes
-                        if (time) {
-                            time = time * 60;
-                        }
-                    }
-                    else {
-                        time = Number(elem);
-                    }
-                    // Convert to milliseconds
+                // Parameter "m" means minutes
+                if (elem.slice(-1) == "m") {
+                    time = Number(elem.slice(0, -1));
+                    // Convert time to minutes
                     if (time) {
-                        if (time > 1200) {
-                            time = 1200;
-                        }
-                        time = time * 1000;
+                        time = time * 60;
                     }
+                }
+                else {
+                    time = Number(elem);
+                }
+                // Convert to milliseconds
+                if (time) {
+                    if (time > 1200) {
+                        time = 1200;
+                    }
+                    time = time * 1000;
                 }
             });
         }
@@ -87,7 +85,7 @@ module.exports = {
 
         // Update database
         await socket.app.database.editAddMembers(String(message.guild.id), guild.roleID, guild.delayTime);
-
+        
         // Variables for response message
         let delay = false;
         let roleMention = false;
