@@ -72,6 +72,8 @@ class DiscordManager extends Socket {
 
     this.randomSettings = new Collection();
 
+    this.newMemberRoles = new Collection();
+
     this.musicData = new Collection();
   }
 
@@ -104,6 +106,7 @@ class DiscordManager extends Socket {
       this.cache('getReactionRoles', this.reactionRoles, 'guildID'),
       this.cache('getPrefixes', this.prefixes, 'guildID'),
       this.cache('getRandom', this.randomSettings, 'guildID'),
+      this.cache('getAddMembers', this.newMemberRoles, 'guildID'),
       this.cacheMusic(),
       this.cacheRooms(),
     ]).catch((err) => {

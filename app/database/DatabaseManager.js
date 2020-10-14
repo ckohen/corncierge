@@ -86,6 +86,52 @@ class DatabaseManager {
     );
   }
 
+   /**
+   * Get New member role settings.
+   * @returns {Promise}
+   */
+  getAddMembers() {
+    return this.query('SELECT guildID, roleID, delayTime FROM `newmemberrole`');
+  }
+
+  /**
+   * Add a new member role setting
+   * @param {string} id
+   * @returns {Promise}
+   */
+  addAddMembers(id) {
+    return this.query(
+      'INSERT INTO `newmemberrole` (guildID, roleID, delayTime) VALUES (?, \'\', \'0\')',
+      [id],
+    );
+  }
+
+    /**
+   * Remove a new member role setting
+   * @param {string} id
+   * @returns {Promise}
+   */
+  deleteAddMembers(id) {
+    return this.query(
+      'DELETE FROM `newmemberrole` WHERE `guildID` = ?',
+      [id],
+    );
+  }
+
+   /**
+   * Updates new member role setting
+   * @param {string} id
+   * @param {string} roleID
+   * @param {string} time
+   * @returns {Promise}
+   */
+  editAddMembers(id, roleID, delayTime) {
+    return this.query(
+      'UPDATE `newmemberrole` SET `roleID` = ?, `delayTime` = ? WHERE `guildID` = ?', 
+      [roleID, delayTime, id],
+    );
+  }
+
   /**
    * Get rooms.
    * @returns {Promise}

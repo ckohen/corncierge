@@ -11,6 +11,7 @@ module.exports = async (socket, guild) => {
   await socket.app.database.addReactionRoles(String(guild.id));
   await socket.app.database.addPrefix(String(guild.id));
   await socket.app.database.addRandom(String(guild.id));
+  await socket.app.database.addAddMembers(String(guild.id));
   await socket.app.database.addVolume(String(guild.id));
 
   // Re-cache managers

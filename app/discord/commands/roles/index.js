@@ -8,5 +8,6 @@ commands.makeme = require('./makeme');
 commands.makemenot = require('./makemenot');
 commands.color = require('./color');
 commands.reactionroles = require('./reactionroles');
+commands.autorole = require('./autorole');
 
 module.exports = commands;
