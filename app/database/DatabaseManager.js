@@ -91,7 +91,13 @@ class DatabaseManager {
    * @returns {Promise}
    */
   getRooms() {
-    return this.query('SELECT guildRoomID, JSON_QUERY(data, \'$\') as data FROM `rooms`');
+    return this.query('SELECT guildRoomID, data FROM `rooms`')
+      .then((all) => {
+        all.forEach((row) => {
+          row.data = JSON.parse(row.data);
+        }); 
+        return all;
+      });
   }
 
   /**
@@ -136,7 +142,14 @@ class DatabaseManager {
    * @returns {Promise}
    */
   getRoleManager() {
-    return this.query('SELECT guildID, JSON_QUERY(addRoles, \'$\') as addRoles, JSON_QUERY(removeRoles, \'$\') as removeRoles FROM `rolemanager`');
+    return this.query('SELECT guildID, addRoles, removeRoles FROM `rolemanager`')
+      .then((all) => {
+        all.forEach((row) => {
+          row.addRoles = JSON.parse(row.addRoles); 
+          row.removeRoles = JSON.parse(row.removeRoles);
+        }); 
+        return all;
+      });
   }
 
   /**
@@ -182,7 +195,14 @@ class DatabaseManager {
  * @returns {Promise}
  */
   getColorManager() {
-    return this.query('SELECT guildID, JSON_QUERY(roles, \'$\') as roles, JSON_QUERY(snowflakes, \'$\') as snowflakes FROM `colormanager`');
+    return this.query('SELECT guildID, roles, snowflakes FROM `colormanager`')
+      .then((all) => {
+        all.forEach((row) => {
+          row.roles = JSON.parse(row.roles);
+          row.snowflakes = JSON.parse(row.snowflakes);
+        }); 
+        return all;
+      });
   }
 
   /**
@@ -228,7 +248,13 @@ class DatabaseManager {
 * @returns {Promise}
 */
   getReactionRoles() {
-    return this.query('SELECT guildID, channelID, messageID, JSON_QUERY(roles, \'$\') as roles FROM `reactionroles`');
+    return this.query('SELECT guildID, channelID, messageID, roles FROM `reactionroles`')
+      .then((all) => {
+        all.forEach((row) => {
+          row.roles = JSON.parse(row.roles);
+        }); 
+        return all;
+      });
   }
 
   /**
