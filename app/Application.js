@@ -69,13 +69,6 @@ class Application {
     this.streaming = new Collection();
 
     /**
-     * The PubSub manager for the application.
-     * @type {PubSubManager}
-     * @private
-     */
-    this.pubsub = new PubSubManager(this);
-
-    /**
      * The Discord manager for the application.
      * @type {DiscordManager}
      * @private
@@ -118,8 +111,7 @@ class Application {
   async boot() {
     // Run tasks in parallel to avoid serial delays
     await Promise.all([this.irc.init(), this.setSettings(), this.setStreaming()]);
-
-    this.pubsub.init();
+    
     await this.discord.init();
     await this.http.init();
     //this.obs.init();
@@ -135,7 +127,6 @@ class Application {
     this.ending = true;
     try {
       await this.irc.driver.disconnect();
-      await this.pubsub.driver.close();
       await this.discord.driver.destroy();
       await this.http.driver.close();
       //await this.obs.driver.disconnect();

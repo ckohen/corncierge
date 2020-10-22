@@ -6,7 +6,6 @@ config.api = require('./api');
 config.app = require('./app');
 config.irc = require('./irc');
 config.log = require('./log');
-config.pubsub = require('./pubsub');
 config.twitch = require('./twitch');
 config.discord = require('./discord');
 config.database = require('./database');
