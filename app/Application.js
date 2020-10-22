@@ -6,7 +6,6 @@ const { collect } = require('./util/helpers');
 const ApiManager = require('./api/ApiManager');
 const IrcManager = require('./irc/IrcManager');
 const LogManager = require('./log/LogManager');
-const PubSubManager = require('./pubsub/PubSubManager');
 const DiscordManager = require('./discord/DiscordManager');
 const OBSManager = require('./obs/OBSManager');
 const HTTPManager = require('./http/HTTPManager');
@@ -111,7 +110,7 @@ class Application {
   async boot() {
     // Run tasks in parallel to avoid serial delays
     await Promise.all([this.irc.init(), this.setSettings(), this.setStreaming()]);
-    
+
     await this.discord.init();
     await this.http.init();
     //this.obs.init();
