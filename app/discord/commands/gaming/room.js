@@ -153,7 +153,9 @@ module.exports = {
                 // Check if the user is already in a room
                 inRoom = rooms.find(room => room.players.indexOf(message.member.id) > -1);
                 if (typeof inRoom == 'undefined' || inRoom == null) {
-                    room.waiting.push(String(message.member.id));
+                    if (room.waiting.indexOf(message.member.id) < 0) { 
+                        room.waiting.push(String(message.member.id));
+                    }
                 }
                 else {
                     return message.reply(`You cannot join a room while playing in another room! Use \`${commandPrefix}room leave\` to leave your current room.`)
