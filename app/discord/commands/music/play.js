@@ -252,7 +252,7 @@ function playSong(queue, message, socket) {
                 .on('error', function (e) {
                     message.reply(`Cannot play song \`${queue[0].title}\`, skipping`);
                     console.error(e);
-                    if (queue.length >= 1) {
+                    if (queue.length > 1) {
                         queue.shift();
                         return playSong(queue, message, socket);
                     } else {
