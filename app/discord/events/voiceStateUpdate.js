@@ -2,6 +2,7 @@
 
 module.exports = (socket, before, after) => {
   const role = after.guild.roles.cache.find((item) => item.name === 'Voice');
+  let musicData = socket.musicData.get(String(after.guild.id));
 
   if (after.channelID !== null) {
     if (after.member.user.id == socket.driver.user.id && !after.selfDeaf) {
@@ -20,10 +21,10 @@ module.exports = (socket, before, after) => {
   }
 
   if (after.member.user.bot &&
-    socket.musicData.songDispatcher &&
+    musicData.songDispatcher &&
     after.member.user.id == socket.driver.user.id) {
-      socket.musicData.queue.length = 0;
-      socket.musicData.songDispatcher.end();
+      musicData.queue.length = 0;
+      musicData.songDispatcher.end();
     return;
   }
   
