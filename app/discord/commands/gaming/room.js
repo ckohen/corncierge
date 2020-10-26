@@ -82,7 +82,7 @@ module.exports = {
                     }
                 }
                 else {
-                    room = rooms.find(room => room.playing.indexOf(String(message.member.id)) > -1);
+                    room = rooms.find(room => room.players.indexOf(String(message.member.id)) > -1);
                     if ((typeof room == 'undefined' || rooms == null)) {
                         room = false;
                         message.reply(`You must be in a room to use that command!`);
@@ -122,7 +122,7 @@ module.exports = {
                 room = rooms.get(String(extraArgs[0]));
                 if (typeof room == 'undefined' || rooms == null) {
                     let msg = `There is no room with room id ${extraArgs[0]}!`;
-                    room = extraArgs[0] ? false : rooms.find(room => room.playing.indexOf(String(message.member.id)) > -1);
+                    room = extraArgs[0] ? false : rooms.find(room => room.players.indexOf(String(message.member.id)) > -1);
                     if (!extraArgs[0] && (typeof room == 'undefined' || rooms == null)) {
                         room = false;
                         msg = `You must be in a room to use that command!`;
@@ -239,7 +239,7 @@ module.exports = {
                 room = rooms.get(String(extraArgs[0]));
                 if (typeof room == 'undefined' || rooms == null) {
                     let msg = `There is no room with room id ${extraArgs[0]}!`;
-                    room = extraArgs[0] ? false : rooms.find(room => room.playing.indexOf(String(message.member.id)) > -1);
+                    room = extraArgs[0] ? false : rooms.find(room => room.players.indexOf(String(message.member.id)) > -1);
                     if (!extraArgs[0] && (typeof room == 'undefined' || rooms == null)) {
                         room = false;
                         msg = `You must be in a room to use that command!`;
@@ -279,7 +279,7 @@ module.exports = {
                 room = rooms.get(String(extraArgs[1]));
                 if (typeof room == 'undefined' || rooms == null) {
                     let msg = `There is no room with room id ${extraArgs[1]}!`;
-                    room = extraArgs[1] ? false : rooms.find(room => room.playing.indexOf(String(message.member.id))) > -1;
+                    room = extraArgs[1] ? false : rooms.find(room => room.players.indexOf(String(message.member.id))) > -1;
                     if (!extraArgs[1] && (typeof room == 'undefined' || rooms == null)) {
                         room = false;
                         msg = `You must be in a room to use that command!`;
