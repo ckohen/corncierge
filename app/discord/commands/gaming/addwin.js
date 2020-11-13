@@ -39,7 +39,7 @@ module.exports = {
             }
 
             let lines = users
-                .map((item, name) => `${message.guild.members.cache.get(name)}: ${plural('win', item.count, true)}!`)
+                .map((item, name) => `<@!${name}>: ${plural('win', item.count, true)}!`)
                 .filter((line) => line);
 
 
