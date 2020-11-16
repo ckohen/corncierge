@@ -1,4 +1,5 @@
 'use strict';
+const { Message } = require('discord.js');
 const cache = require('memory-cache');
 
 module.exports = async (socket, url, headers) => {
