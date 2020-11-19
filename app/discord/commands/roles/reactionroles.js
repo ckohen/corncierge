@@ -43,7 +43,7 @@ module.exports = {
 
         // Limit roles to be below bots highest role
         let botHighest = message.guild.me.roles.highest;
-        roles = roles.filter(role => role.comparePositionTo(botHighest) < 0);
+        roles = roles.filter(role => (role.comparePositionTo(botHighest) < 0) ** !role.managed);
 
         let roleNames = [];
         roles.forEach(role => roleNames.push(role.name.toLowerCase()));

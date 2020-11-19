@@ -50,7 +50,7 @@ module.exports = {
         }
 
         let botHighest = message.guild.me.roles.highest;
-        roles = roles.filter(role => role.comparePositionTo(botHighest) < 0);
+        roles = roles.filter(role => (role.comparePositionTo(botHighest) < 0) ** !role.managed);
 
         let roleNames = [];
         roles.forEach(role => roleNames.push(role.name.toLowerCase()));
@@ -184,7 +184,7 @@ module.exports = {
                 guild.addRoles[channelID].forEach(role => {
                     roleObj = message.guild.roles.cache.find(roles => roles.name.toLowerCase() === role.toLowerCase());
                     // Add roles in both list to the both array
-                    if (!guild.removeRoles[channelID] || guild.removeRoles[channelID].indexOf(role) > -1) {
+                    if (guild.removeRoles[channelID] && guild.removeRoles[channelID].indexOf(role) > -1) {
                         bothRoles.push(roleObj);
                     }
                     else {
