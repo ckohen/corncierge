@@ -4,6 +4,20 @@ module.exports = (socket, before, after) => {
     let embed = false;
     let method = false;
 
+    let voiceRoles = socket.voiceRoles.get(String(after.guild.id));
+
+    let ignoredRoles = ["140254897479090176", "581396312914919424"];
+
+    let voiceRole = after.guild.roles.cache.find((item) => item.name.toLowerCase() === 'voice');
+
+    if (Object.keys(voiceRoles.data).length > 0) {
+        let voiceRoleIDs = Object.keys(voiceRoles.data);
+        ignoredRoles = ignoredRoles.concat(voiceRoleIDs);
+    }
+    else if (voiceRole) {
+        ignoredRoles.push(voiceRole.id);
+    }
+
     if (before.displayName !== after.displayName) {
         embed = socket.getEmbed('userChange', ["Nickname", after, before.displayName, after.displayName]);
         method = 'nickChange';
@@ -16,6 +30,7 @@ module.exports = (socket, before, after) => {
         if (before.roles.cache.array().length > after.roles.cache.array().length) {
             //Role Removed
             rolesChanged = before.roles.cache.filter(role => testRole(role, after.roles.cache));
+            rolesChanged = rolesChanged.filter(role => ignoreRoles(role));
             type = "removed";
         }
         else {
@@ -24,10 +39,8 @@ module.exports = (socket, before, after) => {
             rolesChanged = rolesChanged.filter(role => ignoreRoles(role));
             type = "added";
         }
-        rolesChanged.forEach(role => {
-            if (role.name !== 'Voice') {
-                roleChanged += `${role}`;
-            }
+        rolesChanged.forEach(role => {{
+            roleChanged += `${role}`;}
         });
         if (!roleChanged) {
             return;
@@ -58,7 +71,6 @@ module.exports = (socket, before, after) => {
     }
 
     function ignoreRoles(role) {
-        let ignoredRoles = ["140254897479090176", "581396312914919424"];
         if (ignoredRoles.indexOf(role.id) < 0) {
             return true;
         }

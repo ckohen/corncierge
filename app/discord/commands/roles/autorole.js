@@ -57,7 +57,7 @@ module.exports = {
 
         // Limit role to be below bots highest role
         let botHighest = message.guild.me.roles.highest;
-        if (role && (role.comparePositionTo(botHighest) >= 0)) {
+        if (role && (role.comparePositionTo(botHighest) >= 0) && !role.managed) {
             return message.reply(`Please provide a valid role to add or use \`${commandPrefix}autorole remove\` to remove the autorole. *The bot must have a higher role than the role it is assigning!*`);
         }
 

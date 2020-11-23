@@ -43,7 +43,7 @@ module.exports = {
 
         // Limit roles to be below bots highest role
         let botHighest = message.guild.me.roles.highest;
-        roles = roles.filter(role => role.comparePositionTo(botHighest) < 0);
+        roles = roles.filter(role => (role.comparePositionTo(botHighest) < 0) && !role.managed);
 
         let roleNames = [];
         roles.forEach(role => roleNames.push(role.name.toLowerCase()));
@@ -63,7 +63,7 @@ module.exports = {
                 if (roles.length < 1) {
                     return message.reply("Please provide at least one valid role to add. *The bot must have a higher role than all roles it is assigning!*");
                 }
-                else if (roles.length > 19) {
+                else if (emojis.length > 19) {
                     return message.reply("There are already 20 sets of reactions roles in this server, plese remove one first.")
                 }
                 emote = await getEmote(socket, message, roles);
