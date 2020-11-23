@@ -342,6 +342,57 @@ class DatabaseManager {
     );
   }
 
+    /**
+* Get reaction manager settings.
+* @returns {Promise}
+*/
+getVoiceRoles() {
+  return this.query('SELECT guildID, data FROM `voiceroles`')
+    .then((all) => {
+      all.forEach((row) => {
+        row.data = JSON.parse(row.data);
+      }); 
+      return all;
+    });
+}
+
+/**
+ * Add a guild to the reactionmanager
+ * @param {string} id
+ * @returns {Promise}
+ */
+addVoiceRoles(id) {
+  return this.query(
+    'INSERT INTO `voiceroles` (guildID, data) VALUES (?, \'{}\')',
+    [id],
+  );
+}
+
+/**
+* Remove a guild from the voice role manager
+* @param {string} id
+* @returns {Promise}
+*/
+deleteVoiceRoles(id) {
+  return this.query(
+    'DELETE FROM `voiceroles` WHERE `guildID` = ?',
+    [id],
+  );
+}
+
+/**
+ * Edit the voice role manager for a guild.
+ * @param {string} id
+ * @param {Object} data
+ * @returns {Promise}
+ */
+editVoiceRoles(id, data) {
+  return this.query(
+    'UPDATE `voiceroles` SET `data` = ? WHERE `guildID` = ?',
+    [JSON.stringify(data), id]
+  );
+}
+
   /**
    * Get prefixes.
    * @returns {Promise}
