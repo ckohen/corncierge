@@ -66,6 +66,8 @@ class DiscordManager extends Socket {
 
     this.reactionRoles = new Collection();
 
+    this.voiceRoles = new Collection();
+
     this.prefixes = new Collection();
 
     this.rooms = new Collection();
@@ -104,6 +106,7 @@ class DiscordManager extends Socket {
       this.cache('getRoleManager', this.roleManager, 'guildID'),
       this.cache('getColorManager', this.colorManager, 'guildID'),
       this.cache('getReactionRoles', this.reactionRoles, 'guildID'),
+      this.cache('getVoiceRoles', this.voiceRoles, 'guildID'),
       this.cache('getPrefixes', this.prefixes, 'guildID'),
       this.cache('getRandom', this.randomSettings, 'guildID'),
       this.cache('getAddMembers', this.newMemberRoles, 'guildID'),
