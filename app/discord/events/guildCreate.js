@@ -9,6 +9,7 @@ module.exports = async (socket, guild) => {
   await socket.app.database.addColorManager(String(guild.id));
   await socket.app.database.addRoleManager(String(guild.id));
   await socket.app.database.addReactionRoles(String(guild.id));
+  await socket.app.database.addVoiceRoles(String(guild.id));
   await socket.app.database.addPrefix(String(guild.id));
   await socket.app.database.addRandom(String(guild.id));
   await socket.app.database.addAddMembers(String(guild.id));
