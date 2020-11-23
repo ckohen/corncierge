@@ -1,6 +1,7 @@
 'use strict';
 
 const { Collection } = require('discord.js');
+const commands = require('./roles');
 const { usage } = require.main.require('./app/util/helpers');
 
 module.exports = {
@@ -89,14 +90,26 @@ module.exports = {
         case "reaction roles":
         case "rr":
           msg.addField("About", "The reaction role manager allows members to add roles to themselves by reacting to a specific message, removing the reaction will remove the roles associated with that reaction.")
-          msg.addField("Aliases", `This command can also be \`${commandPrefix}reactions\`,\`${commandPrefix}reactionroles\` or ,\`${commandPrefix}rr\``);
+          msg.addField("Aliases", `This command can also be \`${commandPrefix}reactions\`,\`${commandPrefix}reactionroles\`, or \`${commandPrefix}rr\``);
           msg.addField("Usage", `\`${commandPrefix}reactions add <@role> [@role @role etc...]\`\n\`${commandPrefix}reactions remove\`\n\`${commandPrefix}reactions create\`\n\`${commandPrefix}reactions update\`\n\`${commandPrefix}reactions [list]\``);
           msg.addField("Argument Types", "Arguments surrounded by `<>` are required arguments\nArguments surrounded by `[]` are optional arguments");
-          msg.addField("Arguments", `\`add\` specfifies that you are adding a new emote with the associated roles, you will need to react to the response message with the new emote.\n\`@role\` defines which role you are adding, you can add multiple at once and they **must** be mentioned!\n\`remove\` specfifies that you are removing an emote, you will need to react to the response message with the emote.\n\`create\` will create the message that users will react to. The bot will react with all available reactions.\n\`update\` will update the existing message that users react to with all changes. The bot will react with new reactions.\n\`list\` will list all current emotes and their associated roles, this is the default behavior.`);
+          msg.addField("Arguments", `\`add\` specfifies that you are adding a new emote with the associated roles, you will need to react to the response message with the new emote.\n\`@role\` defines which role you are adding, you can add multiple at once and they **must** be mentioned!\n\`remove\` specifies that you are removing an emote, you will need to react to the response message with the emote.\n\`create\` will create the message that users will react to. The bot will react with all available reactions.\n\`update\` will update the existing message that users react to with all changes. The bot will react with new reactions.\n\`list\` will list all current emotes and their associated roles, this is the default behavior.`);
           msg.addField("Permissions", `You must have the \`Manage Roles\` permission to make changes to the reaction roles.`)
           msg.addField("Important!", "The bot __**must**__ have a role that is __**above all**__ the roles that it is assigning! This is a restriction from discord and cannot be avoided.");
           msg.addField("Please Note", `The message that users react to will not automatically update when you make changes, you need to use \`${commandPrefix}reactions create\` to create a new one.\nThe reaction message will automatically be deleted if you remove the last availble reaction however.\nDiscord does not allow a message to have more than 20 reactions, so that is the limit for the number of possible reactions at this time. You can have many roles per reaction however.`);
           msg.addField("Recommendations", "Because the bot adds all avialable reactions when creating the message, it is advised to disable \`Add Reactions\` and \`Send Messages\` for everyone other than the bot in the channel where the message so that the reactions always reflect available roles and it doesn't get lost.")
+          break;
+        case "voice":
+        case "voice roles":
+        case "voiceroles":
+        case "vr":
+          msg.addField("About", "The voice role manager allows voice channels to be associated with a role. The role is automatically added / removeed when joining / leaving the voice channel respectively.")
+          msg.addField("Aliases", `This command can also be \`${commandPrefix}voice\` or \`${commandPrefix}vr\``);
+          msg.addField("Usage", `\`${commandPrefix}voiceroles add <@role> <channel name>\`\n\`${commandPrefix}voiceroles remove (@role|channel name|#channel)\`\n\`${commandPrefix}voiceroles add <@role> <#channel> [#channel #channel ...]\`\n\`${commandPrefix}voiceroles [list]\``);
+          msg.addField("Argument Types", "Arguments surrounded by `<>` are required arguments\nArguments surrounded by `[]` are optional arguments\nArguments in `()` are a select one option.");
+          msg.addField("Arguments", `\`add\` specfifies that you are adding a new channel(s) with the associated role. \n\`@role\` defines which role you are adding to, it **must** be mentioned!\n\`channel name\` specifies the channel which you are adding by name\n\`remove\` specifies that you are removing a role / channel.\n\`#channel\` specifies a channel mentioned by id, you will need developer mode to get these ids.\n\`list\` will list all current roles and their associated channels, this is the default behavior.`);
+          msg.addField("Permissions", `You must have the \`Manage Roles\` permission to make changes to the voice roles.`)
+          msg.addField("Important!", "The bot __**must**__ have a role that is __**above all**__ the roles that it is assigning! This is a restriction from discord and cannot be avoided.");
           break;
         case "moderation":
           msg.addField("About", "There are not a ton of moderation commands at this time, however, the ones provided do have a unique applciation that discord does not give users direct access to.");
@@ -136,11 +149,10 @@ module.exports = {
           msg.setDescription("Here is a list of all help categories, to see a list of commands for each category, use `" + commandPrefix + "help <category>`");
           msg.addField("Rolemanager", "The basic format for adding roles to the rolemanager is `" + commandPrefix + "rolemanager add #channel @role`. There are many more detailed options listed in `" + commandPrefix + "help rolemanager`", true);
           msg.addField("Colormanager", "The basic format for color management is `" + commandPrefix + "colormanager channel #channel`, then `" + commandPrefix + "colormanager add @role`. There are many more detailed options listed in `" + commandPrefix + "help colormanager`", true)
-          msg.addField('\u200b', '\u200b');
           msg.addField("Moderation", "The moderation commands allow you to clear a certain numbers of messages, move members in your voice channel, and toggle everyones mute status, more detail in `" + commandPrefix + "help moderation`", true);
           msg.addField("Prefix", "You are able to change the prefix for all commands", true);
-          msg.addField('\u200b', '\u200b');
-          msg.addField("Reaction Roles", `Reaction based roles can be managed using the \`${commandPrefix}reactions\` command. Use \`${commandPrefix}help reactions\` to see how to do it!`);
+          msg.addField("Reaction Roles", `Reaction based roles can be managed using the \`${commandPrefix}reactions\` command. Use \`${commandPrefix}help reactions\` to see how to do it!`, true);
+          msg.addField("Voice Roles", `Roles that are assigned / removed when joining / leaving a voice channel respectively. These are managed using \`${commandPrefix}voiceroles\` command. Use \`${commandPrefix}help voiceroles\` to see how to do it!`, true);
           msg.addField("Rooms", `Rooms give you the flexibility to organize members temporarily, without roles. Use \`${commandPrefix}help room\` to see how to use them.`);
           if (music) {
             msg.addField("Music", `The music commands are the same as most other discord music bots, to get started, use \`${commandPrefix}play\` to get started, and use \`${commandPrefix}help music\` to see all commands.`)
