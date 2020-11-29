@@ -64,7 +64,7 @@ module.exports = {
             if (method != "add") {
                 namedChannel = `${chRoleRaw} ${namedChannel}`;
             }
-            namedChannel = await message.guild.channels.cache.find(channel => channel.name.toLowerCase() === namedChannel.toLowerCase() && channel.type === "voice");
+            namedChannel = await message.guild.channels.cache.find(channel => channel.name.toLowerCase().trim() === namedChannel.toLowerCase().trim() && channel.type === "voice");
             if (namedChannel) {
                 channels[0] = namedChannel.id;
             }
