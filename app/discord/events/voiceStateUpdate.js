@@ -4,7 +4,7 @@ module.exports = (socket, before, after) => {
   if (after.channelID == before.channelID) return;
 
   let afterRole = after.guild.roles.cache.find((item) => item.name.toLowerCase() === 'voice');
-  let beforeRole = null;
+  let beforeRole = afterRole;
   let roleData = socket.voiceRoles.get(String(after.member.guild.id));
 
   if (Object.keys(roleData.data).length > 0) {
@@ -46,7 +46,7 @@ module.exports = (socket, before, after) => {
         socket.app.log.out('error', module, err);
       });
     }
-    if (beforeRole) {
+    if (beforeRole && beforeRole != afterRole) {
       after.member.roles.remove(beforeRole).catch((err) => {
         socket.app.log.out('error', module, err);
       });
