@@ -33,6 +33,7 @@ module.exports = {
         if (typeof rooms == 'undefined' || rooms == null) {
             socket.rooms.set(String(message.guild.id), new Collection());
             rooms = socket.rooms.get(String(message.guild.id));
+            rooms.set("master", { id: "master", name: null, owner: null, playerCount: 10, code: null, players: [], waiting: [], lastChannelID: null, lastMessageID: null });
         }
 
         let room = false;
@@ -42,7 +43,7 @@ module.exports = {
         switch (method) {
             case 'create':
                 // Only allow each server to have 25 rooms
-                if (rooms.size > 24) {
+                if (rooms.size > 25) {
                     return message.reply("There are already 25 rooms in this server, please wait for another room to close!");
                 }
 
@@ -58,8 +59,9 @@ module.exports = {
                 for (i = 1; i < 26; i++) {
                     if (!rooms.has(String(i))) {
                         // Create the new room
-                        rooms.set(String(i), { id: String(i), name: extraArgs.join(' ').substring(0, 30), owner: String(message.member.id), playerCount: 10, code: null, players: [String(message.member.id)], waiting: [] });
+                        rooms.set(String(i), { id: String(i), name: extraArgs.join(' ').substring(0, 30), owner: String(message.member.id), playerCount: 10, code: null, players: [String(message.member.id)], waiting: [], lastChannelID: null, lastMessageID: null});
                         socket.app.database.addRoom(message.guild.id + '-' + String(i));
+                        room = rooms.get(String(i));
                         break;
                     }
                 }
@@ -323,20 +325,38 @@ module.exports = {
                 ;
         }
 
-        // 
+        // Get the master room
+        let masterRoom = rooms.get("master");
 
         // Create base embed
         let msg = socket.getEmbed('rooms', [message.member, commandPrefix]);
-        if (rooms.size < 1) {
-            return message.channel.send("**No rooms have been created yet**", msg);
+        if (rooms.size < 2) {
+            // Delete old master room information if it exists
+            if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
+                let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelID);
+                if (lastMasterMessageChannel) {
+                    lastMasterMessageChannel.messages.fetch(masterRoom.lastMessageID).then(msg => {msg.delete()}).catch();
+                }
+            }
+            return message.channel.send("**No rooms have been created yet**", msg).then(sentMsg => {
+                if (masterRoom) {
+                    masterRoom.lastChannelID = sentMsg.channel.id;
+                    masterRoom.lastMessageID = sentMsg.id;
+                }
+            });
         }
 
         // Count lines so we don't hit the charachter limit!
         let lines = 0;
         let owner;
         if (room) {
-            // Update databse
-            socket.app.database.editRoom(message.guild.id + '-' + room.id, room);
+            // Delete old room information if it exists
+            if (room.lastChannelID && room.lastMessageID) {
+                let lastMessageChannel = await socket.driver.channels.cache.get(room.lastChannelID);
+                if (lastMessageChannel) {
+                    lastMessageChannel.messages.fetch(room.lastMessageID).then(msg => {msg.delete()}).catch();
+                }
+            }
             // Store discord's copy of the owner
             owner = message.guild.members.cache.get(room.owner);
             // Change the default description to be more acdurate for a single room
@@ -370,14 +390,20 @@ module.exports = {
             msg.setFooter(`Room Owner: ${owner.user.username}`, owner.user.displayAvatarURL());
         }
         else {
+            // Delete old master room information if it exists
+            if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
+                let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelID);
+                if (lastMasterMessageChannel) {
+                    lastMasterMessageChannel.messages.fetch(masterRoom.lastMessageID).then(msg => {msg.delete()}).catch();
+                }
+            }
             // Create arrays for each embed
             let set1 = [];
             let set2 = [];
             let set3 = [];
             let fields = 1;
             // Loop through room list and add to arrays
-            rooms.each(room => {
-                socket.app.database.editRoom(message.guild.id + '-' + room.id, room);
+            rooms.filter(room => room.id !== "master").each(room => {
                 lines += 1;
                 owner = message.guild.members.cache.get(room.owner);
                 if (lines < 11) {
@@ -414,6 +440,20 @@ module.exports = {
                 default:
             }
         }
-        message.channel.send(msg);
+        let lastMessage = await message.channel.send(msg);
+        if (room) {
+            // Store last message information
+            room.lastChannelID = lastMessage.channel.id;
+            room.lastMessageID = lastMessage.id;
+            // Update database
+            socket.app.database.editRoom(message.guild.id + '-' + room.id, room);
+        }
+        else {
+            // Store last message information
+            if (masterRoom) {
+                masterRoom.lastChannelID = lastMessage.channel.id;
+                masterRoom.lastMessageID = lastMessage.id;
+            }
+        }
     },
 };
