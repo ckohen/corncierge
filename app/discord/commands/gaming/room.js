@@ -33,8 +33,15 @@ module.exports = {
         if (typeof rooms == 'undefined' || rooms == null) {
             socket.rooms.set(String(message.guild.id), new Collection());
             rooms = socket.rooms.get(String(message.guild.id));
-            rooms.set("master", { id: "master", name: null, owner: null, playerCount: 10, code: null, players: [], waiting: [], lastChannelID: null, lastMessageID: null });
         }
+
+        // Get the master room or create it
+        let masterRoom = rooms.get("master");
+        if (!masterRoom) {
+            rooms.set("master", { id: "master", name: null, owner: null, playerCount: 10, code: null, players: [], waiting: [], lastChannelID: null, lastMessageID: null });
+            masterRoom = rooms.get("master");
+        }
+
 
         let room = false;
         let member;
@@ -324,9 +331,6 @@ module.exports = {
             default:
                 ;
         }
-
-        // Get the master room
-        let masterRoom = rooms.get("master");
 
         // Create base embed
         let msg = socket.getEmbed('rooms', [message.member, commandPrefix]);
