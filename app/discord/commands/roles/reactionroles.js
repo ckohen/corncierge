@@ -19,7 +19,7 @@ module.exports = {
         const method = methodRaw ? methodRaw.toLowerCase() : "list";
 
         if (!routines.includes(method)) {
-            return message.reply('Specify a valid subroutine');
+            return message.channel.send(`${message.member}, Specify a valid subroutine`);
         }
 
         let roles = [];
@@ -61,10 +61,10 @@ module.exports = {
             case 'add':
                 // Catch if no roles are being added
                 if (roles.length < 1) {
-                    return message.reply("Please provide at least one valid role to add. *The bot must have a higher role than all roles it is assigning!*");
+                    return message.channel.send(`${message.member}, Please provide at least one valid role to add. *The bot must have a higher role than all roles it is assigning!*`);
                 }
                 else if (emojis.length > 19) {
-                    return message.reply("There are already 20 sets of reactions roles in this server, plese remove one first.")
+                    return message.channel.send(`${message.member}, There are already 20 sets of reactions roles in this server, plese remove one first.`)
                 }
                 emote = await getEmote(socket, message, roles);
                 if (!emote) {
@@ -82,7 +82,7 @@ module.exports = {
             case 'remove':
                 // There must be a reaction first
                 if (emojis.length < 1) {
-                    return message.reply("There are no reaction roles yet!")
+                    return message.channel.send(`${message.member}, There are no reaction roles yet!`)
                 }
 
                 emote = await getEmote(socket, message, roles, emojis, false);
@@ -112,12 +112,12 @@ module.exports = {
             case 'create':
                 // Check for appropriate permissions
                 if (!message.channel.permissionsFor(bot).has(['ADD_REACTIONS', 'SEND_MESSAGES', 'VIEW_CHANNEL', 'USE_EXTERNAL_EMOJIS', 'READ_MESSAGE_HISTORY'])) {
-                    message.reply("Unable to generate reaction roles here. Please make sure that I have permission to `Add Reactions` and `Use External Emoji`").then(msg => { msg.delete({ timeout: 5000 }) });
+                    message.channel.send(`${message.member}, Unable to generate reaction roles here. Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``).then(msg => { msg.delete({ timeout: 5000 }) });
                     message.delete();
                     return;
                 }
                 if (emojis.length < 1) {
-                    message.reply("There are no reaction roles yet!").then(msg => { msg.delete({ timeout: 5000 }) });
+                    message.channel.send(`${message.member}, There are no reaction roles yet!`).then(msg => { msg.delete({ timeout: 5000 }) });
                     message.delete();
                     return;
                 }
@@ -129,7 +129,7 @@ module.exports = {
                     let reacted = true;
                     let collected = await confirmMsg.awaitReactions((reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id, { max: 1, time: 60000, errors: ['time'] })
                         .catch(err => {
-                            message.reply("Not a valid reaction, cancelling!");
+                            message.channel.send(`${message.member}, Not a valid reaction, cancelling!`);
                             message.delete().then(msg => { confirmMsg.delete().then(confMsg => reacted = false) });
                         });
                     if (!reacted) {
@@ -139,7 +139,7 @@ module.exports = {
                     // Find the emote id or name depending on if the emote is custom or not
                     reaction = collected.first();
                     if (reaction.emoji.name === '❌') {
-                        message.reply('Cancelled!').then(msg => { msg.delete({ timeout: 5000 }) });
+                        message.channel.send(`${message.member}, Cancelled!`).then(msg => { msg.delete({ timeout: 5000 }) });
                         message.delete();
                         confirmMsg.delete();
                         return;
@@ -157,7 +157,7 @@ module.exports = {
             case 'update':
                 // Check that there is an existing message
                 if (!guild.messageID) {
-                    message.reply("There is no reaction role message yet, unable to update it!").then(msg => { msg.delete({ timeout: 5000 }) });
+                    message.channel.send(`${message.member}, There is no reaction role message yet, unable to update it!`).then(msg => { msg.delete({ timeout: 5000 }) });
                     message.delete();
                     return;
                 }
@@ -165,7 +165,7 @@ module.exports = {
                 // Check to make sure the message still exists
                 let oldMsg = await socket.driver.channels.cache.get(guild.channelID).messages.fetch(guild.messageID).catch(err => { });;
                 if (!oldMsg) {
-                    message.reply("The reaction role message has been deleted, unable to update it!").then(msg => { msg.delete({ timeout: 5000 }) });
+                    message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => { msg.delete({ timeout: 5000 }) });
                     guild.messageID = "";
                     guild.channelID = "";
                     socket.app.database.editReactionRoles(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
@@ -176,7 +176,7 @@ module.exports = {
                 // Check for appropriate permissions
                 let chan = await socket.driver.channels.cache.get(guild.channelID);
                 if (!chan.permissionsFor(bot).has(['ADD_REACTIONS', 'SEND_MESSAGES', 'VIEW_CHANNEL', 'USE_EXTERNAL_EMOJIS', 'READ_MESSAGE_HISTORY'])) {
-                    message.reply("Unable to update reaction roles message, Please make sure that I have permission to `Add Reactions` and `Use External Emoji`").then(msg => { msg.delete({ timeout: 5000 }) });
+                    message.channel.send(`${message.member}, Unable to update reaction roles message, Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``).then(msg => { msg.delete({ timeout: 5000 }) });
                     message.delete();
                     return;
                 }
@@ -189,7 +189,7 @@ module.exports = {
                     let reacted = true;
                     let collected = await confirmMsg.awaitReactions((reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id, { max: 1, time: 60000, errors: ['time'] })
                         .catch(err => {
-                            message.reply("Not a valid reaction, cancelling!").then(msg => { msg.delete({ timeout: 5000 }) });
+                            message.channel.send(`${message.member}, Not a valid reaction, cancelling!`).then(msg => { msg.delete({ timeout: 5000 }) });
                             message.delete().then(msg => { confirmMsg.delete().then(confMsg => reacted = false) });
                         });
                     if (!reacted) {
@@ -199,7 +199,7 @@ module.exports = {
                     // Find the emote id or name depending on if the emote is custom or not
                     reaction = collected.first();
                     if (reaction.emoji.name === '❌') {
-                        message.reply('Cancelled!').then(msg => { msg.delete({ timeout: 5000 }) });
+                        message.channel.send(`${message.member}, Cancelled!`).then(msg => { msg.delete({ timeout: 5000 }) });
                         message.delete();
                         confirmMsg.delete();
                         return;
@@ -362,7 +362,7 @@ module.exports = {
             // Wait for reactin from the original message sender
             let collected = await emoteMsg.awaitReactions((reaction, user) => user.id === initiator.author.id, { max: 1, time: 60000, errors: ['time'] })
                 .catch(err => {
-                    initiator.reply("Error getting emote");
+                    initiator.channel.send(`${initiator.member}, Error getting emote`);
                     collect = false;
                 });
             if (!collect) {

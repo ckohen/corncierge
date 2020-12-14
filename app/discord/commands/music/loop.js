@@ -10,7 +10,7 @@ module.exports = {
     numOfTimesToLoop = Number(args.join(' '));
     let musicData = socket.musicData.get(String(message.guild.id));
     if (!musicData.isPlaying) {
-      return message.reply('There is no song playing right now!');
+      return message.channel.send(`${message.member}, There is no song playing right now!`);
     }
 
     for (let i = 0; i < numOfTimesToLoop; i++) {

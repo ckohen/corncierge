@@ -17,7 +17,7 @@ module.exports = {
         const method = methodRaw ? methodRaw.toLowerCase() : "status";
 
         if (!routines.includes(method)) {
-            return message.reply('Specify a valid subroutine');
+            return message.channel.send(`${message.member}, Specify a valid subroutine`);
         }
 
         let role;
@@ -58,7 +58,7 @@ module.exports = {
         // Limit role to be below bots highest role
         let botHighest = message.guild.me.roles.highest;
         if (role && (role.comparePositionTo(botHighest) >= 0) && !role.managed) {
-            return message.reply(`Please provide a valid role to add or use \`${commandPrefix}autorole remove\` to remove the autorole. *The bot must have a higher role than the role it is assigning!*`);
+            return message.channel.send(`${message.member}, Please provide a valid role to add or use \`${commandPrefix}autorole remove\` to remove the autorole. *The bot must have a higher role than the role it is assigning!*`);
         }
 
         let roleSnowflake;
@@ -77,7 +77,7 @@ module.exports = {
                 guild.roleID = '';
                 guild.delayTime = '0';
                 await socket.app.database.editAddMembers(String(message.guild.id), guild.roleID, guild.delayTime);
-                return message.reply("I will no longer assign a role to new members!");
+                return message.channel.send(`${message.member}, I will no longer assign a role to new members!`);
             case 'status':
             default:
                 ;

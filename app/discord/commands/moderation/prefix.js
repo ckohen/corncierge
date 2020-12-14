@@ -10,7 +10,7 @@ module.exports = {
         args = args.join(' ');
 
         if (args.indexOf("@") > -1 || args.indexOf("#") > -1) {
-            return message.reply("Please do not use discord mentionable charachters in your prefix (@ and #)");
+            return message.channel.send(`${message.member}, Please do not use discord mentionable charachters in your prefix (@ and #)`);
         }
 
         try {
@@ -18,7 +18,7 @@ module.exports = {
             await socket.app.database.editPrefix(String(message.guild.id), args);
         } catch (err) {
             socket.app.log.out('error', module, err);
-            return message.reply("There was an error changing the prefix!")
+            return message.channel.send(`${message.member}, There was an error changing the prefix!`)
         }
 
         return message.channel.send("Prefix has been changed to `" + args + "`");

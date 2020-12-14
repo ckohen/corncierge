@@ -18,7 +18,7 @@ module.exports = {
         const method = methodRaw ? methodRaw.toLowerCase() : "list";
 
         if (!routines.includes(method)) {
-            return message.reply('Specify a valid subroutine');
+            return message.channel.send(`${message.member}, Specify a valid subroutine`);
         }
 
         let role = null;
@@ -55,7 +55,7 @@ module.exports = {
         // Limit roles to be below bots highest role
         let botHighest = message.guild.me.roles.highest;
         if (method == "add" && (!roleObj || roleObj.comparePositionTo(botHighest) > -1 || roleObj.managed)) {
-            return message.reply("Please provide a valid role to add. *The bot must have a higher role than the roles it is assigning!*");
+            return message.channel.send(`${message.member}, Please provide a valid role to add. *The bot must have a higher role than the roles it is assigning!*`);
         }
 
         // If there are no channels, try using a channel name instead
@@ -78,12 +78,12 @@ module.exports = {
             case 'add':
                 // Only allow 5 different voice roles
                 if (roles.length > 4 && roles.indexOf(role) < 0) {
-                    return message.reply("There are already 5 sets of voice roles in this server, plese remove one first.")
+                    return message.channel.send(`${message.member}, There are already 5 sets of voice roles in this server, plese remove one first.`)
                 }
 
                 // Catch if no channels are being added
                 if (channels.length < 1) {
-                    return message.reply("Please specify at least one channel where the role should be assigned.");
+                    return message.channel.send(`${message.member}, Please specify at least one channel where the role should be assigned.`);
                 }
 
                 // Check if the channel already exists in one of the role associations
@@ -105,7 +105,7 @@ module.exports = {
                         let reacted = true;
                         let collected = await confirmMsg.awaitReactions((reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id, { max: 1, time: 60000, errors: ['time'] })
                             .catch(err => {
-                                message.reply("Not a valid reaction, cancelling!");
+                                message.channel.send(`${message.member}, Not a valid reaction, cancelling!`);
                                 confirmMsg.delete().then(confMsg => reacted = false);
                             });
                         if (!reacted) {
@@ -155,7 +155,7 @@ module.exports = {
                         message.channel.send(`That voice role will no longer be assigned for all associated channels.`);
                     }
                     else {
-                        return message.reply("That role is not currently associated with any voice channels!");
+                        return message.channel.send(`${message.member}, That role is not currently associated with any voice channels!`);
                     }
                 }
                 else if (channels[0]) {
@@ -177,7 +177,7 @@ module.exports = {
                         message.channel.send(`That channel no longer has a voice role associated with it.` + (roleRemoved ? ` The associated role has no more channels assigned, it has also been removed` : ""));
                     }
                     else {
-                        return message.reply("That channel is not currently associated with a voice role.");
+                        return message.channel.send(`${message.member}, That channel is not currently associated with a voice role.`);
                     }
                 }
                 break;

@@ -91,7 +91,7 @@ module.exports = {
             updateEmbed(member);
         }
         else {
-            let confmsg = await message.reply("Please specify a user using their actual discord name (not their nickname)");
+            let confmsg = await message.channel.send(`${message.member}, Please specify a user using their actual discord name (not their nickname)`);
             message.delete();
             confmsg.delete({timeout: 3000});
         }

@@ -20,7 +20,7 @@ module.exports = {
         let method = Number(methodRaw) ? "move" : methodRaw.toLowerCase();
 
         if (!routines.includes(method) || methodRaw.toLowerCase() == "move") {
-            return message.reply("Specifiy a valid number of people or `to` or `from` to specify a permanent channel setting!");
+            return message.channel.send(`${message.member}, Specifiy a valid number of people or \`to\` or \`from\` to specify a permanent channel setting!`);
         }
 
         // A list of key value pairs with stored channels for each guild
@@ -47,11 +47,11 @@ module.exports = {
                 if ((typeof editChannel == 'undefined' || editChannel == null)) {
                     settings.toChannel = "";
                     await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
-                    return message.reply('There is no longer a permanent random move **to** channel set!');
+                    return message.channel.send(`${message.member}, There is no longer a permanent random move **to** channel set!`);
                 }
                 settings.toChannel = String(editChannel.id);
                 await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
-                return message.reply(`Permanent random move **to** channel is now ${editChannel.name}`);
+                return message.channel.send(`${message.member}, Permanent random move **to** channel is now ${editChannel.name}`);
             case 'from':
                 // Find the channel if it exists and store it
                 editChannel = message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === args.join(' ').toLowerCase());
@@ -59,11 +59,11 @@ module.exports = {
                 if ((typeof editChannel == 'undefined' || editChannel == null)) {
                     settings.fromChannel = "";
                     await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
-                    return message.reply('There is no longer a permanent random move **from** channel set!');
+                    return message.channel.send(`${message.member}, There is no longer a permanent random move **from** channel set!`);
                 }
                 settings.fromChannel = String(editChannel.id);
                 await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
-                return message.reply(`Permanent random move **from** channel is now ${editChannel.name}`);
+                return message.channel.send(`${message.member}, Permanent random move **from** channel is now ${editChannel.name}`);
             case 'move':
                 num = Number(methodRaw);
                 if (settings.toChannel.length > 0) {
@@ -78,7 +78,7 @@ module.exports = {
                 if (args.indexOf("->") < 0) {
                     // Check if voice channel
                     if (!voiceChannel) voiceChannel = message.member.voice.channel;
-                    if (!voiceChannel) return message.reply(`Join a channel or specify a from channel with \`${commandPrefix}randmove <number> <from> -> <to>\` or \`${commandPrefix}readmove from <channel>\` and try again`);
+                    if (!voiceChannel) return message.channel.send(`${message.member}, Join a channel or specify a from channel with \`${commandPrefix}randmove <number> <from> -> <to>\` or \`${commandPrefix}readmove from <channel>\` and try again`);
 
                     // If specified, use the override instead
                     if (args.length > 0) {
@@ -86,7 +86,7 @@ module.exports = {
                         // Check for new channel
                         newChannel = await message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === toChannel.toLowerCase() && channel.type === "voice");
                     }
-                    if (!newChannel) return message.reply(`Specify a channel with \`${commandPrefix}randmove <number> <to>\` or \`${commandPrefix}readmove to <channel>\` and try again`)
+                    if (!newChannel) return message.channel.send(`${message.member}, Specify a channel with \`${commandPrefix}randmove <number> <to>\` or \`${commandPrefix}readmove to <channel>\` and try again`)
                 }
                 // Move users in specified channel
                 else {

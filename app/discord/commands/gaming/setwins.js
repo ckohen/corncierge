@@ -101,13 +101,13 @@ module.exports = {
                 updateEmbed(member, newCount);
             }
             else {
-                let confmsg = await message.reply("Please specify a user using their actual discord name (not their nickname)");
+                let confmsg = await message.channel.send(`${message.member}, Please specify a user using their actual discord name (not their nickname)`);
                 message.delete();
                 confmsg.delete({timeout: 3000});
             }
         }
         else {
-            let confmsg = await message.reply("Please specify a win count (>0)!");
+            let confmsg = await message.channel.send(`${message.member}, Please specify a win count (>0)!`);
                 message.delete();
                 confmsg.delete({timeout: 3000});
         }

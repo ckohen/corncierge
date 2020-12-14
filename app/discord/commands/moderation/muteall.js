@@ -12,7 +12,7 @@ module.exports = {
 
         // Check if voice channel
         const voiceChannel = message.member.voice.channel;
-        if (!voiceChannel) return message.reply('Join a channel and try again');
+        if (!voiceChannel) return message.channel.send(`${message.member}, Join a channel and try again`);
 
         let delay = 15000;
 
