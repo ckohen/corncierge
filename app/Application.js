@@ -7,7 +7,6 @@ const ApiManager = require('./api/ApiManager');
 const IrcManager = require('./irc/IrcManager');
 const LogManager = require('./log/LogManager');
 const DiscordManager = require('./discord/DiscordManager');
-const OBSManager = require('./obs/OBSManager');
 const HTTPManager = require('./http/HTTPManager');
 const DatabaseManager = require('./database/DatabaseManager');
 
@@ -74,13 +73,6 @@ class Application {
      */
     this.discord = new DiscordManager(this);
 
-    /**
-     * The OBS manager for the application.
-     * @type {OBSManager}
-     * @private
-     */
-    this.obs = new OBSManager(this);
-
      /**
      * The HTTP Server manager for the application.
      * @type {HTTPManager}
@@ -113,7 +105,6 @@ class Application {
 
     await this.discord.init();
     await this.http.init();
-    //this.obs.init();
 
     this.log.out('info', module, 'Boot complete');
     // Send "Ready" to parent if it exists
@@ -128,7 +119,6 @@ class Application {
       await this.irc.driver.disconnect();
       await this.discord.driver.destroy();
       await this.http.driver.close();
-      //await this.obs.driver.disconnect();
     }
     catch {
       ;
