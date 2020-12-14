@@ -127,6 +127,8 @@ module.exports = {
             confMsg = await message.reply(toChannel + " is not a valid voice channel!");
         }
         message.delete()
-        confMsg.delete({ timeout: 3000 });
+        setTimeout(function() {
+            if (confMsg.deletable) confMsg.delete();
+        }, 3000);
     }
 };

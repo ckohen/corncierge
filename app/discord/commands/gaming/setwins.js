@@ -72,7 +72,9 @@ module.exports = {
                 message.delete();
             }
             // deletes command and response messages after 3 seconds
-            confmsg.delete({timeout: 3000});
+            setTimeout(function() {
+                if (confmsg.deletable) confmsg.delete();
+            }, 3000);
         }
 
         let validNumber
@@ -103,13 +105,17 @@ module.exports = {
             else {
                 let confmsg = await message.channel.send(`${message.member}, Please specify a user using their actual discord name (not their nickname)`);
                 message.delete();
-                confmsg.delete({timeout: 3000});
+                setTimeout(function() {
+                    if (confmsg.deletable) confmsg.delete();
+                }, 3000);
             }
         }
         else {
             let confmsg = await message.channel.send(`${message.member}, Please specify a win count (>0)!`);
                 message.delete();
-                confmsg.delete({timeout: 3000});
+                setTimeout(function() {
+                    if (confmsg.deletable) confmsg.delete();
+                }, 3000);
         }
 
     },

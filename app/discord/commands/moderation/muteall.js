@@ -42,7 +42,9 @@ module.exports = {
         let confMsg = await message.channel.send("Muted " + count + ` users in ${voiceChannel}`);
 
         message.delete();
-        confMsg.delete({timeout: 3000});
+        setTimeout(function() {
+            if (confMsg.deletable) confMsg.delete();
+        }, 3000);
 
         if (newCount !== 0) {
             setTimeout(function () {

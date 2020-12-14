@@ -112,12 +112,20 @@ module.exports = {
             case 'create':
                 // Check for appropriate permissions
                 if (!message.channel.permissionsFor(bot).has(['ADD_REACTIONS', 'SEND_MESSAGES', 'VIEW_CHANNEL', 'USE_EXTERNAL_EMOJIS', 'READ_MESSAGE_HISTORY'])) {
-                    message.channel.send(`${message.member}, Unable to generate reaction roles here. Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``).then(msg => { msg.delete({ timeout: 5000 }) });
+                    message.channel.send(`${message.member}, Unable to generate reaction roles here. Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``).then(msg => {
+                        setTimeout(function() {
+                            if (msg.deletable) msg.delete();
+                        }, 5000);
+                    });
                     message.delete();
                     return;
                 }
                 if (emojis.length < 1) {
-                    message.channel.send(`${message.member}, There are no reaction roles yet!`).then(msg => { msg.delete({ timeout: 5000 }) });
+                    message.channel.send(`${message.member}, There are no reaction roles yet!`).then(msg => {
+                        setTimeout(function() {
+                            if (msg.deletable) msg.delete();
+                        }, 5000);
+                    });
                     message.delete();
                     return;
                 }
@@ -139,7 +147,11 @@ module.exports = {
                     // Find the emote id or name depending on if the emote is custom or not
                     reaction = collected.first();
                     if (reaction.emoji.name === '❌') {
-                        message.channel.send(`${message.member}, Cancelled!`).then(msg => { msg.delete({ timeout: 5000 }) });
+                        message.channel.send(`${message.member}, Cancelled!`).then(msg => {
+                            setTimeout(function() {
+                                if (msg.deletable) msg.delete();
+                            }, 5000);
+                        });
                         message.delete();
                         confirmMsg.delete();
                         return;
@@ -157,7 +169,11 @@ module.exports = {
             case 'update':
                 // Check that there is an existing message
                 if (!guild.messageID) {
-                    message.channel.send(`${message.member}, There is no reaction role message yet, unable to update it!`).then(msg => { msg.delete({ timeout: 5000 }) });
+                    message.channel.send(`${message.member}, There is no reaction role message yet, unable to update it!`).then(msg => {
+                        setTimeout(function() {
+                            if (msg.deletable) msg.delete();
+                        }, 5000);
+                    });
                     message.delete();
                     return;
                 }
@@ -165,7 +181,11 @@ module.exports = {
                 // Check to make sure the message still exists
                 let oldMsg = await socket.driver.channels.cache.get(guild.channelID).messages.fetch(guild.messageID).catch(err => { });;
                 if (!oldMsg) {
-                    message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => { msg.delete({ timeout: 5000 }) });
+                    message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => {
+                        setTimeout(function() {
+                            if (msg.deletable) msg.delete();
+                        }, 5000);
+                    });
                     guild.messageID = "";
                     guild.channelID = "";
                     socket.app.database.editReactionRoles(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
@@ -176,7 +196,11 @@ module.exports = {
                 // Check for appropriate permissions
                 let chan = await socket.driver.channels.cache.get(guild.channelID);
                 if (!chan.permissionsFor(bot).has(['ADD_REACTIONS', 'SEND_MESSAGES', 'VIEW_CHANNEL', 'USE_EXTERNAL_EMOJIS', 'READ_MESSAGE_HISTORY'])) {
-                    message.channel.send(`${message.member}, Unable to update reaction roles message, Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``).then(msg => { msg.delete({ timeout: 5000 }) });
+                    message.channel.send(`${message.member}, Unable to update reaction roles message, Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``).then(msg => {
+                        setTimeout(function() {
+                            if (msg.deletable) msg.delete();
+                        }, 5000);
+                    });
                     message.delete();
                     return;
                 }
@@ -189,7 +213,11 @@ module.exports = {
                     let reacted = true;
                     let collected = await confirmMsg.awaitReactions((reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id, { max: 1, time: 60000, errors: ['time'] })
                         .catch(err => {
-                            message.channel.send(`${message.member}, Not a valid reaction, cancelling!`).then(msg => { msg.delete({ timeout: 5000 }) });
+                            message.channel.send(`${message.member}, Not a valid reaction, cancelling!`).then(msg => {
+                                setTimeout(function() {
+                                    if (msg.deletable) msg.delete();
+                                }, 5000);
+                            });
                             message.delete().then(msg => { confirmMsg.delete().then(confMsg => reacted = false) });
                         });
                     if (!reacted) {
@@ -199,7 +227,11 @@ module.exports = {
                     // Find the emote id or name depending on if the emote is custom or not
                     reaction = collected.first();
                     if (reaction.emoji.name === '❌') {
-                        message.channel.send(`${message.member}, Cancelled!`).then(msg => { msg.delete({ timeout: 5000 }) });
+                        message.channel.send(`${message.member}, Cancelled!`).then(msg => {
+                            setTimeout(function() {
+                                if (msg.deletable) msg.delete();
+                            }, 5000);
+                        });
                         message.delete();
                         confirmMsg.delete();
                         return;
@@ -390,7 +422,9 @@ module.exports = {
             else {
                 emoteMsg.delete();
                 let errorMsg = await initiator.channel.send("I do not have access to that emote at this time, please try again!");
-                errorMsg.delete({ timeout: 5000 });
+                setTimeout(function() {
+                    if (errorMsg.deletable) errorMsg.delete();
+                }, 5000);
                 return getEmote(sock, initiator, roleList, emojis, add);
             }
         }
