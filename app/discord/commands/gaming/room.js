@@ -67,7 +67,7 @@ module.exports = {
                     if (!rooms.has(String(i))) {
                         // Create the new room
                         rooms.set(String(i), { id: String(i), name: extraArgs.join(' ').substring(0, 30), owner: String(message.member.id), playerCount: 10, code: null, players: [String(message.member.id)], waiting: [], lastChannelID: null, lastMessageID: null});
-                        socket.app.database.addRoom(message.guild.id + '-' + String(i));
+                        socket.app.database.add('rooms', [message.guild.id + '-' + String(i)]);
                         room = rooms.get(String(i));
                         break;
                     }
@@ -147,7 +147,7 @@ module.exports = {
                 }
                 // Delete the room
                 message.channel.send(`Room ${room.id}: **${room.name}** has been successfully removed, the new list of rooms can be found below.`);
-                socket.app.database.deleteRoom(message.guild.id + '-' + room.id);
+                socket.app.database.delete('rooms', [message.guild.id + '-' + room.id]);
                 rooms.delete(room.id);
                 room = false;
                 break;
@@ -210,7 +210,7 @@ module.exports = {
                     }
                     // Delete the room if there is no new possible owner
                     else {
-                        socket.app.database.deleteRoom(message.guild.id + '-' + room.id);
+                        socket.app.database.delete('rooms', [message.guild.id + '-' + room.id]);
                         rooms.delete(room.id);
                         return message.channel.send(`${message.member}, You were the last player in ${room.name}, it has been deleted.`);
                     }
@@ -450,7 +450,7 @@ module.exports = {
             room.lastChannelID = lastMessage.channel.id;
             room.lastMessageID = lastMessage.id;
             // Update database
-            socket.app.database.editRoom(message.guild.id + '-' + room.id, room);
+            socket.app.database.edit('rooms', [message.guild.id + '-' + room.id, room]);
         }
         else {
             // Store last message information

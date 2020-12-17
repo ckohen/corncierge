@@ -76,7 +76,7 @@ module.exports = {
                 // Remove data
                 guild.roleID = '';
                 guild.delayTime = '0';
-                await socket.app.database.editAddMembers(String(message.guild.id), guild.roleID, guild.delayTime);
+                await socket.app.database.edit('newMemberRole', [String(message.guild.id), guild.roleID, guild.delayTime]);
                 return message.channel.send(`${message.member}, I will no longer assign a role to new members!`);
             case 'status':
             default:
@@ -84,7 +84,7 @@ module.exports = {
         }
 
         // Update database
-        await socket.app.database.editAddMembers(String(message.guild.id), guild.roleID, guild.delayTime);
+        await socket.app.database.edit('newMemberRole', [String(message.guild.id), guild.roleID, guild.delayTime]);
 
         // Variables for response message
         let delay = false;

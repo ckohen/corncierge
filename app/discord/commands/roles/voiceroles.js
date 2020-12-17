@@ -186,7 +186,7 @@ module.exports = {
                 ;
         }
 
-        await socket.app.database.editVoiceRoles(String(message.guild.id), guild.data);
+        await socket.app.database.edit('voiceRoles', [String(message.guild.id), guild.data]);
 
         // Create base embed
         let msg = socket.getEmbed('voiceRoles', [message.member, commandPrefix]);

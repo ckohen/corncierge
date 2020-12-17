@@ -18,7 +18,7 @@ module.exports = (socket, channel, user, row, update, args, isBroadcaster = fals
         user: twitch.handle(user), touser: target, count: row.count, caster: socket.app.settings.get('app_operator'),
       }),
     ));
-    socket.app.database.countIrcCommand(row.id);
+    socket.app.database.edit('ircCommands', 'count', [row.id]);
   };
 
   if (row.method !== null && typeof commands[row.method] === 'function') {

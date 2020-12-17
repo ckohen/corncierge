@@ -22,7 +22,7 @@ module.exports = {
 
             const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
 
-            await socket.app.database.getFallWins().then((all) => {
+            await socket.app.database.get('fallWins').then((all) => {
                 users.clear();
                 collect(users, all, "id", false);
             });
@@ -31,12 +31,12 @@ module.exports = {
 
             if (userIds.includes(String(target.id))) {
                 users.get(target.id).count = updatedCount;
-                await socket.app.database.editFallWins(target.id, updatedCount)
+                await socket.app.database.edit('fallWins', [target.id, updatedCount])
             }
             else {
                 users.set(target.id, {});
                 users.get(target.id).count = updatedCount;
-                await socket.app.database.addFallWin(target.id, updatedCount)
+                await socket.app.database.add('fallWins', [target.id, updatedCount])
             }
 
             let lines = users

@@ -103,13 +103,13 @@ class DiscordManager extends Socket {
    */
   setCache() {
     return Promise.all([
-      this.cache('getRoleManager', this.roleManager, 'guildID'),
-      this.cache('getColorManager', this.colorManager, 'guildID'),
-      this.cache('getReactionRoles', this.reactionRoles, 'guildID'),
-      this.cache('getVoiceRoles', this.voiceRoles, 'guildID'),
-      this.cache('getPrefixes', this.prefixes, 'guildID'),
-      this.cache('getRandom', this.randomSettings, 'guildID'),
-      this.cache('getAddMembers', this.newMemberRoles, 'guildID'),
+      this.cache('roleManager', this.roleManager, 'guildID'),
+      this.cache('colorManager', this.colorManager, 'guildID'),
+      this.cache('reactionRoles', this.reactionRoles, 'guildID'),
+      this.cache('voiceRoles', this.voiceRoles, 'guildID'),
+      this.cache('prefixes', this.prefixes, 'guildID'),
+      this.cache('randomChannels', this.randomSettings, 'guildID'),
+      this.cache('newMemberRole', this.newMemberRoles, 'guildID'),
       this.cacheMusic(),
       this.cacheRooms(),
     ]).catch((err) => {
@@ -122,7 +122,7 @@ class DiscordManager extends Socket {
    * @returns {Promise}
    */
   cacheMusic() {
-    return this.app.database.getVolume().then((volumes) => {
+    return this.app.database.get('volumes').then((volumes) => {
       this.musicData.clear();
       volumes.forEach((volume) => {
         if (this.musicData.get(volume.guildID)) {
@@ -140,7 +140,7 @@ class DiscordManager extends Socket {
    * @returns {Promise}
    */
   cacheRooms() {
-    return this.app.database.getRooms().then((rooms) => {
+    return this.app.database.get('rooms').then((rooms) => {
       this.rooms.clear();
       let roomGuild, roomID;
       let guild;
@@ -164,7 +164,7 @@ class DiscordManager extends Socket {
    * @returns {Promise}
    */
   cache(method, map, key, secondaryKey = false) {
-    return this.app.database[method]().then((all) => {
+    return this.app.database.get(method).then((all) => {
       map.clear();
       collect(map, all, key, secondaryKey);
     });

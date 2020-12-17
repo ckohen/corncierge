@@ -18,7 +18,7 @@ module.exports = {
 
             let users = new Collection();
 
-            await socket.app.database.getFallWins().then((all) => {
+            await socket.app.database.get('fallWins').then((all) => {
                 users.clear();
                 collect(users, all, "id", false);
             });
@@ -29,13 +29,13 @@ module.exports = {
                 let count = users.get(target.id).count;
                 count = count + 1;
                 users.get(target.id).count = count;
-                await socket.app.database.editFallWins(target.id, count)
+                await socket.app.database.edit('fallWins', [target.id, count])
             }
             else {
                 let count = 1;
                 users.set(target.id, {});
                 users.get(target.id).count = count;
-                await socket.app.database.addFallWin(target.id, count)
+                await socket.app.database.add('fallWins', [target.id, count])
             }
 
             let lines = users

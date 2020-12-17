@@ -23,7 +23,7 @@ module.exports = {
       musicData.volume = volume;
       musicData.songDispatcher.setVolume(volume);
       try {
-        socket.app.database.editVolume(String(message.guild.id), volume);
+        socket.app.database.edit('volumes', [String(message.guild.id), volume]);
       } catch (err) {
         socket.app.log.out('error', module, err);
       }

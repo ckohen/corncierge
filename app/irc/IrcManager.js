@@ -169,7 +169,7 @@ class IrcManager extends Socket {
    * @param {...*} values
    */
   logModeration(...values) {
-    this.app.database.addBotLog(...values);
+    this.app.database.add('botLog', values);
   }
 
   /**
@@ -191,7 +191,7 @@ class IrcManager extends Socket {
    * @returns {Promise}
    */
   cacheJokes() {
-    return this.app.database.getJokes().then((all) => {
+    return this.app.database.get('jokes').then((all) => {
       this.jokes.length = 0;
       all.forEach((item) => this.jokes.push(item));
     });
@@ -202,7 +202,7 @@ class IrcManager extends Socket {
    * @returns {Promise}
    */
   cacheFilters() {
-    return this.cache('getIrcFilters', this.filters, 'id');
+    return this.cache('ircFilters', this.filters, 'id');
   }
 
   /**
@@ -210,7 +210,7 @@ class IrcManager extends Socket {
    * @returns {Promise}
    */
   cacheCommands() {
-    return this.cache('getIrcCommands', this.commands, 'input', 'prefix');
+    return this.cache('ircCommands', this.commands, 'input', 'prefix');
   }
 
   /**
@@ -221,7 +221,7 @@ class IrcManager extends Socket {
    * @returns {Promise}
    */
   cache(method, map, key, secondaryKey = false) {
-    return this.app.database[method]().then((all) => {
+    return this.app.database.get(method).then((all) => {
       map.clear();
       collect(map, all, key, secondaryKey);
     });

@@ -28,7 +28,7 @@ module.exports = {
 
         if (typeof settings == 'undefined' || settings == null) {
             socket.randomSettings.set(String(message.guild.id), { guildID: String(message.guild.id), toChannel: "", fromChannel: "" });
-            await socket.app.database.addRandom(String(message.guild.id));
+            await socket.app.database.add('randomChannels', [String(message.guild.id)]);
             settings = socket.randomSettings.get(String(message.guild.id));
         }
 
@@ -46,11 +46,11 @@ module.exports = {
                 // Remove channel if the requested channel does not exist
                 if ((typeof editChannel == 'undefined' || editChannel == null)) {
                     settings.toChannel = "";
-                    await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
+                    await socket.app.database.edit('randomChannels', [String(message.guild.id), settings.toChannel, settings.fromChannel]);
                     return message.channel.send(`${message.member}, There is no longer a permanent random move **to** channel set!`);
                 }
                 settings.toChannel = String(editChannel.id);
-                await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
+                await socket.app.database.edit('randomChannels', [String(message.guild.id), settings.toChannel, settings.fromChannel]);
                 return message.channel.send(`${message.member}, Permanent random move **to** channel is now ${editChannel.name}`);
             case 'from':
                 // Find the channel if it exists and store it
@@ -58,11 +58,11 @@ module.exports = {
                 // Remove channel if the requested channel does not exist
                 if ((typeof editChannel == 'undefined' || editChannel == null)) {
                     settings.fromChannel = "";
-                    await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
+                    await socket.app.database.edit('randomChannels', [String(message.guild.id), settings.toChannel, settings.fromChannel]);
                     return message.channel.send(`${message.member}, There is no longer a permanent random move **from** channel set!`);
                 }
                 settings.fromChannel = String(editChannel.id);
-                await socket.app.database.editRandom(String(message.guild.id), settings.toChannel, settings.fromChannel);
+                await socket.app.database.edit('randomChannels', [String(message.guild.id), settings.toChannel, settings.fromChannel]);
                 return message.channel.send(`${message.member}, Permanent random move **from** channel is now ${editChannel.name}`);
             case 'move':
                 num = Number(methodRaw);

@@ -147,7 +147,7 @@ class Application {
    * @private
    */
   setSettings() {
-    return this.database.getSettings()
+    return this.database.get('settings')
       .then((all) => collect(this.settings, all, 'name', null, 'value'))
       .catch((err) => {
         this.log.fatal('critical', module, `Settings: ${err}`);
@@ -160,7 +160,7 @@ class Application {
    * @private
    */
   setStreaming() {
-    return this.database.getStreaming()
+    return this.database.get('streaming')
       .then((all) => collect(this.streaming, all, 'name', null))
       .catch((err) => {
         this.log.fatal('critical', module, `Streaming Settings: ${err}`);
