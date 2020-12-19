@@ -37,7 +37,7 @@ module.exports = {
 
         let acknowledged = false;
         let room = false;
-        const roomID = args?.find(arg => arg.name === `roomID`)?.value;
+        const roomID = args?.find(arg => arg.name === `roomid`)?.value;
         let member;
         let inRoom;
 
