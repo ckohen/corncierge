@@ -9,7 +9,7 @@ module.exports = {
   async run(socket, message) {
     let musicData = socket.musicData.get(String(message.guild.id));
     if (!musicData.isPlaying && !musicData.nowPlaying) {
-      return message.reply('There is no song playing right now!');
+      return message.channel.send(`${message.member}, There is no song playing right now!`);
     }
 
     const video = musicData.nowPlaying;

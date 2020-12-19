@@ -19,7 +19,7 @@ module.exports = {
         const method = methodRaw ? methodRaw.toLowerCase() : "list";
 
         if (!routines.includes(method)) {
-            return message.reply('Specify a valid subroutine');
+            return message.channel.send(`${message.member}, Specify a valid subroutine`);
         }
 
         let channel = null;
@@ -35,7 +35,7 @@ module.exports = {
                 channel = message.guild.channels.cache.get(chroleRaw.slice(2, -1));
             }
             else if (chroleRaw) {
-                return message.reply("Please specify a valid channel");
+                return message.channel.send(`${message.member}, Please specify a valid channel`);
             }
         }
         else {
@@ -67,11 +67,11 @@ module.exports = {
             case 'add':
                 // There must be a channel first
                 if (Object.keys(guild.roles).length < 1) {
-                    return message.reply("Please specify a color change channel using `" + commandPrefix + "colormanager channel <#channel>` first")
+                    return message.channel.send(`${message.member}, Please specify a color change channel using \`${commandPrefix}colormanager channel <#channel>\` first`)
                 }
 
                 if (roleNames.length < 1) {
-                    return message.reply("Please provide at least one valid role to add. *The bot must have a higher role than all roles it is assigning!*");
+                    return message.channel.send(`${message.member}, Please provide at least one valid role to add. *The bot must have a higher role than all roles it is assigning!*`);
                 }
 
                 // Edit channel and snowflakes
@@ -82,7 +82,7 @@ module.exports = {
             case 'remove':
                 // There must be a channel first
                 if (Object.keys(guild.roles).length < 1) {
-                    return message.reply("Please specify a color change channel using `" + commandPrefix + "colormanager channel <#channel>` first")
+                    return message.channel.send(`${message.member}, Please specify a color change channel using \`${commandPrefix}colormanager channel <#channel>\` first`)
                 }
 
                 if (roleNames.length < 1) {
@@ -128,7 +128,7 @@ module.exports = {
                 ;
         }
 
-        await socket.app.database.editColorManager(String(message.guild.id), guild.roles, guild.snowflakes);
+        await socket.app.database.edit('colorManager', [String(message.guild.id), guild.roles, guild.snowflakes]);
 
         // Determine the number of channels and get ready to loop through them
         let channels = Object.keys(guild.roles);

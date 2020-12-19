@@ -17,7 +17,7 @@ module.exports = {
         if (args.indexOf("->") < 0) {
             // Check if voice channel
             voiceChannel = message.member.voice.channel;
-            if (!voiceChannel) return message.reply('Join a channel and try again');
+            if (!voiceChannel) return message.channel.send(`${message.member}, Join a channel and try again`);
 
             toChannel = args.join(' ');
 
@@ -45,12 +45,14 @@ module.exports = {
             confMsg = await message.channel.send("Moving all voice members to " + newChannel.name);
         }
         else if (newChannel) {
-            confMsg = await message.reply(fromChannel + " is not a valid voice channel!");
+            confMsg = await message.channel.send(`${message.member}, ${fromChannel} is not a valid voice channel!`);
         }
         else {
-            confMsg = await message.reply(toChannel + " is not a valid voice channel!");
+            confMsg = await message.channel.send(`${message.member}, ${toChannel} is not a valid voice channel!`);
         }
         message.delete()
-        confMsg.delete({ timeout: 3000 });
+        setTimeout(function() {
+            if (confMsg.deletable) confMsg.delete();
+        }, 3000);
     }
 };

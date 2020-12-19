@@ -9,16 +9,16 @@ module.exports = {
     var voiceChannel = message.member.voice.channel;
     let musicData = socket.musicData.get(String(message.guild.id));
     if (!voiceChannel) {
-      message.reply('Join a channel and try again');
+      message.channel.send(`${message.member}, Join a channel and try again`);
       return;
     } else if (
       typeof musicData.songDispatcher == 'undefined' ||
       musicData.songDispatcher == null
     ) {
-      message.reply('There is no song playing right now!');
+      message.channel.send(`${message.member}, There is no song playing right now!`);
       return;
     } else if (!musicData.queue) {
-      message.reply('There are no songs in queue');
+      message.channel.send(`${message.member}, There are no songs in queue`);
       return;
     } else if (musicData.songDispatcher.paused) {
       musicData.songDispatcher.resume();

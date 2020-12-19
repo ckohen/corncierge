@@ -19,7 +19,7 @@ module.exports = {
         }
         // If there is no scale, command cannot execute
         else if (!scale) {
-            return message.reply("Please specify a maximum range as a number");
+            return message.channel.send(`${message.member}, Please specify a maximum range as a number`);
         }
         // Generate random number and scale to desired output
         let rand = Math.random();

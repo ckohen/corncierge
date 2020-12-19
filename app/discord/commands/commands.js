@@ -43,6 +43,7 @@ module.exports = {
 
     let data = null;
     let method = null;
+    let submethod = null;
     let failure = null;
     let success = null;
 
@@ -52,7 +53,7 @@ module.exports = {
         if (command) return respond('That command already exists');
         if (!output) return respond('Provide a command response');
 
-        method = 'addIrcCommand';
+        method = 'add';
         data = [input, output, prefixBool ? 1 : 0];
         success = `Command \`${prefix}${input}\` added`;
         failure = 'Couldn\'t add command. Please try again';
@@ -66,7 +67,8 @@ module.exports = {
           return respond('Provide an updated command response');
         }
 
-        method = 'editIrcCommand';
+        method = 'edit';
+        submethod = 'output';
         data = [command.id, output];
         success = `Command \`${prefix}${input}\` updated`;
         failure = 'Couldn\'t edit command. Please try again';
@@ -80,7 +82,8 @@ module.exports = {
           return respond('Provide a new command name');
         }
 
-        method = 'renameIrcCommand';
+        method = 'edit';
+        submethod = 'rename';
         data = [command.id, output];
         success = `Command \`${prefix}${input}\` renamed to \`${prefix}${output}\``;
         failure = 'Couldn\'t rename command. Please try again';
@@ -91,7 +94,7 @@ module.exports = {
       case 'delete':
         if (!command) return respond('That command doesn\'t exist');
 
-        method = 'deleteIrcCommand';
+        method = 'delete';
         data = [command.id];
         success = `Command \`${prefix}${input}\` deleted`;
         failure = 'Couldn\'t delete command. Please try again';
@@ -109,7 +112,8 @@ module.exports = {
           return respond('Specify a valid user level');
         }
 
-        method = 'editIrcRestriction';
+        method = 'edit';
+        submethod = 'restriction';
         data = [command.id, output.toLowerCase()];
         success = `Command Level for \`${prefix}${input}\` updated`;
         failure = 'Couldn\'t edit command. Please try again';
@@ -122,7 +126,11 @@ module.exports = {
     if (!method || !data) return;
 
     try {
-      await socket.app.database[method](...data);
+      if (method === 'edit') {
+        await socket.app.database[method]('ircCommands', method, data);
+      } else {
+        await socket.app.database[method]('ircCommands', data);
+      }
     } catch (err) {
       socket.app.log.out('error', module, err);
       return respond(failure);

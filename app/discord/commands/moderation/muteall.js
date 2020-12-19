@@ -12,7 +12,7 @@ module.exports = {
 
         // Check if voice channel
         const voiceChannel = message.member.voice.channel;
-        if (!voiceChannel) return message.reply('Join a channel and try again');
+        if (!voiceChannel) return message.channel.send(`${message.member}, Join a channel and try again`);
 
         let delay = 15000;
 
@@ -42,7 +42,9 @@ module.exports = {
         let confMsg = await message.channel.send("Muted " + count + ` users in ${voiceChannel}`);
 
         message.delete();
-        confMsg.delete({timeout: 3000});
+        setTimeout(function() {
+            if (confMsg.deletable) confMsg.delete();
+        }, 3000);
 
         if (newCount !== 0) {
             setTimeout(function () {

@@ -35,7 +35,7 @@ module.exports = {
         }
 
         let data = null;
-        let method = 'editSetting';
+        let method = 'edit';
         let failure = null;
         let success = null;
 
@@ -68,8 +68,8 @@ module.exports = {
 
         try {
             await socket.driver.user.setActivity(data[0] || null, { type: data[1] || null });
-            await socket.app.database[method]("discord_activity", data[0]);
-            await socket.app.database[method]("discord_activity_type", data[1]);
+            await socket.app.database[method]('settings', ["discord_activity", data[0]]);
+            await socket.app.database[method]('settings', ["discord_activity_type", data[1]]);
         } catch (err) {
             socket.app.log.out('error', module, err);
             return respond(failure);

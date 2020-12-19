@@ -18,7 +18,7 @@ module.exports = {
 
             let users = new Collection();
 
-            await socket.app.database.getFallWins().then((all) => {
+            await socket.app.database.get('fallWins').then((all) => {
                 users.clear();
                 collect(users, all, "id", false);
             });
@@ -29,13 +29,13 @@ module.exports = {
                 let count = users.get(target.id).count;
                 count = count + 1;
                 users.get(target.id).count = count;
-                await socket.app.database.editFallWins(target.id, count)
+                await socket.app.database.edit('fallWins', [target.id, count])
             }
             else {
                 let count = 1;
                 users.set(target.id, {});
                 users.get(target.id).count = count;
-                await socket.app.database.addFallWin(target.id, count)
+                await socket.app.database.add('fallWins', [target.id, count])
             }
 
             let lines = users
@@ -71,7 +71,9 @@ module.exports = {
                 message.delete();
             }
             // deletes command and response messages after 3 seconds
-            confmsg.delete({timeout: 3000});
+            setTimeout(function() {
+                if (confmsg.deletable) confmsg.delete();
+            }, 3000);
         }
 
         let member;
@@ -91,9 +93,11 @@ module.exports = {
             updateEmbed(member);
         }
         else {
-            let confmsg = await message.reply("Please specify a user using their actual discord name (not their nickname)");
+            let confmsg = await message.channel.send(`${message.member}, Please specify a user using their actual discord name (not their nickname)`);
             message.delete();
-            confmsg.delete({timeout: 3000});
+            setTimeout(function() {
+                if (confmsg.deletable) confmsg.delete();
+            }, 3000);
         }
 
     },

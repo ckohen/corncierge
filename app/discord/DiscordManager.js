@@ -7,8 +7,10 @@ const embeds = require('./embeds');
 const events = require('./events');
 const Socket = require('../Socket');
 const commands = require('./commands');
+const applicationCommands = require('./interactions/applicationCommands');
 const Composer = require('./Composer');
 const messages = require('./messages');
+const interactionHandler = require('./interactionHandler');
 
 /**
  * Discord manager for the application.
@@ -59,6 +61,12 @@ class DiscordManager extends Socket {
      * @type {Collection<string, Object>}
      */
     this.commands = new Collection();
+    
+    /**
+     * The application commands for the socket, mapped by input.
+     * @type {Collection<string, Object}
+     */
+    this.applicationCommands = new Collection();
 
     this.colorManager = new Collection();
 
@@ -85,10 +93,23 @@ class DiscordManager extends Socket {
    */
   async init() {
     this.attach();
+    // Temporary Addition to handle interactions before discord.js does
+    this.driver.ws.on('INTERACTION_CREATE', async (packet) => {
+      const result = await interactionHandler(this.driver, packet);
+
+      await this.driver.api.interactions(packet.id, packet.token).callback.post({
+        data: result,
+      });
+    });
+    // End addition
 
     Object.entries(commands).forEach(([command, handler]) => {
       this.commands.set(command, handler);
     });
+
+    Object.entries(applicationCommands).forEach(([command, handler]) => {
+      this.applicationCommands.set(command, handler);
+    })
 
     await this.setCache();
 
@@ -103,13 +124,13 @@ class DiscordManager extends Socket {
    */
   setCache() {
     return Promise.all([
-      this.cache('getRoleManager', this.roleManager, 'guildID'),
-      this.cache('getColorManager', this.colorManager, 'guildID'),
-      this.cache('getReactionRoles', this.reactionRoles, 'guildID'),
-      this.cache('getVoiceRoles', this.voiceRoles, 'guildID'),
-      this.cache('getPrefixes', this.prefixes, 'guildID'),
-      this.cache('getRandom', this.randomSettings, 'guildID'),
-      this.cache('getAddMembers', this.newMemberRoles, 'guildID'),
+      this.cache('roleManager', this.roleManager, 'guildID'),
+      this.cache('colorManager', this.colorManager, 'guildID'),
+      this.cache('reactionRoles', this.reactionRoles, 'guildID'),
+      this.cache('voiceRoles', this.voiceRoles, 'guildID'),
+      this.cache('prefixes', this.prefixes, 'guildID'),
+      this.cache('randomChannels', this.randomSettings, 'guildID'),
+      this.cache('newMemberRole', this.newMemberRoles, 'guildID'),
       this.cacheMusic(),
       this.cacheRooms(),
     ]).catch((err) => {
@@ -122,7 +143,7 @@ class DiscordManager extends Socket {
    * @returns {Promise}
    */
   cacheMusic() {
-    return this.app.database.getVolume().then((volumes) => {
+    return this.app.database.get('volumes').then((volumes) => {
       this.musicData.clear();
       volumes.forEach((volume) => {
         if (this.musicData.get(volume.guildID)) {
@@ -140,7 +161,7 @@ class DiscordManager extends Socket {
    * @returns {Promise}
    */
   cacheRooms() {
-    return this.app.database.getRooms().then((rooms) => {
+    return this.app.database.get('rooms').then((rooms) => {
       this.rooms.clear();
       let roomGuild, roomID;
       let guild;
@@ -164,7 +185,7 @@ class DiscordManager extends Socket {
    * @returns {Promise}
    */
   cache(method, map, key, secondaryKey = false) {
-    return this.app.database[method]().then((all) => {
+    return this.app.database.get(method).then((all) => {
       map.clear();
       collect(map, all, key, secondaryKey);
     });

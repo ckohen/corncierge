@@ -17,7 +17,7 @@ module.exports = {
         const method = methodRaw ? methodRaw.toLowerCase() : "list";
 
         if (!routines.includes(method)) {
-            return message.reply('Specify a valid subroutine');
+            return message.channel.send(`${message.member}, Specify a valid subroutine`);
         }
 
         let channel = null;
@@ -29,7 +29,7 @@ module.exports = {
             channel = message.guild.channels.cache.get(channelRaw.slice(2, -1));
         }
         else if (channelRaw) {
-            return message.reply("Please specify a valid channel");
+            return message.channel.send(`${message.member}, Please specify a valid channel`);
         }
 
         // Check for actual role
@@ -61,7 +61,7 @@ module.exports = {
         switch (method) {
             case 'add':
                 if (roleNames.length < 1) {
-                    return message.reply("Please provide at least one valid role to add. *The bot must have a higher role than all roles it is assigning!*");
+                    return message.channel.send(`${message.member}, Please provide at least one valid role to add. *The bot must have a higher role than all roles it is assigning!*`);
                 }
                 // Check if user specified to only add to makeme
                 if (specified != "makemenot") {
@@ -116,7 +116,7 @@ module.exports = {
                     if (guild.removeRoles[String(channel.id)]) {
                         delete guild.removeRoles[String(channel.id)];
                     }
-                    await socket.app.database.editRoleManager(String(message.guild.id), guild.addRoles, guild.removeRoles);
+                    await socket.app.database.edit('roleManager', [tring(message.guild.id), guild.addRoles, guild.removeRoles]);
                     return message.channel.send(`Deleted ${channel} from role manager`);
                 }
 
@@ -144,7 +144,7 @@ module.exports = {
                 ;
         }
 
-        await socket.app.database.editRoleManager(String(message.guild.id), guild.addRoles, guild.removeRoles);
+        await socket.app.database.edit('roleManager', [String(message.guild.id), guild.addRoles, guild.removeRoles]);
 
         // Determine the number of channels and get ready to loop through them
         let channels = Object.keys(guild.addRoles);

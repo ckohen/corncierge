@@ -112,7 +112,7 @@ class HTTPManager extends Socket {
     setMessage(slug, msgID) {
         let user = this.app.streaming.get(`notification_${slug}`);
         user.lastMessage = msgID;
-        return this.app.database.editStreaming(`notification_${slug}`, msgID);
+        return this.app.database.edit('streaming', [`notification_${slug}`, msgID]);
     }
 }
 

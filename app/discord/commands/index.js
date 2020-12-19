@@ -6,6 +6,7 @@ commands.help = require('./help');
 commands.commands = require('./commands');
 commands.twitch = require('./twitch');
 commands.invite = require('./invite');
+commands.eval = require('./eval');
 
 function concat(obj, variable) {
     for(let key of Object.keys(obj)) {

@@ -18,7 +18,13 @@ module.exports = {
     async run(socket, message, args) {
         query = args.join(' ');
         const voiceChannel = message.member.voice.channel;
-        if (!voiceChannel) return message.reply('Join a channel and try again');
+        if (!voiceChannel) return message.channel.send(`${message.member}, Join a channel and try again`);
+
+        if (!message.guild.me.voice.channel) {
+            musicData.isPlaying = false;
+            musicData.nowPlaying = null;
+            musicData.songDispatcher = null;
+        }
 
         youtube = new discordYoutube(socket.app.options.youtube.token);
         let musicData = socket.musicData.get(String(message.guild.id));
@@ -30,13 +36,11 @@ module.exports = {
             )
         ) {
             const playlist = await youtube.getPlaylist(query).catch(function () {
-                return message.reply('Playlist is either private or it does not exist!');
+                return message.channel.send(`${message.member}, Playlist is either private or it does not exist!'`);
             });
             // add 10 as an argument in getVideos() if you choose to limit the queue
             const videosObj = await playlist.getVideos().catch(function () {
-                return message.reply(
-                    'There was a problem getting one of the videos in the playlist!'
-                );
+                return message.channel.send(`${message.member}, There was a problem getting one of the videos in the playlist!`);
             });
             let waitNotify = await message.channel.send("Adding playlist to queue, this may take a bit!");
             for (let i = 0; i < videosObj.length; i++) {
@@ -56,9 +60,7 @@ module.exports = {
                             )
                         );
                         // } else {
-                        //   return message.reply(
-                        //     `I can't play the full playlist because there will be more than 10 songs in queue`
-                        //   );
+                        //   return message.reply(`I can't play the full playlist because there will be more than 10 songs in queue`);
                         // }
                     } catch (err) {
                         console.error(err);
@@ -83,23 +85,19 @@ module.exports = {
                 .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
             const id = query[2].split(/[^0-9a-z_\-]/i)[0];
             const video = await youtube.getVideoByID(id).catch(function () {
-                return message.reply(
-                    'There was a problem getting the video you provided!'
-                );
+                return message.channel.send(`${message.member}, There was a problem getting the video you provided!`);
             });
             // // can be uncommented if you don't want the bot to play live streams
             // if (video.raw.snippet.liveBroadcastContent === 'live') {
-            //   return message.reply("I don't support live streams!");
+            //   return message.channel.send(`${message.member}, I don't support live streams!`);
             // }
             // // can be uncommented if you don't want the bot to play videos longer than 1 hour
             // if (video.duration.hours !== 0) {
-            //   return message.reply('I cannot play videos longer than 1 hour');
+            //   return message.channel.send(`${message.member}, I cannot play videos longer than 1 hour`);
             // }
             // // can be uncommented if you want to limit the queue
             // if (message.guild.musicData.queue.length > 10) {
-            //   return message.reply(
-            //     'There are too many songs in the queue already, skip or wait a bit'
-            //   );
+            //   return message.channel.send(`${message.member}, There are too many songs in the queue already, skip or wait a bit`);
             // }
             musicData.queue.push(
                 constructSongObj(video, voiceChannel, message.member.user)
@@ -117,14 +115,10 @@ module.exports = {
 
         // if user provided a song/video name
         const videos = await youtube.searchVideos(query, 5).catch(async function () {
-            await message.reply(
-                'There was a problem searching the video you requested :('
-            );
+            await message.channel.send(`${message.member}, There was a problem searching the video you requested :(`);
         });
         if (videos.length < 5 || !videos) {
-            return message.reply(
-                `I had some trouble finding what you were looking for, please try again or be more specific`
-            );
+            return message.channel.send(`${message.member}, I had some trouble finding what you were looking for, please try again or be more specific`);
         }
         const vidNameArr = [];
         for (let i = 0; i < videos.length; i++) {
@@ -153,21 +147,19 @@ module.exports = {
                         // // can be uncommented if you don't want the bot to play live streams
                         // if (video.raw.snippet.liveBroadcastContent === 'live') {
                         //   songEmbed.delete();
-                        //   return message.reply("I don't support live streams!");
+                        //   return message.("I don't support live streams!");
                         // }
 
                         // // can be uncommented if you don't want the bot to play videos longer than 1 hour
                         // if (video.duration.hours !== 0) {
                         //   songEmbed.delete();
-                        //   return message.reply('I cannot play videos longer than 1 hour');
+                        //   return message.channel.send(`${message.member}, I cannot play videos longer than 1 hour`);
                         // }
 
                         // // can be uncommented if you don't want to limit the queue
                         // if (message.guild.musicData.queue.length > 10) {
                         //   songEmbed.delete();
-                        //   return message.reply(
-                        //     'There are too many songs in the queue already, skip or wait a bit'
-                        //   );
+                        //   return message.channel.send(`${message.member}, There are too many songs in the queue already, skip or wait a bit`);
                         // }
                         musicData.queue.push(
                             constructSongObj(
@@ -193,18 +185,14 @@ module.exports = {
                         if (songEmbed) {
                             songEmbed.delete();
                         }
-                        return message.reply(
-                            'An error has occured when trying to get the video ID from youtube'
-                        );
+                        return message.channel.send(`${message.member}, An error has occured when trying to get the video ID from youtube`);
                     });
             })
             .catch(function () {
                 if (songEmbed) {
                     songEmbed.delete();
                 }
-                return message.reply(
-                    'Please try again and enter a number between 1 and 5 or exit'
-                );
+                return message.channel.send(`${message.member}, Please try again and enter a number between 1 and 5 or exit`);
             });
 
 
@@ -250,7 +238,7 @@ function playSong(queue, message, socket) {
                     }
                 })
                 .on('error', function (e) {
-                    message.reply(`Cannot play song \`${queue[0].title}\`, skipping`);
+                    message.reply(`Cannot play song \`${queue[0].title}\`, skipping`, { allowedMentions: { repliedUser: true } });
                     console.error(e);
                     if (queue.length > 1) {
                         queue.shift();

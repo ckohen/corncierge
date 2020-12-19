@@ -9,7 +9,7 @@ module.exports = {
   async run(socket, message) {
     let musicData = socket.musicData.get(String(message.guild.id));
     if (musicData.queue.length == 0)
-      return message.reply('There are no songs in queue!');
+      return message.channel.send(`${message.member}, There are no songs in queue!`);
     const titleArray = [];
     /* eslint-disable */
     // display only first 10 items in queue

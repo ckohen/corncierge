@@ -24,7 +24,7 @@ module.exports = {
         const method = methodRaw ? methodRaw.toLowerCase() : "list";
 
         if (!routines.includes(method)) {
-            return message.reply('Specify a valid room management option!');
+            return message.channel.send(`${mesage.member}, Specify a valid room management option!`);
         }
 
         //  A list of key value pairs with room ids and their associated room
@@ -51,13 +51,13 @@ module.exports = {
             case 'create':
                 // Only allow each server to have 25 rooms
                 if (rooms.size > 25) {
-                    return message.reply("There are already 25 rooms in this server, please wait for another room to close!");
+                    return message.channel.send(`${message.member}, There are already 25 rooms in this server, please wait for another room to close!`);
                 }
 
                 // Don't let a user own more than one room
                 let existing = rooms.find(room => room.owner == String(message.member.id))
                 if (existing) {
-                    message.reply(`You already own a room: **ID**: ${existing.id}, **Name**: ${existing.name}. Please delete it to create a new room!`);
+                    message.channel.send(`${message.member}, You already own a room: **ID**: ${existing.id}, **Name**: ${existing.name}. Please delete it to create a new room!`);
                     room = existing;
                     break;
                 }
@@ -67,7 +67,7 @@ module.exports = {
                     if (!rooms.has(String(i))) {
                         // Create the new room
                         rooms.set(String(i), { id: String(i), name: extraArgs.join(' ').substring(0, 30), owner: String(message.member.id), playerCount: 10, code: null, players: [String(message.member.id)], waiting: [], lastChannelID: null, lastMessageID: null});
-                        socket.app.database.addRoom(message.guild.id + '-' + String(i));
+                        socket.app.database.add('rooms', [message.guild.id + '-' + String(i)]);
                         room = rooms.get(String(i));
                         break;
                     }
@@ -86,7 +86,7 @@ module.exports = {
                     room = rooms.get(String(requested));
                     if (typeof room == 'undefined' || rooms == null) {
                         room = false;
-                        message.reply(`There is no room with room id ${requested}!`);
+                        message.channel.send(`${message.member}, There is no room with room id ${requested}!`);
                         break;
                     }
                 }
@@ -94,13 +94,13 @@ module.exports = {
                     room = rooms.find(room => room.players.indexOf(String(message.member.id)) > -1);
                     if ((typeof room == 'undefined' || rooms == null)) {
                         room = false;
-                        message.reply(`You must be in a room to use that command!`);
+                        message.channel.send(`${message.member}, You must be in a room to use that command!`);
                         break;
                     }
                 }
                 // Check permissions
                 if (String(message.member.id) != room.owner && !message.member.permissions.any(["MANAGE_CHANNELS", "MANAGE_MESSAGES", "MOVE_MEMBERS", "MANAGE_ROLES"])) {
-                    return message.reply("Only the owner of a room and admins/mods can manage it!");
+                    return message.channel.send(`${message.member}, Only the owner of a room and admins/mods can manage it!`);
                 }
                 // Set each option accordingly
                 switch (extraArgs[0]) {
@@ -118,11 +118,11 @@ module.exports = {
                             room.playerCount = Number(extraArgs[1]);
                         }
                         else {
-                            return message.reply("The player count must be a number between 1 and 35!");
+                            return message.channel.send(`${message.member}, The player count must be a number between 1 and 35!`);
                         }
                         break;
                     default:
-                        return message.reply("You can only set the number of players or a join code!");
+                        return message.channel.send(`${message.member}, You can only set the number of players or a join code!`);
                 }
 
                 break;
@@ -143,11 +143,11 @@ module.exports = {
                 }
                 // Check permissions
                 if (String(message.member.id) != room.owner && !message.member.permissions.any(["MANAGE_CHANNELS", "MANAGE_MESSAGES", "MOVE_MEMBERS", "MANAGE_ROLES"])) {
-                    return message.reply("Only the owner of a room and admins/mods can remove it!");
+                    return message.channel.send(`${message.member}, Only the owner of a room and admins/mods can remove it!`);
                 }
                 // Delete the room
                 message.channel.send(`Room ${room.id}: **${room.name}** has been successfully removed, the new list of rooms can be found below.`);
-                socket.app.database.deleteRoom(message.guild.id + '-' + room.id);
+                socket.app.database.delete('rooms', [message.guild.id + '-' + room.id]);
                 rooms.delete(room.id);
                 room = false;
                 break;
@@ -156,7 +156,7 @@ module.exports = {
                 room = rooms.get(String(extraArgs[0]));
                 if (typeof room == 'undefined' || rooms == null) {
                     room = false;
-                    message.reply(`There is no room with room id ${extraArgs[0]}!`);
+                    message.channel.send(`${message.member}, There is no room with room id ${extraArgs[0]}!`);
                     break;
                 }
                 // Check if the user is already in a room
@@ -167,7 +167,7 @@ module.exports = {
                     }
                 }
                 else {
-                    return message.reply(`You cannot join a room while playing in another room! Use \`${commandPrefix}room leave\` to leave your current room.`)
+                    return message.channel.send(`${message.member}, You cannot join a room while playing in another room! Use \`${commandPrefix}room leave\` to leave your current room.`)
                 }
                 break;
             case "leave":
@@ -181,7 +181,7 @@ module.exports = {
                 }
 
                 if (!member) {
-                    return message.reply(`${extraArgs.join(' ')} is not a valid member of the server!`);
+                    return message.channel.send(`${message.member}, ${extraArgs.join(' ')} is not a valid member of the server!`);
                 } 
                 member = String(member.id);
                 
@@ -193,12 +193,12 @@ module.exports = {
                     room = rooms.find(room => room.waiting.indexOf(member) > -1);
                     if (typeof room == 'undefined' || room == null) {
                         room = false;
-                        return message.reply(`That member is not currently in a room!`);
+                        return message.channel.send(`${message.member}, That member is not currently in a room!`);
                     }
                 }
                 // Check Permissions for forced leave
                 if (extraArgs[0] && String(message.member.id) != room.owner && !message.member.permissions.any(["MANAGE_CHANNELS", "MANAGE_MESSAGES", "MOVE_MEMBERS", "MANAGE_ROLES"])) {
-                    return message.reply("Only the owner of a room and admins/mods can force users to leave!");
+                    return message.channel.send(`${message.member}, Only the owner of a room and admins/mods can force users to leave!`);
                 }
                 // Transfer ownership to next player in list
                 if (member == room.owner) {
@@ -210,9 +210,9 @@ module.exports = {
                     }
                     // Delete the room if there is no new possible owner
                     else {
-                        socket.app.database.deleteRoom(message.guild.id + '-' + room.id);
+                        socket.app.database.delete('rooms', [message.guild.id + '-' + room.id]);
                         rooms.delete(room.id);
-                        return message.reply(`You were the last player in ${room.name}, it has been deleted.`);
+                        return message.channel.send(`${message.member}, You were the last player in ${room.name}, it has been deleted.`);
                     }
                 }
                 else {
@@ -233,12 +233,12 @@ module.exports = {
                 room = rooms.get(String(extraArgs[0]));
                 if (typeof room == 'undefined' || rooms == null) {
                     room = false;
-                    message.reply(`There is no room with room id ${extraArgs[0]}!`);
+                    message.channel.send(`${message.member}, There is no room with room id ${extraArgs[0]}!`);
                     break;
                 }
                 // Check Permissions
                 if (String(message.member.id) != room.owner && !message.member.permissions.any(["MANAGE_CHANNELS", "MANAGE_MESSAGES", "MOVE_MEMBERS", "MANAGE_ROLES"])) {
-                    return message.reply("Only the owner of a room and admins/mods can manage it!");
+                    return message.channel.send(`${message.member}, Only the owner of a room and admins/mods can manage it!`);
                 }
                 // Clear the room except for the owner
                 room.players.splice(1);
@@ -260,7 +260,7 @@ module.exports = {
                 }
                 // Check Permissions
                 if (String(message.member.id) != room.owner && !message.member.permissions.any(["MANAGE_CHANNELS", "MANAGE_MESSAGES", "MOVE_MEMBERS", "MANAGE_ROLES"])) {
-                    return message.reply("Only the owner of a room and admins/mods can manage it!");
+                    return message.channel.send(`${message.member}, Only the owner of a room and admins/mods can manage it!`);
                 }
 
                 // Move members to fill up to player cap
@@ -282,7 +282,7 @@ module.exports = {
                 member = message.mentions.members ? String(message.mentions.members.first().id) : false;
 
                 if (!member) {
-                    return message.reply(`That is not a valid member of the server!`)
+                    return message.channel.send(`${message.member}, That is not a valid member of the server!`)
                 }
                 // Check if the room exists
                 room = rooms.get(String(extraArgs[1]));
@@ -300,11 +300,11 @@ module.exports = {
                 }
                 // Check Permissions
                 if (String(message.member.id) != room.owner && !message.member.permissions.any(["MANAGE_CHANNELS", "MANAGE_MESSAGES", "MOVE_MEMBERS", "MANAGE_ROLES"])) {
-                    return message.reply("Only the owner of a room and admins/mods can transfer ownership!");
+                    return message.channel.send(`${message.member}, Only the owner of a room and admins/mods can transfer ownership!`);
                 }
                 // Check if the new user is in the room
                 if (room.players.indexOf(member) < 0) {
-                    return message.reply("The new owner must be a player in the room!");
+                    return message.channel.send(`${message.member}, The new owner must be a player in the room!`);
                 }
                 room.players.splice(room.players.indexOf(member), 1);
                 room.owner = member;
@@ -450,7 +450,7 @@ module.exports = {
             room.lastChannelID = lastMessage.channel.id;
             room.lastMessageID = lastMessage.id;
             // Update database
-            socket.app.database.editRoom(message.guild.id + '-' + room.id, room);
+            socket.app.database.edit('rooms', [message.guild.id + '-' + room.id, room]);
         }
         else {
             // Store last message information
