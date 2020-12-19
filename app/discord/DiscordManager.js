@@ -7,8 +7,10 @@ const embeds = require('./embeds');
 const events = require('./events');
 const Socket = require('../Socket');
 const commands = require('./commands');
+const applicationCommands = require('./interactions/applicationCommands');
 const Composer = require('./Composer');
 const messages = require('./messages');
+const interactionHandler = require('./interactionHandler');
 
 /**
  * Discord manager for the application.
@@ -59,6 +61,12 @@ class DiscordManager extends Socket {
      * @type {Collection<string, Object>}
      */
     this.commands = new Collection();
+    
+    /**
+     * The application commands for the socket, mapped by input.
+     * @type {Collection<string, Object}
+     */
+    this.applicationCommands = new Collection();
 
     this.colorManager = new Collection();
 
@@ -85,10 +93,23 @@ class DiscordManager extends Socket {
    */
   async init() {
     this.attach();
+    // Temporary Addition to handle interactions before discord.js does
+    this.driver.ws.on('INTERACTION_CREATE', async (packet) => {
+      const result = await interactionHandler(this.driver, packet);
+
+      await this.driver.api.interactions(packet.id, packet.token).callback.post({
+        data: result,
+      });
+    });
+    // End addition
 
     Object.entries(commands).forEach(([command, handler]) => {
       this.commands.set(command, handler);
     });
+
+    Object.entries(applicationCommands).forEach(([command, handler]) => {
+      this.applicationCommands.set(command, handler);
+    })
 
     await this.setCache();
 

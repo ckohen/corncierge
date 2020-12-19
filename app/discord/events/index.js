@@ -17,5 +17,6 @@ events.guildCreate = require('./guildCreate');
 events.guildDelete = require('./guildDelete');
 events.messageReactionAdd = require('./messageReactionAdd');
 events.messageReactionRemove = require('./messageReactionRemove');
+events.interactionCreate = require('./interactionCreate');
 
 module.exports = events;
