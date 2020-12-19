@@ -1,9 +1,11 @@
+const util = require('util');
+
 module.exports = {
     description: 'Evaluates code passed as string',
     guild: 'helpDesk',
     permissions: 'ADMINISTRATOR',
     usage: [
-        '<eval string> (available bases are socket, message, and client)',
+        '<eval string> (available bases are socket, message, util, and client)',
     ],
 
     async run(socket, message, args) {
