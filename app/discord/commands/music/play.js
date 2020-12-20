@@ -24,6 +24,9 @@ module.exports = {
             musicData.isPlaying = false;
             musicData.nowPlaying = null;
             musicData.songDispatcher = null;
+            if(!voiceChannel.permissionsFor(socket.driver.user).has(['VIEW_CHANNEL','CONNECT'])) {
+                return message.channel.send(`${message.member}, I cannot access that voice channel!`);
+            }
         }
 
         youtube = new discordYoutube(socket.app.options.youtube.token);
