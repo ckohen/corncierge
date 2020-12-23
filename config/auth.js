@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = {
+    redirectUri: 'http://localhost',
     config: {
         baseURL: 'https://id.twitch.tv/oauth2/',
     },

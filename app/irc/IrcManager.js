@@ -93,7 +93,7 @@ class IrcManager extends Socket {
    */
   async init() {
     const cp = await this.setCache();
-    this.options.identity.password = await this.app.auth.getAccessToken(this.options.identity.username);
+    this.options.identity.password = await this.app.auth.getAccessToken(this.options.identity.username.slice(1, -1));
 
     /**
      * The IRC driver.
@@ -113,7 +113,9 @@ class IrcManager extends Socket {
    */
   async setDriver(token) {
     this.options.identity.password = `oauth:${token}`;
-    this.driver = new Client(this.options)
+    this.driver = new Client(this.options);
+    this.attach();
+    this.driver.connect();
   }
 
   /**
