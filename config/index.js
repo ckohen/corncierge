@@ -11,7 +11,7 @@ config.discord = require('./discord');
 config.database = require('./database');
 config.throttle = require('./throttle');
 config.youtube = require('./youtube');
-config.obs = require('./obs');
 config.http = require('./http');
+config.auth = require('./auth');
 
 module.exports = config;

@@ -4,6 +4,7 @@ const { Collection } = require('discord.js');
 
 const { collect } = require('./util/helpers');
 const ApiManager = require('./api/ApiManager');
+const AuthManager = require('./api/AuthManager');
 const IrcManager = require('./irc/IrcManager');
 const LogManager = require('./log/LogManager');
 const DiscordManager = require('./discord/DiscordManager');
@@ -37,6 +38,13 @@ class Application {
      * @private
      */
     this.api = new ApiManager(this);
+
+    /**
+     * The Authentication manager for the application.
+     * @type {AuthManager}
+     * @private
+     */
+    this.auth = new AuthManager(this);
 
     /**
      * The IRC manager for the application.
@@ -101,9 +109,9 @@ class Application {
    */
   async boot() {
     // Run tasks in parallel to avoid serial delays
-    await Promise.all([this.irc.init(), this.setSettings(), this.setStreaming()]);
+    await Promise.all([this.setSettings(), this.setStreaming()]);
 
-    await this.discord.init();
+    await Promise.all([this.discord.init(), this.irc.init()]);
     await this.http.init();
 
     this.log.out('info', module, 'Boot complete');

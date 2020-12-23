@@ -78,8 +78,8 @@ module.exports = {
                 const submethod = args[0].name;
                 args = args[0].options;
                 // Check if the requested room exists
-                if (args?.find(arg => arg.name === `roomID`)?.value) {
-                    let requested = args.find(arg => arg.name === `roomID`).value;
+                if (args?.find(arg => arg.name === `roomid`)?.value) {
+                    let requested = args.find(arg => arg.name === `roomid`).value;
                     room = rooms.get(String(requested));
                     if (typeof room == 'undefined' || rooms == null) {
                         room = false;
@@ -277,7 +277,7 @@ module.exports = {
                 break;
             case "transfer":
                 // Check if the member exists
-                member = args?.find(arg => arg.name === `newOwner`).value;
+                member = args?.find(arg => arg.name === `newowner`).value;
 
                 // Check if the room exists
                 room = rooms.get(String(roomID));

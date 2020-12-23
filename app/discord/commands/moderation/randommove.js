@@ -121,10 +121,10 @@ module.exports = {
             confMsg = await message.channel.send(`Randomly moving ${num} voice members to ` + newChannel.name);
         }
         else if (newChannel) {
-            confMsg = await message.reply(fromChannel + " is not a valid voice channel!");
+            confMsg = await message.channel.send(`${message.member}, ${fromChannel} is not a valid voice channel!`);
         }
         else {
-            confMsg = await message.reply(toChannel + " is not a valid voice channel!");
+            confMsg = await message.channel.send(`${message.member}, ${toChannel} is not a valid voice channel!`);
         }
         message.delete()
         setTimeout(function() {

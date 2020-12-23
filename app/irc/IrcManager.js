@@ -56,11 +56,11 @@ class IrcManager extends Socket {
     this.commands = new Collection();
 
     /**
-     * The IRC driver.
-     * @type {Client}
+     * The options for the client
+     * @type {Object}
      */
-    this.driver = new Client(this.app.options.irc);
-
+    this.options = this.app.options.irc;
+    
     /**
      * The rate limiter.
      * Twitch IRC only allows 100 requests every 30 seconds.
@@ -93,11 +93,27 @@ class IrcManager extends Socket {
    */
   async init() {
     const cp = await this.setCache();
+    this.options.identity.password = await this.app.auth.getAccessToken(this.options.identity.username);
+
+    /**
+     * The IRC driver.
+     * @type {Client}
+     */
+    this.driver = new Client(this.options);
 
     this.attach();
     this.driver.connect();
 
     return cp;
+  }
+
+  /**
+   * Reinitializes the driver with a new token
+   * @param {string} token 
+   */
+  async setDriver(token) {
+    this.options.identity.password = `oauth:${token}`;
+    this.driver = new Client(this.options)
   }
 
   /**
