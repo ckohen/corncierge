@@ -1,6 +1,6 @@
 'use strict';
 
-const { Base } = require("discord.js");
+const { Base } = require('discord.js');
 
 /**
  * Represents an interaction, see {@link InteractionClient}.

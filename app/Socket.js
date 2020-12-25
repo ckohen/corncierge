@@ -18,8 +18,8 @@ class Socket {
 
   /**
    * Listen for a socket event.
-   * @param {string} event
-   * @param {Function} listener
+   * @param {string} event the name of the event to listen for
+   * @param {Function} listener the function to call on event
    */
   listen(event, listener) {
     this.driver.on(event, (...args) => {

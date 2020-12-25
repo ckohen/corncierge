@@ -2,8 +2,8 @@
 
 const helpers = require.main.require('./app/util/helpers');
 
-const twitch = require('../util');
 const commands = require('../commands');
+const twitch = require('../util');
 
 module.exports = (socket, channel, user, row, update, args, isBroadcaster = false, isPrivileged = false, isVip = false) => {
   const hasArgsMod = isPrivileged && args.length > 0;
@@ -12,32 +12,49 @@ module.exports = (socket, channel, user, row, update, args, isBroadcaster = fals
 
   const commandResponder = (message, mention = false) => {
     if (!message) return;
-    row.count = row.count + 1;
-    socket.say(channel, helpers.mentionable(
-      isPrivileged && mention, target, helpers.format(message, {
-        user: twitch.handle(user), touser: target, count: row.count, caster: socket.app.settings.get('app_operator'),
-      }),
-    ));
+    row.count += 1;
+    socket.say(
+      channel,
+      helpers.mentionable(
+        isPrivileged && mention,
+        target,
+        helpers.format(message, {
+          user: twitch.handle(user),
+          touser: target,
+          count: row.count,
+          caster: socket.app.settings.get('app_operator'),
+        }),
+      ),
+    );
     socket.app.database.edit('ircCommands', 'count', [row.id]);
   };
 
   if (row.method !== null && typeof commands[row.method] === 'function') {
-    commands[row.method](socket, (response) => {
-      if (!response) return commandResponder(row.output);
-      commandResponder(response);
-    }, hasArgsMod, user, target, isBroadcaster, isPrivileged, isVip);
+    commands[row.method](
+      socket,
+      response => {
+        if (!response) return commandResponder(row.output);
+        return commandResponder(response);
+      },
+      hasArgsMod,
+      user,
+      target,
+      isBroadcaster,
+      isPrivileged,
+      isVip,
+    );
     return;
   }
 
   if (row.restriction) {
     switch (row.restriction) {
-      case "broadcaster":
+      case 'broadcaster':
         if (!isBroadcaster) return;
         break;
-      case "moderator":
+      case 'moderator':
         if (!isPrivileged) return;
         break;
-      case "vip":
+      case 'vip':
         if (!isPrivileged || !isVip) return;
         break;
       default:

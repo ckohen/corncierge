@@ -7,9 +7,9 @@ module.exports = async (socket, message) => {
   if (message.partial) {
     try {
       await message.fetch();
-    }
-    catch {
-      return socket.app.log.out('debug', module, "Could not get partial message: " + message.id);
+    } catch {
+      socket.app.log.out('debug', module, `Could not get partial message: ${message.id}`);
+      return;
     }
   }
 
@@ -19,8 +19,8 @@ module.exports = async (socket, message) => {
   const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
 
   // Delete all messages except specified messages in tracker channels
-  if (message.channel.name === "fall-guys-tracker" && socket.isGuild(message.guild.id, 'platicorn')) {
-    if (!message.content.startsWith(commandPrefix + "addwin") && !message.content.startsWith(commandPrefix + "setwins")) {
+  if (message.channel.name === 'fall-guys-tracker' && socket.isGuild(message.guild.id, 'platicorn')) {
+    if (!message.content.startsWith(`${commandPrefix}addwin`) && !message.content.startsWith(`${commandPrefix}setwins`)) {
       message.delete();
       return;
     }
@@ -34,8 +34,7 @@ module.exports = async (socket, message) => {
   const command = args.shift().toLowerCase();
 
   // Check for handler or aliases
-  const handler = socket.commands.get(command)
-    || socket.commands.find(cmd => cmd.aliases && cmd.aliases.includes(command));
+  const handler = socket.commands.get(command) || socket.commands.find(cmd => cmd.aliases && cmd.aliases.includes(command));
 
   if (!handler) return;
 
@@ -44,14 +43,14 @@ module.exports = async (socket, message) => {
 
   // Check for channel constraints
   if (handler.channel) {
-    let valid = socket.app.settings.get(`discord_channel_${handler.channel}`).split(",");
+    let valid = socket.app.settings.get(`discord_channel_${handler.channel}`).split(',');
     if (valid.indexOf(message.channel.id) < 0) return;
   }
 
   // Check for role constraints
-  if (handler.role && !message.member.roles.cache.some((role) => role.name === handler.role)) {
-    if (!message.member.hasPermission("MANAGE_ROLES")) {
-      message.channel.send(`You're not allowed to do that, ${message.author}.`).catch((err) => {
+  if (handler.role && !message.member.roles.cache.some(role => role.name === handler.role)) {
+    if (!message.member.hasPermission('MANAGE_ROLES')) {
+      message.channel.send(`You're not allowed to do that, ${message.author}.`).catch(err => {
         socket.app.log.out('error', module, err);
       });
       return;
@@ -60,7 +59,7 @@ module.exports = async (socket, message) => {
 
   // Check permissions
   if (handler.permissions && !message.member.hasPermission(handler.permissions)) {
-    message.channel.send(`You're not allowed to do that, ${message.author}.`).catch((err) => {
+    message.channel.send(`You're not allowed to do that, ${message.author}.`).catch(err => {
       socket.app.log.out('error', module, err);
     });
     return;
@@ -68,7 +67,7 @@ module.exports = async (socket, message) => {
 
   // Check arguments
   if (handler.args && !args[0]) {
-    message.channel.send(`That command requires an argument, ${message.author}.`).catch((err) => {
+    message.channel.send(`That command requires an argument, ${message.author}.`).catch(err => {
       socket.app.log.out('error', module, err);
     });
     return;

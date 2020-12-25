@@ -8,7 +8,7 @@ module.exports = (socket, error) => {
     level = 'info';
   }
   if (error.message.includes('EADDIRUSE') || error.code === 'EADDIRUSE') {
-      socket.driver.close();
+    socket.driver.close();
   }
 
   const message = error.message || JSON.stringify(error);

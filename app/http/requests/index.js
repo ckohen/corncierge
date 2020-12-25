@@ -1,7 +1,5 @@
 'use strict';
 
-const request = require('../events/request');
-
 const requests = {};
 
 requests.streamStart = require('./streamStart');

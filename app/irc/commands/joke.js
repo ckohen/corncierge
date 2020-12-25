@@ -1,10 +1,10 @@
 'use strict';
 
 module.exports = (socket, callback) => {
-  socket.app.api.uptime((time) => {
+  socket.app.api.uptime(time => {
     const { jokes } = socket;
 
-    if (!time) return;
+    if (!time) return false;
     if (!Array.isArray(jokes) || jokes.length === 0) return callback();
 
     // Select a random joke from the top of the stack
@@ -16,8 +16,8 @@ module.exports = (socket, callback) => {
     jokes.splice(key, 1);
     jokes.push(item);
 
-    callback(item.output);
-
     socket.app.log.out('debug', module, `Told joke: ${item.id}`);
+
+    return callback(item.output);
   });
 };

@@ -1,12 +1,12 @@
 'use strict';
 
-const plural = require('pluralize');
 const cache = require('memory-cache');
+const plural = require('pluralize');
 
 module.exports = {
   channel: 'console',
 
-  async run(socket, message) {
+  run(socket, message) {
     const { discord, irc, log, settings, streaming } = socket.app;
 
     log.out('info', module, 'Reload instruct received');
@@ -15,12 +15,7 @@ module.exports = {
     cache.clear();
 
     // Reload application state
-    Promise.all([
-      socket.app.setSettings(),
-      socket.app.setStreaming(),
-      irc.setCache(),
-      discord.setCache(),
-    ]).then(async () => {
+    Promise.all([socket.app.setSettings(), socket.app.setStreaming(), irc.setCache(), discord.setCache()]).then(async () => {
       const md = (name, metric) => `**${metric}** ${plural(name, metric)}`;
       const response = [
         'Reload complete.',
@@ -33,10 +28,11 @@ module.exports = {
         md('total guilds', discord.prefixes.size),
       ];
 
-      await socket.driver.user.setActivity(socket.app.settings.get('discord_activity') || null, {type: socket.app.settings.get('discord_activity_type') || 'PLAYING'});
+      await socket.driver.user.setActivity(socket.app.settings.get('discord_activity') || null, {
+        type: socket.app.settings.get('discord_activity_type') || 'PLAYING',
+      });
 
-      
-      message.channel.send(response).catch((err) => {
+      message.channel.send(response).catch(err => {
         log.out('error', module, err);
       });
 

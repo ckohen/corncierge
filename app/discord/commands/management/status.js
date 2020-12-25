@@ -18,7 +18,7 @@ module.exports = {
       `Cache: **${cache.size()}** items`,
     ];
 
-    message.channel.send(status).catch((err) => {
+    message.channel.send(status).catch(err => {
       socket.app.log.out('error', module, err);
     });
   },
