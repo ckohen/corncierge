@@ -9,10 +9,10 @@ commands.invite = require('./invite');
 commands.eval = require('./eval');
 
 function concat(obj, variable) {
-    for(let key of Object.keys(obj)) {
-        if(!variable[key]) variable[key] = {};
-        for(let innerKey of Object.keys(obj[key])) variable[key][innerKey] = obj[key][innerKey];
-    }
+  for (let key of Object.keys(obj)) {
+    if (!variable[key]) variable[key] = {};
+    for (let innerKey of Object.keys(obj[key])) variable[key][innerKey] = obj[key][innerKey];
+  }
 }
 
 concat(require('./music'), commands);

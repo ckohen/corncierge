@@ -4,7 +4,19 @@
   "description": "A moderation and command bot for Twitch and a fully integrated Discord bot.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run lint && npm run lint:config && npm run docs:test",
+    "docs": "docgen --source app --output docs/docs.json",
+    "docs:test": "docgen --source app",
+    "lint": "eslint app",
+    "lint:config": "eslint config",
+    "lint:fix": "eslint app --fix",
+    "lint:config:fix": "eslint config --fix",
+    "prettier": "prettier --write app/**/*.js",
+    "prettier:config": "prettier --write config/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ckohen/platiBot.git"
   },
   "author": "ckohen",
   "license": "ISC",
@@ -25,7 +37,6 @@
     "mysql2": "^1.7.0",
     "obs-websocket-js": "^4.0.1",
     "pluralize": "^8.0.0",
-    "prettier": "^2.0.5",
     "qs": "^6.9.4",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
@@ -38,8 +49,31 @@
     "ytdl-core": "^4.1.2"
   },
   "devDependencies": {
-    "eslint": "^6.7.2",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.19.1"
+    "discord.js-docgen": "git+https://github.com/discordjs/docgen.git",
+    "eslint": "^7.16.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.3.6",
+    "lint-staged": "^10.5.3",
+    "prettier": "^2.1.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint --fix"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 160,
+    "trailingComma": "all",
+    "endOfLine": "lf",
+    "arrowParens": "avoid"
   }
 }

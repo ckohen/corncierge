@@ -1,4 +1,7 @@
-module.exports = (comp, vidNameArr) => comp
+'use strict';
+
+module.exports = (comp, vidNameArr) =>
+  comp
     .setColor('songSearch')
     .setTitle('Choose a song by commenting a number between 1 and 5')
     .addField('Song 1', vidNameArr[0])

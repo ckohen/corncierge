@@ -2,14 +2,14 @@
 
 const { Collection } = require('discord.js');
 
-const { collect } = require('./util/helpers');
 const ApiManager = require('./api/ApiManager');
 const AuthManager = require('./api/AuthManager');
-const IrcManager = require('./irc/IrcManager');
-const LogManager = require('./log/LogManager');
+const DatabaseManager = require('./database/DatabaseManager');
 const DiscordManager = require('./discord/DiscordManager');
 const HTTPManager = require('./http/HTTPManager');
-const DatabaseManager = require('./database/DatabaseManager');
+const IrcManager = require('./irc/IrcManager');
+const LogManager = require('./log/LogManager');
+const { collect } = require('./util/helpers');
 
 /**
  * The application container.
@@ -18,10 +18,9 @@ const DatabaseManager = require('./database/DatabaseManager');
 class Application {
   /**
    * Create a new application instance.
-   * @param {Object} [options]
-   * @returns {self}
+   * @param {Object} [options={}] the options to provide to the application
    * @public
-  */
+   */
   constructor(options = {}) {
     this.setOptions(options);
 
@@ -81,7 +80,7 @@ class Application {
      */
     this.discord = new DiscordManager(this);
 
-     /**
+    /**
      * The HTTP Server manager for the application.
      * @type {HTTPManager}
      * @private
@@ -116,7 +115,7 @@ class Application {
 
     this.log.out('info', module, 'Boot complete');
     // Send "Ready" to parent if it exists
-    if (typeof process.send === "function") {
+    if (typeof process.send === 'function') {
       process.send('ready');
     }
   }
@@ -127,16 +126,15 @@ class Application {
       await this.irc.driver.disconnect();
       await this.discord.driver.destroy();
       await this.http.driver.close();
-    }
-    catch {
-      ;
+    } catch (err) {
+      this.log.out('error', module, `Error when shutting down: ${err}`);
     }
     process.exit(code);
   }
 
   /**
    * Validate and set the configuration options for the application.
-   * @param {Object} options
+   * @param {Object} options the options to validate
    * @throws {TypeError}
    * @private
    */
@@ -155,9 +153,10 @@ class Application {
    * @private
    */
   setSettings() {
-    return this.database.get('settings')
-      .then((all) => collect(this.settings, all, 'name', null, 'value'))
-      .catch((err) => {
+    return this.database
+      .get('settings')
+      .then(all => collect(this.settings, all, 'name', null, 'value'))
+      .catch(err => {
         this.log.fatal('critical', module, `Settings: ${err}`);
       });
   }
@@ -168,9 +167,10 @@ class Application {
    * @private
    */
   setStreaming() {
-    return this.database.get('streaming')
-      .then((all) => collect(this.streaming, all, 'name', null))
-      .catch((err) => {
+    return this.database
+      .get('streaming')
+      .then(all => collect(this.streaming, all, 'name', null))
+      .catch(err => {
         this.log.fatal('critical', module, `Streaming Settings: ${err}`);
       });
   }

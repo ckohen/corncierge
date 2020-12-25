@@ -10,10 +10,9 @@ const { MessageEmbed } = require('discord.js');
 class Composer extends MessageEmbed {
   /**
    * Create a new composer instance.
-   * @param {Object} options
-   * @param {Object} [data]
-   * @returns {self}
-  */
+   * @param {Object} options the options for the application that instantiated this
+   * @param {Object} [data] data to pass to discord.js MessageEmbed
+   */
   constructor(options, data = {}) {
     super(data);
     this.options = options;
@@ -21,7 +20,7 @@ class Composer extends MessageEmbed {
 
   /**
    * Set the color for the embed.
-   * @param {string} color
+   * @param {string} color one of the colors specified in client options
    * @returns {self}
    */
   setColor(color) {

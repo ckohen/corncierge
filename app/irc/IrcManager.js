@@ -1,9 +1,9 @@
 'use strict';
 
-const throttle = require('tokenthrottle');
+const { Collection } = require('discord.js');
 const { RateLimiter } = require('limiter');
 const { client: Client } = require('tmi.js');
-const { Collection } = require('discord.js');
+const throttle = require('tokenthrottle');
 
 const events = require('./events');
 const Socket = require('../Socket');
@@ -19,9 +19,8 @@ const thirtySecs = 30000;
 class IrcManager extends Socket {
   /**
    * Create a new IRC manager instance.
-   * @param {Application} app
-   * @returns {self}
-  */
+   * @param {Application} app the application that instantiated this
+   */
   constructor(app) {
     super();
 
@@ -60,7 +59,7 @@ class IrcManager extends Socket {
      * @type {Object}
      */
     this.options = this.app.options.irc;
-    
+
     /**
      * The rate limiter.
      * Twitch IRC only allows 100 requests every 30 seconds.
@@ -109,9 +108,9 @@ class IrcManager extends Socket {
 
   /**
    * Reinitializes the driver with a new token
-   * @param {string} token 
+   * @param {string} token the new token to use
    */
-  async setDriver(token) {
+  setDriver(token) {
     this.options.identity.password = `oauth:${token}`;
     this.driver = new Client(this.options);
     this.attach();
@@ -120,8 +119,8 @@ class IrcManager extends Socket {
 
   /**
    * Send a message.
-   * @param {string} channel
-   * @param {string} message
+   * @param {string} channel the twitch channel to post in
+   * @param {string} message the message to post
    */
   say(channel, message) {
     if (!message) return;
@@ -132,59 +131,68 @@ class IrcManager extends Socket {
 
   /**
    * Send a command to delete the given message.
-   * @param {string} channel
-   * @param {string} uuid
-   * @param {Function} [callback]
+   * @param {string} channel the twitch channel to delete from
+   * @param {string} uuid the unique id of the message
+   * @param {Function} [callback] called after succesfull deletion
    */
   delete(channel, uuid, callback = null) {
     this.limiter.removeTokens(1, () => {
-      this.driver.deletemessage(channel, uuid).then(() => {
-        if (typeof callback !== 'function') return;
-        callback();
-      }).catch((err) => {
-        this.app.log.out('error', module, `Delete: ${err}`);
-      });
+      this.driver
+        .deletemessage(channel, uuid)
+        .then(() => {
+          if (typeof callback !== 'function') return;
+          callback();
+        })
+        .catch(err => {
+          this.app.log.out('error', module, `Delete: ${err}`);
+        });
     });
   }
 
   /**
    * Time a user out for the given duration.
-   * @param {string} channel
-   * @param {string} username
-   * @param {number} duration
-   * @param {Function} [callback]
+   * @param {string} channel the twitch channel to timeout in
+   * @param {string} username the twitch name to timeout
+   * @param {number} duration the duration of the timeout
+   * @param {Function} [callback] called after succesfull timeout
    */
   timeout(channel, username, duration, callback = null) {
     this.limiter.removeTokens(1, () => {
-      this.driver.timeout(channel, username, duration).then(() => {
-        if (typeof callback !== 'function') return;
-        callback();
-      }).catch((err) => {
-        this.app.log.out('error', module, `Timeout: ${err}`);
-      });
+      this.driver
+        .timeout(channel, username, duration)
+        .then(() => {
+          if (typeof callback !== 'function') return;
+          callback();
+        })
+        .catch(err => {
+          this.app.log.out('error', module, `Timeout: ${err}`);
+        });
     });
   }
 
   /**
    * Ban a user.
-   * @param {string} channel
-   * @param {string} username
-   * @param {Function} [callback]
+   * @param {string} channel the twitch channel to ban in
+   * @param {string} username the twitch user to ban
+   * @param {Function} [callback] called after succesfull ban
    */
   ban(channel, username, callback = null) {
     this.limiter.removeTokens(1, () => {
-      this.driver.ban(channel, username).then(() => {
-        if (typeof callback !== 'function') return;
-        callback();
-      }).catch((err) => {
-        this.app.log.out('error', module, `Ban: ${err}`);
-      });
+      this.driver
+        .ban(channel, username)
+        .then(() => {
+          if (typeof callback !== 'function') return;
+          callback();
+        })
+        .catch(err => {
+          this.app.log.out('error', module, `Ban: ${err}`);
+        });
     });
   }
 
   /**
    * Log a moderation action to the database.
-   * @param {...*} values
+   * @param {...*} values the extra arguments to log
    */
   logModeration(...values) {
     this.app.database.add('botLog', values);
@@ -195,29 +203,25 @@ class IrcManager extends Socket {
    * @returns {Promise}
    */
   setCache() {
-    return Promise.all([
-      this.cacheJokes(),
-      this.cacheFilters(),
-      this.cacheCommands(),
-    ]).catch((err) => {
+    return Promise.all([this.cacheJokes(), this.cacheFilters(), this.cacheCommands()]).catch(err => {
       this.app.log.fatal('critical', module, `Cache: ${err}`);
     });
   }
 
   /**
    * Cache the jokes.
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   cacheJokes() {
-    return this.app.database.get('jokes').then((all) => {
+    return this.app.database.get('jokes').then(all => {
       this.jokes.length = 0;
-      all.forEach((item) => this.jokes.push(item));
+      all.forEach(item => this.jokes.push(item));
     });
   }
 
   /**
    * Cache the moderation filters.
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   cacheFilters() {
     return this.cache('ircFilters', this.filters, 'id');
@@ -225,7 +229,7 @@ class IrcManager extends Socket {
 
   /**
    * Cache the commands.
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   cacheCommands() {
     return this.cache('ircCommands', this.commands, 'input', 'prefix');
@@ -233,13 +237,14 @@ class IrcManager extends Socket {
 
   /**
    * Query the database and set a given cache.
-   * @param {string} method
-   * @param {Collection} map
-   * @param {string} key
-   * @returns {Promise}
+   * @param {string} method the database table to get
+   * @param {Collection} map the map to store data in
+   * @param {string} [key] a key to use for the new map
+   * @param {string} [secondaryKey=false] a dashed key to use for the new map
+   * @returns {Promise<void>}
    */
   cache(method, map, key, secondaryKey = false) {
-    return this.app.database.get(method).then((all) => {
+    return this.app.database.get(method).then(all => {
       map.clear();
       collect(map, all, key, secondaryKey);
     });

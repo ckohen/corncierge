@@ -9,39 +9,38 @@ const twitch = require('../util');
 
 module.exports = (socket, callback, hasArgs, user, target) => {
   const followCall = (userId, handle) => {
-    socket.app.api.follow(userId).then((body) => {
-      if (body.created_at === null) return;
+    socket.app.api
+      .follow(userId)
+      .then(body => {
+        if (body.created_at === null) return false;
 
-      const age = moment(body.created_at).valueOf();
+        const age = moment(body.created_at).valueOf();
 
-      return callback(lang.followage(
-        handle,
-        helpers.humanDate(age),
-        helpers.relativeTime(age),
-      ));
-    }).catch((err) => {
-      if (err.statusCode === 404 || err.statusCode === '404') {
-        callback();
-        return;
-      }
+        return callback(lang.followage(handle, helpers.humanDate(age), helpers.relativeTime(age)));
+      })
+      .catch(err => {
+        if (err.statusCode === 404 || err.statusCode === '404') {
+          return callback();
+        }
 
-      socket.app.log.out('error', module, err);
-    });
+        socket.app.log.out('error', module, err);
+        return false;
+      });
   };
 
   if (hasArgs) {
-    socket.app.api.user(target, (body) => {
-      if (body.users.length === 0) return;
+    socket.app.api.user(target, body => {
+      if (body.users.length === 0) return false;
 
       const obj = body.users[0];
       const name = obj.display_name || obj.name;
 
       // eslint-disable-next-line no-underscore-dangle
-      followCall(obj._id, name);
+      return followCall(obj._id, name);
     });
 
-    return;
+    return false;
   }
 
-  followCall(user['user-id'], twitch.handle(user));
+  return followCall(user['user-id'], twitch.handle(user));
 };

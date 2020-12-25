@@ -6,10 +6,20 @@
  */
 class Request {
   /**
+   * An HTTP fetch method, one of:
+   * * GET (default)
+   * * PATCH
+   * * POST
+   * * PUT
+   * * DELETE
+   * @typedef {string} HTTPMethod
+   */
+
+  /**
    * Create a new request promise.
-   * @param {string} uri
-   * @param {string} [method]
-   * @param {Object} [body]
+   * @param {string} uri the extended path to request
+   * @param {HTTPMethod} [method] the http method
+   * @param {Object} [body] the body to use for this request
    * @returns {Promise<Request>}
    */
   promise(uri, method = 'GET', body = {}) {
@@ -23,25 +33,27 @@ class Request {
 
   /**
    * Make a request.
-   * @param {string} uri
-   * @param {string} [method]
-   * @param {Object} [body]
-   * @param {Function} [callback]
+   * @param {string} uri the extended path to request
+   * @param {HTTPMethod} [method] the http method
+   * @param {Object} [body] the body to use for this request
+   * @param {Function} [callback] a function to call with the returned data
    */
   call(uri, method = 'GET', body = {}, callback = null) {
-    this.promise(uri, method, body).then((...args) => {
-      if (typeof callback !== 'function') return;
-      callback(...args);
-    }).catch((err) => {
-      this.app.log.out('error', module, err);
-    });
+    this.promise(uri, method, body)
+      .then((...args) => {
+        if (typeof callback !== 'function') return;
+        callback(...args);
+      })
+      .catch(err => {
+        this.app.log.out('error', module, err);
+      });
   }
 
   /**
    * Make a GET request.
-   * @param {string} uri
-   * @param {Object} body
-   * @param {Function} callback
+   * @param {string} uri the extended path to request
+   * @param {Object} body the body to use for this request
+   * @param {Function} callback a function to call with the returned data
    */
   get(uri, body, callback) {
     this.call(uri, 'GET', body, callback);
@@ -49,9 +61,9 @@ class Request {
 
   /**
    * Make a POST request.
-   * @param {string} uri
-   * @param {Object} body
-   * @param {Function} callback
+   * @param {string} uri the extended path to request
+   * @param {Object} body the body to use for this request
+   * @param {Function} callback a function to call with the returned data
    */
   post(uri, body, callback) {
     this.call(uri, 'POST', body, callback);

@@ -1,26 +1,26 @@
 'use strict';
 
 module.exports = {
-    name: 'prefix',
-    description: 'Allows server admins to change the prefix for all commands',
-    args: true,
-    permissions: 'MANAGE_GUILD',
+  name: 'prefix',
+  description: 'Allows server admins to change the prefix for all commands',
+  args: true,
+  permissions: 'MANAGE_GUILD',
 
-    async run(socket, message, args) {
-        args = args.join(' ');
+  async run(socket, message, args) {
+    args = args.join(' ');
 
-        if (args.indexOf("@") > -1 || args.indexOf("#") > -1) {
-            return message.channel.send(`${message.member}, Please do not use discord mentionable charachters in your prefix (@ and #)`);
-        }
+    if (args.indexOf('@') > -1 || args.indexOf('#') > -1) {
+      return message.channel.send(`${message.member}, Please do not use discord mentionable charachters in your prefix (@ and #)`);
+    }
 
-        try {
-            socket.prefixes.get(String(message.guild.id)).prefix = args;
-            await socket.app.database.edit('prefixes', [String(message.guild.id), args]);
-        } catch (err) {
-            socket.app.log.out('error', module, err);
-            return message.channel.send(`${message.member}, There was an error changing the prefix!`)
-        }
+    try {
+      socket.prefixes.get(String(message.guild.id)).prefix = args;
+      await socket.app.database.edit('prefixes', [String(message.guild.id), args]);
+    } catch (err) {
+      socket.app.log.out('error', module, err);
+      return message.channel.send(`${message.member}, There was an error changing the prefix!`);
+    }
 
-        return message.channel.send("Prefix has been changed to `" + args + "`");
-    },
+    return message.channel.send(`Prefix has been changed to \`${args}\``);
+  },
 };

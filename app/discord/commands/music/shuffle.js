@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+'use strict';
 
 module.exports = {
   channel: 'music',
@@ -6,20 +6,23 @@ module.exports = {
   description: 'Shuffle the song queue',
   role: 'DJ',
 
-  async run(socket, message) {
-    var voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.channel.send(`${message.member}, Join a channel and try again`);
-
-    let musicData = socket.musicData.get(String(message.guild.id));
-    if (
-      typeof musicData.songDispatcher == 'undefined' ||
-      musicData.songDispatcher == null
-    ) {
-      return message.channel.send(`${message.member}, There is no song playing right now!`);
+  run(socket, message) {
+    const voiceChannel = message.member.voice.channel;
+    if (!voiceChannel) {
+      message.channel.send(`${message.member}, Join a channel and try again`);
+      return;
     }
 
-    if (musicData.queue.length < 1)
-      return message.channel.send(`${message.member}, There are no songs in queue`);
+    const musicData = socket.musicData.get(String(message.guild.id));
+    if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
+      message.channel.send(`${message.member}, There is no song playing right now!`);
+      return;
+    }
+
+    if (musicData.queue.length < 1) {
+      message.channel.send(`${message.member}, There are no songs in queue`);
+      return;
+    }
 
     shuffleQueue(musicData.queue);
 
@@ -33,8 +36,8 @@ module.exports = {
     for (let i = 0; i < numOfEmbedFields; i++) {
       queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
     }
-    return message.channel.send(queueEmbed);
-  }
+    message.channel.send(queueEmbed);
+  },
 };
 
 function shuffleQueue(queue) {

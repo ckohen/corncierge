@@ -116,20 +116,19 @@ class CommandInteraction extends Interaction {
     }
 
     Object.defineProperty(apiMessage, 'hideSource', {
-        value: options.hideSource ?? false,
-        writable: true,      
+      value: options.hideSource ?? false,
+      writable: true,
     });
 
     Object.defineProperty(apiMessage.data, 'flags', {
-        value: options.ephemeral ? 64 : 0,
-        writable: true,
-    })
+      value: options.ephemeral ? 64 : 0,
+      writable: true,
+    });
 
     const resolved = await apiMessage.resolveFiles();
 
     if (!this.syncHandle.reply(resolved)) {
-      const clientID =
-        this.client.interactionClient.clientID || (await this.client.api.oauth2.applications('@me').get()).id;
+      const clientID = this.client.interactionClient.clientID || (await this.client.api.oauth2.applications('@me').get()).id;
 
       await this.client.api.webhooks(clientID, this.token).post({
         auth: false,

@@ -1,28 +1,25 @@
+'use strict';
+
 module.exports = {
   channel: 'music',
   name: 'loop',
   description: 'Loop the current playing song',
   args: true,
   role: 'DJ',
-  usage: "<amount>",
+  usage: '<amount>',
 
-  async run(socket, message, args) {
-    numOfTimesToLoop = Number(args.join(' '));
-    let musicData = socket.musicData.get(String(message.guild.id));
+  run(socket, message, args) {
+    const numOfTimesToLoop = Number(args.join(' '));
+    const musicData = socket.musicData.get(String(message.guild.id));
     if (!musicData.isPlaying) {
-      return message.channel.send(`${message.member}, There is no song playing right now!`);
+      message.channel.send(`${message.member}, There is no song playing right now!`);
+      return;
     }
 
     for (let i = 0; i < numOfTimesToLoop; i++) {
       musicData.queue.unshift(musicData.nowPlaying);
     }
 
-    // prettier-ignore
-    message.channel.send(
-      `${musicData.nowPlaying.title} looped ${numOfTimesToLoop} ${
-      (numOfTimesToLoop == 1) ? 'time' : 'times'
-      }`
-    );
-    return;
-  }
+    message.channel.send(`${musicData.nowPlaying.title} looped ${numOfTimesToLoop} ${numOfTimesToLoop === 1 ? 'time' : 'times'}`);
+  },
 };
