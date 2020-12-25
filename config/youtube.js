@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
-    token: process.env.YT_TOKEN, 
+  token: process.env.YT_TOKEN,
 };

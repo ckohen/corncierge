@@ -2,12 +2,7 @@
 
 module.exports = {
   channel: 'commandManagement',
-  usage: [
-    '(add|edit) <command> <response>',
-    'rename <old> <new>',
-    'delete <command>',
-    'level <command> <lowest required user level>'
-  ],
+  usage: ['(add|edit) <command> <response>', 'rename <old> <new>', 'delete <command>', 'level <command> <lowest required user level>'],
 
   async run(socket, message, args) {
     const routines = ['add', 'edit', 'rename', 'delete', 'level'];
@@ -16,29 +11,41 @@ module.exports = {
     const [actionRaw, inputRaw, ...outputRaw] = args;
     const action = actionRaw ? actionRaw.toLowerCase() : null;
     const input = inputRaw ? inputRaw.replace(/^[\W]+/g, '').trim() : null;
-    const output = outputRaw.length > 0
-      ? outputRaw.join(' ').replace(/^['"]+|['"]+$/g, '').trim() : null;
+    const output =
+      outputRaw.length > 0
+        ? outputRaw
+            .join(' ')
+            .replace(/^['"]+|['"]+$/g, '')
+            .trim()
+        : null;
 
     const send = (content, mention = false) => {
       if (!content) return;
       const target = mention ? `, ${message.author}` : '';
-      message.channel.send(`${content}${target}.`).catch((err) => {
+      message.channel.send(`${content}${target}.`).catch(err => {
         socket.app.log.out('error', module, err);
       });
     };
 
-    const respond = (content) => send(content, true);
+    const respond = content => send(content, true);
 
-    if (!routines.includes(action)) return respond('Specify a valid subroutine');
-    if (!input) return respond('Provide a command name');
+    if (!routines.includes(action)) {
+      respond('Specify a valid subroutine');
+      return;
+    }
+    if (!input) {
+      respond('Provide a command name');
+      return;
+    }
 
-    const prefixBool = (inputRaw.charAt(0) === "!");
-    const prefix = prefixBool ? "!" : "";
+    const prefixBool = inputRaw.charAt(0) === '!';
+    const prefix = prefixBool ? '!' : '';
 
-    const command = socket.app.irc.commands.get(input + (prefixBool ? "-1" : "-0"));
+    const command = socket.app.irc.commands.get(input + (prefixBool ? '-1' : '-0'));
 
     if (command && command.locked) {
-      return respond('That command is locked and can\'t be modified');
+      respond("That command is locked and can't be modified");
+      return;
     }
 
     let data = null;
@@ -50,74 +57,81 @@ module.exports = {
     switch (action) {
       // Add command
       case 'add':
-        if (command) return respond('That command already exists');
-        if (!output) return respond('Provide a command response');
-
+        if (command) {
+          respond('That command already exists');
+          return;
+        }
+        if (!output) {
+          respond('Provide a command response');
+          return;
+        }
         method = 'add';
         data = [input, output, prefixBool ? 1 : 0];
         success = `Command \`${prefix}${input}\` added`;
-        failure = 'Couldn\'t add command. Please try again';
-
+        failure = "Couldn't add command. Please try again";
         break;
-
       // Edit command
       case 'edit':
-        if (!command) return respond('That command doesn\'t exist. Try adding it');
-        if (!output || output === command.output) {
-          return respond('Provide an updated command response');
+        if (!command) {
+          respond("That command doesn't exist. Try adding it");
+          return;
         }
-
+        if (!output || output === command.output) {
+          respond('Provide an updated command response');
+          return;
+        }
         method = 'edit';
         submethod = 'output';
         data = [command.id, output];
         success = `Command \`${prefix}${input}\` updated`;
-        failure = 'Couldn\'t edit command. Please try again';
-
+        failure = "Couldn't edit command. Please try again";
         break;
-
       // Rename command
       case 'rename':
-        if (!command) return respond('That command doesn\'t exist');
-        if (!output || output === command.input) {
-          return respond('Provide a new command name');
+        if (!command) {
+          respond("That command doesn't exist");
+          return;
         }
-
+        if (!output || output === command.input) {
+          respond('Provide a new command name');
+          return;
+        }
         method = 'edit';
         submethod = 'rename';
         data = [command.id, output];
         success = `Command \`${prefix}${input}\` renamed to \`${prefix}${output}\``;
-        failure = 'Couldn\'t rename command. Please try again';
-
+        failure = "Couldn't rename command. Please try again";
         break;
-
       // Delete command
       case 'delete':
-        if (!command) return respond('That command doesn\'t exist');
-
+        if (!command) {
+          respond("That command doesn't exist");
+          return;
+        }
         method = 'delete';
         data = [command.id];
         success = `Command \`${prefix}${input}\` deleted`;
-        failure = 'Couldn\'t delete command. Please try again';
-
+        failure = "Couldn't delete command. Please try again";
         break;
-
       // Edit command level
       case 'level':
-        if (!command) return respond('That command doesn\'t exist. Try adding it');
+        if (!command) {
+          respond("That command doesn't exist. Try adding it");
+          return;
+        }
         if (!output || output.toLowerCase() === command.restriction) {
-          return respond('Provide an updated user level requirenment');
+          respond('Provide an updated user level requirenment');
+          return;
         }
-
         if (!levels.includes(output)) {
-          return respond('Specify a valid user level');
+          respond('Specify a valid user level');
+          return;
         }
-
         method = 'edit';
         submethod = 'restriction';
         data = [command.id, output.toLowerCase()];
         success = `Command Level for \`${prefix}${input}\` updated`;
-        failure = 'Couldn\'t edit command. Please try again';
-
+        failure = "Couldn't edit command. Please try again";
         break;
       default:
         return;
@@ -127,17 +141,18 @@ module.exports = {
 
     try {
       if (method === 'edit') {
-        await socket.app.database[method]('ircCommands', method, data);
+        await socket.app.database[method]('ircCommands', submethod, data);
       } else {
         await socket.app.database[method]('ircCommands', data);
       }
     } catch (err) {
       socket.app.log.out('error', module, err);
-      return respond(failure);
+      respond(failure);
+      return;
     }
 
     await socket.app.irc.cacheCommands();
 
-    return send(success);
+    send(success);
   },
 };

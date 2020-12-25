@@ -1,16 +1,17 @@
 'use strict';
 
-const { Client, Collection, MessageEmbed } = require('discord.js');
-const { collect } = require('../util/helpers');
+const { Client, Collection } = require('discord.js');
 
+const Composer = require('./Composer');
+const commands = require('./commands');
 const embeds = require('./embeds');
 const events = require('./events');
-const Socket = require('../Socket');
-const commands = require('./commands');
-const applicationCommands = require('./interactions/applicationCommands');
-const Composer = require('./Composer');
-const messages = require('./messages');
 const interactionHandler = require('./interactionHandler');
+const applicationCommands = require('./interactions/applicationCommands');
+const messages = require('./messages');
+const Socket = require('../Socket');
+
+const { collect } = require('../util/helpers');
 
 /**
  * Discord manager for the application.
@@ -20,9 +21,8 @@ const interactionHandler = require('./interactionHandler');
 class DiscordManager extends Socket {
   /**
    * Create a new Discord manager instance.
-   * @param {Application} app
-   * @returns {self}
-  */
+   * @param {Application} app the application that instantiated this
+   */
   constructor(app) {
     super();
 
@@ -61,10 +61,10 @@ class DiscordManager extends Socket {
      * @type {Collection<string, Object>}
      */
     this.commands = new Collection();
-    
+
     /**
      * The application commands for the socket, mapped by input.
-     * @type {Collection<string, Object}
+     * @type {Collection<string, Object>}
      */
     this.applicationCommands = new Collection();
 
@@ -89,12 +89,12 @@ class DiscordManager extends Socket {
 
   /**
    * Initialize the manager.
-   * @returns {Promise}
+   * @returns {Promise<string>}
    */
   async init() {
     this.attach();
     // Temporary Addition to handle interactions before discord.js does
-    this.driver.ws.on('INTERACTION_CREATE', async (packet) => {
+    this.driver.ws.on('INTERACTION_CREATE', async packet => {
       const result = await interactionHandler(this.driver, packet);
 
       await this.driver.api.interactions(packet.id, packet.token).callback.post({
@@ -109,18 +109,18 @@ class DiscordManager extends Socket {
 
     Object.entries(applicationCommands).forEach(([command, handler]) => {
       this.applicationCommands.set(command, handler);
-    })
+    });
 
     await this.setCache();
 
-    return this.driver.login(this.app.options.discord.token).catch((err) => {
+    return this.driver.login(this.app.options.discord.token).catch(err => {
       this.app.log.out('error', module, `Login: ${err}`);
     });
   }
 
   /**
    * Cache all managers and music.
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   setCache() {
     return Promise.all([
@@ -133,39 +133,38 @@ class DiscordManager extends Socket {
       this.cache('newMemberRole', this.newMemberRoles, 'guildID'),
       this.cacheMusic(),
       this.cacheRooms(),
-    ]).catch((err) => {
+    ]).catch(err => {
       this.app.log.fatal('critical', module, `Cache: ${err}`);
     });
   }
 
   /**
    * Cache the music data.
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   cacheMusic() {
-    return this.app.database.get('volumes').then((volumes) => {
+    return this.app.database.get('volumes').then(volumes => {
       this.musicData.clear();
-      volumes.forEach((volume) => {
+      volumes.forEach(volume => {
         if (this.musicData.get(volume.guildID)) {
           this.musicData.get(volume.guildID).volume = Number(volume.volume);
-        }
-        else {
+        } else {
           this.musicData.set(volume.guildID, { queue: [], isPlaying: false, nowPlaying: null, songDispatcher: null, volume: Number(volume.volume) });
         }
-      })
-    })
+      });
+    });
   }
-  
+
   /**
    * Cache room data.
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   cacheRooms() {
-    return this.app.database.get('rooms').then((rooms) => {
+    return this.app.database.get('rooms').then(rooms => {
       this.rooms.clear();
       let roomGuild, roomID;
       let guild;
-      rooms.forEach((room) => {
+      rooms.forEach(room => {
         [roomGuild, roomID] = room.guildRoomID.split('-');
         guild = this.rooms.get(roomGuild);
         if (!guild) {
@@ -173,19 +172,20 @@ class DiscordManager extends Socket {
           guild = this.rooms.get(roomGuild);
         }
         guild.set(roomID, room.data);
-      })
-    })
+      });
+    });
   }
 
   /**
    * Query the database and set a given cache.
-   * @param {string} method
-   * @param {Collection} map
-   * @param {string} key
+   * @param {string} method the database table to get
+   * @param {Collection} map the map to store data in
+   * @param {string} key a key to use for the new map
+   * @param {string} [secondaryKey=false] a dashed key to use for the new map
    * @returns {Promise}
    */
   cache(method, map, key, secondaryKey = false) {
-    return this.app.database.get(method).then((all) => {
+    return this.app.database.get(method).then(all => {
       map.clear();
       collect(map, all, key, secondaryKey);
     });
@@ -193,8 +193,8 @@ class DiscordManager extends Socket {
 
   /**
    * Test a channel ID against the setting for the given key
-   * @param {number} id
-   * @param {string} key
+   * @param {string} id the id of the channel to test
+   * @param {string} key the channel name in settings to test against
    * @returns {boolean}
    */
   isChannel(id, key) {
@@ -202,18 +202,18 @@ class DiscordManager extends Socket {
   }
 
   /**
-  * Test a guild ID against the setting for the given key
-  * @param {number} id
-  * @param {string} key
-  * @returns {boolean}
-  */
+   * Test a guild ID against the setting for the given key
+   * @param {string} id the id of the guild to test
+   * @param {string} key the guild name in settings to test against
+   * @returns {boolean}
+   */
   isGuild(id, key) {
     return id === this.app.settings.get(`discord_guild_${key}`);
   }
 
   /**
    * Get the channel for the given slug.
-   * @param {string} slug
+   * @param {string} slug the channel name in settings to get
    * @returns {?Channel}
    */
   getChannel(slug) {
@@ -223,7 +223,7 @@ class DiscordManager extends Socket {
 
   /**
    * Get the webhook for the given slug.
-   * @param {string} slug
+   * @param {string} slug the webhook name in settings to get
    * @returns {?Promise<Webhook>}
    */
   getWebhook(slug) {
@@ -231,17 +231,16 @@ class DiscordManager extends Socket {
     try {
       uri = this.app.settings.get(`discord_webhook_${slug}`);
       this.driver.fetchWebhook(...uri.split('/'));
-    }
-    catch {
+    } catch {
       return Promise.resolve(false);
     }
-    return this.driver.fetchWebhook(...uri.split('/'));;
+    return this.driver.fetchWebhook(...uri.split('/'));
   }
 
   /**
    * Get the transformed content for the given slug.
-   * @param {string} slug
-   * @param {Array} args
+   * @param {string} slug the name of the message to get
+   * @param {Array} args arguments to pass to the transformer
    * @returns {?string}
    */
   getContent(slug, args) {
@@ -249,7 +248,7 @@ class DiscordManager extends Socket {
 
     if (typeof transformer !== 'function') {
       this.app.log.out('warn', module, `Unknown content: ${transformer}`);
-      return;
+      return null;
     }
 
     return transformer(...args);
@@ -257,8 +256,8 @@ class DiscordManager extends Socket {
 
   /**
    * Get the transformed embed for the given slug.
-   * @param {string} slug
-   * @param {Array} args
+   * @param {string} slug the name of the embed to get
+   * @param {Array} args arguments to pass to the constructor
    * @returns {?string}
    */
   getEmbed(slug, args) {
@@ -266,7 +265,7 @@ class DiscordManager extends Socket {
 
     if (typeof transformer !== 'function') {
       this.app.log.out('warn', module, `Unknown embed: ${transformer}`);
-      return;
+      return null;
     }
 
     return transformer(new Composer(this.app.options), ...args);
@@ -274,9 +273,9 @@ class DiscordManager extends Socket {
 
   /**
    * Send a message with the given content and embed.
-   * @param {string} slug
-   * @param {string|RichEmbed} content
-   * @param {MessageOptions|Attachment|MessageEmbed} [embed]
+   * @param {string} slug the channel name in settings to get and send to
+   * @param {string|RichEmbed} content the content to send
+   * @param {MessageOptions|Attachment|MessageEmbed} [embed] The options to provide
    */
   sendMessage(slug, content, embed) {
     const channel = this.getChannel(slug);
@@ -286,25 +285,25 @@ class DiscordManager extends Socket {
       return;
     }
 
-    channel.send(content, embed).catch((err) => {
+    channel.send(content, embed).catch(err => {
       this.app.log.out('error', module, `Send message: ${err}`);
     });
   }
 
   /**
    * Send a webhook with the given content and embed.
-   * @param {string} slug
-   * @param {string|RichEmbed} content
-   * @param {WebhookMessageOptions|Attachment|MessageEmbed} [embed]
+   * @param {string} slug the webhook name in settings to get and send to
+   * @param {string|RichEmbed} content the content to send
+   * @param {WebhookMessageOptions|Attachment|MessageEmbed} [embed] The options to provide
    */
   sendWebhook(slug, content, embed) {
-    this.getWebhook(slug).then((webhook) => {
+    this.getWebhook(slug).then(webhook => {
       if (!webhook) {
         this.app.log.out('warn', module, `No webhook set for slug: ${slug}`);
         return;
       }
 
-      webhook.send(content, embed).catch((err) => {
+      webhook.send(content, embed).catch(err => {
         this.app.log.out('error', module, `Send webhook: ${err}`);
       });
     });

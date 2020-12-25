@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-    port: process.env.HTTP_PORT,
+  port: process.env.HTTP_PORT,
 };

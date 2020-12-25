@@ -2,4 +2,4 @@
 
 const Application = require('./Application');
 
-module.exports = (options) => new Application(options);
+module.exports = options => new Application(options);

@@ -1,9 +1,9 @@
 'use strict';
 
 module.exports = (socket, before, after) => {
-  if (after.channelID == before.channelID) return;
+  if (after.channelID === before.channelID) return;
 
-  let afterRole = after.guild.roles.cache.find((item) => item.name.toLowerCase() === 'voice');
+  let afterRole = after.guild.roles.cache.find(item => item.name.toLowerCase() === 'voice');
   let beforeRole = afterRole;
   let roleData = socket.voiceRoles.get(String(after.member.guild.id));
 
@@ -20,7 +20,7 @@ module.exports = (socket, before, after) => {
         beforeID = roleID;
       }
     });
-    if (afterID != beforeID) {
+    if (afterID !== beforeID) {
       if (afterID) {
         afterRole = after.guild.roles.cache.get(afterID);
       }
@@ -33,7 +33,7 @@ module.exports = (socket, before, after) => {
   let musicData = socket.musicData.get(String(after.guild.id));
 
   if (after.channelID !== null) {
-    if (after.member.user.id == socket.driver.user.id && !after.selfDeaf) {
+    if (after.member.user.id === socket.driver.user.id && !after.selfDeaf) {
       after.setSelfDeaf(true);
       return;
     }
@@ -42,28 +42,26 @@ module.exports = (socket, before, after) => {
       return;
     }
     if (afterRole) {
-      after.member.roles.add(afterRole).catch((err) => {
+      after.member.roles.add(afterRole).catch(err => {
         socket.app.log.out('error', module, err);
       });
     }
-    if (beforeRole && beforeRole != afterRole) {
-      after.member.roles.remove(beforeRole).catch((err) => {
+    if (beforeRole && beforeRole !== afterRole) {
+      after.member.roles.remove(beforeRole).catch(err => {
         socket.app.log.out('error', module, err);
       });
     }
     return;
   }
 
-  if (after.member.user.bot &&
-    musicData.songDispatcher &&
-    after.member.user.id == socket.driver.user.id) {
+  if (after.member.user.bot && musicData.songDispatcher && after.member.user.id === socket.driver.user.id) {
     musicData.queue.length = 0;
     musicData.songDispatcher.end();
     return;
   }
 
   if (!beforeRole) return;
-  after.member.roles.remove(beforeRole).catch((err) => {
+  after.member.roles.remove(beforeRole).catch(err => {
     socket.app.log.out('error', module, err);
   });
 };

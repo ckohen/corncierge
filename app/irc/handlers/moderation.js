@@ -16,11 +16,7 @@ module.exports = (socket, channel, tags, message, filter) => {
     case filterTypes.BAN:
       action = 'ban';
       socket.ban(channel, tags.username, () => {
-        discord.sendWebhook(
-          'ban',
-          discord.getContent('banAutomatic', [tags.username]),
-          discord.getEmbed('message', [tags.username, message]),
-        );
+        discord.sendWebhook('ban', discord.getContent('banAutomatic', [tags.username]), discord.getEmbed('message', [tags.username, message]));
       });
       break;
     // Timeout
@@ -30,9 +26,7 @@ module.exports = (socket, channel, tags, message, filter) => {
       socket.timeout(channel, tags.username, filter.duration, () => {
         discord.sendWebhook(
           'timeout',
-          discord.getContent('timeoutAutomatic', [
-            tags.username, humanDuration(filter.duration * 1000),
-          ]),
+          discord.getContent('timeoutAutomatic', [tags.username, humanDuration(filter.duration * 1000)]),
           discord.getEmbed('message', [tags.username, message]),
         );
       });
@@ -41,11 +35,7 @@ module.exports = (socket, channel, tags, message, filter) => {
     case filterTypes.DELETE:
       action = 'delete';
       socket.delete(channel, tags.id, () => {
-        discord.sendWebhook(
-          'delete',
-          discord.getContent('deleteAutomatic', [tags.username]),
-          discord.getEmbed('message', [tags.username, message]),
-        );
+        discord.sendWebhook('delete', discord.getContent('deleteAutomatic', [tags.username]), discord.getEmbed('message', [tags.username, message]));
       });
       break;
     // Warning
@@ -57,11 +47,7 @@ module.exports = (socket, channel, tags, message, filter) => {
     // Review
     case filterTypes.REVIEW:
       action = 'review';
-      discord.sendWebhook(
-        'review',
-        discord.getContent('review', [tags.username]),
-        discord.getEmbed('message', [tags.username, message]),
-      );
+      discord.sendWebhook('review', discord.getContent('review', [tags.username]), discord.getEmbed('message', [tags.username, message]));
       break;
     default:
       socket.app.log.out('warn', module, `Unknown moderation type: ${filter.type}`);
