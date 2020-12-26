@@ -20,6 +20,8 @@ module.exports = {
       return;
     }
 
+    const musicData = socket.musicData.get(String(message.guild.id));
+
     if (!message.guild.me.voice.channel) {
       musicData.isPlaying = false;
       musicData.nowPlaying = null;
@@ -31,7 +33,6 @@ module.exports = {
     }
 
     const youtube = new discordYoutube(socket.app.options.youtube.token);
-    let musicData = socket.musicData.get(String(message.guild.id));
 
     if (
       // If the user entered a youtube playlist url
