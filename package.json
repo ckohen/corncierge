@@ -21,7 +21,7 @@
   "author": "ckohen",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/opus": "^0.3.2",
+    "@discordjs/opus": "^0.3.3",
     "axios": "^0.21.1",
     "db-migrate": "^0.11.11",
     "db-migrate-mysql": "^2.1.1",
@@ -46,7 +46,7 @@
     "uuid": "^3.4.0",
     "winston": "^3.3.3",
     "ws": "^7.3.1",
-    "ytdl-core": "^4.1.2"
+    "ytdl-core": "^4.2.1"
   },
   "devDependencies": {
     "discord.js-docgen": "git+https://github.com/discordjs/docgen.git",
