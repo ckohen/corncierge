@@ -26,7 +26,7 @@ module.exports = {
       musicData.isPlaying = false;
       musicData.nowPlaying = null;
       musicData.songDispatcher = null;
-      if (!voiceChannel.permissionsFor(socket.driver.user).has(['VIEW_CHANNEL', 'CONNECT'])) {
+      if (!voiceChannel.joinable) {
         message.channel.send(`${message.member}, I cannot access that voice channel!`);
         return;
       }
@@ -232,13 +232,13 @@ function playSong(queue, message, socket) {
             musicData.isPlaying = false;
             musicData.nowPlaying = null;
             musicData.songDispatcher = null;
-            return message.guild.me.voice.channel.leave();
+            return message.guild.me.voice.channel?.leave();
           }
         });
     })
     .catch(e => {
       console.error(e);
-      return message.guild.me.voice.channel.leave();
+      return message.guild.me.voice.channel?.leave();
     });
 }
 
