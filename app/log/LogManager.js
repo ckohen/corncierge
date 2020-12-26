@@ -74,7 +74,9 @@ class LogManager {
   async out(level, source, message) {
     const path = this.path(source);
     this.driver.log(level, `[${path}] ${message}`);
-    await this.webhook(level, path, message);
+    if (this.opts.log.webhookLevels[level]) {
+      await this.webhook(level, path, message);
+    }
   }
 
   /**
