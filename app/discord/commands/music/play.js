@@ -200,7 +200,6 @@ function playSong(queue, message, socket) {
         )
         .on('start', () => {
           musicData.songDispatcher = dispatcher;
-          dispatcher.pausedTime = 0;
           dispatcher.setVolume(musicData.volume);
           dispatcher.setBitrate(192);
           const videoEmbed = socket.getEmbed('play', [queue]);
