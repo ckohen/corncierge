@@ -70,7 +70,6 @@ module.exports = {
       }
       waitNotify.delete();
       if (musicData.isPlaying === false) {
-        musicData.isPlaying = true;
         playSong(musicData.queue, message, socket);
         return;
       } else if (musicData.isPlaying === true) {
