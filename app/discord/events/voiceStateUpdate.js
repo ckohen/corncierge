@@ -61,6 +61,7 @@ module.exports = (socket, before, after) => {
   }
 
   if (!beforeRole) return;
+  if (!after.member) return;
   after.member.roles.remove(beforeRole).catch(err => {
     socket.app.log.out('error', module, err);
   });
