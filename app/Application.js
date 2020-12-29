@@ -9,6 +9,7 @@ const DiscordManager = require('./discord/DiscordManager');
 const HTTPManager = require('./http/HTTPManager');
 const IrcManager = require('./irc/IrcManager');
 const LogManager = require('./log/LogManager');
+const logBuilder = require('./log/LogRouter');
 const { collect } = require('./util/helpers');
 
 /**
@@ -57,7 +58,7 @@ class Application {
      * @type {LogManager}
      * @public
      */
-    this.log = new LogManager(this);
+    this.logger = new LogManager(this);
 
     /**
      * The settings for the application, mapped by name.
@@ -103,6 +104,30 @@ class Application {
   }
 
   /**
+   * A level of logging based on the following:
+   * * fatal - a critical error that ends the application
+   * * critical - potentially breaking issue
+   * * error - high priority non-breaking issue
+   * * warn - non-breaking issue
+   * * info - general information
+   * * debug - highly detailed debug information
+   * * verbose - clutters the log
+   * @typedef {string} LogLevel
+   */
+
+  /**
+   * Logging shortcut. Logs to `info` by default. Other levels are properties.
+   * @type {Object}
+   * @property {LogLevel} level the level of log to make
+   * @param {Module} source the module sourcing this log
+   * @param {string} message the message to output
+   * @readonly
+   */
+  get log() {
+    return logBuilder(this);
+  }
+
+  /**
    * Boot the application.
    * @public
    */
@@ -113,7 +138,7 @@ class Application {
     await Promise.all([this.discord.init(), this.irc.init()]);
     await this.http.init();
 
-    this.log.out('info', module, 'Boot complete');
+    this.log(module, 'Boot complete');
     // Send "Ready" to parent if it exists
     if (typeof process.send === 'function') {
       process.send('ready');
@@ -127,7 +152,7 @@ class Application {
       await this.discord.driver.destroy();
       await this.http.driver.close();
     } catch (err) {
-      this.log.out('error', module, `Error when shutting down: ${err}`);
+      this.log.error(module, `Error when shutting down: ${err}`);
     }
     process.exit(code);
   }
@@ -157,7 +182,7 @@ class Application {
       .get('settings')
       .then(all => collect(this.settings, all, 'name', null, 'value'))
       .catch(err => {
-        this.log.fatal('critical', module, `Settings: ${err}`);
+        this.log.fatal(module, `Settings: ${err}`);
       });
   }
 
@@ -171,7 +196,7 @@ class Application {
       .get('streaming')
       .then(all => collect(this.streaming, all, 'name', null))
       .catch(err => {
-        this.log.fatal('critical', module, `Streaming Settings: ${err}`);
+        this.log.fatal(module, `Streaming Settings: ${err}`);
       });
   }
 }
