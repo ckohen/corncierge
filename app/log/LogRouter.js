@@ -14,7 +14,7 @@ function buildLog(app) {
     },
     apply(target, _, args) {
       if (level === 'fatal') {
-        app.logger.fatal(...args);
+        app.logger.fatal('critical', ...args);
       } else if (levels.includes(level)) {
         app.logger.out(level, ...args);
       } else {
