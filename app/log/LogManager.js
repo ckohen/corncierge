@@ -41,7 +41,7 @@ class LogManager {
       ),
       transports: [
         new wn.transports.Console({
-          level: this.app.debug ? 'debug' : 'error',
+          level: this.opts.log.verbose ? 'verbose' : this.app.debug ? 'debug' : 'error',
           handleExceptions: true,
         }),
         new wn.transports.File({

@@ -7,6 +7,7 @@ module.exports = {
     warn: 'yellow',
     info: 'cyan',
     debug: 'green',
+    verbose: 'blue',
   },
   levels: {
     critical: 0,
@@ -14,9 +15,11 @@ module.exports = {
     warn: 2,
     info: 3,
     debug: 4,
+    verbose: 5,
   },
   maxLevel: process.env.LOG_LEVEL || 'error',
   outputFile: process.env.LOG_LOCATION,
+  verbose: process.env.LOG_VERBOSE === 'true',
   webhookBase: 'https://discordapp.com/api/webhooks/',
   webhookLevels: {
     error: 'red',

@@ -45,7 +45,7 @@ class AuthManager {
         qs.stringify({
           client_id: this.opts.auth.clientID,
           client_secret: this.opts.auth.clientSecret,
-          code: slug === this.opts.irc.identity.username.slice(1, -1) ? this.opts.auth.botCode : this.app.database.get(`twitch_code_${slug}`),
+          code: slug === this.opts.irc.identity.username ? this.opts.auth.botCode : this.app.database.get(`twitch_code_${slug}`),
           grant_type: 'authorization_code',
           redirect_uri: this.opts.auth.redirectUri,
         }),
@@ -72,8 +72,8 @@ class AuthManager {
       if (await this.validateToken(token)) return token;
       return this.refreshToken(slug);
     }
-    if (slug === this.opts.irc.identity.username.slice(1, -1)) {
-      return this.generateToken(this.opts.irc.identity.username.slice(1, -1));
+    if (slug === this.opts.irc.identity.username) {
+      return this.generateToken(this.opts.irc.identity.username);
     }
     return Promise.reject(new Error('Get Token'));
   }
