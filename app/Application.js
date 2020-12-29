@@ -56,7 +56,7 @@ class Application {
     /**
      * The log manager for the application.
      * @type {LogManager}
-     * @public
+     * @private
      */
     this.logger = new LogManager(this);
 
@@ -117,10 +117,9 @@ class Application {
 
   /**
    * Logging shortcut. Logs to `info` by default. Other levels are properties.
-   * @type {Object}
+   * @type {Logging}
    * @property {LogLevel} level the level of log to make
-   * @param {Module} source the module sourcing this log
-   * @param {string} message the message to output
+   * @property {function({Module, string})} log output the log with these parameters
    * @readonly
    */
   get log() {
