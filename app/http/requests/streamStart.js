@@ -14,7 +14,7 @@ module.exports = async (socket, url, headers) => {
   // Get the annoucement channel defined for the user
   let channel = await socket.getChannel(user);
   if (!channel) {
-    console.log('No channel');
+    socket.app.log.debug(module, 'No channel');
     return;
   }
 
@@ -29,7 +29,7 @@ module.exports = async (socket, url, headers) => {
 
   let role = await socket.getRole(user, channel);
   if (!role) {
-    console.log('No Role');
+    socket.app.log.debug(module, 'No Role');
     return;
   }
 

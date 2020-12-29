@@ -13,6 +13,6 @@ const config = require('./config');
 // Run
 const app = require('./app')(config);
 
-app.log.out('info', '#', 'Starting...');
+app.log('#', 'Starting...');
 
 app.boot();

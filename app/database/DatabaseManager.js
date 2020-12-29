@@ -72,7 +72,7 @@ class DatabaseManager {
     const table = this.tables[slug];
 
     if (typeof table !== 'object' || typeof table.get !== 'function') {
-      this.app.log.out('warn', module, `Table does not have get method: ${slug}`);
+      this.app.log.warn(module, `Table does not have get method: ${slug}`);
       return Promise.reject(new Error('Table Get'));
     }
 
@@ -89,7 +89,7 @@ class DatabaseManager {
     const table = this.tables[slug];
 
     if (typeof table !== 'object' || typeof table.add !== 'function') {
-      this.app.log.out('warn', module, `Table does not have add method: ${slug}`);
+      this.app.log.warn(module, `Table does not have add method: ${slug}`);
       return Promise.reject(new Error('Table Add'));
     }
 
@@ -106,7 +106,7 @@ class DatabaseManager {
     const table = this.tables[slug];
 
     if (typeof table !== 'object' || typeof table.delete !== 'function') {
-      this.app.log.out('warn', module, `Table does not have delete method: ${slug}`);
+      this.app.log.warn(module, `Table does not have delete method: ${slug}`);
       return Promise.reject(new Error('Table Delete'));
     }
 
@@ -124,7 +124,7 @@ class DatabaseManager {
     const table = this.tables[slug];
 
     if (typeof table !== 'object' || typeof table.edit !== 'function') {
-      this.app.log.out('warn', module, `Table does not have edit method: ${slug}`);
+      this.app.log.warn(module, `Table does not have edit method: ${slug}`);
       return Promise.reject(new Error('Table Edit'));
     }
 

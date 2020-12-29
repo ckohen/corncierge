@@ -7,5 +7,5 @@ module.exports = (socket, from, user, message) => {
 
   socket.app.discord.sendMessage('whispers', socket.app.discord.getEmbed('whisper', [handle, message]));
 
-  socket.app.log.out('debug', module, `Received whisper from ${handle}: ${message}`);
+  socket.app.log.debug(module, `Received whisper from ${handle}: ${message}`);
 };

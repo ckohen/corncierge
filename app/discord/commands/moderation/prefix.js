@@ -17,7 +17,7 @@ module.exports = {
       socket.prefixes.get(String(message.guild.id)).prefix = args;
       await socket.app.database.edit('prefixes', [String(message.guild.id), args]);
     } catch (err) {
-      socket.app.log.out('error', module, err);
+      socket.app.log.error(module, err);
       return message.channel.send(`${message.member}, There was an error changing the prefix!`);
     }
 

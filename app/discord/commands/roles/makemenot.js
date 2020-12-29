@@ -38,11 +38,11 @@ function roleAssign(socket, message, validRoles, args) {
       member.roles.remove(role);
       roleAssigned = true;
     } catch (err) {
-      socket.app.log.out('error', module, err);
+      socket.app.log.error(module, err);
       roleAssigned = false;
     }
 
-    socket.app.log.out('info', module, `Removed ${role.name} from ${member.user.username}`);
+    socket.app.log.verbose(module, `Removed ${role.name} from ${member.user.username}`);
 
     // Notify user of role removal
     roleName = roleName.charAt(0).toUpperCase() + roleName.substring(1);

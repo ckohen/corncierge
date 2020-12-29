@@ -19,7 +19,7 @@ module.exports = {
     ];
 
     message.channel.send(status).catch(err => {
-      socket.app.log.out('error', module, err);
+      socket.app.log.error(module, err);
     });
   },
 };

@@ -140,7 +140,7 @@ class ApiManager extends Request {
         }, id);
       });
     } catch (error) {
-      this.app.log.out('debug', module, `Failed to get ${user} uptime`);
+      this.app.log.debug(module, `Failed to get ${user} uptime`);
     }
   }
 
@@ -156,7 +156,7 @@ class ApiManager extends Request {
       const fiveMins = 300000;
       cache.put(`stream.uptime.${user}`, time, fiveMins);
       cache.put(`stream.user.${user}`, id, thirtyMins);
-      this.app.log.out('debug', module, `Uptime for ${user} cached`);
+      this.app.log.debug(module, `Uptime for ${user} cached`);
     }
 
     return callback(time);

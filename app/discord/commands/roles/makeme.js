@@ -38,11 +38,11 @@ function roleAssign(socket, message, validRoles, args) {
       member.roles.add(role);
       roleAssigned = true;
     } catch (err) {
-      socket.app.log.out('error', module, err);
+      socket.app.log.error(module, err);
       roleAssigned = false;
     }
 
-    socket.app.log.out('info', module, `Added ${role.name} to ${member.user.username}`);
+    socket.app.log.verbose(module, `Added ${role.name} to ${member.user.username}`);
 
     // Notify user of role addition
     roleName = roleName.charAt(0).toUpperCase() + roleName.substring(1);

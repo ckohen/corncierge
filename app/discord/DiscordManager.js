@@ -114,7 +114,7 @@ class DiscordManager extends Socket {
     await this.setCache();
 
     return this.driver.login(this.app.options.discord.token).catch(err => {
-      this.app.log.out('error', module, `Login: ${err}`);
+      this.app.log.error(module, `Login: ${err}`);
     });
   }
 
@@ -134,7 +134,7 @@ class DiscordManager extends Socket {
       this.cacheMusic(),
       this.cacheRooms(),
     ]).catch(err => {
-      this.app.log.fatal('critical', module, `Cache: ${err}`);
+      this.app.log.fatal(module, `Cache: ${err}`);
     });
   }
 
@@ -247,7 +247,7 @@ class DiscordManager extends Socket {
     const transformer = this.messages[slug];
 
     if (typeof transformer !== 'function') {
-      this.app.log.out('warn', module, `Unknown content: ${transformer}`);
+      this.app.log.warn(module, `Unknown content: ${transformer}`);
       return null;
     }
 
@@ -264,7 +264,7 @@ class DiscordManager extends Socket {
     const transformer = this.embeds[slug];
 
     if (typeof transformer !== 'function') {
-      this.app.log.out('warn', module, `Unknown embed: ${transformer}`);
+      this.app.log.warn(module, `Unknown embed: ${transformer}`);
       return null;
     }
 
@@ -281,12 +281,12 @@ class DiscordManager extends Socket {
     const channel = this.getChannel(slug);
 
     if (!channel) {
-      this.app.log.out('warn', module, `No channel set for slug: ${slug}`);
+      this.app.log.warn(module, `No channel set for slug: ${slug}`);
       return;
     }
 
     channel.send(content, embed).catch(err => {
-      this.app.log.out('error', module, `Send message: ${err}`);
+      this.app.log.error(module, `Send message: ${err}`);
     });
   }
 
@@ -299,12 +299,12 @@ class DiscordManager extends Socket {
   sendWebhook(slug, content, embed) {
     this.getWebhook(slug).then(webhook => {
       if (!webhook) {
-        this.app.log.out('warn', module, `No webhook set for slug: ${slug}`);
+        this.app.log.warn(module, `No webhook set for slug: ${slug}`);
         return;
       }
 
       webhook.send(content, embed).catch(err => {
-        this.app.log.out('error', module, `Send webhook: ${err}`);
+        this.app.log.error(module, `Send webhook: ${err}`);
       });
     });
   }

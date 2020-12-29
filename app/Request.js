@@ -45,7 +45,7 @@ class Request {
         callback(...args);
       })
       .catch(err => {
-        this.app.log.out('error', module, err);
+        this.app.log.error(module, err);
       });
   }
 

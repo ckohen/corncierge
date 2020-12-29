@@ -50,7 +50,7 @@ module.exports = (socket, channel, tags, message, filter) => {
       discord.sendWebhook('review', discord.getContent('review', [tags.username]), discord.getEmbed('message', [tags.username, message]));
       break;
     default:
-      socket.app.log.out('warn', module, `Unknown moderation type: ${filter.type}`);
+      socket.app.log.warn(module, `Unknown moderation type: ${filter.type}`);
       break;
   }
 
