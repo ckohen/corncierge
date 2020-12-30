@@ -23,7 +23,8 @@ const reflectors = ['toString', 'valueOf', 'inspect', 'constructor', Symbol.toPr
 
 /**
  * @memberof Logging
- * @property {Logging} level the level of log to make
+ * @type {Logging} 
+ * @name level the level of log to make, one of {@link LogLevel}
  */
 
 /**
