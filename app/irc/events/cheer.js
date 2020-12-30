@@ -12,5 +12,5 @@ module.exports = (socket, channel, tags) => {
 
   socket.say(channel, format(alert, { amount, user: twitch.handle(tags) }));
 
-  socket.app.log.out('debug', module, JSON.stringify(tags));
+  socket.app.log.verbose(module, JSON.stringify(tags));
 };

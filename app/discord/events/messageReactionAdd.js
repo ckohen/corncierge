@@ -6,7 +6,7 @@ module.exports = async (socket, reaction, user) => {
     try {
       await reaction.fetch();
     } catch (error) {
-      socket.app.log.out('debug', module, `Could not get partial reaction: ${error}`);
+      socket.app.log.verbose(module, `Could not get partial reaction: ${error}`);
       return;
     }
   }
@@ -35,6 +35,6 @@ module.exports = async (socket, reaction, user) => {
   try {
     member.roles.add(guild.roles[String(emote)]);
   } catch (error) {
-    socket.app.log.out('info', module, 'Error adding reaction roles', error);
+    socket.app.log.warn(module, 'Error adding reaction roles', error);
   }
 };

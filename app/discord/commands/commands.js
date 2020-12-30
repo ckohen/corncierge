@@ -23,7 +23,7 @@ module.exports = {
       if (!content) return;
       const target = mention ? `, ${message.author}` : '';
       message.channel.send(`${content}${target}.`).catch(err => {
-        socket.app.log.out('error', module, err);
+        socket.app.log.error(module, err);
       });
     };
 
@@ -146,7 +146,7 @@ module.exports = {
         await socket.app.database[method]('ircCommands', data);
       }
     } catch (err) {
-      socket.app.log.out('error', module, err);
+      socket.app.log.error(module, err);
       respond(failure);
       return;
     }

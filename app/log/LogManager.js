@@ -56,16 +56,6 @@ class LogManager {
   }
 
   /**
-   * The level of the log, one of:
-   * * critical
-   * * error
-   * * warn
-   * * info
-   * * debug
-   * @typedef {string} LogLevel
-   */
-
-  /**
    * Write a message to the log.
    * @param {LogLevel} level the log level
    * @param {Module} source the module sourcing this log

@@ -42,14 +42,14 @@ async function roleAssign(socket, message, validRoles, colorSnowflakes, args) {
     if (roleName === 'remove') {
       message.channel.send(`Your color has been removed, ${member}`);
 
-      socket.app.log.out('info', module, `Removed ${member.user.username}'s color`);
+      socket.app.log.verbose(module, `Removed ${member.user.username}'s color`);
     } else {
       // Find the role within the discord server
       let role = message.guild.roles.cache.find(roles => roles.name.toLowerCase() === roleName.toLowerCase());
       // Add the role requested
       await member.roles.add(role);
 
-      socket.app.log.out('info', module, `Changed ${member.user.username}'s color to ${role.name}`);
+      socket.app.log.verbose(module, `Changed ${member.user.username}'s color to ${role.name}`);
 
       // Notify user of role addition
       roleName = roleName.charAt(0).toUpperCase() + roleName.substring(1);

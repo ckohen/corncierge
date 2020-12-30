@@ -10,5 +10,5 @@ module.exports = (socket, error) => {
 
   const message = error.message || JSON.stringify(error);
 
-  socket.app.log.out(level, module, message);
+  socket.app.log[level](module, message);
 };

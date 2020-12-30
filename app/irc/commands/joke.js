@@ -16,7 +16,7 @@ module.exports = (socket, callback) => {
     jokes.splice(key, 1);
     jokes.push(item);
 
-    socket.app.log.out('debug', module, `Told joke: ${item.id}`);
+    socket.app.log.verbose(module, `Told joke: ${item.id}`);
 
     return callback(item.output);
   });

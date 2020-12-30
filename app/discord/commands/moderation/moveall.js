@@ -44,7 +44,7 @@ module.exports = {
       // Move members
       voiceChannel.members.forEach(member => {
         member.voice.setChannel(newChannel).catch(err => {
-          socket.app.log.out('error', module, err);
+          socket.app.log.error(module, err);
         });
       });
       confMsg = await message.channel.send(`Moving all voice members to ${newChannel.name}`);

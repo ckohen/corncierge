@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = async (socket, guild) => {
-  socket.app.log.out('info', module, `Joined new server: ${guild.name}`);
+  socket.app.log(module, `Joined new server: ${guild.name}`);
 
   // Add new guild to role and color managers
   await socket.app.database.add('colorManager', [String(guild.id)]);

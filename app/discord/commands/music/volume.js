@@ -28,7 +28,7 @@ module.exports = {
       try {
         socket.app.database.edit('volumes', [String(message.guild.id), volume]);
       } catch (err) {
-        socket.app.log.out('error', module, err);
+        socket.app.log.error(module, err);
       }
       message.channel.send(`I set the volume to: ${wantedVolume}%`);
     } else {

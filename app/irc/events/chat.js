@@ -68,8 +68,8 @@ module.exports = (socket, channel, user, messageRaw, self) => {
 
   // Throttle command usage
   socket.throttle.rateLimit(input, (err, limited) => {
-    if (err) return socket.app.log.out('error', module, `Throttle: ${err}`);
-    if (limited) return socket.app.log.out('debug', module, `Throttled command: ${input}`);
+    if (err) return socket.app.log.error(module, `Throttle: ${err}`);
+    if (limited) return socket.app.log.debug(module, `Throttled command: ${input}`);
 
     // Handle command
     return handlers.command(socket, channel, user, command, input, args);

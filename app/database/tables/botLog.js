@@ -10,6 +10,6 @@ module.exports = {
   add(socket, ...values) {
     return socket
       .query('INSERT INTO `log_bot` (filter_id, action, user, user_id, duration, message, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())', values)
-      .catch(err => this.app.log.out('warn', module, err));
+      .catch(err => this.app.log.warn(module, err));
   },
 };

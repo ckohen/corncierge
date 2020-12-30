@@ -43,12 +43,12 @@ module.exports = (socket, before, after) => {
     }
     if (afterRole) {
       after.member.roles.add(afterRole).catch(err => {
-        socket.app.log.out('error', module, err);
+        socket.app.log.error(module, err);
       });
     }
     if (beforeRole && beforeRole !== afterRole) {
       after.member.roles.remove(beforeRole).catch(err => {
-        socket.app.log.out('error', module, err);
+        socket.app.log.error(module, err);
       });
     }
     return;
@@ -63,6 +63,6 @@ module.exports = (socket, before, after) => {
   if (!beforeRole) return;
   if (!after.member) return;
   after.member.roles.remove(beforeRole).catch(err => {
-    socket.app.log.out('error', module, err);
+    socket.app.log.error(module, err);
   });
 };

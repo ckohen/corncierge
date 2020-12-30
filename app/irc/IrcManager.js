@@ -144,7 +144,7 @@ class IrcManager extends Socket {
           callback();
         })
         .catch(err => {
-          this.app.log.out('error', module, `Delete: ${err}`);
+          this.app.log.error(module, `Delete: ${err}`);
         });
     });
   }
@@ -165,7 +165,7 @@ class IrcManager extends Socket {
           callback();
         })
         .catch(err => {
-          this.app.log.out('error', module, `Timeout: ${err}`);
+          this.app.log.error(module, `Timeout: ${err}`);
         });
     });
   }
@@ -185,7 +185,7 @@ class IrcManager extends Socket {
           callback();
         })
         .catch(err => {
-          this.app.log.out('error', module, `Ban: ${err}`);
+          this.app.log.error(module, `Ban: ${err}`);
         });
     });
   }
@@ -204,7 +204,7 @@ class IrcManager extends Socket {
    */
   setCache() {
     return Promise.all([this.cacheJokes(), this.cacheFilters(), this.cacheCommands()]).catch(err => {
-      this.app.log.fatal('critical', module, `Cache: ${err}`);
+      this.app.log.fatal(module, `Cache: ${err}`);
     });
   }
 

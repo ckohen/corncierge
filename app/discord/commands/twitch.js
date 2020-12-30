@@ -51,7 +51,7 @@ module.exports = {
     paginated.join('\n\n');
 
     message.channel.send(`\`\`\`${paginated.join('\n\n')}\`\`\``, { split: true }).catch(err => {
-      socket.app.log.out('error', module, err);
+      socket.app.log.error(module, err);
     });
   },
 };
