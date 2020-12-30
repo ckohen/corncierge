@@ -4,38 +4,27 @@ const http = require('http');
 
 const events = require('./events');
 const requests = require('./requests');
-const Socket = require('../Socket');
+const EventManager = require('../managers/EventManager');
 
-class HTTPManager extends Socket {
-  /**
-   * Create a new HTTPM manager instance.
-   * @param {Application} app the application that instantiated this
-   */
+/**
+ * HTTP manager for the application.
+ * @extends {EventManager}
+ */
+class HTTPManager extends EventManager {
   constructor(app) {
-    super();
-    /**
-     * The application container.
-     * @type {Application}
-     */
-    this.app = app;
+    super(app, http.createServer(), app.options.http, events);
 
     /**
-     * The socket events.
-     * @type {Object}
+     * The HTTP server.
+     * @type {http.Server}
+     * @name HTTPManager#driver
      */
-    this.events = events;
 
     /**
      * The socket request events.
      * @type {Object}
      */
     this.requests = requests;
-
-    /**
-     * The OBS driver.
-     * @type {?OBSWebSocket}
-     */
-    this.driver = http.createServer();
   }
 
   /**

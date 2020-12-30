@@ -9,28 +9,23 @@ const events = require('./events');
 const interactionHandler = require('./interactionHandler');
 const applicationCommands = require('./interactions/applicationCommands');
 const messages = require('./messages');
-const Socket = require('../Socket');
+const EventManager = require('../managers/EventManager');
 
 const { collect } = require('../util/helpers');
 
 /**
  * Discord manager for the application.
- * @extends {Socket}
- * @private
+ * @extends {EventManager}
  */
-class DiscordManager extends Socket {
-  /**
-   * Create a new Discord manager instance.
-   * @param {Application} app the application that instantiated this
-   */
+class DiscordManager extends EventManager {
   constructor(app) {
-    super();
+    super(app, new Client(app.options.discord.options), app.options.discord, events);
 
     /**
-     * The application container.
-     * @type {Application}
+     * The Discord.js API / Websocket Client.
+     * @type {Client}
+     * @name DiscordManager#driver
      */
-    this.app = app;
 
     /**
      * The Discord rich embeds.
@@ -39,22 +34,10 @@ class DiscordManager extends Socket {
     this.embeds = embeds;
 
     /**
-     * The socket events.
-     * @type {Object}
-     */
-    this.events = events;
-
-    /**
      * The message transformers.
      * @type {Object}
      */
     this.messages = messages;
-
-    /**
-     * The Discord driver.
-     * @type {Client}
-     */
-    this.driver = new Client(this.app.options.discord.options);
 
     /**
      * The commands for the socket, mapped by input.

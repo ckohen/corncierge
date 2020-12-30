@@ -2,35 +2,22 @@
 
 const axios = require('axios').default;
 const qs = require('qs');
+const BaseManager = require('../managers/BaseManager');
 const { clamp } = require('../util/helpers');
 
 /**
  * Auth manager for the application.
- * @private
+ * @extends {BaseManager}
  */
-class AuthManager {
-  /**
-   * Create a new Auth manager instance.
-   * @param {Application} app the application that instantiated this
-   */
+class AuthManager extends BaseManager {
   constructor(app) {
-    /**
-     * The application container.
-     * @type {Application}
-     */
-    this.app = app;
+    super(app, axios.create(app.options.auth.config), app.options.auth);
 
     /**
-     * The application options.
+     * The Authentication handler.
      * @type {Object}
+     * @name AuthManager#driver
      */
-    this.opts = this.app.options;
-
-    /**
-     * The Auth driver.
-     * @type {Function}
-     */
-    this.driver = axios.create(this.opts.auth.config);
   }
 
   /**
@@ -43,11 +30,11 @@ class AuthManager {
       const res = await this.driver.post(
         '/token',
         qs.stringify({
-          client_id: this.opts.auth.clientID,
-          client_secret: this.opts.auth.clientSecret,
-          code: slug === this.opts.irc.identity.username ? this.opts.auth.botCode : this.app.database.get(`twitch_code_${slug}`),
+          client_id: this.options.clientID,
+          client_secret: this.options.clientSecret,
+          code: slug === this.app.options.irc.identity.username ? this.options.botCode : this.app.database.get(`twitch_code_${slug}`),
           grant_type: 'authorization_code',
-          redirect_uri: this.opts.auth.redirectUri,
+          redirect_uri: this.options.redirectUri,
         }),
       );
       if (res.status === clamp(res.status, 200, 299)) {
@@ -63,17 +50,17 @@ class AuthManager {
 
   /**
    * Gets the twitch api access token for the given slug
-   * @param {string} slug the user to get the token for
+   * @param {string} [slug=this.app.options.irc.identity.username] the user to get the token for
    * @returns {Promise<string>} token
    */
-  async getAccessToken(slug) {
+  async getAccessToken(slug = this.app.options.irc.identity.username) {
     const token = this.app.settings.get(`twitch_access_${slug}`);
     if (token) {
       if (await this.validateToken(token)) return token;
       return this.refreshToken(slug);
     }
-    if (slug === this.opts.irc.identity.username) {
-      return this.generateToken(this.opts.irc.identity.username);
+    if (slug === this.app.options.irc.identity.username) {
+      return this.generateToken(this.app.options.irc.identity.username);
     }
     return Promise.reject(new Error('Get Token'));
   }
@@ -88,8 +75,8 @@ class AuthManager {
       const res = await this.driver.post(
         '/token',
         qs.stringify({
-          client_id: this.opts.auth.clientID,
-          client_secret: this.opts.auth.clientSecret,
+          client_id: this.options.clientID,
+          client_secret: this.options.clientSecret,
           refresh_token: this.app.settings.get(`twitch_refresh_${slug}`),
           grant_type: 'refresh_token',
         }),
