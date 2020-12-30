@@ -19,7 +19,14 @@ const reflectors = ['toString', 'valueOf', 'inspect', 'constructor', Symbol.toPr
  * @classdesc Not a real class, a proxy for the {@link LogManager} levels
  * @class
  * @name Logging
- * @property {self} level the level of log to make, one of {@link LogLevel}
+ */
+
+/**
+ * The level of log to make, one of {@link LogLevel}
+ * @name Logging#level
+ * @type {Logging}
+ * @readonly
+ * @static
  */
 
 /**
