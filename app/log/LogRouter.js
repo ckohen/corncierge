@@ -23,7 +23,7 @@ const reflectors = ['toString', 'valueOf', 'inspect', 'constructor', Symbol.toPr
 
 /**
  * The level of log to make, one of {@link LogLevel}
- * @name Logging#<level>
+ * @name Logging#[level]
  * @type {Logging}
  * @readonly
  * @static
@@ -31,7 +31,7 @@ const reflectors = ['toString', 'valueOf', 'inspect', 'constructor', Symbol.toPr
 
 /**
  * Calls the logger at the previously specified level, if none was specified, this is `info`
- * @function Logging#
+ * @function Logging#*
  * @param {Module} source the module sourcing this log
  * @param {string} message the message to output
  */
