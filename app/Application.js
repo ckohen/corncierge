@@ -104,22 +104,8 @@ class Application {
   }
 
   /**
-   * A level of logging based on the following:
-   * * fatal - a critical error that ends the application
-   * * critical - potentially breaking issue
-   * * error - high priority non-breaking issue
-   * * warn - non-breaking issue
-   * * info - general information
-   * * debug - highly detailed debug information
-   * * verbose - clutters the log
-   * @typedef {string} LogLevel
-   */
-
-  /**
    * Logging shortcut. Logs to `info` by default. Other levels are properties.
    * @type {Logging}
-   * @property {LogLevel} level the level of log to make
-   * @property {function({Module, string})} log output the log with these parameters
    * @readonly
    */
   get log() {
