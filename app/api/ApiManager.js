@@ -2,59 +2,35 @@
 
 const cache = require('memory-cache');
 const moment = require('moment');
-const rp = require('request-promise');
-
-const Request = require('../Request');
+const RequestManager = require('../managers/RequestManager');
 
 /**
  * API manager for the application.
- * @extends {Request}
- * @private
+ * @extends {RequestManager}
  */
-class ApiManager extends Request {
-  /**
-   * Create a new API manager instance.
-   * @param {Application} app the application that insantiated this
-   */
+class ApiManager extends RequestManager {
   constructor(app) {
-    super();
+    super(app, app.options.api);
 
     /**
-     * The application container.
-     * @type {Application}
-     */
-    this.app = app;
-
-    /**
-     * The application options.
+     * The Twitch API handler.
      * @type {Object}
+     * @name ApiManager#driver
      */
-    this.opts = this.app.options;
-
-    /**
-     * The API driver.
-     * @type {Function}
-     */
-    this.driver = rp.defaults({
-      baseUrl: this.opts.api.baseUrl,
-      headers: {
-        Accept: this.opts.api.mime,
-        'Client-ID': this.opts.api.client,
-      },
-    });
   }
 
   /**
    * Get the channel for the application's channel ID.
    * @param {Function} callback the function to call afer getting channel data
-   * @param {number} [userId=false] get channel data from a specific user id
+   * @param {number} [userId=this.app.options.twitch.channel.id] get channel data from a specific user id
    * @returns {void}
    */
-  channel(callback, userId = false) {
-    if (userId) {
-      return this.get(`channels/${userId}`, {}, callback);
-    }
-    return this.get(`channels/${this.opts.twitch.channel.id}`, {}, callback);
+  channel(callback, userId = this.app.options.twitch.channel.id) {
+    return this.api
+      .channels(userId)
+      .get()
+      .then(callback)
+      .catch(err => this.app.log.warn(module, err));
   }
 
   /**
@@ -64,40 +40,38 @@ class ApiManager extends Request {
    * @returns {void}
    */
   userChannel(user, callback) {
-    try {
-      return this.get(`users?login=${user}`, {}, userObj => {
+    return this.api.users
+      .get({ params: { login: user } })
+      .then(userObj => {
         const id = userObj.users[0]._id;
-        return this.get(`channels/${id}`, {}, callback);
-      });
-    } catch (error) {
-      return callback(false);
-    }
+        /* eslint-disable-next-line newline-per-chained-call */
+        return this.api.channels(id).get().then(callback).catch(callback(false));
+      })
+      .catch(callback(false));
   }
 
   /**
    * Get a follow object for the given user ID.
    * @param {number} userId the user id to check the follow for
-   * @param {number} [streamerId=false] the channel to check if following
-   * @returns {Promise<Request>}
+   * @param {number} [streamerId=this.app.options.twitch.channel.id] the channel to check if following
+   * @returns {Promise<Object>}
    */
-  follow(userId, streamerId = false) {
-    if (streamerId) {
-      return this.promise(`users/${userId}/follows/channels/${streamerId}`);
-    }
-    return this.promise(`users/${userId}/follows/channels/${this.opts.twitch.channel.id}`);
+  follow(userId, streamerId = this.app.options.twitch.channel.id) {
+    return this.api.users(userId).follows.channels(streamerId).get();
   }
 
   /**
    * Get the stream for the application's channel ID.
    * @param {Function} callback the function to call afer getting stream data
-   * @param {number} [userId=false] get stream data from a specific user id
+   * @param {number} [userId=this.app.options.twitch.channel.id] get stream data from a specific user id
    * @returns {void}
    */
-  stream(callback, userId = false) {
-    if (userId) {
-      return this.get(`streams/${userId}`, {}, callback);
-    }
-    return this.get(`streams/${this.opts.twitch.channel.id}`, {}, callback);
+  stream(callback, userId = this.app.options.twitch.channel.id) {
+    return this.api
+      .streams(userId)
+      .get()
+      .then(callback)
+      .catch(err => this.app.log.warn(module, err));
   }
 
   /**
@@ -107,7 +81,10 @@ class ApiManager extends Request {
    * @returns {void}
    */
   user(name, callback) {
-    this.get(`users?login=${name}`, {}, callback);
+    return this.api.users
+      .get({ params: { login: name } })
+      .then(callback)
+      .catch(err => this.app.log.warn(module, err));
   }
 
   /**
@@ -133,7 +110,7 @@ class ApiManager extends Request {
     }
 
     try {
-      this.get(`users?login=${user}`, {}, userObj => {
+      this.api.users.get({ params: { login: user } }).then(userObj => {
         const id = userObj.users[0]._id;
         this.stream(body => {
           this.uptimeCallback(body, callback, user, id, readOnly);

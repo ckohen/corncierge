@@ -1,7 +1,7 @@
 'use strict';
 
+const axios = require('axios');
 const moment = require('moment');
-const rp = require('request-promise');
 const wn = require('winston');
 const BaseManager = require('../managers/BaseManager');
 
@@ -84,12 +84,11 @@ class LogManager extends BaseManager {
 
     if (!Object.prototype.hasOwnProperty.call(levels, level)) return Promise.reject(new Error('Invalid level'));
 
-    return rp({
-      json: true,
+    return axios({
       method: 'POST',
-      baseUrl: this.options.webhookBase,
-      uri: this.options.webhookToken.toString(),
-      body: {
+      baseURL: this.options.webhookBase,
+      url: this.options.webhookToken.toString(),
+      data: {
         embeds: [
           {
             description: typeof message === 'string' ? message : String(message),

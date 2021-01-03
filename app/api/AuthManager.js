@@ -1,17 +1,14 @@
 'use strict';
 
-const axios = require('axios').default;
-const qs = require('qs');
-const BaseManager = require('../managers/BaseManager');
-const { clamp } = require('../util/helpers');
+const RequestManager = require('../managers/RequestManager');
 
 /**
  * Auth manager for the application.
- * @extends {BaseManager}
+ * @extends {RequestManager}
  */
-class AuthManager extends BaseManager {
+class AuthManager extends RequestManager {
   constructor(app) {
-    super(app, axios.create(app.options.auth.config), app.options.auth);
+    super(app, app.options.auth);
 
     /**
      * The Authentication handler.
@@ -27,23 +24,19 @@ class AuthManager extends BaseManager {
    */
   async generateToken(slug) {
     try {
-      const res = await this.driver.post(
-        '/token',
-        qs.stringify({
+      const res = await this.api.token.post({
+        params: {
           client_id: this.options.clientID,
           client_secret: this.options.clientSecret,
           code: slug === this.app.options.irc.identity.username ? this.options.botCode : this.app.database.get(`twitch_code_${slug}`),
           grant_type: 'authorization_code',
           redirect_uri: this.options.redirectUri,
-        }),
-      );
-      if (res.status === clamp(res.status, 200, 299)) {
-        this.app.database.add('settings', [`twitch_access_${slug}`, res.data.access_token]);
-        this.app.database.add('settings', [`twitch_refresh_${slug}`, res.data.refresh_token]);
-        return res.data.access_token;
-      }
-      return Promise.reject(new Error('Generate Token'));
-    } catch (error) {
+        },
+      });
+      this.app.database.add('settings', [`twitch_access_${slug}`, res.data.access_token]);
+      this.app.database.add('settings', [`twitch_refresh_${slug}`, res.data.refresh_token]);
+      return res.data.access_token;
+    } catch {
       return Promise.reject(new Error('Generate Token'));
     }
   }
@@ -72,22 +65,18 @@ class AuthManager extends BaseManager {
    */
   async refreshToken(slug) {
     try {
-      const res = await this.driver.post(
-        '/token',
-        qs.stringify({
+      const res = await this.api.token.post({
+        params: {
           client_id: this.options.clientID,
           client_secret: this.options.clientSecret,
           refresh_token: this.app.settings.get(`twitch_refresh_${slug}`),
           grant_type: 'refresh_token',
-        }),
-      );
-      if (res.status === clamp(res.status, 200, 299)) {
-        this.app.database.edit('settings', [`twitch_access_${slug}`, res.data.access_token]);
-        this.app.database.edit('settings', [`twitch_refresh_${slug}`, res.data.refresh_token]);
-        return res.data.access_token;
-      }
-      return Promise.reject(new Error('Refresh Token'));
-    } catch (error) {
+        },
+      });
+      this.app.database.edit('settings', [`twitch_access_${slug}`, res.data.access_token]);
+      this.app.database.edit('settings', [`twitch_refresh_${slug}`, res.data.refresh_token]);
+      return res.data.access_token;
+    } catch {
       return Promise.reject(new Error('Refresh Token'));
     }
   }
@@ -99,11 +88,8 @@ class AuthManager extends BaseManager {
    */
   async validateToken(token) {
     try {
-      const res = await this.driver.get('/validate', { headers: { Authorization: `OAuth ${token}` } });
-      if (res.status === clamp(res.status, 200, 299)) {
-        return true;
-      }
-      return false;
+      await this.api.validate.get({ headers: { Authorization: `OAuth ${token}` } });
+      return true;
     } catch (error) {
       return false;
     }
