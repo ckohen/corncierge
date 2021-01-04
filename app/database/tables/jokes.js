@@ -1,12 +1,19 @@
 'use strict';
 
-module.exports = {
+const BaseTable = require('./BaseTable');
+
+/**
+ * Contains API methods for the jokes database table
+ * @extends {BaseTable}
+ */
+class jokesTable extends BaseTable {
   /**
    * Get all jokes.
-   * @param {DatabaseManager} socket the database manager to query with
    * @returns {Promise<Object[]>}
    */
-  get(socket) {
-    return socket.query('SELECT id, output FROM `jokes` WHERE `deleted_at` IS NULL ORDER BY RAND()');
-  },
-};
+  get() {
+    return this.socket.query('SELECT id, output FROM `jokes` WHERE `deleted_at` IS NULL ORDER BY RAND()');
+  }
+}
+
+module.exports = jokesTable;

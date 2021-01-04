@@ -1,39 +1,37 @@
 'use strict';
 
-module.exports = {
+const BaseTable = require('./BaseTable');
+
+/**
+ * Contains API methods for the rooms database table
+ * @extends {BaseTable}
+ */
+class roomsTable extends BaseTable {
   /**
    * Get rooms.
-   * @param {DatabaseManager} socket the database manager to query with
    * @returns {Promise<Object[]>}
    */
-  get(socket) {
-    return socket.query('SELECT guildRoomID, data FROM `rooms`').then(all => {
-      all.forEach(row => {
-        row.data = JSON.parse(row.data);
-      });
-      return all;
-    });
-  },
+  get() {
+    return this.socket.query('SELECT guildRoomID, data FROM `rooms`').then(this.parseJSON.bind(null, ['data']));
+  }
 
   /**
    * Add a room to the room manager
-   * @param {DatabaseManager} socket the database manager to query with
    * @param {string} id the room id (guildID-room) to add to the database
    * @returns {Promise<void>}
    */
-  add(socket, id) {
-    return socket.query("INSERT INTO `rooms` (guildRoomID, data) VALUES (?, '{}')", [id]);
-  },
+  add(id) {
+    return this.socket.query("INSERT INTO `rooms` (guildRoomID, data) VALUES (?, '{}')", [id]);
+  }
 
   /**
    * Remove a room from the room manager
-   * @param {DatabaseManager} socket the database manager to query with
    * @param {string} id the room id (guildID-room) to remove from the database
    * @returns {Promise<void>}
    */
-  delete(socket, id) {
-    return socket.query('DELETE FROM `rooms` WHERE `guildRoomID` = ?', [id]);
-  },
+  delete(id) {
+    return this.socket.query('DELETE FROM `rooms` WHERE `guildRoomID` = ?', [id]);
+  }
 
   /**
    * The data for any room:
@@ -51,12 +49,13 @@ module.exports = {
 
   /**
    * Edit a room
-   * @param {DatabaseManager} socket the database manager to query with
    * @param {string} id the room id (guildID-room) to edit in the database
    * @param {RoomData} data the updated data for the room
    * @returns {Promise<void>}
    */
-  edit(socket, id, data) {
-    return socket.query('UPDATE `rooms` SET `data` = ? WHERE `guildRoomID` = ?', [JSON.stringify(data), id]);
-  },
-};
+  edit(id, data) {
+    return this.socket.query('UPDATE `rooms` SET `data` = ? WHERE `guildRoomID` = ?', [JSON.stringify(data), id]);
+  }
+}
+
+module.exports = roomsTable;
