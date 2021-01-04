@@ -106,8 +106,7 @@ class TwitchManager extends RequestManager {
         .then(body => {
           if (body.stream == null) return Promise.reject(new Error('Stream Offline')); // eslint-disable-line eqeqeq
           return Promise.resolve(moment(body.stream.created_at).valueOf());
-        })
-        .catch(Promise.reject);
+        });
     });
   }
 }
