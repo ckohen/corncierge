@@ -2,14 +2,12 @@
 
 const { Collection } = require('discord.js');
 
-const ApiManager = require('./api/ApiManager');
-const AuthManager = require('./api/AuthManager');
-const DatabaseManager = require('./database/DatabaseManager');
-const DiscordManager = require('./discord/DiscordManager');
-const HTTPManager = require('./http/HTTPManager');
-const IrcManager = require('./irc/IrcManager');
-const LogManager = require('./log/LogManager');
-const logBuilder = require('./log/LogRouter');
+const DatabaseManager = require('./managers/DatabaseManager');
+const DiscordManager = require('./managers/DiscordManager');
+const HTTPManager = require('./managers/HTTPManager');
+const LogManager = require('./managers/LogManager');
+const TwitchManager = require('./managers/TwitchManager');
+const logBuilder = require('./util/LogRouter');
 const { collect } = require('./util/helpers');
 
 /**
@@ -37,21 +35,7 @@ class Application {
      * @type {ApiManager}
      * @private
      */
-    this.api = new ApiManager(this);
-
-    /**
-     * The Authentication manager for the application.
-     * @type {AuthManager}
-     * @private
-     */
-    this.auth = new AuthManager(this);
-
-    /**
-     * The IRC manager for the application.
-     * @type {IrcManager}
-     * @private
-     */
-    this.irc = new IrcManager(this);
+    this.twitch = new TwitchManager(this);
 
     /**
      * The log manager for the application.
@@ -120,7 +104,7 @@ class Application {
     // Run tasks in parallel to avoid serial delays
     await Promise.all([this.setSettings(), this.setStreaming()]);
 
-    await Promise.all([this.discord.init(), this.irc.init()]);
+    await Promise.all([this.discord.init(), this.twitch.irc.init()]);
     await this.http.init();
 
     this.log(module, 'Boot complete');
@@ -133,7 +117,7 @@ class Application {
   async end(code) {
     this.ending = true;
     try {
-      await this.irc.driver.disconnect();
+      await this.twitch.irc.driver.disconnect();
       await this.discord.driver.destroy();
       await this.http.driver.close();
     } catch (err) {

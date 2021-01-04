@@ -3,7 +3,7 @@
 const axios = require('axios');
 const moment = require('moment');
 const wn = require('winston');
-const BaseManager = require('../managers/BaseManager');
+const BaseManager = require('./BaseManager');
 
 /**
  * Log manager for the application.
@@ -41,6 +41,7 @@ class LogManager extends BaseManager {
      * The log driver.
      * @type {Winston}
      * @name LogManager#driver
+     * @private
      */
 
     wn.addColors(this.options.colors);
@@ -78,6 +79,7 @@ class LogManager extends BaseManager {
    * @param {string} path the path to the module that this occured in
    * @param {string} message the message to send
    * @returns {Promise<Request>}
+   * @private
    */
   webhook(level, path, message) {
     const levels = this.options.webhookLevels;
@@ -107,6 +109,7 @@ class LogManager extends BaseManager {
    * Calculate the path of the given source module.
    * @param {Module} source the module that made this log
    * @returns {string}
+   * @private
    */
   path(source) {
     if (!source.id) return source;

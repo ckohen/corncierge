@@ -8,13 +8,13 @@ module.exports = {
   channel: 'console',
 
   run(socket, message) {
-    const { irc, settings } = socket.app;
+    const { twitch, settings } = socket.app;
     const { rss, heapUsed } = process.memoryUsage();
 
     const status = [
       `Uptime: **${humanDuration(process.uptime() * 1000)}**`,
       `Memory: **${humanBytes(rss)}** total, **${humanBytes(heapUsed)}** heap`,
-      `State: **${settings.size}** settings, **${irc.filters.size}** filters, **${irc.commands.size}** commands`,
+      `State: **${settings.size}** settings, **${twitch.irc.filters.size}** filters, **${twitch.irc.commands.size}** commands`,
       `Cache: **${cache.size()}** items`,
     ];
 

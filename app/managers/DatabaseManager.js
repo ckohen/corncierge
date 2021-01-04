@@ -1,8 +1,8 @@
 'use strict';
 
 const mysql = require('mysql2');
-const tables = require('./tables');
-const BaseManager = require('../managers/BaseManager');
+const BaseManager = require('./BaseManager');
+const tables = require('../database/tables');
 
 /**
  * Database manager for the application.
@@ -16,6 +16,7 @@ class DatabaseManager extends BaseManager {
      * The database driver.
      * @type {Pool}
      * @name DatabaseManager#driver
+     * @private
      */
 
     /**
@@ -28,6 +29,7 @@ class DatabaseManager extends BaseManager {
   /**
    * Create a connection to the database.
    * @returns {Promise<Connection>}
+   * @private
    */
   connection() {
     return new Promise((resolve, reject) => {

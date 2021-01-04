@@ -41,7 +41,7 @@ module.exports = {
     const prefixBool = inputRaw.charAt(0) === '!';
     const prefix = prefixBool ? '!' : '';
 
-    const command = socket.app.irc.commands.get(input + (prefixBool ? '-1' : '-0'));
+    const command = socket.app.twitch.irc.commands.get(input + (prefixBool ? '-1' : '-0'));
 
     if (command && command.locked) {
       respond("That command is locked and can't be modified");
@@ -151,7 +151,7 @@ module.exports = {
       return;
     }
 
-    await socket.app.irc.cacheCommands();
+    await socket.app.twitch.irc.cacheCommands();
 
     send(success);
   },

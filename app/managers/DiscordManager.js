@@ -2,14 +2,14 @@
 
 const { Client, Collection } = require('discord.js');
 
-const Composer = require('./Composer');
-const commands = require('./commands');
-const embeds = require('./embeds');
-const events = require('./events');
-const interactionHandler = require('./interactionHandler');
-const applicationCommands = require('./interactions/applicationCommands');
-const messages = require('./messages');
-const EventManager = require('../managers/EventManager');
+const EventManager = require('./EventManager');
+const Composer = require('../discord/Composer');
+const commands = require('../discord/commands');
+const embeds = require('../discord/embeds');
+const events = require('../discord/events');
+const interactionHandler = require('../discord/interactionHandler');
+const applicationCommands = require('../discord/interactions/applicationCommands');
+const messages = require('../discord/messages');
 
 const { collect } = require('../util/helpers');
 
@@ -51,22 +51,58 @@ class DiscordManager extends EventManager {
      */
     this.applicationCommands = new Collection();
 
+    /**
+     * The color manager settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.colorManager = new Collection();
 
+    /**
+     * The role manager settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.roleManager = new Collection();
 
+    /**
+     * The reaction role manager settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.reactionRoles = new Collection();
 
+    /**
+     * The voice role manager settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.voiceRoles = new Collection();
 
+    /**
+     * The prefix settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.prefixes = new Collection();
 
+    /**
+     * The rooms currently stored, mapped by guild-roomID.
+     * @type {Collection<string, Object>}
+     */
     this.rooms = new Collection();
 
+    /**
+     * The random channel movement settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.randomSettings = new Collection();
 
+    /**
+     * The new member role settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.newMemberRoles = new Collection();
 
+    /**
+     * The music data, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.musicData = new Collection();
   }
 
@@ -124,6 +160,7 @@ class DiscordManager extends EventManager {
   /**
    * Cache the music data.
    * @returns {Promise<void>}
+   * @private
    */
   cacheMusic() {
     return this.app.database.get('volumes').then(volumes => {
@@ -141,6 +178,7 @@ class DiscordManager extends EventManager {
   /**
    * Cache room data.
    * @returns {Promise<void>}
+   * @private
    */
   cacheRooms() {
     return this.app.database.get('rooms').then(rooms => {
@@ -166,6 +204,7 @@ class DiscordManager extends EventManager {
    * @param {string} key a key to use for the new map
    * @param {string} [secondaryKey=false] a dashed key to use for the new map
    * @returns {Promise}
+   * @private
    */
   cache(method, map, key, secondaryKey = false) {
     return this.app.database.get(method).then(all => {

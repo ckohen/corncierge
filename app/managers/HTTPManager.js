@@ -2,9 +2,9 @@
 
 const http = require('http');
 
-const events = require('./events');
-const requests = require('./requests');
-const EventManager = require('../managers/EventManager');
+const EventManager = require('./EventManager');
+const events = require('../http/events');
+const requests = require('../http/requests');
 
 /**
  * HTTP manager for the application.

@@ -5,7 +5,7 @@ const { RateLimiter } = require('limiter');
 const { Client } = require('tmi.js');
 const throttle = require('tokenthrottle');
 
-const events = require('./events');
+const events = require('../irc/events');
 const EventManager = require('../managers/EventManager');
 const { collect } = require('../util/helpers');
 
@@ -16,15 +16,23 @@ const thirtySecs = 30000;
  * @extends {EventManager}
  */
 class IrcManager extends EventManager {
-  constructor(app) {
-    app.options.irc.identity.password = app.auth.getAccessToken.bind(app.auth);
-    super(app, new Client(app.options.irc), app.options.irc, events);
+  constructor(app, twitch) {
+    twitch.options.irc.identity.password = twitch.auth.getAccessToken.bind(twitch.auth);
+    super(app, new Client(twitch.options.irc), twitch.options.irc, events);
 
     /**
      * The IRC Client.
      * @type {Client}
      * @name IrcManager#driver
      */
+
+    /**
+     * The Twitch manager that instantiated this.
+     * @name IrcManager#twitch
+     * @type {TwitchManager}
+     * @readonly
+     */
+    Object.defineProperty(this, 'twitch', { value: twitch });
 
     /**
      * The jokes for the IRC joke command.
@@ -55,7 +63,7 @@ class IrcManager extends EventManager {
      * The command throttle.
      * @type {Throttle}
      */
-    this.throttle = throttle(this.app.options.throttle);
+    this.throttle = throttle(this.twitch.options.throttle);
 
     /**
      * The moderation filter types.
