@@ -20,6 +20,7 @@ class EventManager extends BaseManager {
 
   /**
    * Attach the event listeners to the socket.
+   * @private
    */
   attach() {
     if (!this.events) return;
@@ -33,6 +34,7 @@ class EventManager extends BaseManager {
    * Listen for a socket event.
    * @param {string} event the name of the event to listen for
    * @param {Function} listener the function to call on event
+   * @private
    */
   listen(event, listener) {
     this.driver.on(event, (...args) => {
