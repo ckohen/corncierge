@@ -23,7 +23,7 @@ const reflectors = ['toString', 'valueOf', 'inspect', 'constructor', Symbol.toPr
 /**
  * A part of the url path, ending with one of {@link HTTPMethod}
  * @name Requester#[param]
- * @type {Requester|Promise}
+ * @type {Requester|Function}
  * @readonly
  * @static
  */
@@ -41,6 +41,7 @@ const reflectors = ['toString', 'valueOf', 'inspect', 'constructor', Symbol.toPr
  * The method to use in the fetch request, see {@link HTTPMethod}
  * @function Requester#HTTPMethod
  * @param {RequestData} data the data to pass to the request
+ * @returns {Promise<Object>}
  */
 
 /**
