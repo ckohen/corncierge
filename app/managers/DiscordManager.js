@@ -145,7 +145,7 @@ class DiscordManager extends EventManager {
     return Promise.all([
       Promise.all(
         this.app.database.tables.discord.map(async table => {
-          const name = table.name.replace(/Table$/, '');
+          const name = table.constructor.name.replace(/Table$/, '');
           await this.cache(table, this[name], 'guildID');
         }),
       ),
