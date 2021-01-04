@@ -31,9 +31,8 @@ class Application {
     this.debug = this.options.app.debug === 'true';
 
     /**
-     * The API manager for the application.
-     * @type {ApiManager}
-     * @private
+     * The Twitch manager for the application.
+     * @type {TwitchManager}
      */
     this.twitch = new TwitchManager(this);
 
@@ -47,35 +46,30 @@ class Application {
     /**
      * The settings for the application, mapped by name.
      * @type {Collection<string, Object>}
-     * @private
      */
     this.settings = new Collection();
 
     /**
      * The streaming settings for the application, mapped by name.
      * @type {Collection<string, Object>}
-     * @private
      */
     this.streaming = new Collection();
 
     /**
      * The Discord manager for the application.
      * @type {DiscordManager}
-     * @private
      */
     this.discord = new DiscordManager(this);
 
     /**
      * The HTTP Server manager for the application.
      * @type {HTTPManager}
-     * @private
      */
     this.http = new HTTPManager(this);
 
     /**
      * The database manager for the application.
      * @type {DatabaseManager}
-     * @private
      */
     this.database = new DatabaseManager(this);
 
