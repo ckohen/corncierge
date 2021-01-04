@@ -4,9 +4,8 @@ const helpers = require.main.require('./app/util/helpers');
 
 const lang = require('../lang');
 
-module.exports = (socket, callback) => {
-  socket.app.api.uptime(time => {
-    if (!time) return;
-    callback(lang.uptime(helpers.relativeTime(time, 3)));
-  });
+module.exports = async (socket, callback) => {
+  const uptime = await socket.app.twitch.fetchUptime().catch(err => socket.app.log.warn(module, err));
+  if (!uptime) return;
+  callback(lang.uptime(helpers.relativeTime(uptime, 3)));
 };

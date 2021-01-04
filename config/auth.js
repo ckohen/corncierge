@@ -2,7 +2,7 @@
 
 module.exports = {
   redirectUri: 'http://localhost',
-  config: {
+  apiConfig: {
     baseURL: 'https://id.twitch.tv/oauth2/',
   },
   clientID: process.env.API_CLIENT_ID,
