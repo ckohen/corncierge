@@ -14,6 +14,12 @@ class TableManager {
     Object.defineProperty(this, 'socket', { value: socket });
 
     /**
+     * Stores the registered table associated with TableName
+     * @name TableManager#[TableName]
+     * @type {BaseTable}
+     */
+
+    /**
      * An array of database tables, all of which deal with discord, are mapped by guildID, and are cached normally
      * @type {BaseTable[]}
      */

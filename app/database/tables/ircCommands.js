@@ -51,7 +51,7 @@ class ircCommandsTable extends BaseTable {
 
   /**
    * Edits an IRC command.
-   * @param {IRCCommandEditProperty} property the property to edit, one of {@link IRCCommandEditProperty}
+   * @param {IRCCommandEditProperty} property the property of the command to edit
    * @param {number} id the id of the command to update
    * @param  {string} [updated] the new value for the parameter
    * @returns {Promise<void>}
