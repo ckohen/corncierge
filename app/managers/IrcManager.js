@@ -169,7 +169,7 @@ class IrcManager extends EventManager {
    * @param {...*} values the extra arguments to log
    */
   logModeration(...values) {
-    this.app.database.add('botLog', values);
+    this.app.database.tables.botLog.add(values);
   }
 
   /**
@@ -187,7 +187,7 @@ class IrcManager extends EventManager {
    * @returns {Promise<void>}
    */
   cacheJokes() {
-    return this.app.database.get('jokes').then(all => {
+    return this.app.database.tables.jokes.get().then(all => {
       this.jokes.length = 0;
       all.forEach(item => this.jokes.push(item));
     });
@@ -211,14 +211,14 @@ class IrcManager extends EventManager {
 
   /**
    * Query the database and set a given cache.
-   * @param {string} method the database table to get
+   * @param {string} table the database table to get
    * @param {Collection} map the map to store data in
    * @param {string} [key] a key to use for the new map
    * @param {string} [secondaryKey=false] a dashed key to use for the new map
    * @returns {Promise<void>}
    */
-  cache(method, map, key, secondaryKey = false) {
-    return this.app.database.get(method).then(all => {
+  cache(table, map, key, secondaryKey = false) {
+    return this.app.database.tables[table].get().then(all => {
       map.clear();
       collect(map, all, key, secondaryKey);
     });

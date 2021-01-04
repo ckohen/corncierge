@@ -26,7 +26,7 @@ module.exports = (socket, channel, user, row, update, args, isBroadcaster = fals
         }),
       ),
     );
-    socket.app.database.edit('ircCommands', 'count', [row.id]);
+    socket.app.database.tables.ircCommands.edit('count', row.id);
   };
 
   if (row.method !== null && typeof commands[row.method] === 'function') {

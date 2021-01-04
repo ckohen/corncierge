@@ -124,7 +124,7 @@ module.exports = {
       case 'list':
     }
 
-    await socket.app.database.edit('colorManager', [String(message.guild.id), guild.roles, guild.snowflakes]);
+    await socket.app.database.tables.colorManager.edit(String(message.guild.id), guild.roles, guild.snowflakes);
 
     // Determine the number of channels and get ready to loop through them
     let channels = Object.keys(guild.roles);

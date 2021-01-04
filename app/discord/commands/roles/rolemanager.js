@@ -120,7 +120,7 @@ module.exports = {
           if (guild.removeRoles[String(channel.id)]) {
             delete guild.removeRoles[String(channel.id)];
           }
-          await socket.app.database.edit('roleManager', [String(message.guild.id), guild.addRoles, guild.removeRoles]);
+          await socket.app.database.tables.roleManager.edit(String(message.guild.id), guild.addRoles, guild.removeRoles);
           message.channel.send(`Deleted ${channel} from role manager`);
           return;
         }
@@ -146,7 +146,7 @@ module.exports = {
       case 'list':
     }
 
-    await socket.app.database.edit('roleManager', [String(message.guild.id), guild.addRoles, guild.removeRoles]);
+    await socket.app.database.tables.roleManager.edit(String(message.guild.id), guild.addRoles, guild.removeRoles);
 
     // Determine the number of channels and get ready to loop through them
     let channels = Object.keys(guild.addRoles);

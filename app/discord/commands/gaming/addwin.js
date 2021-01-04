@@ -17,7 +17,7 @@ module.exports = {
     async function updateEmbed(target) {
       let users = new Collection();
 
-      await socket.app.database.get('fallWins').then(all => {
+      await socket.app.database.tables.fallWins.get().then(all => {
         users.clear();
         collect(users, all, 'id', false);
       });
@@ -28,12 +28,12 @@ module.exports = {
         let count = users.get(target.id).count;
         count += 1;
         users.get(target.id).count = count;
-        await socket.app.database.edit('fallWins', [target.id, count]);
+        await socket.app.database.tables.fallWins.edit(target.id, count);
       } else {
         let count = 1;
         users.set(target.id, {});
         users.get(target.id).count = count;
-        await socket.app.database.add('fallWins', [target.id, count]);
+        await socket.app.database.tables.fallWins.add(target.id, count);
       }
 
       let lines = users.map((item, name) => `<@!${name}>: ${plural('win', item.count, true)}!`).filter(line => line);

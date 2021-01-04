@@ -147,8 +147,8 @@ class Application {
    * @private
    */
   setSettings() {
-    return this.database
-      .get('settings')
+    return this.database.tables.settings
+      .get()
       .then(all => collect(this.settings, all, 'name', null, 'value'))
       .catch(err => {
         this.log.fatal(module, `Settings: ${err}`);
@@ -161,8 +161,8 @@ class Application {
    * @private
    */
   setStreaming() {
-    return this.database
-      .get('streaming')
+    return this.database.tables.streaming
+      .get()
       .then(all => collect(this.streaming, all, 'name', null))
       .catch(err => {
         this.log.fatal(module, `Streaming Settings: ${err}`);

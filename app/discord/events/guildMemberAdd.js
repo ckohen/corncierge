@@ -12,7 +12,7 @@ module.exports = (socket, member) => {
     socket.sendMessage('helpLogs', embed);
   }
 
-  let roleData = socket.newMemberRoles.get(String(member.guild.id));
+  let roleData = socket.newMemberRole.get(String(member.guild.id));
 
   if (roleData.roleID) {
     let time = Number(roleData.delayTime) ? Number(roleData.delayTime) : 0;
