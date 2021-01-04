@@ -2,35 +2,30 @@
 
 const { Client, Collection } = require('discord.js');
 
-const Composer = require('./Composer');
-const commands = require('./commands');
-const embeds = require('./embeds');
-const events = require('./events');
-const interactionHandler = require('./interactionHandler');
-const applicationCommands = require('./interactions/applicationCommands');
-const messages = require('./messages');
-const Socket = require('../Socket');
+const EventManager = require('./EventManager');
+const Composer = require('../discord/Composer');
+const commands = require('../discord/commands');
+const embeds = require('../discord/embeds');
+const events = require('../discord/events');
+const interactionHandler = require('../discord/interactionHandler');
+const applicationCommands = require('../discord/interactions/applicationCommands');
+const messages = require('../discord/messages');
 
 const { collect } = require('../util/helpers');
 
 /**
  * Discord manager for the application.
- * @extends {Socket}
- * @private
+ * @extends {EventManager}
  */
-class DiscordManager extends Socket {
-  /**
-   * Create a new Discord manager instance.
-   * @param {Application} app the application that instantiated this
-   */
+class DiscordManager extends EventManager {
   constructor(app) {
-    super();
+    super(app, new Client(app.options.discord.options), app.options.discord, events);
 
     /**
-     * The application container.
-     * @type {Application}
+     * The Discord.js API / Websocket Client.
+     * @type {Client}
+     * @name DiscordManager#driver
      */
-    this.app = app;
 
     /**
      * The Discord rich embeds.
@@ -39,22 +34,10 @@ class DiscordManager extends Socket {
     this.embeds = embeds;
 
     /**
-     * The socket events.
-     * @type {Object}
-     */
-    this.events = events;
-
-    /**
      * The message transformers.
      * @type {Object}
      */
     this.messages = messages;
-
-    /**
-     * The Discord driver.
-     * @type {Client}
-     */
-    this.driver = new Client(this.app.options.discord.options);
 
     /**
      * The commands for the socket, mapped by input.
@@ -68,22 +51,58 @@ class DiscordManager extends Socket {
      */
     this.applicationCommands = new Collection();
 
+    /**
+     * The color manager settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.colorManager = new Collection();
 
+    /**
+     * The role manager settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.roleManager = new Collection();
 
+    /**
+     * The reaction role manager settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.reactionRoles = new Collection();
 
+    /**
+     * The voice role manager settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.voiceRoles = new Collection();
 
+    /**
+     * The prefix settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.prefixes = new Collection();
 
+    /**
+     * The rooms currently stored, mapped by guild-roomID.
+     * @type {Collection<string, Object>}
+     */
     this.rooms = new Collection();
 
+    /**
+     * The random channel movement settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.randomSettings = new Collection();
 
+    /**
+     * The new member role settings, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.newMemberRoles = new Collection();
 
+    /**
+     * The music data, mapped by guild.
+     * @type {Collection<string, Object>}
+     */
     this.musicData = new Collection();
   }
 
@@ -141,6 +160,7 @@ class DiscordManager extends Socket {
   /**
    * Cache the music data.
    * @returns {Promise<void>}
+   * @private
    */
   cacheMusic() {
     return this.app.database.get('volumes').then(volumes => {
@@ -158,6 +178,7 @@ class DiscordManager extends Socket {
   /**
    * Cache room data.
    * @returns {Promise<void>}
+   * @private
    */
   cacheRooms() {
     return this.app.database.get('rooms').then(rooms => {
@@ -183,6 +204,7 @@ class DiscordManager extends Socket {
    * @param {string} key a key to use for the new map
    * @param {string} [secondaryKey=false] a dashed key to use for the new map
    * @returns {Promise}
+   * @private
    */
   cache(method, map, key, secondaryKey = false) {
     return this.app.database.get(method).then(all => {

@@ -1,29 +1,23 @@
 'use strict';
 
 const mysql = require('mysql2');
-const tables = require('./tables');
+const BaseManager = require('./BaseManager');
+const tables = require('../database/tables');
 
 /**
  * Database manager for the application.
- * @private
+ * @extends {BaseManager}
  */
-class DatabaseManager {
-  /**
-   * Create a new database manager instance.
-   * @param {Application} app the application that insantiated this
-   */
+class DatabaseManager extends BaseManager {
   constructor(app) {
-    /**
-     * The application container.
-     * @type {Application}
-     */
-    this.app = app;
+    super(app, mysql.createPool(app.options.database), app.options.database);
 
     /**
      * The database driver.
      * @type {Pool}
+     * @name DatabaseManager#driver
+     * @private
      */
-    this.driver = mysql.createPool(this.app.options.database);
 
     /**
      * The database tables.
@@ -35,6 +29,7 @@ class DatabaseManager {
   /**
    * Create a connection to the database.
    * @returns {Promise<Connection>}
+   * @private
    */
   connection() {
     return new Promise((resolve, reject) => {

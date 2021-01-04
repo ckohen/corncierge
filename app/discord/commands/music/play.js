@@ -64,7 +64,7 @@ module.exports = {
             }
             */
           } catch (err) {
-            console.error(err);
+            socket.app.log.error(err);
           }
         }
       }
@@ -224,7 +224,7 @@ function playSong(queue, message, socket) {
         })
         .on('error', e => {
           message.reply(`Cannot play song \`${queue[0].title}\`, skipping`, { allowedMentions: { repliedUser: true } });
-          console.error(e);
+          socket.app.log.error(e);
           if (queue.length > 1) {
             queue.shift();
             return playSong(queue, message, socket);
@@ -237,7 +237,7 @@ function playSong(queue, message, socket) {
         });
     })
     .catch(e => {
-      console.error(e);
+      socket.app.log.error(e);
       return message.guild.me.voice.channel?.leave();
     });
 }

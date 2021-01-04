@@ -23,7 +23,7 @@ module.exports = async (socket, url, headers) => {
   switch (user) {
     case 'platicorn':
       farewell = socket.app.settings.get('irc_message_stream_down');
-      socket.app.irc.say(user, farewell);
+      socket.app.twitch.irc.say(user, farewell);
       break;
     default:
   }
@@ -33,23 +33,21 @@ module.exports = async (socket, url, headers) => {
     return;
   }
 
-  socket.app.api.uptime(time => {
-    const duration = time ? `for ${helpers.relativeTime(time, 3)}` : '';
+  const uptime = socket.app.twitch.fetchUptime(user).catch(err => socket.app.log.warn(err));
+  const duration = uptime ? `for ${helpers.relativeTime(uptime, 3)}` : '';
 
-    socket.app.api.userChannel(user, async twitch => {
-      if (!twitch) {
-        return;
-      }
-      let content = socket.app.discord.getContent('streamDown', [twitch.display_name]);
-      let embed = socket.app.discord.getEmbed('streamDown', [twitch, twitch.game, duration]);
-      let msg = await socket.getMessage(user);
-      if (msg && msg instanceof Message) {
-        msg.edit(content, embed);
-      }
-    });
+  const twitchChannel = socket.app.twitch.userChannel(user).catch(err => socket.app.log.warn(module, err));
+  if (!twitchChannel) {
+    return;
+  }
+  let content = socket.app.discord.getContent('streamDown', [twitchChannel.display_name]);
+  let embed = socket.app.discord.getEmbed('streamDown', [twitchChannel, twitchChannel.game, duration]);
+  let msg = await socket.getMessage(user);
+  if (msg && msg instanceof Message) {
+    msg.edit(content, embed);
+  }
 
-    cache.del(`stream.uptime.${user}`);
-  }, user);
+  cache.del(`stream.uptime.${user}`);
 
   // Throttle additional events
   const tenSec = 10000;

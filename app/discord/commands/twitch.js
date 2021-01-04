@@ -21,8 +21,8 @@ module.exports = {
       }
     }
 
-    const row = command ? socket.app.irc.commands.get(command) : null;
-    const commands = row ? new Collection([[command, row]]) : socket.app.irc.commands;
+    const row = command ? socket.app.twitch.irc.commands.get(command) : null;
+    const commands = row ? new Collection([[command, row]]) : socket.app.twitch.irc.commands;
 
     let lines = commands
       .sort((va, vb, ka, kb) => +(ka > kb) || +(ka === kb) - 1)

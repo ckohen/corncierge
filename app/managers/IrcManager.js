@@ -2,39 +2,37 @@
 
 const { Collection } = require('discord.js');
 const { RateLimiter } = require('limiter');
-const { client: Client } = require('tmi.js');
+const { Client } = require('tmi.js');
 const throttle = require('tokenthrottle');
 
-const events = require('./events');
-const Socket = require('../Socket');
+const events = require('../irc/events');
+const EventManager = require('../managers/EventManager');
 const { collect } = require('../util/helpers');
 
 const thirtySecs = 30000;
 
 /**
  * IRC manager for the application.
- * @extends {Socket}
- * @private
+ * @extends {EventManager}
  */
-class IrcManager extends Socket {
-  /**
-   * Create a new IRC manager instance.
-   * @param {Application} app the application that instantiated this
-   */
-  constructor(app) {
-    super();
+class IrcManager extends EventManager {
+  constructor(app, twitch) {
+    twitch.options.irc.identity.password = twitch.auth.getAccessToken.bind(twitch.auth);
+    super(app, new Client(twitch.options.irc), twitch.options.irc, events);
 
     /**
-     * The application container.
-     * @type {Application}
+     * The IRC Client.
+     * @type {Client}
+     * @name IrcManager#driver
      */
-    this.app = app;
 
     /**
-     * The socket events.
-     * @type {Object}
+     * The Twitch manager that instantiated this.
+     * @name IrcManager#twitch
+     * @type {TwitchManager}
+     * @readonly
      */
-    this.events = events;
+    Object.defineProperty(this, 'twitch', { value: twitch });
 
     /**
      * The jokes for the IRC joke command.
@@ -55,12 +53,6 @@ class IrcManager extends Socket {
     this.commands = new Collection();
 
     /**
-     * The options for the client
-     * @type {Object}
-     */
-    this.options = this.app.options.irc;
-
-    /**
      * The rate limiter.
      * Twitch IRC only allows 100 requests every 30 seconds.
      * @type {RateLimiter}
@@ -71,7 +63,7 @@ class IrcManager extends Socket {
      * The command throttle.
      * @type {Throttle}
      */
-    this.throttle = throttle(this.app.options.throttle);
+    this.throttle = throttle(this.twitch.options.throttle);
 
     /**
      * The moderation filter types.
@@ -92,29 +84,11 @@ class IrcManager extends Socket {
    */
   async init() {
     const cp = await this.setCache();
-    this.options.identity.password = await this.app.auth.getAccessToken(this.options.identity.username);
-
-    /**
-     * The IRC driver.
-     * @type {Client}
-     */
-    this.driver = new Client(this.options);
 
     this.attach();
     this.driver.connect();
 
     return cp;
-  }
-
-  /**
-   * Reinitializes the driver with a new token
-   * @param {string} token the new token to use
-   */
-  setDriver(token) {
-    this.options.identity.password = `oauth:${token}`;
-    this.driver = new Client(this.options);
-    this.attach();
-    this.driver.connect();
   }
 
   /**

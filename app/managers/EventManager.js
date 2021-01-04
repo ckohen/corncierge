@@ -1,12 +1,26 @@
 'use strict';
 
+const BaseManager = require('./BaseManager');
+
 /**
- * Parent implementation for socket-based service classes.
- * @private
+ * Parent implementation for event-driven service classes.
+ * @extends {BaseManager}
+ * @abstract
  */
-class Socket {
+class EventManager extends BaseManager {
+  constructor(app, driver, options, events) {
+    super(app, driver, options);
+
+    /**
+     * The events this driver handles
+     * @type {Object}
+     */
+    this.events = events;
+  }
+
   /**
    * Attach the event listeners to the socket.
+   * @private
    */
   attach() {
     if (!this.events) return;
@@ -20,6 +34,7 @@ class Socket {
    * Listen for a socket event.
    * @param {string} event the name of the event to listen for
    * @param {Function} listener the function to call on event
+   * @private
    */
   listen(event, listener) {
     this.driver.on(event, (...args) => {
@@ -28,4 +43,4 @@ class Socket {
   }
 }
 
-module.exports = Socket;
+module.exports = EventManager;

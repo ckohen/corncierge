@@ -9,7 +9,7 @@ const twitch = require('../util');
 
 module.exports = (socket, callback, hasArgs, user, target) => {
   const followCall = (userId, handle) => {
-    socket.app.api
+    socket.app.twitch
       .follow(userId)
       .then(body => {
         if (body.created_at === null) return false;
@@ -29,17 +29,14 @@ module.exports = (socket, callback, hasArgs, user, target) => {
   };
 
   if (hasArgs) {
-    socket.app.api.user(target, body => {
-      if (body.users.length === 0) return false;
+    const twitchUser = socket.app.twitch.fetchUser(target).catch(err => socket.app.log.warn(module, err));
+    if (!twitchUser || twitchUser.users.length === 0) return false;
 
-      const obj = body.users[0];
-      const name = obj.display_name || obj.name;
+    const obj = twitchUser.users[0];
+    const name = obj.display_name || obj.name;
 
-      // eslint-disable-next-line no-underscore-dangle
-      return followCall(obj._id, name);
-    });
-
-    return false;
+    // eslint-disable-next-line no-underscore-dangle
+    return followCall(obj._id, name);
   }
 
   return followCall(user['user-id'], twitch.handle(user));
