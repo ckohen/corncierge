@@ -109,7 +109,7 @@ module.exports = {
               deleted = true;
             }
           }
-          await socket.app.database.edit('reactionRoles', [String(message.guild.id), guild.channelID, guild.messageID, guild.roles]);
+          await socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
           message.reply(
             `Deleted ${printableEmote} and associated roles from reaction roles.` +
               `${deleted ? 'There are no more reactions roles left, the reaction message has been deleted.' : ''}`,
@@ -208,7 +208,7 @@ module.exports = {
           });
           guild.messageID = '';
           guild.channelID = '';
-          socket.app.database.edit('reactionRoles', [String(message.guild.id), guild.channelID, guild.messageID, guild.roles]);
+          socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
           message.delete();
           return;
         }
@@ -284,7 +284,7 @@ module.exports = {
       case 'list':
     }
 
-    await socket.app.database.edit('reactionRoles', [String(message.guild.id), guild.channelID, guild.messageID, guild.roles]);
+    await socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
 
     emojis = Object.keys(guild.roles);
     // Create base embed
@@ -370,7 +370,7 @@ module.exports = {
       }
       guild.messageID = String(reactionMsg.id);
       guild.channelID = String(reactionMsg.channel.id);
-      socket.app.database.edit('reactionRoles', [String(message.guild.id), guild.channelID, guild.messageID, guild.roles]);
+      socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
       message.delete();
     }
   },

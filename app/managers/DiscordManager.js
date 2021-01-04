@@ -91,13 +91,13 @@ class DiscordManager extends EventManager {
      * The random channel movement settings, mapped by guild.
      * @type {Collection<string, Object>}
      */
-    this.randomSettings = new Collection();
+    this.randomChannels = new Collection();
 
     /**
      * The new member role settings, mapped by guild.
      * @type {Collection<string, Object>}
      */
-    this.newMemberRoles = new Collection();
+    this.newMemberRole = new Collection();
 
     /**
      * The music data, mapped by guild.
@@ -143,13 +143,12 @@ class DiscordManager extends EventManager {
    */
   setCache() {
     return Promise.all([
-      this.cache('roleManager', this.roleManager, 'guildID'),
-      this.cache('colorManager', this.colorManager, 'guildID'),
-      this.cache('reactionRoles', this.reactionRoles, 'guildID'),
-      this.cache('voiceRoles', this.voiceRoles, 'guildID'),
-      this.cache('prefixes', this.prefixes, 'guildID'),
-      this.cache('randomChannels', this.randomSettings, 'guildID'),
-      this.cache('newMemberRole', this.newMemberRoles, 'guildID'),
+      Promise.all(
+        this.app.database.tables.discord.map(async table => {
+          const name = table.constructor.name.replace(/Table$/, '');
+          await this.cache(table, this[name], 'guildID');
+        }),
+      ),
       this.cacheMusic(),
       this.cacheRooms(),
     ]).catch(err => {
@@ -163,7 +162,7 @@ class DiscordManager extends EventManager {
    * @private
    */
   cacheMusic() {
-    return this.app.database.get('volumes').then(volumes => {
+    return this.app.database.tables.volumes.get().then(volumes => {
       this.musicData.clear();
       volumes.forEach(volume => {
         if (this.musicData.get(volume.guildID)) {
@@ -181,7 +180,7 @@ class DiscordManager extends EventManager {
    * @private
    */
   cacheRooms() {
-    return this.app.database.get('rooms').then(rooms => {
+    return this.app.database.tables.rooms.get().then(rooms => {
       this.rooms.clear();
       let roomGuild, roomID;
       let guild;
@@ -199,15 +198,15 @@ class DiscordManager extends EventManager {
 
   /**
    * Query the database and set a given cache.
-   * @param {string} method the database table to get
+   * @param {BaseTable} table the database table to get from
    * @param {Collection} map the map to store data in
    * @param {string} key a key to use for the new map
    * @param {string} [secondaryKey=false] a dashed key to use for the new map
    * @returns {Promise}
    * @private
    */
-  cache(method, map, key, secondaryKey = false) {
-    return this.app.database.get(method).then(all => {
+  cache(table, map, key, secondaryKey = false) {
+    return table.get().then(all => {
       map.clear();
       collect(map, all, key, secondaryKey);
     });

@@ -38,13 +38,13 @@ class AuthManager extends RequestManager {
         params: {
           client_id: this.options.clientID,
           client_secret: this.options.clientSecret,
-          code: slug === this.twitch.options.irc.identity.username ? this.options.botCode : this.app.database.get(`twitch_code_${slug}`),
+          code: slug === this.twitch.options.irc.identity.username ? this.options.botCode : this.app.settings.get(`twitch_code_${slug}`),
           grant_type: 'authorization_code',
           redirect_uri: this.options.redirectUri,
         },
       });
-      this.app.database.add('settings', [`twitch_access_${slug}`, res.data.access_token]);
-      this.app.database.add('settings', [`twitch_refresh_${slug}`, res.data.refresh_token]);
+      this.app.database.tables.settings.add(`twitch_access_${slug}`, res.data.access_token);
+      this.app.database.tables.settings.add(`twitch_refresh_${slug}`, res.data.refresh_token);
       return res.data.access_token;
     } catch {
       return Promise.reject(new Error('Generate Token'));
@@ -84,8 +84,8 @@ class AuthManager extends RequestManager {
           grant_type: 'refresh_token',
         },
       });
-      this.app.database.edit('settings', [`twitch_access_${slug}`, res.data.access_token]);
-      this.app.database.edit('settings', [`twitch_refresh_${slug}`, res.data.refresh_token]);
+      this.app.database.tables.settings.edit(`twitch_access_${slug}`, res.data.access_token);
+      this.app.database.tables.settings.edit(`twitch_refresh_${slug}`, res.data.refresh_token);
       return res.data.access_token;
     } catch {
       return Promise.reject(new Error('Refresh Token'));

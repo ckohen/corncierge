@@ -1,12 +1,19 @@
 'use strict';
 
-module.exports = {
+const BaseTable = require('./BaseTable');
+
+/**
+ * Contains API methods for the ircFilters database table
+ * @extends {BaseTable}
+ */
+class ircFiltersTable extends BaseTable {
   /**
    * Get all IRC moderation filters.
-   * @param {DatabaseManager} socket the database manager to query with
    * @returns {Promise<Object[]>}
    */
-  get(socket) {
-    return socket.query('SELECT id, type, input, duration, output FROM `filters` WHERE `deleted_at` IS NULL ORDER BY `type` ASC');
-  },
-};
+  get() {
+    return this.socket.query('SELECT id, type, input, duration, output FROM `filters` WHERE `deleted_at` IS NULL ORDER BY `type` ASC');
+  }
+}
+
+module.exports = ircFiltersTable;

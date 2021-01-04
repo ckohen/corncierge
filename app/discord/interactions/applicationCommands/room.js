@@ -93,7 +93,7 @@ module.exports = {
               lastChannelID: null,
               lastMessageID: null,
             });
-            socket.app.database.add('rooms', [`${interaction.guild.id}-${String(i)}`]);
+            socket.app.database.tables.rooms.add(`${interaction.guild.id}-${String(i)}`);
             room = rooms.get(String(i));
             break;
           }
@@ -181,7 +181,7 @@ module.exports = {
         }
         // Delete the room
         interaction.reply(`Room ${room.id}: **${room.name}** has been successfully removed, the new list of rooms can be found below.`, { ephemeral: true });
-        socket.app.database.delete('rooms', [`${interaction.guild.id}-${room.id}`]);
+        socket.app.database.tables.rooms.delete(`${interaction.guild.id}-${room.id}`);
         rooms.delete(room.id);
         room = false;
         acknowledged = true;
@@ -245,7 +245,7 @@ module.exports = {
             acknowledged = true;
           } else {
             // Delete the room if there is no new possible owner
-            socket.app.database.delete('rooms', [`${interaction.guild.id}-${room.id}`]);
+            socket.app.database.tables.rooms.delete(`${interaction.guild.id}-${room.id}`);
             rooms.delete(room.id);
             return interaction.reply(`You were the last player in ${room.name}, it has been deleted.`, { ephemeral: true });
           }
@@ -511,7 +511,7 @@ module.exports = {
       room.lastChannelID = lastMessage.channel.id;
       room.lastMessageID = lastMessage.id;
       // Update database
-      socket.app.database.edit('rooms', [`${interaction.guild.id}-${room.id}`, room]);
+      socket.app.database.tables.rooms.edit(`${interaction.guild.id}-${room.id}`, room);
     } else if (masterRoom) {
       // Store last message information
       masterRoom.lastChannelID = lastMessage.channel.id;

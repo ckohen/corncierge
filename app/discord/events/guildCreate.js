@@ -3,15 +3,9 @@
 module.exports = async (socket, guild) => {
   socket.app.log(module, `Joined new server: ${guild.name}`);
 
-  // Add new guild to role and color managers
-  await socket.app.database.add('colorManager', [String(guild.id)]);
-  await socket.app.database.add('roleManager', [String(guild.id)]);
-  await socket.app.database.add('reactionRoles', [String(guild.id)]);
-  await socket.app.database.add('voiceRoles', [String(guild.id)]);
-  await socket.app.database.add('prefixes', [String(guild.id)]);
-  await socket.app.database.add('randomChannels', [String(guild.id)]);
-  await socket.app.database.add('newMemberRole', [String(guild.id)]);
-  await socket.app.database.add('volumes', [String(guild.id)]);
+  // Add new guild to database tables
+  await Promise.all(socket.app.database.tables.discord.map(table => table.add(String(guild.id))));
+  await socket.app.database.tables.volumes.add(String(guild.id));
 
   // Re-cache managers
   await socket.setCache();

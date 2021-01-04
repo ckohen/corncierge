@@ -141,9 +141,9 @@ module.exports = {
 
     try {
       if (method === 'edit') {
-        await socket.app.database[method]('ircCommands', submethod, data);
+        await socket.app.database.tables.ircCommands[method](submethod, data);
       } else {
-        await socket.app.database[method]('ircCommands', data);
+        await socket.app.database.tables.ircCommands[method](data);
       }
     } catch (err) {
       socket.app.log.error(module, err);

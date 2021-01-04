@@ -68,8 +68,8 @@ module.exports = {
 
     try {
       await socket.driver.user.setActivity(data[0] || null, { type: data[1] || null });
-      await socket.app.database[method]('settings', ['discord_activity', data[0]]);
-      await socket.app.database[method]('settings', ['discord_activity_type', data[1]]);
+      await socket.app.database.tables.settings[method]('discord_activity', data[0]);
+      await socket.app.database.tables.settings[method]('discord_activity_type', data[1]);
     } catch (err) {
       socket.app.log.error(module, err);
       respond(failure);

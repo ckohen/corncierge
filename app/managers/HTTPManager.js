@@ -100,7 +100,7 @@ class HTTPManager extends EventManager {
   setMessage(slug, msgID) {
     let user = this.app.streaming.get(`notification_${slug}`);
     user.lastMessage = msgID;
-    return this.app.database.edit('streaming', [`notification_${slug}`, msgID]);
+    return this.app.database.tables.streaming.edit(`notification_${slug}`, msgID);
   }
 }
 

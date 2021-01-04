@@ -2,7 +2,7 @@
 
 const mysql = require('mysql2');
 const BaseManager = require('./BaseManager');
-const tables = require('../database/tables');
+const TableManager = require('../database/tables/TableManager');
 
 /**
  * Database manager for the application.
@@ -21,9 +21,9 @@ class DatabaseManager extends BaseManager {
 
     /**
      * The database tables.
-     * @type {Object}
+     * @type {TableManager}
      */
-    this.tables = tables;
+    this.tables = new TableManager(this);
   }
 
   /**
@@ -56,80 +56,6 @@ class DatabaseManager extends BaseManager {
         return resolve(results);
       });
     });
-  }
-
-  /**
-   * Gets the databse table specified
-   * @param {string} slug the name of the table to get
-   * @returns {Promise<Object[]>}
-   */
-  get(slug) {
-    const table = this.tables[slug];
-
-    if (typeof table !== 'object' || typeof table.get !== 'function') {
-      this.app.log.warn(module, `Table does not have get method: ${slug}`);
-      return Promise.reject(new Error('Table Get'));
-    }
-
-    return table.get(this);
-  }
-
-  /**
-   * Adds a new entry to the table specified
-   * @param {string} slug the name of the table to add to
-   * @param {Array} args arguments to pass to the entry creation
-   * @returns {Promise<void>}
-   */
-  add(slug, args) {
-    const table = this.tables[slug];
-
-    if (typeof table !== 'object' || typeof table.add !== 'function') {
-      this.app.log.warn(module, `Table does not have add method: ${slug}`);
-      return Promise.reject(new Error('Table Add'));
-    }
-
-    return table.add(this, ...args);
-  }
-
-  /**
-   * Removes an entry from the table specified
-   * @param {string} slug the name of the table to remove from
-   * @param {Array} args arguments to pass that identify the deletion
-   * @returns {Promise<void>}
-   */
-  delete(slug, args) {
-    const table = this.tables[slug];
-
-    if (typeof table !== 'object' || typeof table.delete !== 'function') {
-      this.app.log.warn(module, `Table does not have delete method: ${slug}`);
-      return Promise.reject(new Error('Table Delete'));
-    }
-
-    return table.delete(this, ...args);
-  }
-
-  /**
-   * Edits the data for a row in the table specified
-   * @param {string} slug the name of the table to edit
-   * @param {string} [property] the name of a specific property to edit
-   * @param {Array} args arguments to pass to the editor
-   * @returns {Promise<void>}
-   */
-  edit(slug, property, args) {
-    const table = this.tables[slug];
-
-    if (typeof table !== 'object' || typeof table.edit !== 'function') {
-      this.app.log.warn(module, `Table does not have edit method: ${slug}`);
-      return Promise.reject(new Error('Table Edit'));
-    }
-
-    if (typeof property !== 'string') {
-      args = property;
-      property = undefined;
-      return table.edit(this, ...args);
-    } else {
-      return table.edit(this, property, ...args);
-    }
   }
 }
 

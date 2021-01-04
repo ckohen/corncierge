@@ -23,7 +23,7 @@ module.exports = {
     let time = 0;
 
     //  A list of key value pairs with current automatic role data
-    let guild = socket.newMemberRoles.get(String(message.guild.id));
+    let guild = socket.newMemberRole.get(String(message.guild.id));
 
     // Check for actual role
     if (roleRaw && roleRaw.startsWith('<@&') && roleRaw.endsWith('>')) {
@@ -78,14 +78,14 @@ module.exports = {
         // Remove data
         guild.roleID = '';
         guild.delayTime = '0';
-        await socket.app.database.edit('newMemberRole', [String(message.guild.id), guild.roleID, guild.delayTime]);
+        await socket.app.database.tables.newMemberRole.edit(String(message.guild.id), guild.roleID, guild.delayTime);
         message.channel.send(`${message.member}, I will no longer assign a role to new members!`);
         return;
       case 'status':
     }
 
     // Update database
-    await socket.app.database.edit('newMemberRole', [String(message.guild.id), guild.roleID, guild.delayTime]);
+    await socket.app.database.tables.newMemberRole.edit(String(message.guild.id), guild.roleID, guild.delayTime);
 
     // Variables for response message
     let delay = false;

@@ -3,13 +3,7 @@
 module.exports = (socket, guild) => {
   socket.app.log(module, `Left server: ${guild.name}`);
 
-  // Remove guild from role and color managers
-  socket.app.database.delete('colorManager', [String(guild.id)]);
-  socket.app.database.delete('roleManager', [String(guild.id)]);
-  socket.app.database.delete('reactionRoles', [String(guild.id)]);
-  socket.app.database.delete('voiceRoles', [String(guild.id)]);
-  socket.app.database.delete('prefixes', [String(guild.id)]);
-  socket.app.database.delete('randomChannels', [String(guild.id)]);
-  socket.app.database.delete('newMemberRole', [String(guild.id)]);
-  socket.app.database.delete('volumes', [String(guild.id)]);
+  // Remove guild from database tables
+  socket.app.database.tables.discord.forEach(table => table.delete(String(guild.id)));
+  socket.app.database.tables.volumes.delete(String(guild.id));
 };
