@@ -78,7 +78,7 @@ class LogManager extends BaseManager {
    * @param {LogLevel} level the log level
    * @param {string} path the path to the module that this occured in
    * @param {string} message the message to send
-   * @returns {Promise<Request>}
+   * @returns {Promise<axiosRequest, axiosResponse>}
    * @private
    */
   webhook(level, path, message) {

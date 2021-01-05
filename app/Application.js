@@ -75,7 +75,7 @@ class Application {
 
     /**
      * True when intentionally ending the application so subapplications do not restart
-     * @type {Boolean}
+     * @type {boolean}
      * @private
      */
     this.ending = false;

@@ -22,7 +22,7 @@ class IrcManager extends EventManager {
 
     /**
      * The IRC Client.
-     * @type {Client}
+     * @type {tmi.js.Client}
      * @name IrcManager#driver
      */
 

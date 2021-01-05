@@ -12,7 +12,7 @@ class AuthManager extends RequestManager {
 
     /**
      * The Authentication handler.
-     * @type {Object}
+     * @type {Axios}
      * @name AuthManager#driver
      * @private
      */

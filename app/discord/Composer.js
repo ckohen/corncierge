@@ -21,7 +21,7 @@ class Composer extends MessageEmbed {
   /**
    * Set the color for the embed.
    * @param {string} color one of the colors specified in client options
-   * @returns {self}
+   * @returns {Composer}
    */
   setColor(color) {
     this.color = this.options.discord.colors[color];

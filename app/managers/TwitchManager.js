@@ -15,7 +15,7 @@ class TwitchManager extends RequestManager {
 
     /**
      * The Twitch API handler.
-     * @type {Object}
+     * @type {Axios}
      * @name TwitchManager#driver
      */
 

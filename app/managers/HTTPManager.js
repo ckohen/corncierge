@@ -29,7 +29,7 @@ class HTTPManager extends EventManager {
 
   /**
    * Initialize the manager.
-   * @returns {self}
+   * @returns {Promise}
    */
   init() {
     this.app.log.debug(module, 'Registering events');

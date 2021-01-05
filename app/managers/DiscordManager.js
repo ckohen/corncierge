@@ -23,7 +23,7 @@ class DiscordManager extends EventManager {
 
     /**
      * The Discord.js API / Websocket Client.
-     * @type {Client}
+     * @type {discord.js.Client}
      * @name DiscordManager#driver
      */
 
@@ -302,10 +302,10 @@ class DiscordManager extends EventManager {
   /**
    * Send a message with the given content and embed.
    * @param {string} slug the channel name in settings to get and send to
-   * @param {string|RichEmbed} content the content to send
-   * @param {MessageOptions|Attachment|MessageEmbed} [embed] The options to provide
+   * @param {StringResolvable|APIMessage} [content] the content to send
+   * @param {MessageOptions|MessageAddtions} [options] The options to provide
    */
-  sendMessage(slug, content, embed) {
+  sendMessage(slug, content, options) {
     const channel = this.getChannel(slug);
 
     if (!channel) {
@@ -313,7 +313,7 @@ class DiscordManager extends EventManager {
       return;
     }
 
-    channel.send(content, embed).catch(err => {
+    channel.send(content, options).catch(err => {
       this.app.log.warn(module, `Send message: ${err}`);
     });
   }
@@ -321,17 +321,17 @@ class DiscordManager extends EventManager {
   /**
    * Send a webhook with the given content and embed.
    * @param {string} slug the webhook name in settings to get and send to
-   * @param {string|RichEmbed} content the content to send
-   * @param {WebhookMessageOptions|Attachment|MessageEmbed} [embed] The options to provide
+   * @param {StringResolvable|APIMessage} [content] the content to send
+   * @param {MessageOptions|MessageAddtions} [options] The options to provide
    */
-  sendWebhook(slug, content, embed) {
+  sendWebhook(slug, content, options) {
     this.getWebhook(slug).then(webhook => {
       if (!webhook) {
         this.app.log.warn(module, `No webhook set for slug: ${slug}`);
         return;
       }
 
-      webhook.send(content, embed).catch(err => {
+      webhook.send(content, options).catch(err => {
         this.app.log.warn(module, `Send webhook: ${err}`);
       });
     });

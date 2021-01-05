@@ -14,7 +14,7 @@ class DatabaseManager extends BaseManager {
 
     /**
      * The database driver.
-     * @type {Pool}
+     * @type {mysql2.Pool}
      * @name DatabaseManager#driver
      * @private
      */
@@ -28,7 +28,7 @@ class DatabaseManager extends BaseManager {
 
   /**
    * Create a connection to the database.
-   * @returns {Promise<Connection>}
+   * @returns {Promise<mysql2.Connection>}
    * @private
    */
   connection() {
