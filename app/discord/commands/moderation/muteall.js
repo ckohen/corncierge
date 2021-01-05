@@ -29,7 +29,7 @@ module.exports = {
       await voiceChannel.members.forEach(member => {
         if (!member.user.bot && !(member === message.member)) {
           member.voice.setMute(true).catch(err => {
-            socket.app.log.error(module, err);
+            socket.app.log.warn(module, err);
           });
         } else {
           count -= 1;
@@ -48,7 +48,7 @@ module.exports = {
       setTimeout(() => {
         voiceChannel.members.forEach(member => {
           member.voice.setMute(false).catch(err => {
-            socket.app.log.error(module, err);
+            socket.app.log.warn(module, err);
           });
         });
       }, delay);

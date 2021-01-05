@@ -115,7 +115,7 @@ class Application {
       await this.discord.driver.destroy();
       await this.http.driver.close();
     } catch (err) {
-      this.log.error(module, `Error when shutting down: ${err}`);
+      this.log.debug(module, `Error when shutting down: ${err}`);
     }
     process.exit(code);
   }

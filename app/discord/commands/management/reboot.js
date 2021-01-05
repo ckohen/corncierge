@@ -7,7 +7,7 @@ module.exports = {
     socket.app.log(module, 'Reboot instruct received');
 
     await message.channel.send('Rebooting now!').catch(err => {
-      socket.app.log.error(module, err);
+      socket.app.log.warn(module, err);
     });
 
     // Reboot

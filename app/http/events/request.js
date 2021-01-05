@@ -9,6 +9,8 @@ module.exports = (socket, request, response) => {
   // Ignore when the url path is not base
   if (request.url !== '/') {
     socket.app.log.verbose(module, `No page available for URL: ${request.url}`);
+    response.statusCode = 404;
+    response.statusMessage = 'Not found';
     return response.end();
   }
 

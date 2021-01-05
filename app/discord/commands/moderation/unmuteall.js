@@ -15,7 +15,7 @@ module.exports = {
     // Unmute members
     voiceChannel.members.forEach(member => {
       member.voice.setMute(false).catch(err => {
-        socket.app.log.error(module, err);
+        socket.app.log.warn(module, err);
       });
     });
 

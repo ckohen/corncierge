@@ -29,7 +29,7 @@ module.exports = {
       if (!lines) return;
 
       message.channel.send(`\`\`\`${lines}\`\`\``, { split: true }).catch(err => {
-        socket.app.log.error(module, err);
+        socket.app.log.warn(module, err);
       });
     } else {
       let request = args.join(' ');

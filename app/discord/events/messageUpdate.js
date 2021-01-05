@@ -4,16 +4,16 @@ module.exports = async (socket, before, after) => {
   if (before.partial) {
     try {
       before = await before.fetch();
-    } catch {
-      socket.app.log.verbose(module, `Could not get partial message:${before.id}`);
+    } catch (err) {
+      socket.app.log.verbose(module, `Could not get partial message:${err}`);
       return;
     }
   }
   if (after.partial) {
     try {
       await after.fetch();
-    } catch {
-      socket.app.log.verbose(module, `Could not get partial message: ${after.id}`);
+    } catch (err) {
+      socket.app.log.verbose(module, `Could not get partial message: ${err}`);
       return;
     }
   }

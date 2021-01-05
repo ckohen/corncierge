@@ -9,7 +9,7 @@ module.exports = {
   run(socket, message) {
     const { discord, twitch, log, settings, streaming } = socket.app;
 
-    log.out('info', module, 'Reload instruct received');
+    log(module, 'Reload instruct received');
 
     // Clear cache
     cache.clear();
@@ -33,10 +33,10 @@ module.exports = {
       });
 
       message.channel.send(response).catch(err => {
-        log.out('error', module, err);
+        log.warn(module, err);
       });
 
-      log.out('info', module, 'Reload complete');
+      log(module, 'Reload complete');
     });
   },
 };

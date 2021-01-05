@@ -18,7 +18,7 @@ module.exports = {
       if (!content) return;
       const target = mention ? `, ${message.author}` : '';
       message.channel.send(`${content}${target}.`).catch(err => {
-        socket.app.log.error(module, err);
+        socket.app.log.warn(module, err);
       });
     };
 
@@ -71,7 +71,7 @@ module.exports = {
       await socket.app.database.tables.settings[method]('discord_activity', data[0]);
       await socket.app.database.tables.settings[method]('discord_activity_type', data[1]);
     } catch (err) {
-      socket.app.log.error(module, err);
+      socket.app.log.warn(module, err);
       respond(failure);
       return;
     }

@@ -133,7 +133,7 @@ class DiscordManager extends EventManager {
     await this.setCache();
 
     return this.driver.login(this.app.options.discord.token).catch(err => {
-      this.app.log.error(module, `Login: ${err}`);
+      this.app.log.critical(module, `Login: ${err}`);
     });
   }
 
@@ -307,7 +307,7 @@ class DiscordManager extends EventManager {
     }
 
     channel.send(content, embed).catch(err => {
-      this.app.log.error(module, `Send message: ${err}`);
+      this.app.log.warn(module, `Send message: ${err}`);
     });
   }
 
@@ -325,7 +325,7 @@ class DiscordManager extends EventManager {
       }
 
       webhook.send(content, embed).catch(err => {
-        this.app.log.error(module, `Send webhook: ${err}`);
+        this.app.log.warn(module, `Send webhook: ${err}`);
       });
     });
   }
