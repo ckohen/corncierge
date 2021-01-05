@@ -1,10 +1,2 @@
 /node_modules
 .env
-
-# PM2
-module_conf.json
-*.pm2
-*.pid
-*.bak
-*.log
-touch
