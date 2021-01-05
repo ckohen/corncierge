@@ -34,6 +34,7 @@ class AuthManager extends RequestManager {
    */
   async generateToken(slug) {
     try {
+      this.app.log.debug(module, `Generating token for ${slug}`);
       const res = await this.api.token.post({
         params: {
           client_id: this.options.clientID,
@@ -43,8 +44,10 @@ class AuthManager extends RequestManager {
           redirect_uri: this.options.redirectUri,
         },
       });
+      this.app.log.debug(module, 'Successfull Generation');
       this.app.database.tables.settings.add(`twitch_access_${slug}`, res.data.access_token);
       this.app.database.tables.settings.add(`twitch_refresh_${slug}`, res.data.refresh_token);
+      this.app.log.debug(module, 'Added tokens to database.');
       return res.data.access_token;
     } catch {
       return Promise.reject(new Error('Generate Token'));
@@ -57,15 +60,13 @@ class AuthManager extends RequestManager {
    * @returns {Promise<string>} token
    */
   async getAccessToken(slug = this.twitch.options.irc.identity.username) {
+    this.app.log.debug(module, `Getting access token for ${slug}`);
     const token = this.app.settings.get(`twitch_access_${slug}`);
     if (token) {
       if (await this.validateToken(token)) return token;
       return this.refreshToken(slug);
     }
-    if (slug === this.twitch.options.irc.identity.username) {
-      return this.generateToken(slug);
-    }
-    return Promise.reject(new Error('Get Token'));
+    return this.generateToken(slug);
   }
 
   /**
@@ -76,6 +77,7 @@ class AuthManager extends RequestManager {
    */
   async refreshToken(slug) {
     try {
+      this.app.log.debug(module, `Refreshing Access Token for ${slug}`);
       const res = await this.api.token.post({
         params: {
           client_id: this.options.clientID,
@@ -84,8 +86,10 @@ class AuthManager extends RequestManager {
           grant_type: 'refresh_token',
         },
       });
+      this.app.log.debug(module, 'Successfully refreshed.');
       this.app.database.tables.settings.edit(`twitch_access_${slug}`, res.data.access_token);
       this.app.database.tables.settings.edit(`twitch_refresh_${slug}`, res.data.refresh_token);
+      this.app.log.debug(module, 'Updated Database with refreshed tokens.');
       return res.data.access_token;
     } catch {
       return Promise.reject(new Error('Refresh Token'));
@@ -100,9 +104,12 @@ class AuthManager extends RequestManager {
    */
   async validateToken(token) {
     try {
+      this.app.log.debug(module, 'Validating token.');
       await this.api.validate.get({ headers: { Authorization: `OAuth ${token}` } });
+      this.app.log.debug(module, 'Token valid.');
       return true;
     } catch (error) {
+      this.app.log.debug(module, 'Token Invalid.');
       return false;
     }
   }

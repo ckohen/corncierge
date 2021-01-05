@@ -97,18 +97,20 @@ class Application {
   async boot() {
     // Run tasks in parallel to avoid serial delays
     await Promise.all([this.setSettings(), this.setStreaming()]);
+    this.log.debug(module, 'All settings Initialized.');
 
-    await Promise.all([this.discord.init(), this.twitch.irc.init()]);
-    await this.http.init();
+    await Promise.all([this.discord.init(), this.twitch.irc.init(), this.http.init()]);
 
     this.log(module, 'Boot complete');
     // Send "Ready" to parent if it exists
     if (typeof process.send === 'function') {
       process.send('ready');
+      this.log.debug(module, 'Sent ready to parent');
     }
   }
 
   async end(code) {
+    this.log.debug(module, `Shutting Down`);
     this.ending = true;
     try {
       await this.twitch.irc.driver.disconnect();
@@ -141,6 +143,7 @@ class Application {
    * @private
    */
   setSettings() {
+    this.log.debug(module, 'Initializing Settings.');
     return this.database.tables.settings
       .get()
       .then(all => collect(this.settings, all, 'name', null, 'value'))
@@ -155,6 +158,7 @@ class Application {
    * @private
    */
   setStreaming() {
+    this.log.debug(module, 'Initializing Streaming Settings.');
     return this.database.tables.streaming
       .get()
       .then(all => collect(this.streaming, all, 'name', null))
