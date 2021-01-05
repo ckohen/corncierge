@@ -303,7 +303,7 @@ class DiscordManager extends EventManager {
    * Send a message with the given content and embed.
    * @param {string} slug the channel name in settings to get and send to
    * @param {StringResolvable|APIMessage} [content] the content to send
-   * @param {MessageOptions|MessageAddtions} [options] The options to provide
+   * @param {MessageOptions|MessageAdditions} [options] The options to provide
    */
   sendMessage(slug, content, options) {
     const channel = this.getChannel(slug);
@@ -322,7 +322,7 @@ class DiscordManager extends EventManager {
    * Send a webhook with the given content and embed.
    * @param {string} slug the webhook name in settings to get and send to
    * @param {StringResolvable|APIMessage} [content] the content to send
-   * @param {MessageOptions|MessageAddtions} [options] The options to provide
+   * @param {MessageOptions|MessageAdditions} [options] The options to provide
    */
   sendWebhook(slug, content, options) {
     this.getWebhook(slug).then(webhook => {
