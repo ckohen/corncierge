@@ -85,7 +85,9 @@ class IrcManager extends EventManager {
   async init() {
     const cp = await this.setCache();
 
+    this.app.log.debug(module, 'Registering events');
     this.attach();
+    this.app.log.debug(module, 'Connecting');
     this.driver.connect();
 
     return cp;
@@ -187,6 +189,7 @@ class IrcManager extends EventManager {
    * @returns {Promise<void>}
    */
   cacheJokes() {
+    this.app.log.debug(module, 'Caching jokes');
     return this.app.database.tables.jokes.get().then(all => {
       this.jokes.length = 0;
       all.forEach(item => this.jokes.push(item));
@@ -198,6 +201,7 @@ class IrcManager extends EventManager {
    * @returns {Promise<void>}
    */
   cacheFilters() {
+    this.app.log.debug(module, 'Caching filters');
     return this.cache('ircFilters', this.filters, 'id');
   }
 
@@ -206,6 +210,7 @@ class IrcManager extends EventManager {
    * @returns {Promise<void>}
    */
   cacheCommands() {
+    this.app.log.debug(module, 'Caching commands');
     return this.cache('ircCommands', this.commands, 'input', 'prefix');
   }
 

@@ -111,6 +111,7 @@ class DiscordManager extends EventManager {
    * @returns {Promise<string>}
    */
   async init() {
+    this.app.log.debug(module, 'Registering events');
     this.attach();
     // Temporary Addition to handle interactions before discord.js does
     this.driver.ws.on('INTERACTION_CREATE', async packet => {
@@ -122,18 +123,21 @@ class DiscordManager extends EventManager {
     });
     // End addition
 
+    this.app.log.debug(module, 'Registering commands');
     Object.entries(commands).forEach(([command, handler]) => {
       this.commands.set(command, handler);
     });
 
+    this.app.log.debug(module, 'Registering interactions');
     Object.entries(applicationCommands).forEach(([command, handler]) => {
       this.applicationCommands.set(command, handler);
     });
 
     await this.setCache();
 
+    this.app.log.debug(module, 'Logging in');
     return this.driver.login(this.app.options.discord.token).catch(err => {
-      this.app.log.error(module, `Login: ${err}`);
+      this.app.log.critical(module, `Login: ${err}`);
     });
   }
 
@@ -146,6 +150,7 @@ class DiscordManager extends EventManager {
       Promise.all(
         this.app.database.tables.discord.map(async table => {
           const name = table.constructor.name.replace(/Table$/, '');
+          this.app.log.debug(module, `Caching ${name}`);
           await this.cache(table, this[name], 'guildID');
         }),
       ),
@@ -162,6 +167,7 @@ class DiscordManager extends EventManager {
    * @private
    */
   cacheMusic() {
+    this.app.log.debug(module, 'Caching music');
     return this.app.database.tables.volumes.get().then(volumes => {
       this.musicData.clear();
       volumes.forEach(volume => {
@@ -180,6 +186,7 @@ class DiscordManager extends EventManager {
    * @private
    */
   cacheRooms() {
+    this.app.log.debug(module, 'Caching rooms');
     return this.app.database.tables.rooms.get().then(rooms => {
       this.rooms.clear();
       let roomGuild, roomID;
@@ -307,7 +314,7 @@ class DiscordManager extends EventManager {
     }
 
     channel.send(content, embed).catch(err => {
-      this.app.log.error(module, `Send message: ${err}`);
+      this.app.log.warn(module, `Send message: ${err}`);
     });
   }
 
@@ -325,7 +332,7 @@ class DiscordManager extends EventManager {
       }
 
       webhook.send(content, embed).catch(err => {
-        this.app.log.error(module, `Send webhook: ${err}`);
+        this.app.log.warn(module, `Send webhook: ${err}`);
       });
     });
   }

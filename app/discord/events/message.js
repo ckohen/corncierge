@@ -7,8 +7,8 @@ module.exports = async (socket, message) => {
   if (message.partial) {
     try {
       await message.fetch();
-    } catch {
-      socket.app.log.verbose(module, `Could not get partial message: ${message.id}`);
+    } catch (err) {
+      socket.app.log.verbose(module, `Could not get partial message: ${err}`);
       return;
     }
   }
@@ -51,7 +51,7 @@ module.exports = async (socket, message) => {
   if (handler.role && !message.member.roles.cache.some(role => role.name === handler.role)) {
     if (!message.member.hasPermission('MANAGE_ROLES')) {
       message.channel.send(`You're not allowed to do that, ${message.author}.`).catch(err => {
-        socket.app.log.error(module, err);
+        socket.app.log.warn(module, err);
       });
       return;
     }
@@ -60,7 +60,7 @@ module.exports = async (socket, message) => {
   // Check permissions
   if (handler.permissions && !message.member.hasPermission(handler.permissions)) {
     message.channel.send(`You're not allowed to do that, ${message.author}.`).catch(err => {
-      socket.app.log.error(module, err);
+      socket.app.log.warn(module, err);
     });
     return;
   }
@@ -68,7 +68,7 @@ module.exports = async (socket, message) => {
   // Check arguments
   if (handler.args && !args[0]) {
     message.channel.send(`That command requires an argument, ${message.author}.`).catch(err => {
-      socket.app.log.error(module, err);
+      socket.app.log.warn(module, err);
     });
     return;
   }

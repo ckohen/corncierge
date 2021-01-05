@@ -38,7 +38,7 @@ function roleAssign(socket, message, validRoles, args) {
       member.roles.add(role);
       roleAssigned = true;
     } catch (err) {
-      socket.app.log.error(module, err);
+      socket.app.log.warn(module, err);
       roleAssigned = false;
     }
 

@@ -21,10 +21,10 @@ module.exports = {
     message.channel
       .bulkDelete(clamp(amount + 1, 2, 100), true)
       .then(deleted => {
-        socket.app.log(module, `Deleted ${deleted.size} messages`);
+        socket.app.log.debug(module, `Deleted ${deleted.size} messages`);
       })
       .catch(err => {
-        socket.app.log.error(module, err);
+        socket.app.log.warn(module, err);
       });
     if (socket.isGuild(message.guild.id, 'platicorn')) {
       socket.sendWebhook('clear', `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);

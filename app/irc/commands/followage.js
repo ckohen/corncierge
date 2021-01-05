@@ -23,7 +23,7 @@ module.exports = (socket, callback, hasArgs, user, target) => {
           return callback();
         }
 
-        socket.app.log.error(module, err);
+        socket.app.log.warn(module, err);
         return false;
       });
   };

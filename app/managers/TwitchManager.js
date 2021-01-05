@@ -38,6 +38,7 @@ class TwitchManager extends RequestManager {
    * @returns {Promise<Object>}
    */
   fetchChannel(userId = this.options.channel.id) {
+    this.app.log.debug(module, `Fetching channel: ${userId}`);
     return this.api
       .channels(userId)
       .get()
@@ -50,13 +51,10 @@ class TwitchManager extends RequestManager {
    * @returns {Promise<Object>}
    */
   userChannel(user) {
-    return this.fetchUser(user)
-      .then(userObj => {
-        const id = userObj.users[0]._id;
-        /* eslint-disable-next-line newline-per-chained-call */
-        return this.api.channels(id).get();
-      })
-      .catch(Promise.reject);
+    return this.fetchUser(user).then(userObj => {
+      const id = userObj.users[0]._id;
+      return this.fetchChannel(id);
+    });
   }
 
   /**
@@ -66,6 +64,7 @@ class TwitchManager extends RequestManager {
    * @returns {Promise<Object>}
    */
   follow(userId, streamerId = this.options.channel.id) {
+    this.app.log.debug(module, `Fetching follow: ${userId} to ${streamerId}`);
     return this.api
       .users(userId)
       .follows.channels(streamerId)
@@ -79,6 +78,7 @@ class TwitchManager extends RequestManager {
    * @returns {void}
    */
   fetchStream(userId = this.options.channel.id) {
+    this.app.log.debug(module, `Fetching stream: ${userId}`);
     return this.api
       .streams(userId)
       .get()
@@ -91,6 +91,7 @@ class TwitchManager extends RequestManager {
    * @returns {Promise<Object>}
    */
   fetchUser(name) {
+    this.app.log.debug(module, `Fetching user: ${name}`);
     return this.api.users.get({ params: { login: name } }).then(res => res.data);
   }
 
@@ -100,6 +101,7 @@ class TwitchManager extends RequestManager {
    * @returns {Promise<number>}
    */
   fetchUptime(user = this.options.channel.name) {
+    this.app.log.debug(module, `Fetching uptime: ${user}`);
     return this.fetchUser(user).then(userObj => {
       const id = userObj.users[0]._id;
       return this.fetchStream(id).then(body => {
