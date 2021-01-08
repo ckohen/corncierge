@@ -8,7 +8,7 @@ const HTTPManager = require('./managers/HTTPManager');
 const LogManager = require('./managers/LogManager');
 const TwitchManager = require('./managers/TwitchManager');
 const logBuilder = require('./util/LogRouter');
-const { collect } = require('./util/helpers');
+const { collect } = require('./util/UtilManager');
 
 /**
  * The application container.

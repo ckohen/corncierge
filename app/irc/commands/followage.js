@@ -2,10 +2,7 @@
 
 const moment = require('moment');
 
-const helpers = require.main.require('./app/util/helpers');
-
-const lang = require('../lang');
-const twitch = require('../util');
+const util = require('../../util/UtilManager');
 
 module.exports = (socket, callback, hasArgs, user, target) => {
   const followCall = (userId, handle) => {
@@ -16,7 +13,7 @@ module.exports = (socket, callback, hasArgs, user, target) => {
 
         const age = moment(body.created_at).valueOf();
 
-        return callback(lang.followage(handle, helpers.humanDate(age), helpers.relativeTime(age)));
+        return callback(util.twitch.messages.followage(handle, util.humanDate(age), util.relativeTime(age)));
       })
       .catch(err => {
         if (err.statusCode === 404 || err.statusCode === '404') {
@@ -39,5 +36,5 @@ module.exports = (socket, callback, hasArgs, user, target) => {
     return followCall(obj._id, name);
   }
 
-  return followCall(user['user-id'], twitch.handle(user));
+  return followCall(user['user-id'], util.twitch.handle(user));
 };

@@ -2,7 +2,7 @@
 
 const { Collection } = require('discord.js');
 const plural = require('pluralize');
-const { collect } = require('../../../util/helpers');
+const { collect } = require('../../../util/UtilManager');
 
 module.exports = {
   guild: 'platicorn',

@@ -1,8 +1,6 @@
 'use strict';
 
-const twitch = require('../util');
-
-const { humanDuration } = require.main.require('./app/util/helpers');
+const util = require('../../util/UtilManager');
 
 module.exports = (socket, channel, tags, message, filter) => {
   const { filterTypes } = socket;
@@ -26,7 +24,7 @@ module.exports = (socket, channel, tags, message, filter) => {
       socket.timeout(channel, tags.username, filter.duration, () => {
         discord.sendWebhook(
           'timeout',
-          discord.getContent('timeoutAutomatic', [tags.username, humanDuration(filter.duration * 1000)]),
+          discord.getContent('timeoutAutomatic', [tags.username, util.humanDuration(filter.duration * 1000)]),
           discord.getEmbed('message', [tags.username, message]),
         );
       });
@@ -42,7 +40,7 @@ module.exports = (socket, channel, tags, message, filter) => {
     case filterTypes.WARNING:
       action = 'warning';
       if (!filter.output) break;
-      socket.say(channel, `@${twitch.handle(tags)} ${filter.output}`);
+      socket.say(channel, `@${util.twitch.handle(tags)} ${filter.output}`);
       break;
     // Review
     case filterTypes.REVIEW:

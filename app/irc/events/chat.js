@@ -1,7 +1,7 @@
 'use strict';
 
+const { twitch } = require('../../util/UtilManager');
 const handlers = require('../handlers');
-const twitch = require('../util');
 
 module.exports = (socket, channel, user, messageRaw, self) => {
   // Ignore self

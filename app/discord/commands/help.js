@@ -1,7 +1,7 @@
 'use strict';
 
 const { Collection } = require('discord.js');
-const { usage } = require.main.require('./app/util/helpers');
+const { usage } = require('../../util/UtilManager');
 
 module.exports = {
   usage: ['[command type]', 'legacy [command] (This lists all commands across all servers in a very ugly code block)'],
