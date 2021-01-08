@@ -1,5 +1,5 @@
 /*
- * Wildfire
+ * Corncierge
  */
 
 'use strict';
@@ -8,10 +8,12 @@
 require('dotenv').config();
 
 // Run
-const app = require('./app')(config);
+let app = require('./app');
 
-// Configuration
+// Get Configuration
 const config = require('./config');
+
+app = app(config);
 
 app.log('#', 'Starting...');
 
