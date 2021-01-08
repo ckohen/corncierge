@@ -1,7 +1,7 @@
 'use strict';
 
 const { Collection } = require('discord.js');
-const { clamp } = require('../../../util/helpers');
+const { clamp } = require('../../../util/UtilManager');
 
 module.exports = {
   name: 'room',

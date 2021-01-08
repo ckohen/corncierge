@@ -1,6 +1,6 @@
 'use strict';
 
-const { clamp } = require.main.require('./app/util/helpers');
+const { clamp } = require('../../../util/UtilManager');
 
 module.exports = {
   permissions: 'MANAGE_MESSAGES',

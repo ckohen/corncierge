@@ -2,7 +2,7 @@
 
 const plural = require('pluralize');
 
-const { format } = require.main.require('./app/util/helpers');
+const { format } = require('../../util/UtilManager');
 
 module.exports = (socket, channel, user, _, message, tags) => {
   if (!tags || !tags['msg-param-cumulative-months']) return;

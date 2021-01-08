@@ -1,7 +1,7 @@
 'use strict';
 const { Message } = require('discord.js');
 const cache = require('memory-cache');
-const helpers = require('../../util/helpers');
+const util = require('../../util/UtilManager');
 
 module.exports = async (socket, url, headers) => {
   // Different handling for different users
@@ -34,7 +34,7 @@ module.exports = async (socket, url, headers) => {
   }
 
   const uptime = socket.app.twitch.fetchUptime(user).catch(err => socket.app.log.warn(err));
-  const duration = uptime ? `for ${helpers.relativeTime(uptime, 3)}` : '';
+  const duration = uptime ? `for ${util.relativeTime(uptime, 3)}` : '';
 
   const twitchChannel = socket.app.twitch.userChannel(user).catch(err => socket.app.log.warn(module, err));
   if (!twitchChannel) {

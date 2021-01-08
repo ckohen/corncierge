@@ -11,7 +11,7 @@ const interactionHandler = require('../discord/interactionHandler');
 const applicationCommands = require('../discord/interactions/applicationCommands');
 const messages = require('../discord/messages');
 
-const { collect } = require('../util/helpers');
+const { collect } = require('../util/UtilManager');
 
 /**
  * Discord manager for the application.

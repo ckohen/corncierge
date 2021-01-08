@@ -1,6 +1,6 @@
 'use strict';
 
-const { clamp } = require('../../../util/helpers');
+const { clamp } = require('../../../util/UtilManager');
 
 module.exports = {
   permissions: 'MOVE_MEMBERS',

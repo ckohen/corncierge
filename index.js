@@ -7,11 +7,11 @@
 // Environment
 require('dotenv').config();
 
-// Configuration
-const config = require('./config');
-
 // Run
 const app = require('./app')(config);
+
+// Configuration
+const config = require('./config');
 
 app.log('#', 'Starting...');
 

@@ -1,9 +1,9 @@
 'use strict';
 
-const helpers = require.main.require('./app/util/helpers');
+const util = require('../../util/utilManager');
 
 module.exports = (socket, member) => {
-  const created = helpers.humanDate(member.user.createdAt);
+  const created = util.humanDate(member.user.createdAt);
   let embed = socket.getEmbed('memberAdd', [member.user.displayAvatarURL(), member, member.user.tag, created, member.user.id]);
 
   if (socket.isGuild(member.guild.id, 'platicorn')) {

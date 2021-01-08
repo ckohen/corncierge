@@ -1,5 +1,7 @@
 'use strict';
 
+const { confirmAction, delayDelete } = require('../../../util/UtilManager').discord;
+
 module.exports = {
   name: 'reactionroles',
   description: 'Allows server admins to create a reaction based role manager',
@@ -124,64 +126,30 @@ module.exports = {
               `${message.member}, Unable to generate reaction roles here. ` +
                 `Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``,
             )
-            .then(msg => {
-              setTimeout(() => {
-                if (msg.deletable) msg.delete();
-              }, 5000);
-            });
+            .then(msg => delayDelete(msg, 5000));
           message.delete();
           return;
         }
         if (emojis.length < 1) {
-          message.channel.send(`${message.member}, There are no reaction roles yet!`).then(msg => {
-            setTimeout(() => {
-              if (msg.deletable) msg.delete();
-            }, 5000);
-          });
+          message.channel.send(`${message.member}, There are no reaction roles yet!`).then(msg => delayDelete(msg, 5000));
           message.delete();
           return;
         }
 
         if (guild.messageID) {
-          const confirmMsg = await message.channel.send(
+          const confirm = await confirmAction(
+            message,
             'The reaction role message already exists in this server, performing this action will erase it. Are you sure? ✅ (yes) or ❌(cancel)',
-          );
-          await confirmMsg.react('✅');
-          await confirmMsg.react('❌');
-          let reacted = true;
-          let collected = await confirmMsg
-            .awaitReactions((reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id, {
-              max: 1,
-              time: 60000,
-              errors: ['time'],
-            })
-            .catch(() => {
-              message.channel.send(`${message.member}, Not a valid reaction, cancelling!`);
-              message.delete().then(() => {
-                confirmMsg.delete().then(() => (reacted = false));
-              });
-            });
-          if (!reacted) {
-            return;
-          }
-
-          // Find the emote id or name depending on if the emote is custom or not
-          const reaction = collected.first();
-          if (reaction.emoji.name === '❌') {
-            message.channel.send(`${message.member}, Cancelled!`).then(msg => {
-              setTimeout(() => {
-                if (msg.deletable) msg.delete();
-              }, 5000);
-            });
-            message.delete();
-            confirmMsg.delete();
+            60000,
+          ).catch(() => false);
+          if (!confirm) {
+            if (message.deletable) {
+              message.delete();
+            }
             return;
           } else {
             oldMsg = await socket.driver.channels.cache.get(guild.channelID).messages.fetch(guild.messageID).catch();
-            if (oldMsg) {
-              oldMsg.delete();
-            }
-            confirmMsg.delete();
+            if (oldMsg?.deletable) oldMsg.delete();
           }
         }
         create = true;
@@ -189,11 +157,7 @@ module.exports = {
       case 'update':
         // Check that there is an existing message
         if (!guild.messageID) {
-          message.channel.send(`${message.member}, There is no reaction role message yet, unable to update it!`).then(msg => {
-            setTimeout(() => {
-              if (msg.deletable) msg.delete();
-            }, 5000);
-          });
+          message.channel.send(`${message.member}, There is no reaction role message yet, unable to update it!`).then(msg => delayDelete(msg, 5000));
           message.delete();
           return;
         }
@@ -201,11 +165,7 @@ module.exports = {
         // Check to make sure the message still exists
         oldMsg = await socket.driver.channels.cache.get(guild.channelID).messages.fetch(guild.messageID).catch();
         if (!oldMsg) {
-          message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => {
-            setTimeout(() => {
-              if (msg.deletable) msg.delete();
-            }, 5000);
-          });
+          message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => delayDelete(msg, 5000));
           guild.messageID = '';
           guild.channelID = '';
           socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
@@ -221,60 +181,23 @@ module.exports = {
               `${message.member}, Unable to update reaction roles message, ` +
                 `Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``,
             )
-            .then(msg => {
-              setTimeout(() => {
-                if (msg.deletable) msg.delete();
-              }, 5000);
-            });
+            .then(msg => delayDelete(msg, 5000));
           message.delete();
           return;
         }
 
         // If there are no longer any roles, delete the message after prompting
         if (emojis.length < 1) {
-          const confirmMsg = await message.channel.send(
+          const confirm = await confirmAction(
+            message,
             'There are no longer any reaction roles assigned, performing this action will erase the message. Are you sure? ✅ (yes) or ❌(cancel)',
-          );
-          await confirmMsg.react('✅');
-          await confirmMsg.react('❌');
-          let reacted = true;
-          let collected = await confirmMsg
-            .awaitReactions((reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id, {
-              max: 1,
-              time: 60000,
-              errors: ['time'],
-            })
-            .catch(() => {
-              message.channel.send(`${message.member}, Not a valid reaction, cancelling!`).then(msg => {
-                setTimeout(() => {
-                  if (msg.deletable) msg.delete();
-                }, 5000);
-              });
-              message.delete().then(() => {
-                confirmMsg.delete().then(() => (reacted = false));
-              });
-            });
-          if (!reacted) {
-            return;
-          }
-
-          // Find the emote id or name depending on if the emote is custom or not
-          const reaction = collected.first();
-          if (reaction.emoji.name === '❌') {
-            message.channel.send(`${message.member}, Cancelled!`).then(msg => {
-              setTimeout(() => {
-                if (msg.deletable) msg.delete();
-              }, 5000);
-            });
-            message.delete();
-            confirmMsg.delete();
-            return;
+            60000,
+          ).catch(() => false);
+          if (!confirm) {
+            if (message.deletable) message.delete();
           } else {
-            message.delete();
-            if (oldMsg) {
-              oldMsg.delete();
-            }
-            confirmMsg.delete();
+            if (message.deletable) message.delete();
+            if (oldMsg?.deletable) oldMsg.delete();
           }
           return;
         }
@@ -415,7 +338,7 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
     }
   }
   let collect = true;
-  // Wait for reactin from the original message sender
+  // Wait for reaction from the original message sender
   let collected = await emoteMsg
     .awaitReactions((reaction, user) => user.id === initiator.author.id, { max: 1, time: 60000, errors: ['time'] })
     .catch(() => {
@@ -445,9 +368,7 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
   } else {
     emoteMsg.delete();
     let errorMsg = await initiator.channel.send('I do not have access to that emote at this time, please try again!');
-    setTimeout(() => {
-      if (errorMsg.deletable) errorMsg.delete();
-    }, 5000);
+    delayDelete(errorMsg, 5000);
     return getEmote(sock, initiator, roleList, emojis, add);
   }
 }

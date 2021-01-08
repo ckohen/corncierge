@@ -5,9 +5,9 @@ const { RateLimiter } = require('limiter');
 const { Client } = require('tmi.js');
 const throttle = require('tokenthrottle');
 
+const EventManager = require('./EventManager');
 const events = require('../irc/events');
-const EventManager = require('../managers/EventManager');
-const { collect } = require('../util/helpers');
+const { collect } = require('../util/UtilManager');
 
 const thirtySecs = 30000;
 

@@ -1,5 +1,7 @@
 'use strict';
 
+const { confirmAction } = require('../../../util/UtilManager').discord;
+
 module.exports = {
   name: 'voiceroles',
   description: 'Allows server admins to set voice roles linked to voice channels',
@@ -103,35 +105,13 @@ module.exports = {
           if (duplicate) {
             channel = message.guild.channels.cache.get(channelID);
             /* eslint-disable no-await-in-loop */
-            const confirmMsg = await message.channel.send(
+            const confirm = await confirmAction(
+              message,
               `The channel ${channel} already has a role associated with it. Would you like to change to the new role? ✅ (yes) or ❌(no)`,
-            );
-            await confirmMsg.react('✅');
-            await confirmMsg.react('❌');
-            let reacted = true;
-            let collected = await confirmMsg
-              /* eslint-enable no-await-in-loop */
-              .awaitReactions((reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id, {
-                max: 1,
-                time: 60000,
-                errors: ['time'],
-              })
-              .catch(() => {
-                message.channel.send(`${message.member}, Not a valid reaction, cancelling!`);
-                confirmMsg.delete().then(() => (reacted = false));
-              });
-            if (!reacted) {
-              return;
-            }
+              60000,
+            ).catch(() => false);
+            if (confirm) move = true;
 
-            // Find the emote id or name depending on if the emote is custom or not
-            const reaction = collected.first();
-            if (reaction.emoji.name === '❌') {
-              confirmMsg.delete();
-            } else {
-              confirmMsg.delete();
-              move = true;
-            }
             if (move) {
               roles.forEach(roleID => {
                 if (guild.data[roleID].indexOf(channelID) > -1) {
