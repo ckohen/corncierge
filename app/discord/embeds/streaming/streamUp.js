@@ -3,7 +3,7 @@
 module.exports = (comp, streamData) =>
   comp
     .setTitle(streamData.status)
-    .setColor('live')
+    .setColor('red')
     .setAuthor(`${streamData.display_name}`, '', streamData.url)
     .setURL(streamData.url)
     .setThumbnail(streamData.logo)

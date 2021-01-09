@@ -13,7 +13,17 @@ class UtilManager {
   }
 
   /**
-   * An object containnig all discord utilities
+   * An object containing all the constant data
+   * @type {Object}
+   * @readonly
+   * @private
+   */
+  static get constants() {
+    return require('./Constants');
+  }
+
+  /**
+   * An object containing all discord utilities
    * @type {DiscordUtil}
    * @readonly
    */
@@ -22,7 +32,7 @@ class UtilManager {
   }
 
   /**
-   * An object containnig all http utilities
+   * An object containing all http utilities
    * @type {HTTPUtil}
    * @readonly
    */
@@ -31,7 +41,7 @@ class UtilManager {
   }
 
   /**
-   * An object containnig all twich utilities
+   * An object containing all twich utilities
    * @type {TwitchUtil}
    * @readonly
    */
@@ -137,6 +147,25 @@ class UtilManager {
    */
   static mentionable(mention, target, message) {
     return mention === true ? `@${target} ${message}` : message;
+  }
+
+  /**
+   * Sets default properties on an object that aren't already specified.
+   * @param {Object} def Default properties
+   * @param {Object} given Object to assign defaults to
+   * @returns {Object}
+   * @private
+   */
+  static mergeDefault(def, given) {
+    if (!given) return def;
+    for (const key in def) {
+      if (!Object.prototype.hasOwnProperty.call(given, key) || given[key] === undefined) {
+        given[key] = def[key];
+      } else if (given[key] === Object(given[key])) {
+        given[key] = UtilManager.mergeDefault(def[key], given[key]);
+      }
+    }
+    return given;
   }
 
   /**

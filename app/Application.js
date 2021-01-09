@@ -7,8 +7,9 @@ const DiscordManager = require('./managers/DiscordManager');
 const HTTPManager = require('./managers/HTTPManager');
 const LogManager = require('./managers/LogManager');
 const TwitchManager = require('./managers/TwitchManager');
+const Constants = require('./util/Constants');
 const logBuilder = require('./util/LogRouter');
-const { collect } = require('./util/UtilManager');
+const { collect, mergeDefault } = require('./util/UtilManager');
 
 /**
  * The application container.
@@ -17,7 +18,7 @@ const { collect } = require('./util/UtilManager');
 class Application {
   /**
    * Create a new application instance.
-   * @param {Object} [options={}] the options to provide to the application
+   * @param {ApplicationOptions} [options] the options for the application
    * @public
    */
   constructor(options = {}) {
@@ -129,8 +130,60 @@ class Application {
    * @private
    */
   setOptions(options) {
-    if (Object.keys(options).length === 0 && options.constructor === Object) {
-      throw new TypeError('The application must be provided with an options object.');
+    const merged = mergeDefault(Constants.DefaultOptions, options);
+    if (typeof merged.database !== 'object') {
+      throw new TypeError('The database option must be an object');
+    } else {
+      if (typeof merged.database.database !== 'string') throw new TypeError('The database target must be a string');
+      if (typeof merged.database.host !== 'string') throw new TypeError('The database host must be a string');
+      if (typeof merged.database.password !== 'string') throw new TypeError('The database password must be a string');
+      if (typeof merged.database.port !== 'number') throw new TypeError('The database port must be a number');
+      if (typeof merged.database.timezone !== 'string') throw new TypeError('The database timezone must be a string');
+      if (typeof merged.database.user !== 'string') throw new TypeError('The database user must be a string');
+    }
+    if (typeof merged.debug !== 'boolean') throw new TypeError('Debug must be a boolean');
+    if (typeof merged.disableDiscord !== 'boolean') throw new TypeError('Disable Discord must be a boolean');
+    if (typeof merged.disableIRC !== 'boolean') throw new TypeError('Disable IRC must be a boolean');
+    if (typeof merged.disableServer !== 'boolean') throw new TypeError('Disable Server must be a boolean');
+    if (typeof merged.disableTwitch !== 'boolean') throw new TypeError('Disable Twitch must be a boolean');
+    if (!merged.disableDiscord && typeof merged.discord !== 'object') {
+      throw new TypeError('The discord option must be provided when discord is not disabled');
+    } else {
+      if (typeof merged.discord.clientOptions !== 'object') throw new TypeError('The discord client options must be an object');
+      if (!Array.isArray(merged.discord.disabledCommands)) throw new TypeError('Disabled commands must be an array');
+      if (typeof merged.discord.token !== 'string') throw new TypeError('The discord bot token must be a string');
+      if (!merged.discord.disabledCommands.includes('music') && !merged.discord.disabledCommands.includes('all') && typeof merged.youtubeToken !== 'string') {
+        throw new TypeError('The Youtube token must be a string if music commands are enabled');
+      }
+    }
+    if (!merged.disableServer && typeof merged.http !== 'object') {
+      throw new TypeError('The http option must be an object when server is not disabled');
+    }
+    if (typeof merged.log !== 'object') {
+      throw new TypeError('The log option must be an object');
+    } else {
+      if (typeof merged.log.maxLevel !== 'string') throw new TypeError('The max level option must be a string');
+      if (typeof merged.log.outputFile !== 'string') throw new TypeError('The output file path must be a string');
+      if (typeof merged.log.verbose !== 'boolean') throw new TypeError('The verbose toggle must be a boolean');
+      if (typeof merged.log.webhookBase !== 'string') throw new TypeError('The webhook base url must be a string');
+      if (typeof merged.log.webhookToken !== 'string') throw new TypeError('The webhook token must be a string');
+    }
+    if (typeof merged.http.port !== 'number') throw new TypeError('The HTTP port must be a number');
+    if (!merged.disableTwitch && typeof merged.twitch !== 'object') {
+      throw new TypeError('The twitch option must be an object when twitch is not disabled');
+    } else {
+      if (typeof merged.twitch.api !== 'string') throw new TypeError('The base api url must be a string');
+      if (typeof merged.twitch.authapi !== 'string') throw new TypeError('The base auth api url must be a string');
+      if (merged.twitch.botCode && typeof merged.twitch.botCode !== 'string') throw new TypeError('The bot auth code must be a string');
+      if (merged.twitch.channel?.id && typeof merged.twitch.channel.id !== 'string') throw new TypeError('The default channel id must be a string');
+      if (merged.twitch.channel?.name && typeof merged.twitch.channel.name !== 'string') throw new TypeError('The default channel name must be a string');
+      if (typeof merged.twitch.clientID !== 'string') throw new TypeError('The twitch client id must be a string');
+      if (typeof merged.twitch.clientSecret !== 'string') throw new TypeError('The twitch client secret must be a string');
+      if (typeof merged.twitch.redirectUri !== 'string') throw new TypeError('The twitch redirect uri must be a string');
+      if (!merged.disableIRC && typeof merged.twitch.disableIRC !== 'object') throw new TypeError('The IRC option must be an object when IRC is not disabled');
+      if (!merged.disableIRC && typeof merged.twitch.ircThrottle !== 'object') {
+        throw new TypeError('The IRC throttler must be an object when IRC is not disabled');
+      }
     }
 
     this.options = options;

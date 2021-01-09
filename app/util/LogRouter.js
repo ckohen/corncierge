@@ -4,18 +4,6 @@ const noop = () => {}; // eslint-disable-line no-empty-function
 const reflectors = ['toString', 'valueOf', 'inspect', 'constructor', Symbol.toPrimitive, Symbol.for('nodejs.util.inspect.custom')];
 
 /**
- * A level of logging based on the following:
- * * fatal - a critical error that ends the application
- * * critical - potentially breaking issue
- * * error - high priority non-breaking issue
- * * warn - non-breaking issue
- * * info - general information
- * * debug - highly detailed debug information
- * * verbose - clutters the log
- * @typedef {string} LogLevel
- */
-
-/**
  * @classdesc Not a real class, a proxy for the {@link LogManager} levels
  * @class
  * @name Logging

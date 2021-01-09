@@ -37,7 +37,7 @@ class TwitchManager extends RequestManager {
    * @param {number} [userId=ApplicationOptions.twitch.channel.id] fetch channel data from a specific user id
    * @returns {Promise<Object>}
    */
-  fetchChannel(userId = this.options.channel.id) {
+  fetchChannel(userId = this.options.channel?.id) {
     this.app.log.debug(module, `Fetching channel: ${userId}`);
     return this.api
       .channels(userId)
@@ -60,7 +60,7 @@ class TwitchManager extends RequestManager {
   /**
    * Fetch a follow object for the given user ID.
    * @param {number} userId the user id to check the follow for
-   * @param {number} [streamerId=ApplicationOptions.twitch.channel.id] the channel id to check if following
+   * @param {number} [streamerId=ApplicationOptions.twitch.channel?.id] the channel id to check if following
    * @returns {Promise<Object>}
    */
   follow(userId, streamerId = this.options.channel.id) {
@@ -74,7 +74,7 @@ class TwitchManager extends RequestManager {
 
   /**
    * Fetch the stream for the application's channel ID.
-   * @param {number} [userId=ApplicationOptions.twitch.channel.id] fetch stream data from a specific user id
+   * @param {number} [userId=ApplicationOptions.twitch.channel?.id] fetch stream data from a specific user id
    * @returns {void}
    */
   fetchStream(userId = this.options.channel.id) {
@@ -97,7 +97,7 @@ class TwitchManager extends RequestManager {
 
   /**
    * Fetch the uptime for the specified stream.
-   * @param {string} [user = ApplicationOptions.twitch.channel.name] the user to fetch uptime for
+   * @param {string} [user = ApplicationOptions.twitch.channel?.name] the user to fetch uptime for
    * @returns {Promise<number>}
    */
   fetchUptime(user = this.options.channel.name) {

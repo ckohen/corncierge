@@ -64,18 +64,6 @@ class IrcManager extends EventManager {
      * @type {Throttle}
      */
     this.throttle = throttle(this.twitch.options.throttle);
-
-    /**
-     * The moderation filter types.
-     * @type {Object}
-     */
-    this.filterTypes = {
-      BAN: 1,
-      TIMEOUT: 2,
-      DELETE: 3,
-      WARNING: 4,
-      REVIEW: 5,
-    };
   }
 
   /**
