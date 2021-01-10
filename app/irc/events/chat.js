@@ -7,11 +7,12 @@ module.exports = (socket, channel, user, messageRaw, self) => {
   // Ignore self
   if (self) return;
 
+  const channelData = { name: channel, id: socket.twitch.getID(channel) };
   const message = messageRaw.trim();
-  const opts = socket.app.options.twitch;
+  const opts = socket.twitch.options;
   const isVip = twitch.isVip(user);
-  const isPrivileged = twitch.isPrivileged(user, opts.channel);
-  const isBroadcaster = twitch.isBroadcaster(user, opts.channel);
+  const isPrivileged = twitch.isPrivileged(user, channelData);
+  const isBroadcaster = twitch.isBroadcaster(user, channelData);
 
   // Check for moderation filters
   const filter = socket.filters.find(item => new RegExp(item.input, 'gi').test(message));

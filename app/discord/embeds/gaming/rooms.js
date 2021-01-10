@@ -2,7 +2,7 @@
 
 module.exports = (comp, member, prefix) =>
   comp
-    .setColor('aqua')
+    .setColor('RANDOM')
     .setTitle('Game Rooms')
     .setDescription(
       'These rooms are designed to help keep track of who is playing with who and allow members to wait for an available spot. ' +

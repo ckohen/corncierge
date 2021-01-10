@@ -1,9 +1,9 @@
 'use strict';
 
 const util = require('../../util/UtilManager');
+const filterTypes = util.constants.IRCFilterTypes;
 
 module.exports = (socket, channel, tags, message, filter) => {
-  const { filterTypes } = socket;
   const { discord } = socket.app;
 
   let action = 'none';

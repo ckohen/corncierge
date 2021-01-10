@@ -1,8 +1,10 @@
 'use strict';
 
+const { Colors } = require('../../../util/Constants');
+
 module.exports = (comp, member, prefix) =>
   comp
-    .setColor('purple')
+    .setColor(Colors.BRIGHT_PURPLE)
     .setTitle(`Role Manager (${prefix}makeme and ${prefix}makemenot)`)
     .setDescription(
       'This is a list of roles that users can add and remove from themselves, ' +

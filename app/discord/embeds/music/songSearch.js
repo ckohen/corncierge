@@ -2,7 +2,7 @@
 
 module.exports = (comp, vidNameArr) =>
   comp
-    .setColor('songSearch')
+    .setColor('RANDOM')
     .setTitle('Choose a song by commenting a number between 1 and 5')
     .addField('Song 1', vidNameArr[0])
     .addField('Song 2', vidNameArr[1])

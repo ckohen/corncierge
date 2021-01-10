@@ -4,6 +4,7 @@ const axios = require('axios');
 const moment = require('moment');
 const wn = require('winston');
 const BaseManager = require('./BaseManager');
+const Constants = require('../util/Constants');
 
 /**
  * Log manager for the application.
@@ -14,7 +15,7 @@ class LogManager extends BaseManager {
     super(
       app,
       wn.createLogger({
-        levels: app.options.log.levels,
+        levels: Constants.LogLevels.console,
         format: wn.format.combine(
           wn.format.colorize(),
           wn.format.timestamp({
@@ -44,7 +45,7 @@ class LogManager extends BaseManager {
      * @private
      */
 
-    wn.addColors(this.options.colors);
+    wn.addColors(Constants.LogColors);
   }
 
   /**
@@ -56,7 +57,7 @@ class LogManager extends BaseManager {
   async out(level, source, message) {
     const path = this.path(source);
     this.driver.log(level, `[${path}] ${message}`);
-    if (this.options.webhookLevels[level]) {
+    if (Constants.LogLevels.webhook[level]) {
       await this.webhook(level, path, message);
     }
   }
@@ -82,7 +83,7 @@ class LogManager extends BaseManager {
    * @private
    */
   webhook(level, path, message) {
-    const levels = this.options.webhookLevels;
+    const levels = Constants.LogLevels.webhook;
 
     if (!Object.prototype.hasOwnProperty.call(levels, level)) return Promise.reject(new Error('Invalid level'));
 
@@ -96,7 +97,7 @@ class LogManager extends BaseManager {
             description: typeof message === 'string' ? message : String(message),
             timestamp: moment().utcOffset(0).format(),
             title: `${level} \u00B7 ${path}`,
-            color: this.app.options.discord.colors[levels[level] || 'aqua'],
+            color: Constants.EmbedColors[levels[level] || 'aqua'],
           },
         ],
       },

@@ -41,7 +41,8 @@ module.exports = async (socket, url, headers) => {
   let embed = socket.app.discord.getEmbed('streamUp', [twitchChannel]);
   // Check if throttled
   let msg;
-  if (cache.get(`video.stream.up.${user}`) !== null) {
+  /* eslint-disable-next-line eqeqeq */
+  if (cache.get(`video.stream.up.${user}`) != null) {
     msg = await socket.getMessage(user);
     if (msg && msg instanceof Message) {
       msg.edit(content, embed);

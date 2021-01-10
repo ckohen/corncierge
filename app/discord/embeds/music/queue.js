@@ -1,3 +1,5 @@
 'use strict';
 
-module.exports = (comp, queue) => comp.setColor('queue').setTitle(`Music Queue - ${queue.length} Songs Currently`);
+const { Colors } = require('../../../util/Constants');
+
+module.exports = (comp, queue) => comp.setColor(Colors.SALMON).setTitle(`Music Queue - ${queue.length} Songs Currently`);
