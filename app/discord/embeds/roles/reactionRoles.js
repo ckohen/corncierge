@@ -1,8 +1,10 @@
 'use strict';
 
+const { Colors } = require('../../../util/Constants');
+
 module.exports = (comp, member, prefix = '!') =>
   comp
-    .setColor('pink')
+    .setColor(Colors.BRIGHT_PINK)
     .setTitle('Reaction Roles')
     .setDescription(
       'This is a list of reactions roles that users can assign themselves. They can also remove the role by removing their reaction. ' +

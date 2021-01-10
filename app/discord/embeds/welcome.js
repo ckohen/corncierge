@@ -2,7 +2,7 @@
 
 module.exports = comp =>
   comp
-    .setColor('orange')
+    .setColor('ORANGE')
     .setTitle('Thank You for Adding Corncierge!')
     .setDescription("This bot has a few different sets of features, here's a brief explanation of each of them.")
     .addField('Getting Started', 'The best way to get started is by using `!help`', true)
