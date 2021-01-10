@@ -35,7 +35,7 @@ class HTTPManager extends EventManager {
     this.app.log.debug(module, 'Registering events');
     this.attach();
     this.driver.requestTimeout = 2000;
-    return this.driver.listen(this.app.options.http.port);
+    return this.driver.listen(this.options.port);
   }
 
   /**

@@ -1,9 +1,8 @@
 'use strict';
 
-const { Client, Collection } = require('discord.js');
+const { Client, Collection, MessageEmbed } = require('discord.js');
 
 const EventManager = require('./EventManager');
-const Composer = require('../discord/Composer');
 const commands = require('../discord/commands');
 const embeds = require('../discord/embeds');
 const events = require('../discord/events');
@@ -19,7 +18,7 @@ const { collect } = require('../util/UtilManager');
  */
 class DiscordManager extends EventManager {
   constructor(app) {
-    super(app, new Client(app.options.discord.options), app.options.discord, events);
+    super(app, new Client(app.options.discord.clientOptions), app.options.discord, events);
 
     /**
      * The Discord.js API / Websocket Client.
@@ -136,7 +135,7 @@ class DiscordManager extends EventManager {
     await this.setCache();
 
     this.app.log.debug(module, 'Logging in');
-    return this.driver.login(this.app.options.discord.token).catch(err => {
+    return this.driver.login(this.options.token).catch(err => {
       this.app.log.critical(module, `Login: ${err}`);
     });
   }
@@ -296,7 +295,7 @@ class DiscordManager extends EventManager {
       return null;
     }
 
-    return transformer(new Composer(this.app.options), ...args);
+    return transformer(new MessageEmbed(), ...args);
   }
 
   /**
