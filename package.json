@@ -4,13 +4,11 @@
   "description": "A moderation and command bot for Twitch and a fully integrated Discord bot.",
   "main": "index.js",
   "scripts": {
-    "test": "npm run lint && npm run lint:config && npm run docs:test",
+    "test": "npm run lint && npm run docs:test",
     "docs": "docgen --source app --output docs/docs.json",
     "docs:test": "docgen --source app",
     "lint": "eslint app",
-    "lint:config": "eslint config",
     "lint:fix": "eslint app --fix",
-    "lint:config:fix": "eslint config --fix",
     "prettier": "prettier --write app/**/*.js",
     "prettier:config": "prettier --write config/**/*.js"
   },
