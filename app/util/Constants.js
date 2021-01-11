@@ -42,44 +42,44 @@ exports.DefaultOptions = {
    * A disableable discord command, the top level is groups which disable the items within as well
    * * `all` - disables all built in commands
    * * `gaming`
-   *   * `random`
-   *   * `room`
+   *  * `random`
+   *  * `room`
    * * `general`
-   *   * `help`
+   *  * `help`
    * * `management`
-   *   * `eval`
-   *   * `reboot`
-   *   * `reload`
-   *   * `setstatus`
-   *   * `status`
+   *  * `eval`
+   *  * `reboot`
+   *  * `reload`
+   *  * `setstatus`
+   *  * `status`
    * * `moderation`
-   *   * `clear`
-   *   * `moveall`
-   *   * `muteall`
-   *   * `nuke`
-   *   * `randommove`
-   *   * `unmuteall`
+   *  * `clear`
+   *  * `moveall`
+   *  * `muteall`
+   *  * `nuke`
+   *  * `randommove`
+   *  * `unmuteall`
    * * `music` - some sub items are not shown as they should not be disabled without disabling the whole group
-   *   * `loop`
-   *   * `nowplaying`
-   *   * `remove`
-   *   * `shuffle`
-   *   * `skip`
-   *   * `skipall`
-   *   * `skipto`
-   *   * `volume`
+   *  * `loop`
+   *  * `nowplaying`
+   *  * `remove`
+   *  * `shuffle`
+   *  * `skip`
+   *  * `skipall`
+   *  * `skipto`
+   *  * `volume`
    * * `roles`
-   *   * `autorole`
-   *   * `color`
-   *   * `colormanager`
-   *   * `makeme`
-   *   * `makemenot`
-   *   * `reactionroles`
-   *   * `rolemanager`
-   *   * `voceroles`
+   *  * `autorole`
+   *  * `color`
+   *  * `colormanager`
+   *  * `makeme`
+   *  * `makemenot`
+   *  * `reactionroles`
+   *  * `rolemanager`
+   *  * `voceroles`
    * * `twitch`
-   *   * `commandlist`
-   *   * `commands`
+   *  * `commandlist`
+   *  * `commands`
    * @typedef {string} DisableableCommands
    */
 
