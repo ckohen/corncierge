@@ -13,7 +13,8 @@ class BaseCommand {
    * * `Role`
    * * `Permissions`
    * * `User`
-   * e.g. if a command is executed and has role and channel set, if it is not sent in the channel specified, it will not run
+   *
+   *  e.g. if a command is executed and has role and channel set, if it is not sent in the channel specified, it will not run
    * @typedef {Object} CommandData
    * @param {string} name the name of the command (used to register the command as useable)
    * @param {string[]} [aliases] a list of aliases that can be used to call this command
