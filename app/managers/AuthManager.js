@@ -39,7 +39,7 @@ class AuthManager extends RequestManager {
         params: {
           client_id: this.options.clientID,
           client_secret: this.options.clientSecret,
-          code: slug === this.twitch.options.irc.identity?.username ? this.options.botCode : this.app.settings.get(`twitch_code_${slug}`),
+          code: slug === this.twitch.options.irc?.identity?.username ? this.options.botCode : this.app.settings.get(`twitch_code_${slug}`),
           grant_type: 'authorization_code',
           redirect_uri: this.options.redirectUri,
         },
@@ -56,10 +56,10 @@ class AuthManager extends RequestManager {
 
   /**
    * Gets the twitch api access token for the given slug
-   * @param {string} [slug=ApplicationOptions.twitch.irc.identity?.username] the user to get the token for
+   * @param {string} [slug=ApplicationOptions.twitch.irc?.identity?.username] the user to get the token for
    * @returns {Promise<string>} token
    */
-  async getAccessToken(slug = this.twitch.options.irc.identity?.username) {
+  async getAccessToken(slug = this.twitch.options.irc?.identity?.username) {
     this.app.log.debug(module, `Getting access token for ${slug}`);
     const token = this.app.settings.get(`twitch_access_${slug}`);
     if (token) {

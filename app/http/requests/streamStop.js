@@ -13,19 +13,23 @@ module.exports = async (socket, url, headers) => {
     return;
   }
 
+  if (!socket.app.options.disableIRC) {
+    let farewell;
+    switch (user) {
+      case 'platicorn':
+        farewell = socket.app.settings.get('irc_message_stream_down');
+        socket.app.twitch.irc.say(user, farewell);
+        break;
+      default:
+    }
+  }
+
+  if (socket.app.options.disableDiscord) return;
+
   // Get the annoucement channel defined for the user
   let channel = await socket.getChannel(user);
   if (!channel) {
     return;
-  }
-
-  let farewell;
-  switch (user) {
-    case 'platicorn':
-      farewell = socket.app.settings.get('irc_message_stream_down');
-      socket.app.twitch.irc.say(user, farewell);
-      break;
-    default:
   }
 
   let role = await socket.getRole(user, channel);

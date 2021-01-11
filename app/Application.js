@@ -31,11 +31,13 @@ class Application {
      */
     this.debug = this.options.debug;
 
-    /**
-     * The Twitch manager for the application.
-     * @type {TwitchManager}
-     */
-    this.twitch = new TwitchManager(this);
+    if (!this.options.disableTwitch) {
+      /**
+       * The Twitch manager for the application.
+       * @type {TwitchManager}
+       */
+      this.twitch = new TwitchManager(this);
+    }
 
     /**
      * The log manager for the application.
@@ -56,17 +58,21 @@ class Application {
      */
     this.streaming = new Collection();
 
-    /**
-     * The Discord manager for the application.
-     * @type {DiscordManager}
-     */
-    this.discord = new DiscordManager(this);
+    if (!this.options.disableDiscord) {
+      /**
+       * The Discord manager for the application.
+       * @type {DiscordManager}
+       */
+      this.discord = new DiscordManager(this);
+    }
 
-    /**
-     * The HTTP Server manager for the application.
-     * @type {HTTPManager}
-     */
-    this.http = new HTTPManager(this);
+    if (!this.options.disableServer) {
+      /**
+       * The HTTP Server manager for the application.
+       * @type {HTTPManager}
+       */
+      this.http = new HTTPManager(this);
+    }
 
     /**
      * The database manager for the application.
@@ -100,7 +106,19 @@ class Application {
     await Promise.all([this.setSettings(), this.setStreaming()]);
     this.log.debug(module, 'All settings Initialized.');
 
-    await Promise.all([this.discord.init(), this.twitch.irc.init(), this.http.init()]);
+    const discordInit = new Promise(resolve => {
+      if (this.options.disableDiscord) return resolve('Discord Disabled');
+      return resolve(this.discord.init());
+    });
+    const httpInit = new Promise(resolve => {
+      if (this.options.disableServer) return resolve('HTTP Disabled');
+      return resolve(this.http.init());
+    });
+    const ircInit = new Promise(resolve => {
+      if (this.options.disableIRC) return resolve('IRC Disabled');
+      return resolve(this.twitch.irc.init());
+    });
+    await Promise.all([discordInit, httpInit, ircInit]);
 
     this.log(module, 'Boot complete');
     // Send "Ready" to parent if it exists
@@ -113,12 +131,14 @@ class Application {
   async end(code) {
     this.log.debug(module, `Shutting Down`);
     this.ending = true;
-    try {
-      await this.twitch.irc.driver.disconnect();
-      await this.discord.driver.destroy();
-      await this.http.driver.close();
-    } catch (err) {
-      this.log.debug(module, `Error when shutting down: ${err}`);
+    if (!this.options.disableTwitch && !this.options.disableIRC) {
+      await this.twitch.irc.driver.disconnect().catch(err => this.log.debug(module, err));
+    }
+    if (!this.options.disableDiscord) {
+      await this.discord.driver.destroy().catch(err => this.log.debug(module, err));
+    }
+    if (!this.options.disableServer) {
+      await this.http.driver.close().catch(err => this.log.debug(module, err));
     }
     process.exit(code);
   }
@@ -240,7 +260,7 @@ class Application {
     const formatted = {
       debug: options.debug,
       disableDiscord: options.disableDiscord,
-      disableIRC: options.disableIRC,
+      disableIRC: options.disableTwitch ? true : options.disableIRC,
       disableServer: options.disableServer,
       disableTwitch: options.disableTwitch,
       database: options.database,

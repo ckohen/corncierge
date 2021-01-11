@@ -5,6 +5,7 @@ const filterTypes = util.constants.IRCFilterTypes;
 
 module.exports = (socket, channel, tags, message, filter) => {
   const { discord } = socket.app;
+  const externalLog = !socket.app.options.disableDiscord;
 
   let action = 'none';
   let duration = null;
@@ -14,7 +15,7 @@ module.exports = (socket, channel, tags, message, filter) => {
     case filterTypes.BAN:
       action = 'ban';
       socket.ban(channel, tags.username, () => {
-        discord.sendWebhook('ban', discord.getContent('banAutomatic', [tags.username]), discord.getEmbed('message', [tags.username, message]));
+        webhookLog(discord, externalLog, 'userBan', 'banAutomatic', [tags.username], [tags.username, message]);
       });
       break;
     // Timeout
@@ -22,18 +23,14 @@ module.exports = (socket, channel, tags, message, filter) => {
       action = 'timeout';
       ({ duration } = filter);
       socket.timeout(channel, tags.username, filter.duration, () => {
-        discord.sendWebhook(
-          'timeout',
-          discord.getContent('timeoutAutomatic', [tags.username, util.humanDuration(filter.duration * 1000)]),
-          discord.getEmbed('message', [tags.username, message]),
-        );
+        webhookLog(discord, externalLog, 'twitch', 'timeoutAutomatic', [tags.username, util.humanDuration(filter.duration * 1000)], [tags.username, message]);
       });
       break;
     // Delete
     case filterTypes.DELETE:
       action = 'delete';
       socket.delete(channel, tags.id, () => {
-        discord.sendWebhook('delete', discord.getContent('deleteAutomatic', [tags.username]), discord.getEmbed('message', [tags.username, message]));
+        webhookLog(discord, externalLog, 'twitch', 'deleteAutomatic', [tags.username], [tags.username, message]);
       });
       break;
     // Warning
@@ -45,7 +42,7 @@ module.exports = (socket, channel, tags, message, filter) => {
     // Review
     case filterTypes.REVIEW:
       action = 'review';
-      discord.sendWebhook('review', discord.getContent('review', [tags.username]), discord.getEmbed('message', [tags.username, message]));
+      webhookLog(discord, externalLog, 'twitch', 'review', [tags.username], [tags.username, message]);
       break;
     default:
       socket.app.log.warn(module, `Unknown moderation type: ${filter.type}`);
@@ -54,3 +51,9 @@ module.exports = (socket, channel, tags, message, filter) => {
 
   return { action, duration };
 };
+
+function webhookLog(discord, enabled, webhook, contentType, contentArgs, embedArgs) {
+  if (enabled) {
+    discord.sendWebhook(webhook, discord.getContent(contentType, contentArgs), discord.getEmbed('message', embedArgs));
+  }
+}

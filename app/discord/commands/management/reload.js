@@ -8,6 +8,7 @@ module.exports = {
 
   run(socket, message) {
     const { discord, twitch, log, settings, streaming } = socket.app;
+    const ircDisabled = !socket.app.options.disableIRC;
 
     log(module, 'Reload instruct received');
 
@@ -15,15 +16,20 @@ module.exports = {
     cache.clear();
 
     // Reload application state
-    Promise.all([socket.app.setSettings(), socket.app.setStreaming(), twitch.irc.setCache(), discord.setCache()]).then(async () => {
+    Promise.all([
+      socket.app.setSettings(),
+      socket.app.setStreaming(),
+      ircDisabled ? Promise.resolve('Twitch Disabled') : twitch.irc.setCache(),
+      discord.setCache(),
+    ]).then(async () => {
       const md = (name, metric) => `**${metric}** ${plural(name, metric)}`;
       const response = [
         'Reload complete.',
         `>>> ${md('settings', settings.size)}`,
         md('streaming users', streaming.size),
-        md('filters', twitch.irc.filters.size),
-        md('commands', twitch.irc.commands.size),
-        md('jokes', twitch.irc.jokes.length),
+        md('filters', ircDisabled ? 'N/A' : twitch.irc.filters.size),
+        md('commands', ircDisabled ? 'N/A' : twitch.irc.commands.size),
+        md('jokes', ircDisabled ? 'N/A' : twitch.irc.jokes.length),
         md('music guilds', discord.musicData.size),
         md('total guilds', discord.prefixes.size),
       ];
