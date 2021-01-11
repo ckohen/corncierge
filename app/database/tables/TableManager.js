@@ -47,7 +47,7 @@ class TableManager {
   /**
    * Registers a table in the manager for use throughout the application
    * @param {BaseTable} table the table to register
-   * @param {string} type the type of this table, used to place in relevant arrays
+   * @param {string} [type] the type of this table, used to place in relevant arrays
    */
   register(table, type = undefined) {
     const name = table.name.replace(/Table$/, '');
