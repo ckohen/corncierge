@@ -128,7 +128,6 @@ class DiscordManager extends EventManager {
      * @type {Collection<string, BaseCommand>}
      */
     this.commands = this.commandManager.registered;
-    console.log(this.commands);
 
     this.app.log.debug(module, 'Registering interactions');
     Object.entries(applicationCommands).forEach(([command, handler]) => {

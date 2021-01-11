@@ -17,7 +17,7 @@ class CommandManager {
     Object.defineProperty(this, 'socket', { value: socket });
 
     /**
-     * An array of all registered commands
+     * The registered commands, mapped by input
      * @type {Collection<string, BaseCommand>}
      */
     this.registered = new Collection();
