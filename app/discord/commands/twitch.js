@@ -9,6 +9,12 @@ module.exports = {
   aliases: ['twitchlist', 'twitch-list', 'twitch-commands', 'list-commands', 'command-list', 'irc-commands'],
 
   run(socket, message, [arg]) {
+    if (socket.app.options.disableIRC) {
+      message.channels.send('Twitch is not enabled for this bot (this command should be disabled)').catch(err => {
+        socket.app.log.warn(module, err);
+      });
+      return;
+    }
     let command;
     let page;
     if (arg) {

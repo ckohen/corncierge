@@ -26,11 +26,13 @@ class TwitchManager extends RequestManager {
      */
     this.auth = new AuthManager(app, this);
 
-    /**
-     * The IRC manager for the application.
-     * @type {IrcManager}
-     */
-    this.irc = new IrcManager(app, this);
+    if (!app.options.disableIRC) {
+      /**
+       * The IRC manager for the application.
+       * @type {IrcManager}
+       */
+      this.irc = new IrcManager(app, this);
+    }
   }
 
   /**

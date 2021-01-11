@@ -5,6 +5,12 @@ module.exports = {
   usage: ['(add|edit) <command> <response>', 'rename <old> <new>', 'delete <command>', 'level <command> <lowest required user level>'],
 
   async run(socket, message, args) {
+    if (socket.app.options.disableIRC) {
+      message.channels.send('Twitch is not enabled for this bot (this command should be disabled)').catch(err => {
+        socket.app.log.warn(module, err);
+      });
+      return;
+    }
     const routines = ['add', 'edit', 'rename', 'delete', 'level'];
     const levels = ['broadcaster', 'moderator', 'vip', 'everyone'];
 
