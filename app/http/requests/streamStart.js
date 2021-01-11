@@ -11,20 +11,23 @@ module.exports = async (socket, url, headers) => {
     return;
   }
 
+  if (!socket.app.options.disableIRC) {
+    let greeting;
+    switch (user) {
+      case 'platicorn':
+        greeting = socket.app.settings.get('irc_message_stream_up');
+        socket.app.twitch.irc.say(user, greeting);
+        break;
+      default:
+    }
+  }
+
+  if (socket.app.options.disableDiscord) return;
   // Get the annoucement channel defined for the user
   let channel = await socket.getChannel(user);
   if (!channel) {
     socket.app.log.debug(module, 'No channel');
     return;
-  }
-
-  let greeting;
-  switch (user) {
-    case 'platicorn':
-      greeting = socket.app.settings.get('irc_message_stream_up');
-      socket.app.twitch.irc.say(user, greeting);
-      break;
-    default:
   }
 
   let role = await socket.getRole(user, channel);
