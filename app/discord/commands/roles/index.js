@@ -1,14 +1,14 @@
 'use strict';
 
-const commands = {};
+const roleCommands = [];
 
-commands.rolemanager = require('./rolemanager');
-commands.colormanager = require('./colormanager');
-commands.makeme = require('./makeme');
-commands.makemenot = require('./makemenot');
-commands.color = require('./color');
-commands.reactionroles = require('./reactionroles');
-commands.autorole = require('./autorole');
-commands.voiceroles = require('./voiceroles');
+roleCommands.push(require('./autorole'));
+roleCommands.push(require('./color'));
+roleCommands.push(require('./colormanager'));
+roleCommands.push(require('./makeme'));
+roleCommands.push(require('./makemenot'));
+roleCommands.push(require('./reactionroles'));
+roleCommands.push(require('./rolemanager'));
+roleCommands.push(require('./voiceroles'));
 
-module.exports = commands;
+module.exports = roleCommands;

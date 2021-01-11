@@ -1,12 +1,19 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'skipto',
-  description: 'Skip to a specific song in the queue, provide the song number as an argument',
-  role: 'DJ',
-  args: true,
-  usage: '<song number>',
+const BaseCommand = require('../BaseCommand');
+
+class SkipToCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'skipto',
+      description: 'Skip to a specific song in the queue, provide the song number as an argument',
+      usage: '<song number>',
+      channel: 'music',
+      role: 'DJ',
+      args: true,
+    };
+    super(socket, info);
+  }
 
   run(socket, message, args) {
     const songNumber = Number(args.join(' '));
@@ -33,5 +40,7 @@ module.exports = {
 
     musicData.queue.splice(0, songNumber - 1);
     musicData.songDispatcher.end();
-  },
-};
+  }
+}
+
+module.exports = SkipToCommand;

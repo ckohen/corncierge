@@ -1,18 +1,25 @@
 'use strict';
 
 const { clamp } = require('../../../util/UtilManager');
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  permissions: 'MOVE_MEMBERS',
-  description: 'Randomly moves a specifed number of users between vcs',
-  args: true,
-  aliases: ['randmove'],
-  usage: [
-    'to [string name of channel to always move to]',
-    'from [string name of channel to always move from]',
-    '<number> [string name of channel to move to]',
-    '<number> [string name of channel to move from] -> [string name of channel to move to]',
-  ],
+class RandomMoveCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'randommove',
+      aliases: ['randmove'],
+      description: 'Randomly moves a specifed number of users between vcs',
+      usage: [
+        'to [string name of channel to always move to]',
+        'from [string name of channel to always move from]',
+        '<number> [string name of channel to move to]',
+        '<number> [string name of channel to move from] -> [string name of channel to move to]',
+      ],
+      permissions: 'MOVE_MEMBERS',
+      args: true,
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
@@ -147,5 +154,7 @@ module.exports = {
     setTimeout(() => {
       if (confMsg.deletable) confMsg.delete();
     }, 3000);
-  },
-};
+  }
+}
+
+module.exports = RandomMoveCommand;

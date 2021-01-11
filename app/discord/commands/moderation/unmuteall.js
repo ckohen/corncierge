@@ -1,8 +1,16 @@
 'use strict';
 
-module.exports = {
-  permissions: 'MUTE_MEMBERS',
-  description: 'Unmutes all members in a channel',
+const BaseCommand = require('../BaseCommand');
+
+class UnmuteAllCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'unmuteall',
+      description: 'Unmutes all members in a channel',
+      permissions: 'MUTE_MEMBERS',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     // Check if voice channel
@@ -20,5 +28,7 @@ module.exports = {
     });
 
     message.delete();
-  },
-};
+  }
+}
+
+module.exports = UnmuteAllCommand;

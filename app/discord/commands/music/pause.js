@@ -1,10 +1,17 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'pause',
-  aliases: ['pause-song', 'hold', 'stop'],
-  description: 'Pause the current playing song',
+const BaseCommand = require('../BaseCommand');
+
+class PauseCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'pause',
+      aliases: ['pause-song', 'hold', 'stop'],
+      description: 'Pause the current playing song',
+      channel: 'music',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     const voiceChannel = message.member.voice.channel;
@@ -22,5 +29,7 @@ module.exports = {
     message.channel.send('Song paused :pause_button:');
 
     musicData.songDispatcher.pause(true);
-  },
-};
+  }
+}
+
+module.exports = PauseCommand;

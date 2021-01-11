@@ -1,9 +1,17 @@
 'use strict';
 
-module.exports = {
-  description: 'Randomly generates a number based on the argument given',
-  aliases: ['rand', 'roll', 'flip'],
-  usage: ['<number (> 0)>'],
+const BaseCommand = require('../BaseCommand');
+
+class RandomCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'random',
+      aliases: ['rand', 'roll', 'flip'],
+      description: 'Randomly generates a number based on the argument given',
+      usage: ['<number (> 0)>'],
+    };
+    super(socket, info);
+  }
 
   run(socket, message, args) {
     // Detect 'flip' without args
@@ -57,5 +65,7 @@ module.exports = {
           message.channel.send(`The die landed on **${output}**`);
         }, delay);
     }
-  },
-};
+  }
+}
+
+module.exports = RandomCommand;

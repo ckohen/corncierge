@@ -1,10 +1,11 @@
 'use strict';
 
-const commands = {};
+const managementCommands = [];
 
-commands.reboot = require('./reboot');
-commands.reload = require('./reload');
-commands.status = require('./status');
-commands.setstatus = require('./setstatus');
+managementCommands.push(require('./eval'));
+managementCommands.push(require('./reboot'));
+managementCommands.push(require('./reload'));
+managementCommands.push(require('./setstatus'));
+managementCommands.push(require('./status'));
 
-module.exports = commands;
+module.exports = managementCommands;

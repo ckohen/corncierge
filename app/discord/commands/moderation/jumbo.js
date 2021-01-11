@@ -1,8 +1,16 @@
 'use strict';
 
-module.exports = {
-  permissions: 'MANAGE_EMOJIS',
-  description: 'jumbofies an emoji',
+const BaseCommand = require('../BaseCommand');
+
+class JumboCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'jumbo',
+      description: 'jumbofies an emoji',
+      permissions: 'MANAGE_EMOJIS',
+    };
+    super(socket, info);
+  }
 
   run(socket, message, args) {
     const requestRaw = args[0];
@@ -16,5 +24,7 @@ module.exports = {
     } else {
       message.reply('Sorry, I cannot jumbo that!');
     }
-  },
-};
+  }
+}
+
+module.exports = JumboCommand;

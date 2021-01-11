@@ -1,10 +1,10 @@
 'use strict';
 
-const commands = {};
+const gamingCommands = [];
 
-commands.addwin = require('./addwin');
-commands.setwins = require('./setwins');
-commands.room = require('./room');
-commands.random = require('./random');
+gamingCommands.push(require('./addwin'));
+gamingCommands.push(require('./random'));
+gamingCommands.push(require('./room'));
+gamingCommands.push(require('./setwins'));
 
-module.exports = commands;
+module.exports = gamingCommands;

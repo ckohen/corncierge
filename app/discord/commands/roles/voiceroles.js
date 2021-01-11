@@ -1,13 +1,19 @@
 'use strict';
 
 const { confirmAction } = require('../../../util/UtilManager').discord;
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  name: 'voiceroles',
-  description: 'Allows server admins to set voice roles linked to voice channels',
-  permissions: 'MANAGE_ROLES',
-  aliases: ['voice', 'vr'],
-  usage: ['add <@role> <#channel> [#channel #channel ...]', 'add <@role> <channel name>', 'remove (@role|#channel|channel name)', '[list]'],
+class VoiceRolesCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'voiceroles',
+      aliases: ['voice', 'vr'],
+      description: 'Allows server admins to set voice roles linked to voice channels',
+      usage: ['add <@role> <#channel> [#channel #channel ...]', 'add <@role> <channel name>', 'remove (@role|#channel|channel name)', '[list]'],
+      permissions: 'MANAGE_ROLES',
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
@@ -208,5 +214,7 @@ module.exports = {
       outChannels = [];
     }
     message.channel.send(msg);
-  },
-};
+  }
+}
+
+module.exports = VoiceRolesCommand;

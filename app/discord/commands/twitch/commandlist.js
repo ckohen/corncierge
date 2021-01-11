@@ -1,12 +1,19 @@
 'use strict';
 
 const { Collection } = require('discord.js');
-const { usage } = require('../../util/UtilManager');
+const { usage } = require('../../../util/UtilManager');
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  channel: 'commandManagement',
-  usage: ['[command]', '[page]'],
-  aliases: ['twitchlist', 'twitch-list', 'twitch-commands', 'list-commands', 'command-list', 'irc-commands'],
+class CommandListCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'commandlist',
+      aliases: ['cl', 'twitchlist', 'twitch-list', 'twitch-commands', 'list-commands', 'command-list', 'irc-commands'],
+      usage: ['[command]', '[page]'],
+      channel: 'commandManagement',
+    };
+    super(socket, info);
+  }
 
   run(socket, message, [arg]) {
     if (socket.app.options.disableIRC) {
@@ -59,5 +66,7 @@ module.exports = {
     message.channel.send(`\`\`\`${paginated.join('\n\n')}\`\`\``, { split: true }).catch(err => {
       socket.app.log.warn(module, err);
     });
-  },
-};
+  }
+}
+
+module.exports = CommandListCommand;

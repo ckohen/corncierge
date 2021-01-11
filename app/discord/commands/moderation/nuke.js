@@ -1,8 +1,16 @@
 'use strict';
 
-module.exports = {
-  permissions: 'MOVE_MEMBERS',
-  description: 'Disconnects all members in a channel',
+const BaseCommand = require('../BaseCommand');
+
+class NukeCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'nuke',
+      description: 'Disconnects all members in a channel',
+      permissions: 'MOVE_MEMBERS',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     // Check if voice channel
@@ -20,5 +28,7 @@ module.exports = {
     });
 
     message.delete();
-  },
-};
+  }
+}
+
+module.exports = NukeCommand;

@@ -1,10 +1,17 @@
 'use strict';
 
-module.exports = {
-  name: 'color',
-  description: 'color [The color from the predefined list of colors]',
-  args: true,
-  usage: '<color-role-name>',
+const BaseCommand = require('../BaseCommand');
+
+class ColorsCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'color',
+      description: 'color [The color from the predefined list of colors]',
+      usage: '<color-role-name>',
+      args: true,
+    };
+    super(socket, info);
+  }
 
   run(socket, message, args) {
     args = args.join(' ');
@@ -23,8 +30,8 @@ module.exports = {
     } else {
       message.delete();
     }
-  },
-};
+  }
+}
 
 // Role manager
 async function roleAssign(socket, message, validRoles, colorSnowflakes, args) {
@@ -68,3 +75,5 @@ async function roleAssign(socket, message, validRoles, colorSnowflakes, args) {
 
   return roleAssigned;
 }
+
+module.exports = ColorsCommand;

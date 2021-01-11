@@ -1,10 +1,17 @@
 'use strict';
 
-module.exports = {
-  name: 'makeme',
-  description: 'makeme [The role you would like to add]',
-  args: true,
-  usage: '<role>',
+const BaseCommand = require('../BaseCommand');
+
+class MakeMeCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'makeme',
+      description: 'makeme [The role you would like to add]',
+      usage: '<role>',
+      args: true,
+    };
+    super(socket, info);
+  }
 
   run(socket, message, args) {
     args = args.join(' ');
@@ -17,8 +24,8 @@ module.exports = {
     } else {
       message.delete();
     }
-  },
-};
+  }
+}
 
 // Role manager
 function roleAssign(socket, message, validRoles, args) {
@@ -65,3 +72,5 @@ function roleAssign(socket, message, validRoles, args) {
 
   return roleAssigned;
 }
+
+module.exports = MakeMeCommand;

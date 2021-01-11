@@ -2,9 +2,16 @@
 
 const cache = require('memory-cache');
 const plural = require('pluralize');
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  channel: 'console',
+class ReloadCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'reload',
+      channel: 'console',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     const { discord, twitch, log, settings, streaming } = socket.app;
@@ -44,5 +51,7 @@ module.exports = {
 
       log(module, 'Reload complete');
     });
-  },
-};
+  }
+}
+
+module.exports = ReloadCommand;

@@ -2,21 +2,27 @@
 
 const { Collection } = require('discord.js');
 const { clamp } = require('../../../util/UtilManager');
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  name: 'room',
-  description: 'Allows servers to have game rooms with waiting rooms',
-  usage: [
-    'list [room id]',
-    'join <room id>',
-    'leave [@user|username]',
-    'create <room name>',
-    'set [room id] (code|players) <option>',
-    'remove [room id]',
-    'clear <room id>',
-    'fill [room id]',
-    'transfer <@newOwner> [room id]',
-  ],
+class RoomCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'room',
+      description: 'Allows servers to have game rooms with waiting rooms',
+      usage: [
+        'list [room id]',
+        'join <room id>',
+        'leave [@user|username]',
+        'create <room name>',
+        'set [room id] (code|players) <option>',
+        'remove [room id]',
+        'clear <room id>',
+        'fill [room id]',
+        'transfer <@newOwner> [room id]',
+      ],
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
@@ -515,5 +521,7 @@ module.exports = {
       masterRoom.lastMessageID = lastMessage.id;
     }
     return true;
-  },
-};
+  }
+}
+
+module.exports = RoomCommand;

@@ -1,10 +1,17 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'shuffle',
-  description: 'Shuffle the song queue',
-  role: 'DJ',
+const BaseCommand = require('../BaseCommand');
+
+class ShuffleCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'shuffle',
+      description: 'Shuffle the song queue',
+      channel: 'music',
+      role: 'DJ',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     const voiceChannel = message.member.voice.channel;
@@ -37,8 +44,8 @@ module.exports = {
       queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
     }
     message.channel.send(queueEmbed);
-  },
-};
+  }
+}
 
 function shuffleQueue(queue) {
   for (let i = queue.length - 1; i > 0; i--) {
@@ -46,3 +53,5 @@ function shuffleQueue(queue) {
     [queue[i], queue[j]] = [queue[j], queue[i]];
   }
 }
+
+module.exports = ShuffleCommand;

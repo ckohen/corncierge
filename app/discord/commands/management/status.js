@@ -1,11 +1,17 @@
 'use strict';
 
 const cache = require('memory-cache');
-
 const { humanBytes, humanDuration } = require('../../../util/UtilManager');
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  channel: 'console',
+class StatusCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'status',
+      channel: 'console',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     const { discord, twitch, settings } = socket.app;
@@ -23,5 +29,7 @@ module.exports = {
     message.channel.send(status).catch(err => {
       socket.app.log.warn(module, err);
     });
-  },
-};
+  }
+}
+
+module.exports = StatusCommand;

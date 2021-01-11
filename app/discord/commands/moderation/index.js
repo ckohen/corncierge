@@ -1,14 +1,14 @@
 'use strict';
 
-const commands = {};
+const moderationCommands = [];
 
-commands.clear = require('./clear');
-commands.muteall = require('./muteall');
-commands.unmuteall = require('./unmuteall');
-commands.moveall = require('./moveall');
-commands.prefix = require('./prefix');
-commands.randommove = require('./randommove');
-commands.nuke = require('./nuke');
-commands.jumbo = require('./jumbo');
+moderationCommands.push(require('./clear'));
+moderationCommands.push(require('./jumbo'));
+moderationCommands.push(require('./moveall'));
+moderationCommands.push(require('./muteall'));
+moderationCommands.push(require('./nuke'));
+moderationCommands.push(require('./prefix'));
+moderationCommands.push(require('./randommove'));
+moderationCommands.push(require('./unmuteall'));
 
-module.exports = commands;
+module.exports = moderationCommands;

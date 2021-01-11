@@ -1,10 +1,17 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'nowplaying',
-  aliases: ['np', 'currently-playing', 'now-playing'],
-  description: 'Display the currently playing song',
+const BaseCommand = require('../BaseCommand');
+
+class NowPlayingCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'nowplaying',
+      aliases: ['np', 'currently-playing', 'now-playing'],
+      description: 'Display the currently playing song',
+      channel: 'music',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     let musicData = socket.musicData.get(String(message.guild.id));
@@ -24,8 +31,8 @@ module.exports = {
     const videoEmbed = socket.getEmbed('videoEmbed', [video, description]);
 
     message.channel.send(videoEmbed);
-  },
-};
+  }
+}
 
 function playbackBar(data, video) {
   const passedTimeInMS = data.songDispatcher.streamTime - data.songDispatcher.pausedTime;
@@ -74,3 +81,5 @@ function formatDuration(durationObj) {
   }`;
   return duration;
 }
+
+module.exports = NowPlayingCommand;

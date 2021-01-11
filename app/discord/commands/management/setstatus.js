@@ -1,9 +1,17 @@
 'use strict';
 
-module.exports = {
-  channel: 'console',
-  aliases: ['setactivity', 'activity', 'setgame'],
-  usage: ['(add|edit) <type: PLAYING, LISTENING, WATCHING, STREAMING> <activity>', 'remove'],
+const BaseCommand = require('../BaseCommand');
+
+class SetStatusCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'setstatus',
+      aliases: ['setactivity', 'activity', 'setgame'],
+      usage: ['(add|edit) <type: PLAYING, LISTENING, WATCHING, STREAMING> <activity>', 'remove'],
+      channel: 'console',
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     const routines = ['add', 'edit', 'remove'];
@@ -77,5 +85,7 @@ module.exports = {
     }
 
     send(success);
-  },
-};
+  }
+}
+
+module.exports = SetStatusCommand;
