@@ -34,12 +34,14 @@ class TwitchCommand {
 
   /**
    * Runs the command
-   * @function TwitchCommand#run
    * @param {CommandHandler} handler the handler that handles interacting with the socket
    * @param {boolean} hasArgsMod whether the command has arguments and the user is privileged
    * @returns {Promise<boolean>} whether the command has been successfully handled
    * @abstract
    */
+  run() {
+    throw new Error('Must be implemented by subclass');
+  }
 }
 
 module.exports = TwitchCommand;

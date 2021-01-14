@@ -132,11 +132,13 @@ class BaseCommand {
 
   /**
    * Runs the command
-   * @function BaseCommand#run
    * @param {Message} message the message that executed the command
    * @param {string[]} args the content of the message split on spaces excluding the command name
    * @abstract
    */
+  run() {
+    throw new Error('Must be implemented by subclass');
+  }
 }
 
 module.exports = BaseCommand;
