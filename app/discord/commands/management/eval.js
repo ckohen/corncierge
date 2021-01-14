@@ -20,7 +20,7 @@ class EvalCommand extends BaseCommand {
     /* eslint-disable-next-line no-unused-vars */
     const client = socket.driver;
     args = args.join(' ');
-    if (args.includes('token')) {
+    if (args.toLowerCase().includes('token') || args.toLowerCase().includes('secret')) {
       message.channel.send(`Error: Execution of command refused`);
       return;
     }
