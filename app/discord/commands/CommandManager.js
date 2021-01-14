@@ -1,6 +1,7 @@
 'use strict';
 
 const { Collection } = require('discord.js');
+const BaseCommand = require('./BaseCommand');
 
 /**
  * Stores the commands for a discord manager
@@ -17,7 +18,7 @@ class CommandManager {
     Object.defineProperty(this, 'socket', { value: socket });
 
     /**
-     * The registered commands, mapped by input
+     * The registered commands, mapped by name
      * @type {Collection<string, BaseCommand>}
      */
     this.registered = new Collection();
@@ -52,6 +53,7 @@ class CommandManager {
    */
   register(command) {
     const handler = new command(this.socket);
+    if (!(handler instanceof BaseCommand)) throw new TypeError(`Discord commands must extend BaseCommand: ${command.name}`);
     if (this.socket.options.disabledCommands.includes(handler.name)) return;
     this.registered.set(handler.name, handler);
   }
