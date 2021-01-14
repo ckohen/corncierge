@@ -52,7 +52,7 @@ class BaseCommand {
       /**
        * The aliases for this command
        * @name BaseCommand#aliases
-       * @type {string[]}
+       * @type {?string[]}
        */
       Object.defineProperty(this, 'aliases', { value: data.aliases });
     }
@@ -61,7 +61,7 @@ class BaseCommand {
       /**
        * What this command does
        * @name BaseCommand#description
-       * @type {string}
+       * @type {?string}
        */
       Object.defineProperty(this, 'description', { value: data.description });
     }
@@ -70,7 +70,7 @@ class BaseCommand {
       /**
        * The usage for this command
        * @name BaseCommand#usage
-       * @type {string[]}
+       * @type {?string[]}
        */
       Object.defineProperty(this, 'usage', { value: data.usage });
     }
@@ -79,7 +79,7 @@ class BaseCommand {
       /**
        * The guild this command is restricted to, if any
        * @name BaseCommand#guild
-       * @type {string}
+       * @type {?string}
        */
       Object.defineProperty(this, 'guild', { value: data.guild });
     }
@@ -88,7 +88,7 @@ class BaseCommand {
       /**
        * The channel this command is restricted to, if any
        * @name BaseCommand#channel
-       * @type {string}
+       * @type {?string}
        */
       Object.defineProperty(this, 'channel', { value: data.channel });
     }
@@ -97,7 +97,7 @@ class BaseCommand {
       /**
        * The role this command is restricted to, if any
        * @name BaseCommand#role
-       * @type {string}
+       * @type {?string}
        */
       Object.defineProperty(this, 'role', { value: data.role });
     }
@@ -106,7 +106,7 @@ class BaseCommand {
       /**
        * The permissions requied to use this command, if any
        * @name BaseCommand#permissions
-       * @type {PermissionResolvable}
+       * @type {?PermissionResolvable}
        */
       Object.defineProperty(this, 'permissions', { value: data.permissions });
     }
@@ -115,16 +115,16 @@ class BaseCommand {
       /**
        * The user this command is restricted to, if any
        * @name BaseCommand#user
-       * @type {string}
+       * @type {?string}
        */
       Object.defineProperty(this, 'user', { value: data.user });
     }
 
-    if ('uargs' in data) {
+    if ('args' in data) {
       /**
        * Whether arguments are required for this command (false when handled by the the run function)
        * @name BaseCommand#args
-       * @type {boolean}
+       * @type {?boolean}
        */
       Object.defineProperty(this, 'args', { value: data.args });
     }
