@@ -1,9 +1,22 @@
 'use strict';
 
+const TwitchCommand = require('./TwitchCommand');
 const util = require('../../util/UtilManager');
 
-module.exports = async (socket, callback) => {
-  const uptime = await socket.app.twitch.fetchUptime().catch(() => callback('{caster} is not live!'));
-  if (!uptime) return;
-  callback(util.twitch.messages.uptime(util.relativeTime(uptime, 3)));
-};
+class UptimeTwitchCommand extends TwitchCommand {
+  constructor(socket) {
+    const info = {
+      name: 'uptime',
+    };
+    super(socket, info);
+  }
+
+  async run(handler) {
+    const uptime = await this.socket.app.twitch.fetchUptime(this.channel.name).catch(err => this.socket.log.verbose(err));
+    if (!uptime) return Promise.resolve(false);
+    handler.respond(util.twitch.messages.uptime(util.relativeTime(uptime, 3)));
+    return Promise.resolve(true);
+  }
+}
+
+module.exports = UptimeTwitchCommand;
