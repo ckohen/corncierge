@@ -1,12 +1,19 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'loop',
-  description: 'Loop the current playing song',
-  args: true,
-  role: 'DJ',
-  usage: '<amount>',
+const BaseCommand = require('../BaseCommand');
+
+class LoopCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'loop',
+      description: 'Loop the current playing song',
+      usage: '<amount>',
+      channel: 'music',
+      role: 'DJ',
+      args: true,
+    };
+    super(socket, info);
+  }
 
   run(socket, message, args) {
     const numOfTimesToLoop = Number(args.join(' '));
@@ -21,5 +28,7 @@ module.exports = {
     }
 
     message.channel.send(`${musicData.nowPlaying.title} looped ${numOfTimesToLoop} ${numOfTimesToLoop === 1 ? 'time' : 'times'}`);
-  },
-};
+  }
+}
+
+module.exports = LoopCommand;

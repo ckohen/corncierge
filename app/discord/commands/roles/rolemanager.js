@@ -1,15 +1,22 @@
 'use strict';
 
-module.exports = {
-  name: 'rolemanager',
-  description: 'Allows server admins to change self-assingable roles',
-  permissions: 'MANAGE_ROLES',
-  aliases: ['rm'],
-  usage: [
-    '(add|remove) <#channel> <@role> [@role @role etc..] [makeme|makemenot]',
-    'remove <#channel> [role(not mentioned, e.g. if deleted)]',
-    '[list] [#channel]',
-  ],
+const BaseCommand = require('../BaseCommand');
+
+class RoleManagerCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'rolemanager',
+      aliases: ['rm'],
+      description: 'Allows server admins to change self-assingable roles',
+      usage: [
+        '(add|remove) <#channel> <@role> [@role @role etc..] [makeme|makemenot]',
+        'remove <#channel> [role(not mentioned, e.g. if deleted)]',
+        '[list] [#channel]',
+      ],
+      permissions: 'MANAGE_ROLES',
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
@@ -235,8 +242,8 @@ module.exports = {
     });
 
     message.channel.send(msg);
-  },
-};
+  }
+}
 
 function modifyRoles(existingRoles, changedRoles, add = true) {
   let newRoles = [];
@@ -255,3 +262,5 @@ function modifyRoles(existingRoles, changedRoles, add = true) {
   });
   return newRoles;
 }
+
+module.exports = RoleManagerCommand;

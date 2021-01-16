@@ -1,11 +1,18 @@
 'use strict';
 
 const { Collection } = require('discord.js');
-const { usage } = require('../../util/UtilManager');
+const { usage } = require('../../../util/UtilManager');
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  usage: ['[command type]', 'legacy [command] (This lists all commands across all servers in a very ugly code block)'],
-  aliases: ['?'],
+class HelpCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'help',
+      aliases: ['?'],
+      usage: ['[command type]', 'legacy [command] (This lists all commands across all servers in a very ugly code block)'],
+    };
+    super(socket, info);
+  }
 
   run(socket, message, args) {
     const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
@@ -382,5 +389,7 @@ module.exports = {
       }
       message.channel.send(msg);
     }
-  },
-};
+  }
+}
+
+module.exports = HelpCommand;

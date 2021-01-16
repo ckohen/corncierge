@@ -2,15 +2,21 @@
 
 const discordYoutube = require('simple-youtube-api');
 const ytdl = require('ytdl-core');
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  channel: 'music',
-  name: 'play',
-  aliases: ['play-song', 'add'],
-  description: 'Play any song or playlist from youtube',
-  permissions: ['SPEAK', 'CONNECT'],
-  args: true,
-  usage: ['<song name>', '<song url>', '<playlist url>'],
+class PlayCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'play',
+      aliases: ['play-song', 'add'],
+      description: 'Play any song or playlist from youtube',
+      usage: ['<song name>', '<song url>', '<playlist url>'],
+      channel: 'music',
+      permissions: ['SPEAK', 'CONNECT'],
+      args: true,
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     let query = args.join(' ');
@@ -183,8 +189,8 @@ module.exports = {
         }
         return message.channel.send(`${message.member}, Please try again and enter a number between 1 and 5 or exit`);
       });
-  },
-};
+  }
+}
 
 function playSong(queue, message, socket) {
   const musicData = socket.musicData.get(String(message.guild.id));
@@ -263,3 +269,5 @@ function formatDuration(durationObj) {
   }`;
   return duration;
 }
+
+module.exports = PlayCommand;

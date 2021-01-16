@@ -1,10 +1,17 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'queue',
-  aliases: ['song-list', 'next-songs', 'q'],
-  description: 'Display the song queue',
+const BaseCommand = require('../BaseCommand');
+
+class QueueCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'queue',
+      aliases: ['song-list', 'next-songs', 'q'],
+      description: 'Display the song queue',
+      channel: 'music',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     const musicData = socket.musicData.get(String(message.guild.id));
@@ -21,5 +28,7 @@ module.exports = {
       queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
     }
     return message.channel.send(queueEmbed);
-  },
-};
+  }
+}
+
+module.exports = QueueCommand;

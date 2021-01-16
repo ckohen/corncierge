@@ -1,10 +1,18 @@
 'use strict';
 
-module.exports = {
-  permissions: 'MOVE_MEMBERS',
-  description: 'Moves all members in your vc (or specified vc) to another vc',
-  args: true,
-  usage: ['<string name of channel to move to>', '<string name of channel to move from> -> <string name of channel to move to>'],
+const BaseCommand = require('../BaseCommand');
+
+class MoveAllCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'moveall',
+      description: 'Moves all members in your vc (or specified vc) to another vc',
+      usage: ['<string name of channel to move to>', '<string name of channel to move from> -> <string name of channel to move to>'],
+      permissions: 'MOVE_MEMBERS',
+      args: true,
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     let voiceChannel;
@@ -57,5 +65,7 @@ module.exports = {
     setTimeout(() => {
       if (confMsg.deletable) confMsg.delete();
     }, 3000);
-  },
-};
+  }
+}
+
+module.exports = MoveAllCommand;

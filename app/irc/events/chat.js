@@ -3,16 +3,14 @@
 const { twitch } = require('../../util/UtilManager');
 const handlers = require('../handlers');
 
-module.exports = (socket, channel, user, messageRaw, self) => {
+module.exports = async (socket, channel, user, messageRaw, self) => {
   // Ignore self
   if (self) return;
 
-  const channelData = { name: channel, id: socket.twitch.getID(channel) };
+  const channelData = { name: channel, id: await socket.twitch.getID(channel) };
   const message = messageRaw.trim();
   const opts = socket.twitch.options;
-  const isVip = twitch.isVip(user);
   const isPrivileged = twitch.isPrivileged(user, channelData);
-  const isBroadcaster = twitch.isBroadcaster(user, channelData);
 
   // Check for moderation filters
   const filter = socket.filters.find(item => new RegExp(item.input, 'gi').test(message));
@@ -49,30 +47,5 @@ module.exports = (socket, channel, user, messageRaw, self) => {
     }
   }
 
-  if (command.level === 'broadcaster' && !isBroadcaster) {
-    return;
-  }
-
-  if (command.level === 'moderator' && !isPrivileged) {
-    return;
-  }
-
-  if (command.level === 'vip' && !(isPrivileged || isVip)) {
-    return;
-  }
-
-  if (isPrivileged || isVip) {
-    // Handle immediately if user is privileged or VIP
-    handlers.command(socket, channel, user, command, input, args, isBroadcaster, isPrivileged, isVip);
-    return;
-  }
-
-  // Throttle command usage
-  socket.throttle.rateLimit(input, (err, limited) => {
-    if (err) return socket.app.log.error(module, `Throttle: ${err}`);
-    if (limited) return socket.app.log.debug(module, `Throttled command: ${input}`);
-
-    // Handle command
-    return handlers.command(socket, channel, user, command, input, args);
-  });
+  new handlers.command(socket, channelData, user, command, args, isPrivileged).execute();
 };

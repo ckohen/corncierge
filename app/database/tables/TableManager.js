@@ -1,5 +1,7 @@
 'use strict';
 
+const BaseTable = require('./BaseTable');
+
 /**
  * Stores the tables for a database
  */
@@ -47,11 +49,13 @@ class TableManager {
   /**
    * Registers a table in the manager for use throughout the application
    * @param {BaseTable} table the table to register
-   * @param {string} type the type of this table, used to place in relevant arrays
+   * @param {string} [type] the type of this table, used to place in relevant arrays
    */
   register(table, type = undefined) {
     const name = table.name.replace(/Table$/, '');
-    this[name] = new table(this.socket);
+    const handler = new table(this.socket);
+    if (!(handler instanceof BaseTable)) throw new TypeError(`Database tables must extend BaseTable: ${table.name}`);
+    this[name] = handler;
     switch (type) {
       case 'discord':
         this.discord.push(this[name]);

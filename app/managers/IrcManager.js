@@ -6,6 +6,7 @@ const { Client } = require('tmi.js');
 const throttle = require('tokenthrottle');
 
 const EventManager = require('./EventManager');
+const TwitchCommandManager = require('../irc/commands/TwitchCommandManager');
 const events = require('../irc/events');
 const { collect } = require('../util/UtilManager');
 
@@ -53,6 +54,12 @@ class IrcManager extends EventManager {
      * @type {Collection<string, Object>}
      */
     this.commands = new Collection();
+
+    /**
+     * The command manager that stores specially handled commands
+     * @type {TwitchCommandManager}
+     */
+    this.specialCommands = new TwitchCommandManager(this);
 
     /**
      * The rate limiter.

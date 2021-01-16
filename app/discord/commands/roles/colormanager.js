@@ -1,11 +1,18 @@
 'use strict';
 
-module.exports = {
-  name: 'colormanager',
-  description: 'Allows server admins to change self-assingable color roles',
-  permissions: 'MANAGE_ROLES',
-  aliases: ['cm'],
-  usage: ['', '(add|remove) <@role> [@role @role etc..]', 'remove <role(not mentioned, e.g. if deleted)>', 'channel <#channel>', '[list]'],
+const BaseCommand = require('../BaseCommand');
+
+class ColorManagerCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'colormanager',
+      aliases: ['cm'],
+      description: 'Allows server admins to change self-assingable color roles',
+      usage: ['', '(add|remove) <@role> [@role @role etc..]', 'remove <role(not mentioned, e.g. if deleted)>', 'channel <#channel>', '[list]'],
+      permissions: 'MANAGE_ROLES',
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
@@ -173,8 +180,8 @@ module.exports = {
 
     msg.addField('Remove Color', 'remove', true);
     message.channel.send(msg);
-  },
-};
+  }
+}
 
 function modifyRoles(existingRoles, changedRoles, add = true) {
   let newRoles = [];
@@ -213,3 +220,5 @@ function modifySnowflakes(existingSnowflakes, changedSnwoflakes, add = true) {
   });
   return newSnowflakes;
 }
+
+module.exports = ColorManagerCommand;

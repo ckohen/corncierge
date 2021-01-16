@@ -1,10 +1,17 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'resume',
-  aliases: ['resume-song', 'continue'],
-  description: 'Resume the current paused song',
+const BaseCommand = require('../BaseCommand');
+
+class ResumeCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'resume',
+      aliases: ['resume-song', 'continue'],
+      description: 'Resume the current paused song',
+      channel: 'music',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     const voiceChannel = message.member.voice.channel;
@@ -22,5 +29,7 @@ module.exports = {
     message.channel.send('Song resumed :play_pause:');
 
     musicData.songDispatcher.resume();
-  },
-};
+  }
+}
+
+module.exports = ResumeCommand;

@@ -1,11 +1,18 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'leave',
-  aliases: ['end'],
-  description: 'Leaves voice channel if in one',
-  role: 'DJ',
+const BaseCommand = require('../BaseCommand');
+
+class LeaveCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'leave',
+      aliases: ['end'],
+      description: 'Leaves voice channel if in one',
+      channel: 'music',
+      role: 'DJ',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     var voiceChannel = message.member.voice.channel;
@@ -26,5 +33,7 @@ module.exports = {
       musicData.songDispatcher.end();
       musicData.queue.length = 0;
     }
-  },
-};
+  }
+}
+
+module.exports = LeaveCommand;

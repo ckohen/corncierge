@@ -1,12 +1,19 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'volume',
-  aliases: ['change-volume'],
-  description: 'Adjust song volume',
-  role: 'DJ',
-  usage: '[volume: 1-200]',
+const BaseCommand = require('../BaseCommand');
+
+class VolumeCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'volume',
+      aliases: ['change-volume'],
+      description: 'Adjust song volume',
+      usage: '[volume: 1-200]',
+      channel: 'music',
+      role: 'DJ',
+    };
+    super(socket, info);
+  }
 
   run(socket, message, args) {
     const wantedVolume = Number(args[0]);
@@ -34,5 +41,7 @@ module.exports = {
     } else {
       message.reply(`The current volume is ${musicData.volume * 100}%`);
     }
-  },
-};
+  }
+}
+
+module.exports = VolumeCommand;

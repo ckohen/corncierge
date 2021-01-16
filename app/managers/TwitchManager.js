@@ -124,13 +124,12 @@ class TwitchManager extends RequestManager {
    */
   fetchUptime(user = this.options.channel?.name) {
     this.app.log.debug(module, `Fetching uptime: ${user}`);
-    return this.fetchUser(user).then(userObj => {
-      const id = userObj.users[0]._id;
-      return this.fetchStream(id).then(body => {
+    return this.getID(user)
+      .then(id => this.fetchStream(id))
+      .then(body => {
         if (body.stream == null) return Promise.reject(new Error('Stream Offline')); // eslint-disable-line eqeqeq
-        return Promise.resolve(moment(body.stream.created_at).valueOf());
+        return moment(body.stream.created_at).valueOf();
       });
-    });
   }
 }
 

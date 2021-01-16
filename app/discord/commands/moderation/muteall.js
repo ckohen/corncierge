@@ -1,9 +1,17 @@
 'use strict';
 
-module.exports = {
-  permissions: 'MUTE_MEMBERS',
-  description: 'Mutes all members in a channel (auto-unmute after)',
-  usage: ['', '[delay before auto-unmute or 0 for indefinte]'],
+const BaseCommand = require('../BaseCommand');
+
+class MuteAllCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'muteall',
+      description: 'Mutes all members in a channel (auto-unmute after)',
+      usage: ['', '[delay before auto-unmute or 0 for indefinte]'],
+      permissions: 'MUTE_MEMBERS',
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     // Check if voice channel
@@ -53,5 +61,7 @@ module.exports = {
         });
       }, delay);
     }
-  },
-};
+  }
+}
+
+module.exports = MuteAllCommand;

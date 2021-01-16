@@ -1,8 +1,16 @@
 'use strict';
 
-module.exports = {
-  channel: 'commandManagement',
-  usage: ['(add|edit) <command> <response>', 'rename <old> <new>', 'delete <command>', 'level <command> <lowest required user level>'],
+const BaseCommand = require('../BaseCommand');
+
+class CommandsCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'commands',
+      usage: ['(add|edit) <command> <response>', 'rename <old> <new>', 'delete <command>', 'level <command> <lowest required user level>'],
+      channel: 'commandManagement',
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     if (socket.app.options.disableIRC) {
@@ -160,5 +168,7 @@ module.exports = {
     await socket.app.twitch.irc.cacheCommands();
 
     send(success);
-  },
-};
+  }
+}
+
+module.exports = CommandsCommand;

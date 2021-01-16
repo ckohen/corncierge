@@ -1,10 +1,17 @@
 'use strict';
 
-module.exports = {
-  name: 'makemenot',
-  description: 'makemenot [The role you would like to remove]',
-  args: true,
-  usage: '<role>',
+const BaseCommand = require('../BaseCommand');
+
+class MakeMeNotCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'makemenot',
+      description: 'makemenot [The role you would like to remove]',
+      usage: '<role>',
+      args: true,
+    };
+    super(socket, info);
+  }
 
   run(socket, message, args) {
     args = args.join(' ');
@@ -17,8 +24,8 @@ module.exports = {
     } else {
       message.delete();
     }
-  },
-};
+  }
+}
 
 // Role manager
 function roleAssign(socket, message, validRoles, args) {
@@ -62,3 +69,5 @@ function roleAssign(socket, message, validRoles, args) {
     message.channel.bulkDelete(2);
   }, 3000);
 }
+
+module.exports = MakeMeNotCommand;

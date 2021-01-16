@@ -3,12 +3,19 @@
 const { Collection } = require('discord.js');
 const plural = require('pluralize');
 const { collect } = require('../../../util/UtilManager');
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  guild: 'platicorn',
-  name: 'addwin',
-  description: 'addwin [specific user]',
-  usage: ['[target user]'],
+class AddWinCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'addwin',
+      description: 'addwin [specific user]',
+      usage: ['[target user]'],
+      guild: 'platicorn',
+    };
+    super(socket, info);
+  }
+
   async run(socket, message, args) {
     args = args.join(' ');
 
@@ -90,5 +97,7 @@ module.exports = {
         if (confmsg.deletable) confmsg.delete();
       }, 3000);
     }
-  },
-};
+  }
+}
+
+module.exports = AddWinCommand;

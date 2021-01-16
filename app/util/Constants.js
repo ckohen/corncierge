@@ -39,7 +39,47 @@ exports.DefaultOptions = {
   },
 
   /**
-   * A disableable discord command, some are groups which disable the items within as well
+   * A disableable discord command, the top level is groups which disable the items within as well
+   * * `all` - disables all built in commands
+   * * `gaming`
+   *  * `random`
+   *  * `room`
+   * * `general`
+   *  * `help`
+   * * `management`
+   *  * `eval`
+   *  * `reboot`
+   *  * `reload`
+   *  * `setstatus`
+   *  * `status`
+   * * `moderation`
+   *  * `clear`
+   *  * `moveall`
+   *  * `muteall`
+   *  * `nuke`
+   *  * `randommove`
+   *  * `unmuteall`
+   * * `music` - some sub items are not shown as they should not be disabled without disabling the whole group
+   *  * `loop`
+   *  * `nowplaying`
+   *  * `remove`
+   *  * `shuffle`
+   *  * `skip`
+   *  * `skipall`
+   *  * `skipto`
+   *  * `volume`
+   * * `roles`
+   *  * `autorole`
+   *  * `color`
+   *  * `colormanager`
+   *  * `makeme`
+   *  * `makemenot`
+   *  * `reactionroles`
+   *  * `rolemanager`
+   *  * `voceroles`
+   * * `twitch`
+   *  * `commandlist`
+   *  * `commands`
    * @typedef {string} DisableableCommands
    */
 
@@ -169,6 +209,66 @@ exports.Colors = {
   TWITCH: 0x9146ff,
 };
 
+exports.discordMessages = {
+  ban(user, moderator, reason) {
+    return `**${user}** was banned by **${moderator}** ${reason}`;
+  },
+
+  banAutomatic(user) {
+    return `**${user}** was banned automatically`;
+  },
+
+  delete(user, moderator) {
+    return `A message from **${user}** was deleted by **${moderator}**`;
+  },
+
+  deleteAutomatic(user) {
+    return `A message from **${user}** was deleted automatically`;
+  },
+
+  review(user) {
+    return `A message from **${user}** may require moderation`;
+  },
+
+  timeout(user, moderator, duration, reason) {
+    return `**${user}** was timed out for ${duration} by **${moderator}** ${reason}`;
+  },
+
+  timeoutAutomatic(user, duration) {
+    return `**${user}** was timed out for ${duration} automatically`;
+  },
+
+  unban(user, moderator) {
+    return `**${user}** was pardoned by **${moderator}**`;
+  },
+
+  streamUp(role, userLogin, title_url) {
+    return `Hey ${role}, ${userLogin} is now live at <${title_url}>! Go check it out!`;
+  },
+
+  streamDown(userLogin) {
+    return `${userLogin} has finished streaming :)`;
+  },
+};
+
+exports.IRCFilterTypes = {
+  BAN: 1,
+  TIMEOUT: 2,
+  DELETE: 3,
+  WARNING: 4,
+  REVIEW: 5,
+};
+
+exports.IRCResponders = {
+  followage(user, date, duration) {
+    return `${user} has been following {caster} since ${date} (${duration})`;
+  },
+
+  uptime(duration) {
+    return `{caster} has been live for ${duration}`;
+  },
+};
+
 exports.LogColors = {
   critical: 'bold white redBG',
   error: 'red',
@@ -202,12 +302,4 @@ exports.LogLevels = {
     error: 'red',
     warn: 'gold',
   },
-};
-
-exports.IRCFilterTypes = {
-  BAN: 1,
-  TIMEOUT: 2,
-  DELETE: 3,
-  WARNING: 4,
-  REVIEW: 5,
 };

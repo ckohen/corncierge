@@ -1,11 +1,18 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'skipall',
-  aliases: ['skip-all', 'queue-clear', 'clearq', 'clear-q'],
-  description: 'Skip all songs in queue',
-  role: 'DJ',
+const BaseCommand = require('../BaseCommand');
+
+class SkipAllCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'skipall',
+      aliases: ['skip-all', 'queue-clear', 'clearq', 'clear-q'],
+      description: 'Skip all songs in queue',
+      channel: 'music',
+      role: 'DJ',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     const voiceChannel = message.member.voice.channel;
@@ -21,5 +28,7 @@ module.exports = {
     // Clear Queue
     musicData.queue.length = 0;
     return message.channel.send(`The queue has been cleared!`);
-  },
-};
+  }
+}
+
+module.exports = SkipAllCommand;

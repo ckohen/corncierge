@@ -1,20 +1,34 @@
 'use strict';
 
-module.exports = (socket, callback) => {
-  const { jokes } = socket;
+const TwitchCommand = require('./TwitchCommand');
 
-  if (!Array.isArray(jokes) || jokes.length === 0) return callback();
+class JokeTwitchCommand extends TwitchCommand {
+  constructor(socket) {
+    const info = {
+      name: 'joke',
+    };
+    super(socket, info);
+  }
 
-  // Select a random joke from the top of the stack
-  const heap = Math.floor(jokes.length / 4);
-  const key = Math.floor(Math.random() * heap);
-  const item = jokes[key];
+  run(handler) {
+    const { jokes } = this.socket;
 
-  // Move the joke to the bottom of the stack
-  jokes.splice(key, 1);
-  jokes.push(item);
+    if (!Array.isArray(jokes) || jokes.length === 0) return Promise.resolve(false);
 
-  socket.app.log.verbose(module, `Told joke: ${item.id}`);
+    // Select a random joke from the top of the stack
+    const heap = Math.floor(jokes.length / 4);
+    const key = Math.floor(Math.random() * heap);
+    const item = jokes[key];
 
-  return callback(item.output);
-};
+    // Move the joke to the bottom of the stack
+    jokes.splice(key, 1);
+    jokes.push(item);
+
+    this.socket.app.log.verbose(module, `Told joke: ${item.id}`);
+
+    handler.respond(item.output);
+    return Promise.resolve(true);
+  }
+}
+
+module.exports = JokeTwitchCommand;

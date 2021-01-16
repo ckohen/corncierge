@@ -1,11 +1,18 @@
 'use strict';
 
-module.exports = {
-  name: 'autorole',
-  description: 'Allows server admins to set an automatically added role (with a delay time)',
-  permissions: 'MANAGE_ROLES',
-  aliases: ['ar'],
-  usage: ['set <@role> [delay]', 'remove', 'status'],
+const BaseCommand = require('../BaseCommand');
+
+class AutoRoleCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'autorole',
+      aliases: ['ar'],
+      description: 'Allows server admins to set an automatically added role (with a delay time)',
+      usage: ['set <@role> [delay]', 'remove', 'status'],
+      permissions: 'MANAGE_ROLES',
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
@@ -120,5 +127,7 @@ module.exports = {
           : 'not assigning any role to new members.'
       }`,
     );
-  },
-};
+  }
+}
+
+module.exports = AutoRoleCommand;

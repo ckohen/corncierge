@@ -1,10 +1,17 @@
 'use strict';
 
 const { clamp } = require('../../../util/UtilManager');
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  permissions: 'MANAGE_MESSAGES',
-  usage: '<amount:1-100>',
+class ClearCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'clear',
+      usage: '<amount:1-100>',
+      permissions: 'MANAGE_MESSAGES',
+    };
+    super(socket, info);
+  }
 
   run(socket, message, [amountRaw]) {
     const amount = parseInt(amountRaw, 10);
@@ -31,5 +38,7 @@ module.exports = {
     } else if (message.guild.id === '756319910191300778') {
       socket.sendMessage('helpLogs', `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);
     }
-  },
-};
+  }
+}
+
+module.exports = ClearCommand;

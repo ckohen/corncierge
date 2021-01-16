@@ -1,7 +1,15 @@
 'use strict';
 
-module.exports = {
-  channel: 'console',
+const BaseCommand = require('../BaseCommand');
+
+class RebootCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'reboot',
+      channel: 'console',
+    };
+    super(socket, info);
+  }
 
   async run(socket, message) {
     socket.app.log(module, 'Reboot instruct received');
@@ -12,5 +20,7 @@ module.exports = {
 
     // Reboot
     socket.app.end(0);
-  },
-};
+  }
+}
+
+module.exports = RebootCommand;

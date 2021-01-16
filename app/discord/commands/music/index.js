@@ -1,19 +1,19 @@
 'use strict';
 
-const commands = {};
+const musicCommands = [];
 
-commands.leave = require('./leave');
-commands.loop = require('./loop');
-commands.nowplaying = require('./nowplaying');
-commands.pause = require('./pause');
-commands.play = require('./play');
-commands.queue = require('./queue');
-commands.remove = require('./remove');
-commands.resume = require('./resume');
-commands.shuffle = require('./shuffle');
-commands.skip = require('./skip');
-commands.skipall = require('./skipall');
-commands.skipto = require('./skipto');
-commands.volume = require('./volume');
+musicCommands.push(require('./leave'));
+musicCommands.push(require('./loop'));
+musicCommands.push(require('./nowplaying'));
+musicCommands.push(require('./pause'));
+musicCommands.push(require('./play'));
+musicCommands.push(require('./queue'));
+musicCommands.push(require('./remove'));
+musicCommands.push(require('./resume'));
+musicCommands.push(require('./shuffle'));
+musicCommands.push(require('./skip'));
+musicCommands.push(require('./skipall'));
+musicCommands.push(require('./skipto'));
+musicCommands.push(require('./volume'));
 
-module.exports = commands;
+module.exports = musicCommands;

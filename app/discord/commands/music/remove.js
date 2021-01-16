@@ -1,12 +1,19 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'remove',
-  description: 'Remove a specific song from queue',
-  args: true,
-  role: 'DJ',
-  usage: '<song number to delete>',
+const BaseCommand = require('../BaseCommand');
+
+class RemoveCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'remove',
+      description: 'Remove a specific song from queue',
+      usage: '<song number to delete>',
+      channel: 'music',
+      role: 'DJ',
+      args: true,
+    };
+    super(socket, info);
+  }
 
   run(socket, message, args) {
     const songNumber = Number(args.join(' '));
@@ -23,5 +30,7 @@ module.exports = {
 
     musicData.queue.splice(songNumber - 1, 1);
     return message.channel.send(`Removed song number ${songNumber} from queue`);
-  },
-};
+  }
+}
+
+module.exports = RemoveCommand;

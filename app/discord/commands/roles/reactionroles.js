@@ -1,13 +1,19 @@
 'use strict';
 
 const { confirmAction, delayDelete } = require('../../../util/UtilManager').discord;
+const BaseCommand = require('../BaseCommand');
 
-module.exports = {
-  name: 'reactionroles',
-  description: 'Allows server admins to create a reaction based role manager',
-  permissions: 'MANAGE_ROLES',
-  aliases: ['reactions', 'rr'],
-  usage: ['', 'add <@role> [@role @role etc..]', 'remove', 'create', '[list]'],
+class ReactionRolesCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'reactionroles',
+      aliases: ['reactions', 'rr'],
+      description: 'Allows server admins to create a reaction based role manager',
+      usage: ['', 'add <@role> [@role @role etc..]', 'remove', 'create', '[list]'],
+      permissions: 'MANAGE_ROLES',
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
@@ -296,8 +302,8 @@ module.exports = {
       socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
       message.delete();
     }
-  },
-};
+  }
+}
 
 async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
   let emoteMsg;
@@ -372,3 +378,5 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
     return getEmote(sock, initiator, roleList, emojis, add);
   }
 }
+
+module.exports = ReactionRolesCommand;

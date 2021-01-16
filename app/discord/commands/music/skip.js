@@ -1,11 +1,18 @@
 'use strict';
 
-module.exports = {
-  channel: 'music',
-  name: 'skip',
-  aliases: ['skip-song', 'advance-song'],
-  description: 'Skip the current playing song',
-  role: 'DJ',
+const BaseCommand = require('../BaseCommand');
+
+class SkipCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'skip',
+      aliases: ['skip-song', 'advance-song'],
+      description: 'Skip the current playing song',
+      channel: 'music',
+      role: 'DJ',
+    };
+    super(socket, info);
+  }
 
   run(socket, message) {
     const voiceChannel = message.member.voice.channel;
@@ -20,5 +27,7 @@ module.exports = {
       return;
     }
     musicData.songDispatcher.end();
-  },
-};
+  }
+}
+
+module.exports = SkipCommand;

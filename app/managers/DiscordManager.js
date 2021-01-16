@@ -3,14 +3,13 @@
 const { Client, Collection, MessageEmbed } = require('discord.js');
 
 const EventManager = require('./EventManager');
-const commands = require('../discord/commands');
+const CommandManager = require('../discord/commands/CommandManager');
 const embeds = require('../discord/embeds');
 const events = require('../discord/events');
 const interactionHandler = require('../discord/interactionHandler');
 const applicationCommands = require('../discord/interactions/applicationCommands');
-const messages = require('../discord/messages');
 
-const { collect } = require('../util/UtilManager');
+const { collect, constants } = require('../util/UtilManager');
 
 /**
  * Discord manager for the application.
@@ -36,13 +35,13 @@ class DiscordManager extends EventManager {
      * The message transformers.
      * @type {Object}
      */
-    this.messages = messages;
+    this.messages = constants.discorMessages;
 
     /**
-     * The commands for the socket, mapped by input.
-     * @type {Collection<string, Object>}
+     * The command manager that registers all commands
+     * @type {CommandManager}
      */
-    this.commands = new Collection();
+    this.commandManager = new CommandManager(this);
 
     /**
      * The application commands for the socket, mapped by input.
@@ -123,9 +122,11 @@ class DiscordManager extends EventManager {
     // End addition
 
     this.app.log.debug(module, 'Registering commands');
-    Object.entries(commands).forEach(([command, handler]) => {
-      this.commands.set(command, handler);
-    });
+    /**
+     * The commands for the socket, mapped by input. Only available after DiscordManager#init()
+     * @type {Collection<string, BaseCommand>}
+     */
+    this.commands = this.commandManager.registered;
 
     this.app.log.debug(module, 'Registering interactions');
     Object.entries(applicationCommands).forEach(([command, handler]) => {

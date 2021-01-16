@@ -1,10 +1,17 @@
 'use strict';
 
-module.exports = {
-  name: 'prefix',
-  description: 'Allows server admins to change the prefix for all commands',
-  args: true,
-  permissions: 'MANAGE_GUILD',
+const BaseCommand = require('../BaseCommand');
+
+class PrefixCommand extends BaseCommand {
+  constructor(socket) {
+    const info = {
+      name: 'prefix',
+      description: 'Allows server admins to change the prefix for all commands',
+      permissions: 'MANAGE_GUILD',
+      args: true,
+    };
+    super(socket, info);
+  }
 
   async run(socket, message, args) {
     args = args.join(' ');
@@ -22,5 +29,7 @@ module.exports = {
     }
 
     return message.channel.send(`Prefix has been changed to \`${args}\``);
-  },
-};
+  }
+}
+
+module.exports = PrefixCommand;
