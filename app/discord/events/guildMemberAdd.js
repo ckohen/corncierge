@@ -1,6 +1,6 @@
 'use strict';
 
-const util = require('../../util/utilManager');
+const util = require('../../util/UtilManager');
 
 module.exports = (socket, member) => {
   const created = util.humanDate(member.user.createdAt);
