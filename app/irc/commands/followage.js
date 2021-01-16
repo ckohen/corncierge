@@ -30,7 +30,7 @@ class FollowageTwitchCommand extends TwitchCommand {
       .then(data => {
         if (data.created_at == null) return false; // eslint-disable-line eqeqeq
         const age = moment(data.created_at).valueOf();
-        handler.respond(util.twitch.messages.followage(name, util.humanDate(age), util.relativeTime(age)));
+        handler.respond(util.constants.IRCResponders.followage(name, util.humanDate(age), util.relativeTime(age)));
         return true;
       })
       .catch(err => {

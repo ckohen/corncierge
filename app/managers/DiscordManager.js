@@ -8,9 +8,8 @@ const embeds = require('../discord/embeds');
 const events = require('../discord/events');
 const interactionHandler = require('../discord/interactionHandler');
 const applicationCommands = require('../discord/interactions/applicationCommands');
-const messages = require('../discord/messages');
 
-const { collect } = require('../util/UtilManager');
+const { collect, constants } = require('../util/UtilManager');
 
 /**
  * Discord manager for the application.
@@ -36,7 +35,7 @@ class DiscordManager extends EventManager {
      * The message transformers.
      * @type {Object}
      */
-    this.messages = messages;
+    this.messages = constants.discorMessages;
 
     /**
      * The command manager that registers all commands
