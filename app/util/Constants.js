@@ -299,7 +299,7 @@ exports.LogLevels = {
     verbose: 5,
   },
   webhook: {
-    error: 'red',
-    warn: 'gold',
+    error: 'BRIGHT_RED',
+    warn: 'DEEP_GOLD',
   },
 };

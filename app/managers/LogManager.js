@@ -97,7 +97,7 @@ class LogManager extends BaseManager {
             description: typeof message === 'string' ? message : String(message),
             timestamp: moment().utcOffset(0).format(),
             title: `${level} \u00B7 ${path}`,
-            color: Constants.EmbedColors[levels[level] || 'aqua'],
+            color: Constants.Colors[levels[level] || 'CYAN'],
           },
         ],
       },
