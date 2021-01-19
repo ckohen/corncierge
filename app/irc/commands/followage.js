@@ -17,7 +17,7 @@ class FollowageTwitchCommand extends TwitchCommand {
     let id = handler.user['user-id'];
     let name = util.twitch.handle(handler.user);
     if (hasArgs) {
-      const twitchUser = await this.socket.app.twitch.fetchUser(handler.target).catch(err => this.socket.app.log.warn(module, err));
+      const twitchUser = await this.socket.twitch.fetchUser(handler.target).catch(err => this.socket.app.log.warn(module, err));
       if (!twitchUser || twitchUser.users.length === 0) return false;
 
       const obj = twitchUser.users[0];
@@ -25,7 +25,7 @@ class FollowageTwitchCommand extends TwitchCommand {
       name = obj.display_name || obj.name;
     }
 
-    return this.socket.app.twitch
+    return this.socket.twitch
       .follow(id)
       .then(data => {
         if (data.created_at == null) return false; // eslint-disable-line eqeqeq
