@@ -7,7 +7,7 @@ module.exports = async (socket, channel, user, messageRaw, self) => {
   // Ignore self
   if (self) return;
 
-  const channelData = { name: channel, id: await socket.twitch.getID(channel) };
+  const channelData = { name: channel.slice(1), handle: channel, id: await socket.twitch.getID(channel.slice(1)) };
   const message = messageRaw.trim();
   const opts = socket.twitch.options;
   const isPrivileged = twitch.isPrivileged(user, channelData);

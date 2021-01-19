@@ -63,14 +63,14 @@ class TwitchManager extends RequestManager {
    * @returns {Promise<string>}
    */
   async getID(user) {
-    this.app.log.debug(module, `Getting id for channel: ${user}`);
+    this.app.log.verbose(module, `Getting id for channel: ${user}`);
     let id;
     /* eslint-disable-next-line eqeqeq */
     if (cache.get(`twitch.id.${user}`) != null) {
       id = cache.get(`twitch.id.${user}`);
-      this.app.log.debug(module, `ID was cached: ${id}`);
+      this.app.log.verbose(module, `ID was cached: ${id}`);
     } else {
-      this.app.log.debug(module, 'ID not cached');
+      this.app.log.verbose(module, 'ID not cached');
       const data = await this.fetchUser(user).catch(err => this.app.log.warn(err));
       if (!data) return Promise.reject(new Error('User not fetched'));
       id = data.users[0]._id;

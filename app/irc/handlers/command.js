@@ -163,7 +163,7 @@ class CommandHandler {
     if (this.handled) return;
     if (!message) return;
     this.socket.say(
-      this.channel.name,
+      this.channel.handle,
       util.mentionable(
         this.isPrivileged && mention,
         this.target,
