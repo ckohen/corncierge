@@ -35,7 +35,7 @@ class DiscordManager extends EventManager {
      * The message transformers.
      * @type {Object}
      */
-    this.messages = constants.discorMessages;
+    this.messages = constants.discordMessages;
 
     /**
      * The command manager that registers all commands
