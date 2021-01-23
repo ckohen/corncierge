@@ -37,10 +37,10 @@ module.exports = async (socket, url, headers) => {
     return;
   }
 
-  const uptime = socket.app.twitch.fetchUptime(user).catch(err => socket.app.log.warn(err));
+  const uptime = await socket.app.twitch.fetchUptime(user).catch(err => socket.app.log.warn(err));
   const duration = uptime ? `for ${util.relativeTime(uptime, 3)}` : '';
 
-  const twitchChannel = socket.app.twitch.userChannel(user).catch(err => socket.app.log.warn(module, err));
+  const twitchChannel = await socket.app.twitch.userChannel(user).catch(err => socket.app.log.warn(module, err));
   if (!twitchChannel) {
     return;
   }
