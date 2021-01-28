@@ -12,5 +12,6 @@ events.connected = require('./connected');
 events.disconnected = require('./disconnected');
 events.serverchange = require('./serverchange');
 events.subscription = require('./subscription');
+events.redeem = require('./redeem');
 
 module.exports = events;
