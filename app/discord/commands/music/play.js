@@ -42,7 +42,7 @@ class PlayCommand extends BaseCommand {
 
     if (
       // If the user entered a youtube playlist url
-      query.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/)
+      query.match(/^(?!.*\?.*\bv=)https:\/\/(www\.)?youtube\.com\/.*\?.*\blist=.*$/)
     ) {
       const playlist = await youtube
         .getPlaylist(query)
