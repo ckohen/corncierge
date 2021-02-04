@@ -520,3 +520,160 @@ module.exports = {
     return true;
   },
 };
+
+// Command Structure
+/* eslint-disable-next-line no-unused-vars */
+const command = {
+  name: 'room',
+  description: 'handles room management',
+  options: [
+    {
+      type: 1,
+      name: 'list',
+      description: 'lists the existing rooms',
+      options: [
+        {
+          type: 4,
+          name: 'roomID',
+          description: 'list a specific room',
+        },
+      ],
+    },
+    {
+      type: 1,
+      name: 'join',
+      description: 'joins the room specified',
+      options: [
+        {
+          type: 4,
+          name: 'roomID',
+          description: 'the room to join',
+          required: true,
+        },
+      ],
+    },
+    {
+      type: 1,
+      name: 'leave',
+      description: 'leaves all rooms',
+      options: [
+        {
+          type: 6,
+          name: 'user',
+          description: 'the user to force leave',
+        },
+      ],
+    },
+    {
+      type: 1,
+      name: 'create',
+      description: 'creates a new room',
+      options: [
+        {
+          type: 3,
+          name: 'name',
+          description: 'the name of the new room',
+          required: true,
+        },
+      ],
+    },
+    {
+      type: 2,
+      name: 'set',
+      description: 'changes settings for a room',
+      options: [
+        {
+          type: 1,
+          name: 'code',
+          description: 'edits the code',
+          options: [
+            {
+              type: 3,
+              name: 'code',
+              description: 'the new room code',
+              required: true,
+            },
+            {
+              type: 4,
+              name: 'roomID',
+              description: 'the room to edit',
+            },
+          ],
+        },
+        {
+          type: 1,
+          name: 'players',
+          description: 'edits the max player number',
+          options: [
+            {
+              type: 4,
+              name: 'max',
+              description: 'the new max players',
+              required: true,
+            },
+            {
+              type: 4,
+              name: 'roomID',
+              description: 'the room to edit',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: 1,
+      name: 'remove',
+      description: 'removes a room',
+      options: [
+        {
+          type: 4,
+          name: 'roomID',
+          description: 'the room to remove',
+        },
+      ],
+    },
+    {
+      type: 1,
+      name: 'clear',
+      description: 'removes all players from the room except the owner',
+      options: [
+        {
+          type: 4,
+          name: 'roomID',
+          description: 'the room to clear',
+          required: true,
+        },
+      ],
+    },
+    {
+      type: 1,
+      name: 'fill',
+      description: 'fills players from the waiting list',
+      options: [
+        {
+          type: 4,
+          name: 'roomID',
+          description: 'the room to edit',
+        },
+      ],
+    },
+    {
+      type: 1,
+      name: 'transfer',
+      description: 'transfers ownership of a room',
+      options: [
+        {
+          type: 6,
+          name: 'newOwner',
+          description: 'the user to transfer to',
+          required: true,
+        },
+        {
+          type: 4,
+          name: 'roomID',
+          description: 'the room to transfer',
+        },
+      ],
+    },
+  ],
+};
