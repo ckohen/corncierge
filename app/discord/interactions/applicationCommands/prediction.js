@@ -25,8 +25,8 @@ module.exports = {
       }
     }, 1500);
 
-    const predictionChannel = '756336572835823746';
-    const predictionRole = '756321825654439996';
+    const predictionChannel = '806665141466693723';
+    const predictionRole = '798335986455150614';
     const ratelimit = 2 * 60 * 1000;
     const ratelimited = ['start', 'structure', 'bastion', 'win'];
     const startAlias = ['structure', 'bastion', 'win'];
