@@ -17,7 +17,6 @@ embeds.roleChange = require('./roles/roleChange');
 embeds.userBanChange = require('./users/userBanChange');
 embeds.messageEdit = require('./messageEdit');
 embeds.messageRemove = require('./messageRemove');
-embeds.fallWins = require('./gaming/fallWins');
 embeds.rolemanager = require('./roles/rolemanager');
 embeds.colormanager = require('./roles/colormanager');
 embeds.welcome = require('./welcome');

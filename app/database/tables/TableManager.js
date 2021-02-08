@@ -29,7 +29,6 @@ class TableManager {
 
     this.register(require('./botLog'));
     this.register(require('./colorManager'), 'discord');
-    this.register(require('./fallWins'));
     this.register(require('./humanLog'));
     this.register(require('./ircCommands'));
     this.register(require('./ircFilters'));

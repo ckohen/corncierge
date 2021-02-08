@@ -18,14 +18,6 @@ module.exports = async (socket, message) => {
 
   const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
 
-  // Delete all messages except specified messages in tracker channels
-  if (message.channel.name === 'fall-guys-tracker' && socket.isGuild(message.guild.id, 'platicorn')) {
-    if (!message.content.startsWith(`${commandPrefix}addwin`) && !message.content.startsWith(`${commandPrefix}setwins`)) {
-      message.delete();
-      return;
-    }
-  }
-
   // Check for commands
   if (!message.content.startsWith(commandPrefix)) return;
 
