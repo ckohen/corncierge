@@ -9,13 +9,13 @@ class SelfClearCommand extends BaseCommand {
       name: 'selfclear',
       usage: '<amount:1-100>',
       guild: 'platicorn',
-      validChannels: ['732322543607873640', '733885058754150431', '541307689674735637', '701328121106006047'],
     };
     super(socket, info);
   }
 
   async run(socket, message, [amountRaw]) {
-    if (!this.validChannels.includes(message.channel.id)) {
+    const validChannels = ['732322543607873640', '733885058754150431', '541307689674735637', '701328121106006047'];
+    if (!validChannels.includes(message.channel.id)) {
       return;
     }
 
