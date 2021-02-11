@@ -7,6 +7,7 @@ module.exports = {
   name: 'prediction',
   description: 'prediction annoucments',
   usage: [
+    'redeemed',
     'start [title] [option1] [option2]',
     'end <result> [predictionID]',
     'set <title|option1|option2> [predictionID]',
@@ -28,6 +29,7 @@ module.exports = {
     const predictionChannel = '806665141466693723';
     const predictionRole = '798335986455150614';
     const ratelimit = 2 * 60 * 1000;
+    const redeemRateLimit = 60 * 60 * 1000;
     const ratelimited = ['start', 'structure', 'bastion', 'win'];
     const startAlias = ['structure', 'bastion', 'win'];
     let method = args[0].name;
@@ -37,6 +39,14 @@ module.exports = {
     const lastCreation = cache.get(`discord.twitch.prediction.create`);
     if (ratelimited.includes(method) && lastCreation) {
       respondPrivate(interaction, 'Another prediction was created very recently, please wait a bit before creating another!', responded);
+      responded = true;
+      return;
+    }
+
+    // Rate limit prediction redeem
+    const lastRedeem = cache.get(`discord.twitch.prediction.redeem`);
+    if (method === 'redeemed' && lastRedeem) {
+      respondPrivate(interaction, 'This prediction was already redeemed within the last hour!', responded);
       responded = true;
       return;
     }
@@ -57,7 +67,7 @@ module.exports = {
 
     // Variables for use in switch
     let predictionID = lastPredictionID;
-    let create;
+    let redeemMessage;
     let toEdit;
     let newEmbed;
     let title;
@@ -92,9 +102,17 @@ module.exports = {
     }
 
     switch (method) {
+      // Notify that a prediction was redeemed
+      case 'redeemed':
+        await interaction.client.channels.cache.get(predictionChannel).send(`<@&${predictionRole}> **Ready Up**, a prediction has been redeemed!`);
+        cache.put(`discord.twitch.prediction.redeem`, 'trigger', redeemRateLimit);
+        if (!responded) {
+          interaction.reply('Prediction redeem notification sent!', { hideSource: true, ephemeral: true });
+          responded = true;
+        }
+        return;
       // Create a new prediction
       case 'start':
-        create = true;
         newEmbed = new MessageEmbed().setColor('RANDOM').setFooter(`Prediction #${lastPredictionID + 1}`);
         if (!title) {
           title = getArg(args, 'title') ?? 'New Prediction, who knows what it is?';
@@ -113,11 +131,21 @@ module.exports = {
         if (newEmbed.color === Constants.Colors.PURPLE) {
           newEmbed.setColor('BLURPLE');
         }
+        await interaction.client.channels.cache.get(predictionChannel).send(`<@&${predictionRole}> A Prediction has been started!`, newEmbed);
+        cache.put(`discord.twitch.prediction.create`, 'trigger', ratelimit);
+        cache.put(`discord.twitch.prediction.id`, lastPredictionID + 1);
         if (!responded) {
           interaction.reply('Prediction Started!', { hideSource: true, ephemeral: true });
           responded = true;
         }
-        break;
+        redeemMessage = interaction.client.channels.cache
+          .get(predictionChannel)
+          .messages.cache.filter(message => message.author.id === message.client.user.id && message.embeds.length === 0);
+        if (redeemMessage.size > 0) {
+          redeemMessage = redeemMessage.last();
+          redeemMessage.delete();
+        }
+        return;
       // Basically just a fancy handler for set
       case 'end':
         if (getArg(args, 'predictionID')) {
@@ -241,13 +269,7 @@ module.exports = {
         break;
     }
 
-    if (create) {
-      await interaction.client.channels.cache.get(predictionChannel).send(`<@&${predictionRole}> A Prediction has been started!`, newEmbed);
-      cache.put(`discord.twitch.prediction.create`, 'trigger', ratelimit);
-      cache.put(`discord.twitch.prediction.id`, lastPredictionID + 1);
-    } else {
-      await toEdit.edit(newEmbed);
-    }
+    await toEdit.edit(newEmbed);
   },
 };
 
@@ -286,6 +308,11 @@ const command = {
   options: [
     {
       type: 1,
+      name: 'redeemed',
+      description: 'Pings to let people know a prediction was redeemed',
+    },
+    {
+      type: 1,
       name: 'start',
       description: 'Starts a new prediction',
       options: [
@@ -319,7 +346,7 @@ const command = {
     {
       type: 1,
       name: 'win',
-      descriptions: 'Starts a new basic "win" prediction',
+      description: 'Starts a new basic "win" prediction',
     },
     {
       type: 1,
