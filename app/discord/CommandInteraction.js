@@ -116,12 +116,12 @@ class CommandInteraction extends Interaction {
     }
 
     Object.defineProperty(apiMessage, 'hideSource', {
-      value: options.hideSource ?? false,
+      value: options?.hideSource ?? false,
       writable: true,
     });
 
     Object.defineProperty(apiMessage.data, 'flags', {
-      value: options.ephemeral ? 64 : 0,
+      value: options?.ephemeral ? 64 : 0,
       writable: true,
     });
 
