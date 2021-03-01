@@ -1,5 +1,7 @@
 'use strict';
 
+const { discord } = require('../../util/UtilManager');
+
 module.exports = async (socket, message) => {
   // Ignore bots
   if (message.author.bot) return;
@@ -31,29 +33,33 @@ module.exports = async (socket, message) => {
   if (!handler) return;
 
   // Check for guild constraints
-  if (handler.guild && !socket.isGuild(message.guild.id, handler.guild)) return;
+  if (handler.guild && !discord.isGuild(message.guild.id, handler.guild, socket.app.settings)) return;
 
   // Check for channel constraints
-  if (handler.channel) {
-    let valid = socket.app.settings.get(`discord_channel_${handler.channel}`).split(',');
-    if (valid.indexOf(message.channel.id) < 0) return;
-  }
+  if (handler.channel && !discord.isChannel(message.channel.id, handler.channel, socket.app.settings)) return;
+
+  // Check user
+  if (handler.user && !discord.isUser(message.author.id, handler.user, socket.app.settings)) return;
 
   // Check for role constraints
   if (handler.role && !message.member.roles.cache.some(role => role.name === handler.role)) {
-    if (!message.member.hasPermission('MANAGE_ROLES')) {
-      message.channel.send(`You're not allowed to do that, ${message.author}.`).catch(err => {
+    if (!message.member.permissions.has('MANAGE_ROLES')) {
+      const errMsg = await message.channel.send(`You're not allowed to do that, ${message.author}.`).catch(err => {
         socket.app.log.warn(module, err);
       });
+      discord.delayDelete(message, 3000);
+      if (errMsg) discord.delayDelete(errMsg, 3000);
       return;
     }
   }
 
   // Check permissions
-  if (handler.permissions && !message.member.hasPermission(handler.permissions)) {
-    message.channel.send(`You're not allowed to do that, ${message.author}.`).catch(err => {
+  if (handler.permissions && !message.member.permissions.has(handler.permissions)) {
+    const errMsg = await message.channel.send(`You're not allowed to do that, ${message.author}.`).catch(err => {
       socket.app.log.warn(module, err);
     });
+    discord.delayDelete(message, 3000);
+    if (errMsg) discord.delayDelete(errMsg, 3000);
     return;
   }
 

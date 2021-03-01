@@ -220,26 +220,6 @@ class DiscordManager extends EventManager {
   }
 
   /**
-   * Test a channel ID against the setting for the given key
-   * @param {string} id the id of the channel to test
-   * @param {string} key the channel name in settings to test against
-   * @returns {boolean}
-   */
-  isChannel(id, key) {
-    return id === this.app.settings.get(`discord_channel_${key}`);
-  }
-
-  /**
-   * Test a guild ID against the setting for the given key
-   * @param {string} id the id of the guild to test
-   * @param {string} key the guild name in settings to test against
-   * @returns {boolean}
-   */
-  isGuild(id, key) {
-    return id === this.app.settings.get(`discord_guild_${key}`);
-  }
-
-  /**
    * Get the channel for the given slug.
    * @param {string} slug the channel name in settings to get
    * @returns {?Channel}

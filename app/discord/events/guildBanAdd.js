@@ -1,10 +1,10 @@
 'use strict';
 
-const { Colors } = require('../../util/Constants');
+const { constants, discord } = require('../../util/UtilManager');
 
 module.exports = (socket, guild, user) => {
-  let embed = socket.getEmbed('userBanChange', [user, 'Ban', Colors.BRIGHT_RED]);
-  if (socket.isGuild(guild.id, 'platicorn')) {
+  let embed = socket.getEmbed('userBanChange', [user, 'Ban', constants.Colors.BRIGHT_RED]);
+  if (discord.isGuild(guild.id, 'platicorn', socket.app.settings)) {
     socket.sendWebhook('userBan', embed);
   } else if (guild.id === '756319910191300778') {
     socket.sendMessage('helpLogs', embed);

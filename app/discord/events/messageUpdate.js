@@ -1,5 +1,7 @@
 'use strict';
 
+const { isGuild } = require('../../util/UtilManager').discord;
+
 module.exports = async (socket, before, after) => {
   if (before.partial) {
     try {
@@ -34,7 +36,7 @@ module.exports = async (socket, before, after) => {
   }
 
   let embed = socket.getEmbed('messageEdit', [after, before.content, after.content]);
-  if (socket.isGuild(before.guild.id, 'platicorn')) {
+  if (isGuild(before.guild.id, 'platicorn', socket.app.settings)) {
     socket.sendWebhook('msgEdit', embed);
   } else if (before.guild.id === '756319910191300778') {
     socket.sendMessage('helpLogs', embed);

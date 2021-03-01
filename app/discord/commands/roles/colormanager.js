@@ -1,5 +1,6 @@
 'use strict';
 
+const { isSnowflake } = require('../../../util/UtilManager').discord;
 const BaseCommand = require('../BaseCommand');
 
 class ColorManagerCommand extends BaseCommand {
@@ -108,7 +109,7 @@ class ColorManagerCommand extends BaseCommand {
             roleSnowflakes.push(role.id);
             guild.roles[channel] = modifyRoles(guild.roles[channel], roleNames, false);
             guild.snowflakes = modifySnowflakes(guild.snowflakes, roleSnowflakes, false);
-          } else if (roleString.match(/[0-9]{17,18}/g)) {
+          } else if (isSnowflake(roleString)) {
             roleSnowflakes.push(roleString);
             guild.snowflakes = modifySnowflakes(guild.snowflakes, roleSnowflakes, false);
           }

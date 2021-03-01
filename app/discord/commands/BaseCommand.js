@@ -10,9 +10,9 @@ class BaseCommand {
    * Checks are done in the following order:
    * * `Guild`
    * * `Channel`
+   * * `User`
    * * `Role`
    * * `Permissions`
-   * * `User`
    *
    *  e.g. if a command is executed and has role and channel set, if it is not sent in the channel specified, it will not run
    * @typedef {Object} CommandData
@@ -20,11 +20,11 @@ class BaseCommand {
    * @param {string[]} [aliases] a list of aliases that can be used to call this command
    * @param {string} [description] what the command does
    * @param {string[]} [usage] an array of possible ways to use the command (for legacy help)
-   * @param {string} [guild] restrict the command to a specific guild
-   * @param {string} [channel] restrict the command to a specific channel (or set of channels if specified in database)
+   * @param {string|Snowflake|Snowflake[]} [guild] restrict the command to a specific guild
+   * @param {string|Snowflake|Snowflake[]} [channel] restrict the command to a specific channel (or set of channels if specified in database)
    * @param {string} [role] restrict the command to a specific role (those with `Manage Roles` bypass this)
    * @param {PermissionResolvable} [permissions] restrict the command to users with certain permissions
-   * @param {string} [user] restrict the command to a specific user
+   * @param {string|Snowflake|Snowflake[]} [user] restrict the command to a specific user
    * @param {boolean} [args] whether arguments are required (set to false to provide a custom error message handled in command)
    */
 
@@ -79,7 +79,7 @@ class BaseCommand {
       /**
        * The guild this command is restricted to, if any
        * @name BaseCommand#guild
-       * @type {?string}
+       * @type {?string|Snowflake|Snowflake[]}
        */
       Object.defineProperty(this, 'guild', { value: data.guild });
     }
@@ -88,7 +88,7 @@ class BaseCommand {
       /**
        * The channel this command is restricted to, if any
        * @name BaseCommand#channel
-       * @type {?string}
+       * @type {?string|Snowflake|Snowflake[]}
        */
       Object.defineProperty(this, 'channel', { value: data.channel });
     }
@@ -115,7 +115,7 @@ class BaseCommand {
       /**
        * The user this command is restricted to, if any
        * @name BaseCommand#user
-       * @type {?string}
+       * @type {?string|Snowflake|Snowflake[]}
        */
       Object.defineProperty(this, 'user', { value: data.user });
     }

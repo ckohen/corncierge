@@ -1,5 +1,7 @@
 'use strict';
 
+const { isGuild } = require('../../util/UtilManager').discord;
+
 module.exports = (socket, message) => {
   if (message.partial) {
     socket.app.log.verbose(module, `Recieved partial message in delete event:${message.id}`);
@@ -16,7 +18,7 @@ module.exports = (socket, message) => {
 
   let embed = socket.getEmbed('messageRemove', [message, message.content]);
 
-  if (socket.isGuild(message.guild.id, 'platicorn')) {
+  if (isGuild(message.guild.id, 'platicorn', socket.app.settings)) {
     socket.sendWebhook('msgDelete', embed);
   } else if (message.guild.id === '756319910191300778') {
     socket.sendMessage('helpLogs', embed);

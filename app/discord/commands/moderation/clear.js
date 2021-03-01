@@ -1,6 +1,6 @@
 'use strict';
 
-const { clamp } = require('../../../util/UtilManager');
+const { clamp, discord } = require('../../../util/UtilManager');
 const BaseCommand = require('../BaseCommand');
 
 class ClearCommand extends BaseCommand {
@@ -33,7 +33,7 @@ class ClearCommand extends BaseCommand {
       .catch(err => {
         socket.app.log.warn(module, err);
       });
-    if (socket.isGuild(message.guild.id, 'platicorn')) {
+    if (discord.isGuild(message.guild.id, 'platicorn', socket.app.settings)) {
       socket.sendWebhook('clear', `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);
     } else if (message.guild.id === '756319910191300778') {
       socket.sendMessage('helpLogs', `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);

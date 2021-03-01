@@ -1,5 +1,7 @@
 'use strict';
 
+const { isGuild } = require('../../util/UtilManager').discord;
+
 module.exports = (socket, before, after) => {
   let embed = false;
   let method = false;
@@ -46,7 +48,7 @@ module.exports = (socket, before, after) => {
     method = 'roleUpdate';
   }
 
-  if (socket.isGuild(before.guild.id, 'platicorn')) {
+  if (isGuild(before.guild.id, 'platicorn', socket.app.settings)) {
     if (embed) {
       socket.sendWebhook(method, embed);
     }

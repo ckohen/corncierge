@@ -56,6 +56,63 @@ class DiscordUtil {
       if (message.deletable) message.delete();
     }, time);
   }
+
+  /**
+   * Checks whether a string is a valid discord snowflake
+   * @param {string} potentialSnoflake the string to check for a snwoflake
+   * @returns {boolean}
+   */
+  static isSnowflake(potentialSnoflake) {
+    return !!String(potentialSnoflake).match(/[0-9]{17,18}/g);
+  }
+
+  /**
+   * Test a guild ID against the setting for the given key
+   * @param {string} id the id of the guild to test
+   * @param {string|Snowflake|Snowflake[]} slugOrId the guild name or id(s)
+   * @param {Collection} settings the app settings for checking slugs
+   * @returns {boolean}
+   */
+  static isGuild(id, slugOrId, settings) {
+    if (Array.isArray(slugOrId)) {
+      return slugOrId.includes(id);
+    } else if (this.isSnowflake(slugOrId)) {
+      return slugOrId === id;
+    }
+    return settings.get(`discord_guild_${slugOrId}`).split(',').includes(id);
+  }
+
+  /**
+   * Test a channel ID against the setting for the given key
+   * @param {string} id the id of the channel to test
+   * @param {string|Snowflake|Snowflake[]} slugOrId the channel name or id(s)
+   * @param {Collection} settings the app settings for checking slugs
+   * @returns {boolean}
+   */
+  static isChannel(id, slugOrId, settings) {
+    if (Array.isArray(slugOrId)) {
+      return slugOrId.includes(id);
+    } else if (this.isSnowflake(slugOrId)) {
+      return slugOrId === id;
+    }
+    return settings.get(`discord_channel_${slugOrId}`).split(',').includes(id);
+  }
+
+  /**
+   * Test a user ID against the setting for the given key
+   * @param {string} id the id of the user to test
+   * @param {string|Snowflake|Snowflake[]} slugOrId the user name or id(s)
+   * @param {Collection} settings the app settings for checking slugs
+   * @returns {boolean}
+   */
+  static isUser(id, slugOrId, settings) {
+    if (Array.isArray(slugOrId)) {
+      return slugOrId.includes(id);
+    } else if (this.isSnowflake(slugOrId)) {
+      return slugOrId === id;
+    }
+    return settings.get(`discord_user_${slugOrId}`).split(',').includes(id);
+  }
 }
 
 module.exports = DiscordUtil;
