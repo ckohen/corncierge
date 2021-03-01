@@ -9,7 +9,7 @@ module.exports = {
     let guild = socket.colorManager.get(String(interaction.guild.id));
 
     // An array of snowflakes for all the available color roles to remove all color roles before assigning a new one
-    let colorSnowflakes = guild.snowflakes;
+    let colorSnowflakes = guild.snowflakes.filter(id => interaction.guild.roles.resolve(id) !== null);
 
     // Set user to command sender
     let member = interaction.member;
@@ -21,17 +21,23 @@ module.exports = {
       // Remove all predefined colors *Does not remove specialty colors*
       await member.roles.remove(colorSnowflakes);
       if (typeof args === `undefined`) {
-        interaction.reply(`Your color has been removed, ${member}`, { hideSource: true, ephemeral: true });
+        interaction.reply(`Your color has been removed.`, { hideSource: true, ephemeral: true });
       } else {
         // Add the role requested
-        await member.roles.add(roleID);
-
-        // Notify user of role addition
-        interaction.reply(`Your color has been changed to <@&${roleID}>, ${member}`, { hideSource: true, ephemeral: true });
+        const assigned = await member.roles.add(roleID).catch(() => false);
+        if (!assigned) {
+          interaction.reply(`I was unable to assign <@&${roleID}>, please contact a mod to ensure all permissions are adequate.`, {
+            hideSource: true,
+            ephemeral: true,
+          });
+        } else {
+          // Notify user of role addition
+          interaction.reply(`Your color has been changed t0o <@&${roleID}>.`, { hideSource: true, ephemeral: true });
+        }
       }
     } else {
       // If the role is invalid, notify user
-      interaction.reply(`<@&${roleID}> isn't a valid color role, ${member}`, { hideSource: true, ephemeral: true });
+      interaction.reply(`<@&${roleID}> isn't a valid color role.`, { hideSource: true, ephemeral: true });
     }
   },
 };

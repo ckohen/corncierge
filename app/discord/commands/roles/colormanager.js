@@ -8,7 +8,7 @@ class ColorManagerCommand extends BaseCommand {
       name: 'colormanager',
       aliases: ['cm'],
       description: 'Allows server admins to change self-assingable color roles',
-      usage: ['', '(add|remove) <@role> [@role @role etc..]', 'remove <role(not mentioned, e.g. if deleted)>', 'channel <#channel>', '[list]'],
+      usage: ['', '(add|remove) <@role> [@role @role etc..]', 'remove <role name || role id(not mentioned, e.g. if deleted)>', 'channel <#channel>', '[list]'],
       permissions: 'MANAGE_ROLES',
     };
     super(socket, info);
@@ -49,7 +49,7 @@ class ColorManagerCommand extends BaseCommand {
       channel = Object.keys(guild.roles)[0];
     }
 
-    // Check for extra roles and specifying makeme or makemenot only
+    // Check for extra roles
     if (extraArgs) {
       extraArgs.forEach(elem => {
         if (elem.startsWith('<@&') && elem.endsWith('>')) {
@@ -92,23 +92,27 @@ class ColorManagerCommand extends BaseCommand {
           return;
         }
 
-        if (roleNames.length < 1) {
-          // Check if deleting a string based role
-          if (chroleRaw) {
-            let roleString = chroleRaw;
-            if (extraArgs) {
-              roleString = `${chroleRaw} ${extraArgs.join(' ')}`;
-            }
+        // Auto remove deleted roles
+        roleSnowflakes.push(...guild.snowflakes.filter(id => message.guild.roles.resolve(id) === null));
 
-            let role = message.guild.roles.cache.find(data => data.name.toLowerCase() === roleString.toLowerCase());
-            if (role) {
-              roleNames.push(roleString);
-              roleSnowflakes.push(role.id);
-              guild.roles[channel] = modifyRoles(guild.roles[channel], roleNames, false);
-              guild.snowflakes = modifySnowflakes(guild.snowflakes, roleSnowflakes, false);
-            }
-            break;
+        // Check if deleting a string based role
+        if (roleNames.length < 1 && chroleRaw) {
+          let roleString = chroleRaw;
+          if (extraArgs.length) {
+            roleString = `${chroleRaw} ${extraArgs.join(' ')}`;
           }
+
+          let role = message.guild.roles.cache.find(data => data.name.toLowerCase() === roleString.toLowerCase());
+          if (role) {
+            roleNames.push(roleString);
+            roleSnowflakes.push(role.id);
+            guild.roles[channel] = modifyRoles(guild.roles[channel], roleNames, false);
+            guild.snowflakes = modifySnowflakes(guild.snowflakes, roleSnowflakes, false);
+          } else if (roleString.match(/[0-9]{17,18}/g)) {
+            roleSnowflakes.push(roleString);
+            guild.snowflakes = modifySnowflakes(guild.snowflakes, roleSnowflakes, false);
+          }
+          break;
         }
 
         guild.roles[channel] = modifyRoles(guild.roles[channel], roleNames, false);
@@ -145,38 +149,36 @@ class ColorManagerCommand extends BaseCommand {
     // Variables for counting to limt
     let fields = 0;
     // Variables to store looped information
-    let channelObj;
-    let roleObj;
+
     let outRoles = [];
     // Loop through each channel found
-    channels.forEach(channelID => {
-      channelObj = message.guild.channels.cache.get(channelID);
+    const channelObj = message.guild.channels.cache.get(channels[0]);
 
-      // Get role objects so discord can embed properly
-      guild.snowflakes.forEach(id => {
-        roleObj = message.guild.roles.cache.get(id);
-        outRoles.push(roleObj);
-      });
-
-      // Create and send embeds
-      if (outRoles.length > 40) {
-        for (let i = 1; i <= Math.ceil(outRoles.length / 40); i++) {
-          if (fields < 24) {
-            msg.addField(channelObj.name, outRoles.slice((i - 1) * 40, i * 40).join('\n'), true);
-            fields += 1;
-          } else {
-            fields = 0;
-            message.channel.send(msg);
-            msg = socket.getEmbed('colormanager', [message.member, commandPrefix]);
-          }
-        }
-      } else if (outRoles.length > 0) {
-        msg.addField(channelObj.name, outRoles.join('\n'), true);
-        fields += 1;
-      }
-      // Clear arrays
-      outRoles = [];
+    // Get role mentions so discord can embed properly
+    let roleMention;
+    guild.snowflakes.forEach(id => {
+      roleMention = `<@&${id}>`;
+      outRoles.push(roleMention);
     });
+
+    // Create and send embeds
+    if (outRoles.length > 40) {
+      for (let i = 1; i <= Math.ceil(outRoles.length / 40); i++) {
+        if (fields < 24) {
+          msg.addField(channelObj.name, outRoles.slice((i - 1) * 40, i * 40).join('\n'), true);
+          fields += 1;
+        } else {
+          fields = 0;
+          message.channel.send(msg);
+          msg = socket.getEmbed('colormanager', [message.member, commandPrefix]);
+        }
+      }
+    } else if (outRoles.length > 0) {
+      msg.addField(channelObj.name, outRoles.join('\n'), true);
+      fields += 1;
+    }
+    // Clear arrays
+    outRoles = [];
 
     msg.addField('Remove Color', 'remove', true);
     message.channel.send(msg);

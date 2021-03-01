@@ -148,10 +148,10 @@ class DiscordManager extends EventManager {
   setCache() {
     return Promise.all([
       Promise.all(
-        this.app.database.tables.discord.map(async table => {
+        this.app.database.tables.discord.map(table => {
           const name = table.constructor.name.replace(/Table$/, '');
           this.app.log.debug(module, `Caching ${name}`);
-          await this.cache(table, this[name], 'guildID');
+          return this.cache(table, this[name], 'guildID');
         }),
       ),
       this.cacheMusic(),

@@ -22,11 +22,13 @@ class ColorsCommand extends BaseCommand {
     let channelName = guild.roles;
 
     // An array of snowflakes for all the available color roles to remove all color roles before assigning a new one
-    let colorSnowflakes = guild.snowflakes;
+    let colorSnowflakes = guild.snowflakes.filter(id => message.guild.roles.resolve(id) !== null);
 
     // If a role from a valid channel is typed in that channel add the role to the user
     if (channelName[String(message.channel.id)]) {
-      roleAssign(socket, message, channelName[String(message.channel.id)], colorSnowflakes, args);
+      if (!roleAssign(socket, message, channelName[String(message.channel.id)], colorSnowflakes, args)) {
+        socket.app.database.tables.colorManager.edit(String(message.guild.id), guild.roles, guild.snowflakes);
+      }
     } else {
       message.delete();
     }
@@ -53,16 +55,26 @@ async function roleAssign(socket, message, validRoles, colorSnowflakes, args) {
     } else {
       // Find the role within the discord server
       let role = message.guild.roles.cache.find(roles => roles.name.toLowerCase() === roleName.toLowerCase());
+      if (!role) {
+        validRoles.splice(validRoles.indexOf(roleName), 1);
+        message.channel.send(`${roleName} is no longer a color :(, it has been removed.`);
+        setTimeout(() => message.channel.bulkDelete(2), 3000);
+        return false;
+      }
       // Add the role requested
-      await member.roles.add(role);
+      const assigned = await member.roles.add(role).catch(() => false);
+      if (!assigned) {
+        message.channel.send(`I was unable to assign ${roleName}, please contact a mod to ensure all permissions are adequate.`);
+        roleAssigned = false;
+      } else {
+        socket.app.log.verbose(module, `Changed ${member.user.username}'s color to ${role.name}`);
 
-      socket.app.log.verbose(module, `Changed ${member.user.username}'s color to ${role.name}`);
-
-      // Notify user of role addition
-      roleName = roleName.charAt(0).toUpperCase() + roleName.substring(1);
-      message.channel.send(`Your color has been changed to ${roleName}, ${member}`);
+        // Notify user of role addition
+        roleName = roleName.charAt(0).toUpperCase() + roleName.substring(1);
+        message.channel.send(`Your color has been changed to ${roleName}, ${member}`);
+        roleAssigned = true;
+      }
     }
-    roleAssigned = true;
   } else {
     // If the role is invalid in the channel, notify user
     roleName = roleName.charAt(0).toUpperCase() + roleName.substring(1);
