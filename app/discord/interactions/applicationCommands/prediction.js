@@ -18,13 +18,7 @@ module.exports = {
   ],
 
   async run(socket, interaction, args) {
-    let responded = false;
-    setTimeout(() => {
-      if (!responded) {
-        interaction.reply('Prediction action recieved, but is taking a while. If there are any errors, I will DM you!', { hideSource: true, ephemeral: true });
-        responded = true;
-      }
-    }, 1500);
+    interaction.acknowledge({ ephemeral: true });
 
     const predictionChannel = '806665141466693723';
     const predictionRole = '798335986455150614';
@@ -38,16 +32,14 @@ module.exports = {
     // Rate limit prediction Creation
     const lastCreation = cache.get(`discord.twitch.prediction.create`);
     if (ratelimited.includes(method) && lastCreation) {
-      respondPrivate(interaction, 'Another prediction was created very recently, please wait a bit before creating another!', responded);
-      responded = true;
+      interaction.reply('Another prediction was created very recently, please wait a bit before creating another!', { ephemeral: true });
       return;
     }
 
     // Rate limit prediction redeem
     const lastRedeem = cache.get(`discord.twitch.prediction.redeem`);
     if (method === 'redeemed' && lastRedeem) {
-      respondPrivate(interaction, 'This prediction was already redeemed within the last hour!', responded);
-      responded = true;
+      interaction.reply('This prediction was already redeemed within the last hour!', { ephemeral: true });
       return;
     }
 
@@ -106,10 +98,7 @@ module.exports = {
       case 'redeemed':
         await interaction.client.channels.cache.get(predictionChannel).send(`<@&${predictionRole}> **Ready Up**, a prediction has been redeemed!`);
         cache.put(`discord.twitch.prediction.redeem`, 'trigger', redeemRateLimit);
-        if (!responded) {
-          interaction.reply('Prediction redeem notification sent!', { hideSource: true, ephemeral: true });
-          responded = true;
-        }
+        interaction.reply('Prediction redeem notification sent!', { ephemeral: true });
         return;
       // Create a new prediction
       case 'start':
@@ -134,10 +123,7 @@ module.exports = {
         await interaction.client.channels.cache.get(predictionChannel).send(`<@&${predictionRole}> A Prediction has been started!`, newEmbed);
         cache.put(`discord.twitch.prediction.create`, 'trigger', ratelimit);
         cache.put(`discord.twitch.prediction.id`, lastPredictionID + 1);
-        if (!responded) {
-          interaction.reply('Prediction Started!', { hideSource: true, ephemeral: true });
-          responded = true;
-        }
+        interaction.reply(`Prediction ${lastPredictionID + 1} Started!`, { ephemeral: true });
         redeemMessage = interaction.client.channels.cache
           .get(predictionChannel)
           .messages.cache.filter(message => message.author.id === message.client.user.id && message.embeds.length === 0);
@@ -154,21 +140,16 @@ module.exports = {
         toEdit = getPrediction(predictions, predictionID);
         newEmbed = toEdit?.embeds[0];
         if (!newEmbed) {
-          respondPrivate(interaction, `Unable to end prediction ${predictionID}, it may be too old!`, responded);
-          responded = true;
+          interaction.reply(`Unable to end prediction ${predictionID}, it may be too old!`);
           return;
         }
         if (checkEnded(newEmbed)) {
-          respondPrivate(interaction, `Prediction ${predictionID} has already been ended`, responded);
-          responded = true;
+          interaction.reply(`Prediction ${predictionID} has already been ended`);
           return;
         }
         newEmbed.setColor('PURPLE').setDescription('*This prediction has ended*');
         newEmbed.fields[args.find(arg => arg.name === 'result').value].name += ' ✅';
-        if (!responded) {
-          interaction.reply(`Prediction ${predictionID} ended!`, { hideSource: true, ephemeral: true });
-          responded = true;
-        }
+        interaction.reply(`Prediction ${predictionID} ended!`);
         break;
       // Set some properties
       case 'set':
@@ -178,18 +159,15 @@ module.exports = {
         toEdit = getPrediction(predictions, predictionID);
         newEmbed = toEdit?.embeds[0];
         if (!newEmbed) {
-          respondPrivate(interaction, `Unable to edit prediction ${predictionID}, it may be too old!`, responded);
-          responded = true;
+          interaction.reply(`Unable to edit prediction ${predictionID}, it may be too old!`);
           return;
         }
         if (checkEnded(newEmbed)) {
-          respondPrivate(interaction, `Prediction ${predictionID} has already been ended, you can no longer edit this property!`, responded);
-          responded = true;
+          interaction.reply(`Prediction ${predictionID} has already been ended, you can no longer edit this property!`);
           return;
         }
         if (args.length === 0 || (args.length === 1 && getArg(args, 'predictionID'))) {
-          respondPrivate(interaction, 'Please specify at least one parameter to edit!', responded);
-          responded = true;
+          interaction.reply('Please specify at least one parameter to edit!');
           return;
         }
         title = getArg(args, 'title');
@@ -210,10 +188,7 @@ module.exports = {
           oldArray[0] = option2;
           newEmbed.fields[1].value = oldArray.join('\n');
         }
-        if (!responded) {
-          interaction.reply(`Updated prediction ${predictionID}!`, { hideSource: true, ephemeral: true });
-          responded = true;
-        }
+        interaction.reply(`Updated prediction ${predictionID}!`);
         break;
       // Set some stats
       case 'stats':
@@ -223,13 +198,11 @@ module.exports = {
         toEdit = getPrediction(predictions, predictionID);
         newEmbed = toEdit?.embeds[0];
         if (!newEmbed) {
-          respondPrivate(interaction, `Unable to edit prediction ${predictionID}, it may be too old!`, responded);
-          responded = true;
+          interaction.reply(`Unable to edit prediction ${predictionID}, it may be too old!`);
           return;
         }
         if (args.length === 0 || (args.length === 1 && getArg(args, 'predictionID'))) {
-          respondPrivate(interaction, 'Please specify at least one parameter to edit!', responded);
-          responded = true;
+          interaction.reply('Please specify at least one parameter to edit!');
           return;
         }
         odds1 = getArg(args, 'odds1');
@@ -263,9 +236,7 @@ module.exports = {
           }
           newEmbed.fields[1].value = oldArray.join('\n');
         }
-        if (!responded) {
-          interaction.reply(`Prediction ${predictionID} updated!`, { hideSource: true, ephemeral: true });
-        }
+        interaction.reply(`Prediction ${predictionID} updated!`);
         break;
     }
 
@@ -290,14 +261,6 @@ function getPredictionId(message) {
 function getPrediction(predictions, id) {
   predictions = predictions.filter(prediction => getPredictionId(prediction) === id);
   return predictions.size > 0 ? predictions.first() : null;
-}
-
-function respondPrivate(interaction, message, alreadyResponded) {
-  if (alreadyResponded) {
-    interaction.member.send(message);
-  } else {
-    interaction.reply(message, { hideSource: true, ephemeral: true });
-  }
 }
 
 // Command Structure

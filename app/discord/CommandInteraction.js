@@ -11,6 +11,7 @@ class CommandInteraction extends Interaction {
   constructor(client, data, syncHandle) {
     super(client);
     this.syncHandle = syncHandle;
+    this._replied = false;
     this._patch(data);
   }
 
@@ -115,11 +116,6 @@ class CommandInteraction extends Interaction {
       }
     }
 
-    Object.defineProperty(apiMessage, 'hideSource', {
-      value: options?.hideSource ?? false,
-      writable: true,
-    });
-
     Object.defineProperty(apiMessage.data, 'flags', {
       value: options?.ephemeral ? 64 : 0,
       writable: true,
@@ -128,13 +124,22 @@ class CommandInteraction extends Interaction {
     const resolved = await apiMessage.resolveFiles();
 
     if (!this.syncHandle.reply(resolved)) {
-      const clientID = this.client.interactionClient.clientID || (await this.client.api.oauth2.applications('@me').get()).id;
+      const clientID = this.client.user?.id || (await this.client.api.oauth2.applications('@me').get()).id;
 
-      await this.client.api.webhooks(clientID, this.token).post({
-        auth: false,
-        data: resolved.data,
-        files: resolved.files,
-      });
+      if (this._replied) {
+        await this.client.api.webhooks(clientID, this.token).post({
+          auth: false,
+          data: resolved.data,
+          files: resolved.files,
+        });
+      } else {
+        resolved.data.flags = undefined;
+        await this.client.api.webhooks(clientID, this.token).messages('@original').patch({
+          auth: false,
+          data: resolved.data,
+        });
+        this._replied = true;
+      }
     }
   }
 }

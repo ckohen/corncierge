@@ -4,10 +4,8 @@ const CommandInteraction = require('./CommandInteraction');
 
 const InteractionResponseType = {
   PONG: 1,
-  ACKNOWLEDGE: 2,
-  CHANNEL_MESSAGE: 3,
   CHANNEL_MESSAGE_WITH_SOURCE: 4,
-  ACKNOWLEDGE_WITH_SOURCE: 5,
+  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
 };
 
 const InteractionType = {
@@ -29,16 +27,17 @@ module.exports = (client, data) => {
         client.setTimeout(() => {
           timedOut = true;
           r({
-            type: InteractionResponseType.ACKNOWLEDGE_WITH_SOURCE,
+            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
           });
-        }, 2000);
+        }, 250);
       });
 
       const syncHandle = {
-        acknowledge({ hideSource }) {
+        acknowledge({ ephemeral }) {
           if (!timedOut) {
             resolve({
-              type: hideSource ? InteractionResponseType.ACKNOWLEDGE : InteractionResponseType.ACKNOWLEDGE_WITH_SOURCE,
+              type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+              data: ephemeral ? { flags: 64 } : undefined,
             });
           }
         },
@@ -47,7 +46,7 @@ module.exports = (client, data) => {
             return false;
           }
           resolve({
-            type: resolved.hideSource ? InteractionResponseType.CHANNEL_MESSAGE : InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: resolved.data,
           });
           return true;

@@ -76,7 +76,7 @@ class DiscordUtil {
   static isGuild(id, slugOrId, settings) {
     if (Array.isArray(slugOrId)) {
       return slugOrId.includes(id);
-    } else if (this.isSnowflake(slugOrId)) {
+    } else if (DiscordUtil.isSnowflake(slugOrId)) {
       return slugOrId === id;
     }
     return settings.get(`discord_guild_${slugOrId}`).split(',').includes(id);
@@ -92,7 +92,7 @@ class DiscordUtil {
   static isChannel(id, slugOrId, settings) {
     if (Array.isArray(slugOrId)) {
       return slugOrId.includes(id);
-    } else if (this.isSnowflake(slugOrId)) {
+    } else if (DiscordUtil.isSnowflake(slugOrId)) {
       return slugOrId === id;
     }
     return settings.get(`discord_channel_${slugOrId}`).split(',').includes(id);
@@ -108,7 +108,7 @@ class DiscordUtil {
   static isUser(id, slugOrId, settings) {
     if (Array.isArray(slugOrId)) {
       return slugOrId.includes(id);
-    } else if (this.isSnowflake(slugOrId)) {
+    } else if (DiscordUtil.isSnowflake(slugOrId)) {
       return slugOrId === id;
     }
     return settings.get(`discord_user_${slugOrId}`).split(',').includes(id);

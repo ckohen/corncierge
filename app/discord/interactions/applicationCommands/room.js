@@ -46,8 +46,6 @@ module.exports = {
       });
       masterRoom = rooms.get('master');
     }
-
-    let acknowledged = false;
     let room = false;
     const roomID = args?.find(arg => arg.name === `roomid`)?.value;
     let member;
@@ -63,18 +61,16 @@ module.exports = {
       case 'create':
         // Only allow each server to have 25 rooms
         if (rooms.size > 25) {
-          return interaction.reply(`There are already 25 rooms in this server, please wait for another room to close!`, { hideSource: true, ephemeral: true });
+          return interaction.reply(`There are already 25 rooms in this server, please wait for another room to close!`, { ephemeral: true });
         }
 
         // Don't let a user own more than one room
         existing = rooms.find(data => data.owner === String(interaction.member.id));
         if (existing) {
           interaction.reply(`You already own a room: **ID**: ${existing.id}, **Name**: ${existing.name}. Please delete it to create a new room!`, {
-            hideSource: true,
             ephemeral: true,
           });
           room = existing;
-          acknowledged = true;
           break;
         }
 
@@ -95,6 +91,7 @@ module.exports = {
             });
             socket.app.database.tables.rooms.add(`${interaction.guild.id}-${String(i)}`);
             room = rooms.get(String(i));
+            interaction.reply(`Room ${i} created!`);
             break;
           }
         }
@@ -114,16 +111,14 @@ module.exports = {
           room = rooms.get(String(requested));
           if (typeof room === 'undefined' || rooms === null) {
             room = false;
-            interaction.reply(`There is no room with room id ${requested}!`, { hideSource: true, ephemeral: true });
-            acknowledged = true;
+            interaction.reply(`There is no room with room id ${requested}!`, { ephemeral: true });
             break;
           }
         } else {
           room = rooms.find(data => data.players.includes(String(interaction.member.id)));
           if (typeof room === 'undefined' || rooms === null) {
             room = false;
-            interaction.reply(`You must be in a room to use that command!`, { hideSource: true, ephemeral: true });
-            acknowledged = true;
+            interaction.reply(`You must be in a room to use that command!`, { ephemeral: true });
             break;
           }
         }
@@ -132,7 +127,7 @@ module.exports = {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can manage it!`, { hideSource: true, ephemeral: true });
+          return interaction.reply(`Only the owner of a room and admins/mods can manage it!`, { ephemeral: true });
         }
         // Set each option accordingly
         switch (submethod) {
@@ -150,10 +145,11 @@ module.exports = {
             if (newMax === clamp(newMax, 0, 35)) {
               room.playerCount = newMax;
             } else {
-              return interaction.reply(`The player count must be a number between 1 and 35!`, { hideSource: true, ephemeral: true });
+              return interaction.reply(`The player count must be a number between 1 and 35!`, { ephemeral: true });
             }
             break;
         }
+        interaction.reply(`Updated settings for room ${room.id}`, { ephemeral: true });
         break;
       case 'remove':
         // Check if the room exists
@@ -164,11 +160,10 @@ module.exports = {
           room = roomID ? false : rooms.find(data => data.players.includes(String(interaction.member.id)));
           if (!roomID && (typeof room === 'undefined' || rooms === null)) {
             room = false;
-            msg = `You must be in a room to use that command!`;
+            msg = `You must be in a room or specify a room id to use that command!`;
           }
           if (!room) {
-            interaction.reply(msg, { hideSource: true, ephemeral: true });
-            acknowledged = true;
+            interaction.reply(msg, { ephemeral: true });
             break;
           }
         }
@@ -177,22 +172,20 @@ module.exports = {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can remove it!`, { hideSource: true, ephemeral: true });
+          return interaction.reply(`Only the owner of a room and admins/mods can remove it!`, { ephemeral: true });
         }
         // Delete the room
-        interaction.reply(`Room ${room.id}: **${room.name}** has been successfully removed, the new list of rooms can be found below.`, { ephemeral: true });
+        interaction.reply(`Room ${room.id}: **${room.name}** has been successfully removed, the new list of rooms can be found below.`);
         socket.app.database.tables.rooms.delete(`${interaction.guild.id}-${room.id}`);
         rooms.delete(room.id);
         room = false;
-        acknowledged = true;
         break;
       case 'join':
         // Check if the room exists
         room = rooms.get(String(roomID));
         if (typeof room === 'undefined' || rooms === null) {
           room = false;
-          interaction.reply(`There is no room with room id ${roomID}!`, { hideSource: true, ephemeral: true });
-          acknowledged = true;
+          interaction.reply(`There is no room with room id ${roomID}!`, { ephemeral: true });
           break;
         }
         // Check if the user is already in a room
@@ -201,9 +194,9 @@ module.exports = {
           if (!room.waiting.includes(interaction.member.id)) {
             room.waiting.push(String(interaction.member.id));
           }
+          interaction.reply(`Succesfully joined room ${room.id}.`, { ephemeral: true });
         } else {
           return interaction.reply(`You cannot join a room while playing in another room! Use \`/room leave\` to leave your current room.`, {
-            hideSource: true,
             ephemeral: true,
           });
         }
@@ -224,7 +217,7 @@ module.exports = {
           room = rooms.find(data => data.waiting.includes(member));
           if (typeof room === 'undefined' || room === null) {
             room = false;
-            return interaction.reply(`That member is not currently in a room!`, { hideSource: true, ephemeral: true });
+            return interaction.reply(`That member is not currently in a room!`, { ephemeral: true });
           }
         }
         // Check Permissions for forced leave
@@ -233,7 +226,7 @@ module.exports = {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can force users to leave!`, { hideSource: true, ephemeral: true });
+          return interaction.reply(`Only the owner of a room and admins/mods can force users to leave!`, { ephemeral: true });
         }
         // Transfer ownership to next player in list
         if (member === room.owner) {
@@ -242,21 +235,22 @@ module.exports = {
             let newOwner = interaction.guild.members.cache.get(room.owner);
             interaction.reply(`The owner has left, the new owner is ${newOwner}`);
             room.players.shift();
-            acknowledged = true;
           } else {
             // Delete the room if there is no new possible owner
             socket.app.database.tables.rooms.delete(`${interaction.guild.id}-${room.id}`);
             rooms.delete(room.id);
-            return interaction.reply(`You were the last player in ${room.name}, it has been deleted.`, { ephemeral: true });
+            return interaction.reply(`You were the last player in ${room.name}, it has been deleted.`);
           }
         } else if (alreadyPlaying) {
           room.players.splice(room.players.indexOf(member), 1);
+          interaction.reply(`Successfully left room ${room.id}`, { ephemeral: true });
         } else {
           rooms.each(index => {
             if (index.waiting.includes(member)) {
               index.waiting.splice(index.waiting.indexOf(member), 1);
             }
           });
+          interaction.reply(`Successfully left all waiting rooms.`, { ephemeral: true });
         }
         break;
       case 'clear':
@@ -264,8 +258,7 @@ module.exports = {
         room = rooms.get(String(roomID));
         if (typeof room === 'undefined' || room === null) {
           room = false;
-          interaction.reply(`There is no room with room id ${roomID}!`, { hideSource: true, ephemeral: true });
-          acknowledged = true;
+          interaction.reply(`There is no room with room id ${roomID}!`, { ephemeral: true });
           break;
         }
         // Check Permissions
@@ -273,10 +266,11 @@ module.exports = {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can manage it!`, { hideSource: true, ephemeral: true });
+          return interaction.reply(`Only the owner of a room and admins/mods can manage it!`);
         }
         // Clear the room except for the owner
         room.players.splice(1);
+        interaction.reply(`Cleared the players list of room ${room.id}.`);
         break;
       case 'fill':
         // Check if the room exists
@@ -289,8 +283,7 @@ module.exports = {
             msg = `You must be in a room to use that command!`;
           }
           if (!room) {
-            interaction.reply(msg, { hideSource: true, ephemeral: true });
-            acknowledged = true;
+            interaction.reply(msg, { ephemeral: true });
             break;
           }
         }
@@ -299,9 +292,10 @@ module.exports = {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can manage it!`, { hideSource: true, ephemeral: true });
+          return interaction.reply(`Only the owner of a room and admins/mods can manage it!`, { hephemeral: true });
         }
 
+        interaction.reply(`Filling room ${room.id} right up to the brim!`);
         // Move members to fill up to player cap
         for (let i = 0; i < room.playerCount; i++) {
           if (!room.players[i] && room.waiting[0]) {
@@ -330,8 +324,7 @@ module.exports = {
             msg = `You must be in a room to use that command!`;
           }
           if (!room) {
-            interaction.reply(msg, { hideSource: true, ephemeral: true });
-            acknowledged = true;
+            interaction.reply(msg, { ephemeral: true });
             break;
           }
         }
@@ -340,15 +333,16 @@ module.exports = {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can transfer ownership!`, { hideSource: true, ephemeral: true });
+          return interaction.reply(`Only the owner of a room and admins/mods can transfer ownership!`, { ephemeral: true });
         }
         // Check if the new user is in the room
         if (!room.players.includes(member)) {
-          return interaction.reply(`The new owner must be a player in the room!`, { hideSource: true, ephemeral: true });
+          return interaction.reply(`The new owner must be a player in the room!`, { ephemeral: true });
         }
         room.players.splice(room.players.indexOf(member), 1);
         room.owner = member;
         room.players.unshift(member);
+        interaction.reply(`Transfered ownership of room ${room.id} to <@${member}>`);
         break;
       case 'list':
         // Check if user is in a room
@@ -367,9 +361,8 @@ module.exports = {
         if (!room) {
           room = false;
         }
+        interaction.reply(`Listing Rooms!`, { ephemeral: true });
     }
-
-    if (!acknowledged) await interaction.acknowledge();
 
     // Create base embed
     let msg = socket.getEmbed('rooms', [interaction.member, '/']);
@@ -413,7 +406,7 @@ module.exports = {
       // Store discord's copy of the owner
       owner = interaction.guild.members.cache.get(room.owner);
       // Change the default description to be more acdurate for a single room
-      msg.setDescription(`Join this room by typing \`/room join ${room.id}\`. See a list of all rooms by typing \`/room list all\``);
+      msg.setDescription(`Join this room by typing \`/room join ${room.id}\`. See a list of all rooms by typing \`/room list roomid:0\``);
       // Add Room name and code (if applicable)
       if (room.code) {
         msg.addField(`Room Name`, `${room.name} \n**Current code**: \`${room.code}\``);
