@@ -135,11 +135,13 @@ class Application {
       await this.twitch.irc.driver.disconnect().catch(err => this.log.debug(module, err));
     }
     if (!this.options.disableDiscord) {
-      await this.discord.driver.destroy().catch(err => this.log.debug(module, err));
+      await this.discord.driver.destroy();
     }
     if (!this.options.disableServer) {
-      await this.http.driver.close().catch(err => this.log.debug(module, err));
+      await new Promise(resolve => this.http.driver.close(resolve)).catch(err => this.log.debug(module, err));
     }
+    /* eslint-disable-next-line no-empty-function */
+    await new Promise(resolve => this.logger.end(resolve)).catch(() => {});
     process.exit(code);
   }
 
