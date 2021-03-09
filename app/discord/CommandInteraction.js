@@ -121,6 +121,13 @@ class CommandInteraction extends Interaction {
       writable: true,
     });
 
+    if (apiMessage.data.embed) {
+      Object.defineProperty(apiMessage.data, 'embeds', {
+        value: [apiMessage.data.embed],
+        writable: true,
+      });
+    }
+
     const resolved = await apiMessage.resolveFiles();
 
     if (!this.syncHandle.reply(resolved)) {
