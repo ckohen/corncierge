@@ -272,7 +272,7 @@ class DiscordManager extends EventManager {
     const transformer = this.embeds[slug];
 
     if (typeof transformer !== 'function') {
-      this.app.log.warn(module, `Unknown embed: ${transformer}`);
+      this.app.log.warn(module, `Unknown embed: ${slug}`);
       return null;
     }
 

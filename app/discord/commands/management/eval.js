@@ -10,8 +10,8 @@ class EvalCommand extends BaseCommand {
       name: 'eval',
       description: 'Evaluates code passed as string',
       usage: ['<eval string> (available bases are socket, message, util, and client)'],
-      guild: 'helpDesk',
-      permissions: 'ADMINISTRATOR',
+      guild: ['helpDesk', '788600861982588940', '816750686251384862'],
+      user: '140214425276776449',
     };
     super(socket, info);
   }

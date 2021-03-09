@@ -12,7 +12,7 @@ module.exports = (socket, before, after) => {
 
   let voiceRole = after.guild.roles.cache.find(item => item.name.toLowerCase() === 'voice');
 
-  if (Object.keys(voiceRoles?.data)?.length > 0) {
+  if (voiceRoles && Object.keys(voiceRoles.data).length > 0) {
     let voiceRoleIDs = Object.keys(voiceRoles.data);
     ignoredRoles = ignoredRoles.concat(voiceRoleIDs);
   } else if (voiceRole) {

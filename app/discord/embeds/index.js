@@ -23,6 +23,7 @@ embeds.welcome = require('./welcome');
 embeds.help = require('./help');
 embeds.rooms = require('./gaming/rooms');
 embeds.reactionRoles = require('./roles/reactionRoles');
+embeds.update = require('./update');
 embeds.voiceRoles = require('./roles/voiceRoles');
 
 module.exports = embeds;

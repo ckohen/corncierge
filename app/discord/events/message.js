@@ -18,7 +18,7 @@ module.exports = async (socket, message) => {
   // React only in guild text channels
   if (message.channel.type !== 'text') return;
 
-  const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+  const commandPrefix = socket.prefixes.get(String(message.guild.id))?.prefix ?? '!';
 
   // Check for commands
   if (!message.content.startsWith(commandPrefix)) return;

@@ -75,7 +75,7 @@ class DiscordUtil {
    */
   static isGuild(id, slugOrId, settings) {
     if (Array.isArray(slugOrId)) {
-      return slugOrId.includes(id);
+      return slugOrId.some(elem => DiscordUtil.isGuild(id, elem, settings));
     } else if (DiscordUtil.isSnowflake(slugOrId)) {
       return slugOrId === id;
     }
@@ -91,7 +91,7 @@ class DiscordUtil {
    */
   static isChannel(id, slugOrId, settings) {
     if (Array.isArray(slugOrId)) {
-      return slugOrId.includes(id);
+      return slugOrId.some(elem => DiscordUtil.isChannel(id, elem, settings));
     } else if (DiscordUtil.isSnowflake(slugOrId)) {
       return slugOrId === id;
     }
@@ -107,7 +107,7 @@ class DiscordUtil {
    */
   static isUser(id, slugOrId, settings) {
     if (Array.isArray(slugOrId)) {
-      return slugOrId.includes(id);
+      return slugOrId.some(elem => DiscordUtil.isUser(id, elem, settings));
     } else if (DiscordUtil.isSnowflake(slugOrId)) {
       return slugOrId === id;
     }
