@@ -71,7 +71,7 @@ class TwitchManager extends RequestManager {
       this.app.log.verbose(module, `ID was cached: ${id}`);
     } else {
       this.app.log.verbose(module, 'ID not cached');
-      const data = await this.fetchUser(user).catch(err => this.app.log.warn(err));
+      const data = await this.fetchUser(user).catch(err => this.app.log.warn(module, err));
       if (!data) return Promise.reject(new Error('User not fetched'));
       id = data.users[0]._id;
       cache.put(`twitch.id.${user}`, id);

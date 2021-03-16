@@ -4,14 +4,15 @@ const cache = require('memory-cache');
 
 module.exports = async (socket, url, headers) => {
   // Different handling for different users
-  let user = headers.user;
+  const user = headers.user;
+  const testing = headers.test;
 
   // Ignore empty or default users
   if (!user || user === 'default') {
     return;
   }
 
-  if (!socket.app.options.disableIRC) {
+  if (!socket.app.options.disableIRC && !testing) {
     let greeting;
     switch (user) {
       case 'platicorn':
@@ -24,13 +25,13 @@ module.exports = async (socket, url, headers) => {
 
   if (socket.app.options.disableDiscord) return;
   // Get the annoucement channel defined for the user
-  let channel = await socket.getChannel(user);
+  const channel = await socket.getChannel(user);
   if (!channel) {
     socket.app.log.debug(module, 'No channel');
     return;
   }
 
-  let role = await socket.getRole(user, channel);
+  const role = await socket.getRole(user, channel);
   if (!role) {
     socket.app.log.debug(module, 'No Role');
     return;
@@ -40,18 +41,18 @@ module.exports = async (socket, url, headers) => {
   if (!twitchChannel) {
     return;
   }
-  let content = socket.app.discord.getContent('streamUp', [role, twitchChannel.display_name, twitchChannel.url]);
-  let embed = socket.app.discord.getEmbed('streamUp', [twitchChannel]);
+  const content = socket.app.discord.getContent('streamUp', [role, twitchChannel.display_name, twitchChannel.url]);
+  const embed = socket.app.discord.getEmbed('streamUp', [twitchChannel]);
   // Check if throttled
   let msg;
   /* eslint-disable-next-line eqeqeq */
   if (cache.get(`video.stream.up.${user}`) != null) {
     msg = await socket.getMessage(user);
     if (msg && msg instanceof Message) {
-      msg.edit(content, embed);
+      msg.edit(content, { embed, allowedMentions: testing ? { parse: [] } : undefined });
     }
   } else {
-    msg = await channel.send(content, embed);
+    msg = await channel.send(content, { embed, allowedMentions: testing ? { parse: [] } : undefined });
     if (msg.channel.type === 'news') {
       msg.crosspost().catch(err => socket.app.log.warn(module, err));
     }

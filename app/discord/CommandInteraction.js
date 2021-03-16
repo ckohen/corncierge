@@ -144,9 +144,12 @@ class CommandInteraction extends Interaction {
         await this.client.api.webhooks(clientID, this.token).messages('@original').patch({
           auth: false,
           data: resolved.data,
+          files: resolved.files,
         });
         this._replied = true;
       }
+    } else {
+      this._replied = true;
     }
   }
 }

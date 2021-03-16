@@ -5,7 +5,8 @@ const util = require('../../util/UtilManager');
 
 module.exports = async (socket, url, headers) => {
   // Different handling for different users
-  let user = headers.user;
+  const user = headers.user;
+  const testing = headers.test;
   if (cache.get(`video.stream.down.${user}`) !== null) return;
 
   // Ignore empty or default users
@@ -13,7 +14,7 @@ module.exports = async (socket, url, headers) => {
     return;
   }
 
-  if (!socket.app.options.disableIRC) {
+  if (!socket.app.options.disableIRC && !testing) {
     let farewell;
     switch (user) {
       case 'platicorn':
@@ -27,28 +28,28 @@ module.exports = async (socket, url, headers) => {
   if (socket.app.options.disableDiscord) return;
 
   // Get the annoucement channel defined for the user
-  let channel = await socket.getChannel(user);
+  const channel = await socket.getChannel(user);
   if (!channel) {
     return;
   }
 
-  let role = await socket.getRole(user, channel);
+  const role = await socket.getRole(user, channel);
   if (!role) {
     return;
   }
 
-  const uptime = await socket.app.twitch.fetchUptime(user).catch(err => socket.app.log.warn(err));
+  const uptime = await socket.app.twitch.fetchUptime(user).catch(err => socket.app.log.warn(module, err));
   const duration = uptime ? `for ${util.relativeTime(uptime, 3)}` : '';
 
   const twitchChannel = await socket.app.twitch.userChannel(user).catch(err => socket.app.log.warn(module, err));
   if (!twitchChannel) {
     return;
   }
-  let content = socket.app.discord.getContent('streamDown', [twitchChannel.display_name]);
-  let embed = socket.app.discord.getEmbed('streamDown', [twitchChannel, twitchChannel.game, duration]);
-  let msg = await socket.getMessage(user);
+  const content = socket.app.discord.getContent('streamDown', [twitchChannel.display_name]);
+  const embed = socket.app.discord.getEmbed('streamDown', [twitchChannel, twitchChannel.game, duration]);
+  const msg = await socket.getMessage(user);
   if (msg && msg instanceof Message) {
-    msg.edit(content, embed);
+    msg.edit(content, { embed, allowedMentions: testing ? { parse: [] } : undefined });
   }
 
   cache.del(`stream.uptime.${user}`);

@@ -70,7 +70,7 @@ class PlayCommand extends BaseCommand {
             }
             */
           } catch (err) {
-            socket.app.log.warn(err);
+            socket.app.log.warn(module, err);
           }
         }
       }
@@ -230,7 +230,7 @@ function playSong(queue, message, socket) {
         })
         .on('error', e => {
           message.reply(`Cannot play song \`${queue[0].title}\`, skipping`, { allowedMentions: { repliedUser: true } });
-          socket.app.log.warn(e);
+          socket.app.log.warn(module, e);
           if (queue.length > 1) {
             queue.shift();
             return playSong(queue, message, socket);
@@ -243,7 +243,7 @@ function playSong(queue, message, socket) {
         });
     })
     .catch(e => {
-      socket.app.log.warn(e);
+      socket.app.log.warn(module, e);
       return message.guild.me.voice.channel?.leave();
     });
 }
