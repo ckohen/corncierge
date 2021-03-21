@@ -27,10 +27,8 @@ class CommandListCommand extends BaseCommand {
     if (arg) {
       if (Number(arg)) {
         page = Number(arg);
-      } else if (arg.charAt(0) === '!') {
-        command = `${arg.slice(1)}-1`;
       } else {
-        command = `${arg}-0`;
+        command = `${arg}`;
       }
     }
 
@@ -39,7 +37,7 @@ class CommandListCommand extends BaseCommand {
 
     let lines = commands
       .sort((va, vb, ka, kb) => +(ka > kb) || +(ka === kb) - 1)
-      .map(item => usage(false, Number(item.prefix) ? '!' : '', `${item.input} => ${item.output}`))
+      .map(item => usage(false, '', `${item.input} => ${item.output}`))
       .filter(line => line);
 
     let pages = Math.ceil(lines.length / 15);

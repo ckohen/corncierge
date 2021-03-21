@@ -292,7 +292,6 @@ class Application {
           clientID: options.twitch.clientID,
           clientSecret: options.twitch.clientSecret,
         },
-        commandPrefix: '!',
       };
       if (options.twitch.channel) {
         formatted.twitch.channel = {

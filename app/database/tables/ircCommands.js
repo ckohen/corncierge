@@ -13,7 +13,7 @@ class ircCommandsTable extends BaseTable {
    */
   get() {
     return this.socket.query(
-      'SELECT id, LOWER(input) as input, method, output, locked, prefix, count, restriction as level FROM `commands` WHERE `deleted_at` IS NULL',
+      'SELECT id, LOWER(input) as input, method, output, locked, count, restriction as level FROM `commands` WHERE `deleted_at` IS NULL',
     );
   }
 
@@ -21,14 +21,13 @@ class ircCommandsTable extends BaseTable {
    * Add an IRC command.
    * @param {string} input what the command responds to
    * @param {string} output what to display as an output when the command is fired
-   * @param {boolean} prefix whether or not a prefix is required for this command
    * @returns {Promise<void>}
    */
-  add(input, output, prefix) {
-    return this.socket.query(
-      'INSERT INTO `commands` (input, method, output, locked, prefix, count, created_at, updated_at) VALUES (?, NULL, ?, 0, ?, 0, NOW(), NOW())',
-      [input, output, prefix],
-    );
+  add(input, output) {
+    return this.socket.query('INSERT INTO `commands` (input, method, output, locked, count, created_at, updated_at) VALUES (?, NULL, ?, 0, 0, NOW(), NOW())', [
+      input,
+      output,
+    ]);
   }
 
   /**

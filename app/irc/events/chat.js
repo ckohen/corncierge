@@ -9,7 +9,6 @@ module.exports = async (socket, channel, user, messageRaw, self) => {
 
   const channelData = { name: channel.slice(1), handle: channel, id: await socket.twitch.getID(channel.slice(1)) };
   const message = messageRaw.trim();
-  const opts = socket.twitch.options;
   const isPrivileged = twitch.isPrivileged(user, channelData);
 
   // Check for moderation filters
@@ -29,19 +28,12 @@ module.exports = async (socket, channel, user, messageRaw, self) => {
   const args = message.trim().split(/\s+/g);
   let input = args.shift().toLowerCase();
 
-  // Listen for commands
-  if (!message.startsWith(opts.commandPrefix)) {
-    input += '-0';
-  } else {
-    input = `${input.slice(opts.commandPrefix.length)}-1`;
-  }
-
   // Check for existing commands
   let command = socket.commands.get(input);
 
   if (!command) {
     if (message.indexOf('bonk') > -1) {
-      command = socket.commands.get('bonk-0');
+      command = socket.commands.get('!bonk');
     } else {
       return;
     }

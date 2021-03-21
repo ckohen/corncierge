@@ -208,7 +208,7 @@ class IrcManager extends EventManager {
    */
   cacheCommands() {
     this.app.log.debug(module, 'Caching commands');
-    return this.cache('ircCommands', this.commands, 'input', 'prefix');
+    return this.cache('ircCommands', this.commands, 'input');
   }
 
   /**
