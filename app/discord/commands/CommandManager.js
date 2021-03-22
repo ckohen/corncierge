@@ -22,7 +22,13 @@ class CommandManager {
      * @type {Collection<string, BaseCommand>}
      */
     this.registered = new Collection();
+  }
 
+  /**
+   * Registers built in commands
+   * @private
+   */
+  registerBuiltIn() {
     if (!this.socket.options.disabledCommands.includes('all')) {
       this.registerGroup(require('./gaming'), 'gaming');
       this.registerGroup(require('./general'), 'general');

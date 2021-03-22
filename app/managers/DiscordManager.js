@@ -122,6 +122,7 @@ class DiscordManager extends EventManager {
     // End addition
 
     this.app.log.debug(module, 'Registering commands');
+    this.commandManager.registerBuiltIn();
     /**
      * The commands for the socket, mapped by input. Only available after DiscordManager#init()
      * @type {Collection<string, BaseCommand>}
