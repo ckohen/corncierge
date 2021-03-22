@@ -87,6 +87,19 @@ class LogManager extends BaseManager {
 
     if (!Object.prototype.hasOwnProperty.call(levels, level)) return Promise.reject(new Error('Invalid level'));
 
+    let formatted = typeof message === 'string' ? message : String(message);
+    formatted = formatted.split('\n').slice(0, 5);
+    let code = false;
+    for (const i in formatted) {
+      let line = formatted[i];
+      if (line.trim().startsWith('at')) {
+        formatted[i] = `\`\`\`ada\n${line}`;
+        code = true;
+        break;
+      }
+    }
+    formatted = `${formatted.join('\n')}${code ? '```' : ''}`;
+
     return axios({
       method: 'POST',
       baseURL: this.options.webhookBase,
@@ -94,7 +107,7 @@ class LogManager extends BaseManager {
       data: {
         embeds: [
           {
-            description: typeof message === 'string' ? message : String(message),
+            description: formatted,
             timestamp: moment().utcOffset(0).format(),
             title: `${level} \u00B7 ${path}`,
             color: Constants.Colors[levels[level] || 'CYAN'],
