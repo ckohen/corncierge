@@ -77,7 +77,7 @@ class CommandHandler {
     this.target = this.hasArgs ? args[0].replace(/^@/, '') : util.twitch.handle(this.user);
 
     /**
-     * The command executor if the command is handled specially
+     * The command executor if the command is handled by a responder
      * @type {?TwitchCommand}
      */
     this.executor = null;
@@ -94,7 +94,7 @@ class CommandHandler {
    * @private
    */
   execute() {
-    const commands = this.socket.specialCommands.registered;
+    const commands = this.socket.commandResponders.registered;
     if (this.command.level) {
       switch (this.command.level) {
         case 'broadcaster':

@@ -48,10 +48,7 @@ exports.DefaultOptions = {
    *  * `help`
    * * `management`
    *  * `eval`
-   *  * `reboot`
-   *  * `reload`
    *  * `setstatus`
-   *  * `status`
    * * `moderation`
    *  * `clear`
    *  * `moveall`

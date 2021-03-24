@@ -25,18 +25,11 @@ class FollowageTwitchCommand extends TwitchCommand {
       name = obj.display_name || obj.name;
     }
 
-    return this.socket.twitch
-      .follow(id)
-      .then(data => {
-        if (data.created_at == null) return false; // eslint-disable-line eqeqeq
-        const age = moment(data.created_at).valueOf();
-        handler.respond(util.constants.IRCResponders.followage(name, util.humanDate(age), util.relativeTime(age)));
-        return true;
-      })
-      .catch(err => {
-        this.socket.app.log.warn(module, err);
-        return false;
-      });
+    const followData = await this.socket.twitch.follow(id, handler.channel.id).catch(err => this.socket.app.log.warn(module, err));
+    if (!followData || followData.created_at == null) return false; // eslint-disable-line eqeqeq
+    const age = moment(followData.created_at).valueOf();
+    handler.respond(util.constants.IRCResponders.followage(name, util.humanDate(age), util.relativeTime(age)));
+    return true;
   }
 }
 

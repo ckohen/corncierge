@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run lint && npm run docs:test",
-    "docs": "docgen --source app --output docs/docs.json",
-    "docs:test": "docgen --source app",
+    "docs": "docgen --source app --custom docs/index.yml --output docs/docs.json",
+    "docs:test": "docgen --source app --custom docs/index.yml",
     "lint": "eslint app",
     "lint:fix": "eslint app --fix",
     "prettier": "prettier --write app/**/*.js",

@@ -4,7 +4,7 @@ const http = require('http');
 
 const EventManager = require('./EventManager');
 const events = require('../http/events');
-const requests = require('../http/requests');
+const RequestManager = require('../http/requests/RequestManager');
 
 /**
  * HTTP manager for the application.
@@ -24,7 +24,7 @@ class HTTPManager extends EventManager {
      * The socket request events.
      * @type {Object}
      */
-    this.requests = requests;
+    this.requestsManager = new RequestManager(this);
   }
 
   /**
@@ -34,6 +34,14 @@ class HTTPManager extends EventManager {
   init() {
     this.app.log.debug(module, 'Registering events');
     this.attach();
+
+    this.app.log.debug(module, 'Registering requests');
+    /**
+     * The requests for the socket, mapped by input. Only available after HTTPManager#init()
+     * @type {Collection<string, BaseRequest>}
+     */
+    this.requests = this.requestsManager.registered;
+
     this.driver.requestTimeout = 2000;
     return this.driver.listen(this.options.port);
   }

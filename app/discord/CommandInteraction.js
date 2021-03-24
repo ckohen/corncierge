@@ -1,6 +1,6 @@
 'use strict';
 
-const { APIMessage, Snowflake } = require('discord.js');
+const { APIMessage, Snowflake, User } = require('discord.js');
 const Interaction = require('./Interaction');
 
 /**
@@ -57,6 +57,13 @@ class CommandInteraction extends Interaction {
      * @readonly
      */
     this.channel = this.client.channels?.cache.get(data.channel_id) || null;
+
+    /**
+     * If this interaction was sent in a DM, the user which sent it.
+     * @type {?User}
+     * @readonly
+     */
+    this.user = data.user ? this.client.users?.add(data.user, false) ?? new User(this.client, data.user) : null;
 
     /**
      * The guild this interaction was sent in, if any.
