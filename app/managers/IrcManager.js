@@ -59,7 +59,7 @@ class IrcManager extends EventManager {
      * The command manager that stores specially handled commands
      * @type {TwitchCommandManager}
      */
-    this.specialCommands = new TwitchCommandManager(this);
+    this.commandResponders = new TwitchCommandManager(this);
 
     /**
      * The rate limiter.
