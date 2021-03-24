@@ -27,8 +27,6 @@ class UpdateCommand extends BaseCommand {
     stderr = clean(stderr);
     embed = socket.getEmbed('update', ['Packages Updated', stdout, stderr]);
     await message.channel.send(embed);
-
-    socket.app.end(0);
   }
 }
 
