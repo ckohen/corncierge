@@ -119,4 +119,4 @@ Because of the unique nature of slash commands, they can be registered per guild
 !eval socket.registerCommand('commandname');
 ```
 
-`socket` in the above code refers to the [DiscordManager](/#/docs/corncierge/master/class/DiscordManager). You can find more information about these methods there.
+`socket` in the above code refers to the [DiscordManager](/#/docs/corncierge/master/class/DiscordManager). You can find more information about these methods there. It can be accessed as `Application#discord`.
