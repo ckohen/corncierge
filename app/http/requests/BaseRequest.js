@@ -65,12 +65,11 @@ class BaseRequest {
    * @typedef {Object} RespondData
    * @property {Number} statusCode the status code to return
    * @property {Object} [headers] the headers to return
-   * @property {*} [data] the data to respond with, automatically stringified
+   * @property {*} [data] the data to respond with
    */
 
   /**
    * Runs the request
-   * @param {HTTPManager} socket the socket that called this request
    * @param {string} method the method used to fetch this request
    * @param {string} url the full uri of the request
    * @param {Object} headers the headers sent with this request

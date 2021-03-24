@@ -52,29 +52,23 @@ module.exports = async (socket, request, response) => {
   }
 
   // Handle internal vs external response
-  if (!handler.responds) {
-    try {
+  try {
+    if (!handler.responds) {
       await handler.run(socket, request.method, request.url, request.headers);
       response.statusCode = 202;
-    } catch (err) {
-      socket.app.log.warn(module, `Error occured during request call ${handler.name}: ${err.stack ? err.stack : err}`);
-      response.statusCode = 503;
-      response.write('Error Encountered by server while processing request!');
-    }
-  } else {
-    try {
+    } else {
       const res = await handler.run(socket, request.method, request.url, request.headers);
       if (res) {
         response.writeHead(res.statusCode, res.headers);
         if (res.data && request.method !== 'HEAD') {
-          response.write(res.data instanceof Buffer ? res.data : JSON.stringify(res.data));
+          response.write(Buffer.from(res.data));
         }
       }
-    } catch (err) {
-      socket.app.log.warn(module, `Error occured during request call ${handler.name}: ${err.stack ? err.stack : err}`);
-      response.statusCode = 503;
-      response.write('Error Encountered by server while processing request!');
     }
+  } catch (err) {
+    socket.app.log.warn(module, `Error occured during request call ${handler.name}: ${err.stack ? err.stack : err}`);
+    response.statusCode = 503;
+    response.write('Error Encountered by server while processing request!');
   }
   return response.end();
 };

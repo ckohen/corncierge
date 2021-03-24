@@ -13,7 +13,8 @@ class StreamStartRequest extends BaseRequest {
     super(socket, info);
   }
 
-  async run(socket, method, url, headers) {
+  async run(method, url, headers) {
+    const socket = this.socket;
     // Different handling for different users
     const user = headers.user;
     const testing = headers.test;
