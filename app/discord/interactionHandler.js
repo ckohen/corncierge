@@ -24,12 +24,6 @@ module.exports = (client, data) => {
       let resolve;
       const directPromise = new Promise(r => {
         resolve = r;
-        client.setTimeout(() => {
-          timedOut = true;
-          r({
-            type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-          });
-        }, 250);
       });
 
       const syncHandle = {
