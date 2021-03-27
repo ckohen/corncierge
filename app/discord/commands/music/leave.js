@@ -6,7 +6,7 @@ class LeaveCommand extends BaseCommand {
   constructor(socket) {
     const info = {
       name: 'leave',
-      aliases: ['end'],
+      aliases: ['end', 'fuckoff'],
       description: 'Leaves voice channel if in one',
       channel: 'music',
       role: 'DJ',
