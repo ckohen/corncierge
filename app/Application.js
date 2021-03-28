@@ -131,6 +131,8 @@ class Application {
   async end(code) {
     this.log.debug(module, `Shutting Down`);
     this.ending = true;
+    // Panic out if something broke
+    const panic = setTimeout(() => process.exit(code), 5000);
     if (!this.options.disableTwitch && !this.options.disableIRC) {
       await this.twitch.irc.driver.disconnect().catch(err => this.log.debug(module, err));
     }
@@ -142,6 +144,7 @@ class Application {
     }
     /* eslint-disable-next-line no-empty-function */
     await new Promise(resolve => this.logger.end(resolve)).catch(() => {});
+    clearTimeout(panic);
     process.exit(code);
   }
 
