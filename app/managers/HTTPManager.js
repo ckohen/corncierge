@@ -1,6 +1,7 @@
 'use strict';
 
 const http = require('http');
+const https = require('https');
 
 const EventManager = require('./EventManager');
 const events = require('../http/events');
@@ -12,7 +13,13 @@ const RequestManager = require('../http/requests/RequestManager');
  */
 class HTTPManager extends EventManager {
   constructor(app) {
-    super(app, http.createServer(), app.options.http, events);
+    let driver;
+    if (app.options.http.useHttps) {
+      driver = https.createServer(app.options.http.httpsOptions);
+    } else {
+      driver = http.createServer();
+    }
+    super(app, driver, app.options.http, events);
 
     /**
      * The HTTP server.
