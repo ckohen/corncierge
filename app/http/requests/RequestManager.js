@@ -19,6 +19,7 @@ class RequestManager {
     /**
      * The registered requests, mapped by name
      * @type {Collection<string, BaseRequest>}
+     * @private
      */
     this.registered = new Collection();
 

@@ -20,6 +20,7 @@ class CommandManager {
     /**
      * The registered commands, mapped by name
      * @type {Collection<string, BaseCommand>}
+     * @private
      */
     this.registered = new Collection();
   }
