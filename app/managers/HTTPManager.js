@@ -9,7 +9,9 @@ const events = require('../http/events');
 const RequestManager = require('../http/requests/RequestManager');
 
 /**
- * HTTP manager for the application.
+ * HTTP manager for the application. Can run https mode if useHttps is enabled in options.
+ * Node cannot run on ports below 1024 on linux natively. It is suggested to use a proxy from
+ * something such as nginx in these cases.
  * @extends {EventManager}
  */
 class HTTPManager extends EventManager {
