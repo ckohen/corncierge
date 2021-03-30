@@ -6,7 +6,6 @@
 
 // Environment
 require('dotenv').config();
-const fs = require('fs');
 
 // Run
 let app = require('./app');
@@ -25,8 +24,8 @@ const config = {
     port: Number(process.env.HTTP_PORT),
     useHttps: process.env.USE_HTTPS === 'true',
     httpsOptions: {
-      cert: fs.readFileSync(process.env.HTTPS_CERT),
-      key: fs.readFileSync(process.env.HTTPS_KEY),
+      certLocation: process.env.HTTPS_CERT,
+      keyLocation: process.env.HTTPS_KEY,
     },
   },
   log: {
