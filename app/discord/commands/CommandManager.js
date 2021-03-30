@@ -45,7 +45,6 @@ class CommandManager {
    * Registers a group of commands
    * @param {BaseCommand[]} commands the commands to register
    * @param {string} group the group to which this command resides (if disabledCommands includes this group name it will disable this command)
-   * @private
    */
   registerGroup(commands, group) {
     if (this.socket.options.disabledCommands.includes(group)) return;

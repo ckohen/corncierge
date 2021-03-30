@@ -30,7 +30,6 @@ class RequestManager {
    * Registers a group of requests
    * @param {BaseRequest[]} requests the requests to register
    * @param {string} group the group to which this request resides, the group name is prepended in the url path e.g. group/request
-   * @private
    */
   registerGroup(requests, group) {
     for (const request of requests) {
