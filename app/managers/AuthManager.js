@@ -1,12 +1,12 @@
 'use strict';
 
-const RequestManager = require('./RequestManager');
+const APIManager = require('./APIManager');
 
 /**
  * Auth manager for the application.
- * @extends {RequestManager}
+ * @extends {APIManager}
  */
-class AuthManager extends RequestManager {
+class AuthManager extends APIManager {
   constructor(app, twitch) {
     super(app, twitch.options.auth);
 

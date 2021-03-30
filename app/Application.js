@@ -128,6 +128,23 @@ class Application {
     }
   }
 
+  async rebootHttps() {
+    this.log.debug(module, 'Reboot param for https recieved');
+    this.ending = true;
+    await new Promise(resolve => {
+      // Give 10 seconds to handle gracefully
+      const timeout = setTimeout(resolve, 10000);
+      this.http.driver.close(() => {
+        clearTimeout(timeout);
+        resolve();
+      });
+    }).catch(err => this.log.debug(module, err));
+    this.ending = false;
+    this.http = new HTTPManager(this);
+    await this.http.init();
+    this.log.debug(module, 'Reboot of https complete');
+  }
+
   async end(code) {
     this.log.debug(module, `Shutting Down`);
     this.ending = true;
@@ -205,6 +222,15 @@ class Application {
     }
     if (!merged.disableServer && typeof merged.http !== 'object') {
       throw new TypeError('The http option must be an object when server is not disabled');
+    } else {
+      if (typeof merged.http.port !== 'number') throw new TypeError('The HTTP port must be a number');
+      if (typeof merged.http.useHttps !== 'boolean') throw new TypeError('The HTTPS toggle must be a boolean');
+      if (merged.http.useHttps) {
+        const https = merged.http.httpsOptions;
+        if (typeof https !== 'object') throw new TypeError('The HTTPS options must be provided as an object when using https');
+        if (!https.key && typeof https.keyLocation !== 'string') throw new TypeError('A suitable key location is required to use https');
+        if (!https.cert && typeof https.certLocation !== 'string') throw new TypeError('A suitable cert location is required to use https');
+      }
     }
     if (typeof merged.log !== 'object') {
       throw new TypeError('The log option must be an object');
@@ -221,7 +247,6 @@ class Application {
         }
       }
     }
-    if (typeof merged.http.port !== 'number') throw new TypeError('The HTTP port must be a number');
     if (!merged.disableTwitch && typeof merged.twitch !== 'object') {
       throw new TypeError('The twitch option must be an object when twitch is not disabled');
     } else {
@@ -276,6 +301,14 @@ class Application {
     }
     if (!options.disableServer) {
       formatted.http = options.http;
+      if (options.http.useHttps && options.http.httpsOptions.keyLocation) {
+        formatted.http.locations = {
+          key: options.http.httpsOptions.keyLocation,
+          cert: options.http.httpsOptions.certLocation,
+        };
+        delete formatted.http.httpsOptions.keyLocation;
+        delete formatted.http.httpsOptions.certLocation;
+      }
     }
     if (!options.disableTwitch) {
       formatted.twitch = {

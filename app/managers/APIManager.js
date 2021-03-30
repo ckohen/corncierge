@@ -5,11 +5,11 @@ const BaseManager = require('./BaseManager');
 const apiRouter = require('../util/APIRouter');
 
 /**
- * Parent implementation for request-based service classes.
+ * Parent implementation for API request-based service classes.
  * @extends {BaseManager}
  * @abstract
  */
-class RequestManager extends BaseManager {
+class APIManager extends BaseManager {
   constructor(app, options) {
     super(app, axios.create(options.apiConfig), options);
   }
@@ -25,4 +25,4 @@ class RequestManager extends BaseManager {
   }
 }
 
-module.exports = RequestManager;
+module.exports = APIManager;

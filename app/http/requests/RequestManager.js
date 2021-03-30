@@ -19,9 +19,11 @@ class RequestManager {
     /**
      * The registered requests, mapped by name
      * @type {Collection<string, BaseRequest>}
+     * @private
      */
     this.registered = new Collection();
 
+    this.register(require('./renewCert'), '/api/private/certbot/');
     this.registerGroup(require('./streaming'), 'streaming');
   }
 
@@ -29,7 +31,6 @@ class RequestManager {
    * Registers a group of requests
    * @param {BaseRequest[]} requests the requests to register
    * @param {string} group the group to which this request resides, the group name is prepended in the url path e.g. group/request
-   * @private
    */
   registerGroup(requests, group) {
     for (const request of requests) {

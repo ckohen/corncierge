@@ -2,15 +2,15 @@
 
 const cache = require('memory-cache');
 const moment = require('moment');
+const APIManager = require('./APIManager');
 const AuthManager = require('./AuthManager');
 const IrcManager = require('./IrcManager');
-const RequestManager = require('./RequestManager');
 
 /**
  * Twitch manager for the application.
- * @extends {RequestManager}
+ * @extends {APIManager}
  */
-class TwitchManager extends RequestManager {
+class TwitchManager extends APIManager {
   constructor(app) {
     super(app, app.options.twitch);
 

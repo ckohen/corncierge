@@ -1,6 +1,8 @@
 'use strict';
 
+const fs = require('fs');
 const http = require('http');
+const https = require('https');
 
 const EventManager = require('./EventManager');
 const events = require('../http/events');
@@ -12,7 +14,18 @@ const RequestManager = require('../http/requests/RequestManager');
  */
 class HTTPManager extends EventManager {
   constructor(app) {
-    super(app, http.createServer(), app.options.http, events);
+    let driver;
+    if (app.options.http.useHttps) {
+      const opts = app.options.http.httpsOptions;
+      if (app.options.http.locations) {
+        opts.key = fs.readFileSync(app.options.http.locations.key);
+        opts.cert = fs.readFileSync(app.options.http.locations.cert);
+      }
+      driver = https.createServer(opts);
+    } else {
+      driver = http.createServer();
+    }
+    super(app, driver, app.options.http, events);
 
     /**
      * The HTTP server.

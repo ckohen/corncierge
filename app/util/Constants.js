@@ -98,9 +98,14 @@ exports.DefaultOptions = {
    * The options for the built in web server
    * @typedef {Object} HTTPOptions
    * @property {number} [port=80] the port to listen on
+   * @property {boolean} [useHttps=false] whether to use http or https
+   * @property {https.ServerOptions} [httpsOptions] options to pass to the createServer call of https, must be provided when useHttps = true
+   * @property {string} httpsOptions.keyLocation the location of the private key for https in PEM format
+   * @property {string} httpsOptions.certLocation the location of the certificate chains for https in PEM format
    */
   http: {
     port: 80,
+    useHttps: false,
   },
 
   /**

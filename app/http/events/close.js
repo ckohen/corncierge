@@ -3,9 +3,7 @@
 module.exports = socket => {
   if (!socket.app.ending) {
     setTimeout(() => {
-      socket.driver.listen(socket.options.port).catch(err => {
-        socket.app.log.error(module, `Listen: ${err}`);
-      });
+      socket.driver.listen(socket.options.port);
     }, 5000);
   }
 };

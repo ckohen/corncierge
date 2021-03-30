@@ -22,6 +22,11 @@ const config = {
   },
   http: {
     port: Number(process.env.HTTP_PORT),
+    useHttps: process.env.USE_HTTPS === 'true',
+    httpsOptions: {
+      certLocation: process.env.HTTPS_CERT,
+      keyLocation: process.env.HTTPS_KEY,
+    },
   },
   log: {
     maxLevel: process.env.LOG_LEVEL,

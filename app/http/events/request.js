@@ -1,6 +1,10 @@
 'use strict';
 
 module.exports = async (socket, request, response) => {
+  // Handle incoming data
+  let data;
+  request.on('data', chunk => (data += chunk));
+  await new Promise(res => request.on('end', res));
   // Ignore aborted requests
   if (request.aborted) {
     return response.end();
@@ -18,7 +22,7 @@ module.exports = async (socket, request, response) => {
       }
     }
     if (method) {
-      socket.requests.get(method.toLowerCase()).run(socket, request.method, request.url, request.headers);
+      socket.requests.get(method.toLowerCase()).run(request.method, request.url, request.headers, data.toString());
       response.statusCode = 202;
       return response.end();
     }
@@ -54,10 +58,10 @@ module.exports = async (socket, request, response) => {
   // Handle internal vs external response
   try {
     if (!handler.responds) {
-      await handler.run(socket, request.method, request.url, request.headers);
+      await handler.run(request.method, request.url, request.headers, data);
       response.statusCode = 202;
     } else {
-      const res = await handler.run(socket, request.method, request.url, request.headers);
+      const res = await handler.run(request.method, request.url, request.headers, data);
       if (res) {
         response.writeHead(res.statusCode, res.headers);
         if (res.data && request.method !== 'HEAD') {
