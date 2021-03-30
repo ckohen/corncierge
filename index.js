@@ -23,7 +23,7 @@ const config = {
   },
   http: {
     port: Number(process.env.HTTP_PORT),
-    useHttps: true,
+    useHttps: process.env.USE_HTTPS === 'true',
     httpsOptions: {
       cert: fs.readFileSync(process.env.HTTPS_CERT),
       key: fs.readFileSync(process.env.HTTPS_KEY),
