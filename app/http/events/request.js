@@ -18,7 +18,7 @@ module.exports = async (socket, request, response) => {
       }
     }
     if (method) {
-      socket.requests.get(method.toLowerCase()).run(socket, request.method, request.url, request.headers);
+      socket.requests.get(method.toLowerCase()).run(request.method, request.url, request.headers);
       response.statusCode = 202;
       return response.end();
     }
@@ -54,10 +54,10 @@ module.exports = async (socket, request, response) => {
   // Handle internal vs external response
   try {
     if (!handler.responds) {
-      await handler.run(socket, request.method, request.url, request.headers);
+      await handler.run(request.method, request.url, request.headers);
       response.statusCode = 202;
     } else {
-      const res = await handler.run(socket, request.method, request.url, request.headers);
+      const res = await handler.run(request.method, request.url, request.headers);
       if (res) {
         response.writeHead(res.statusCode, res.headers);
         if (res.data && request.method !== 'HEAD') {
