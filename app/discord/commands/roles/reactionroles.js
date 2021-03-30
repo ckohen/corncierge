@@ -1,6 +1,6 @@
 'use strict';
 
-const { confirmAction, delayDelete } = require('../../../util/UtilManager').discord;
+const { confirmAction } = require('../../../util/UtilManager').discord;
 const BaseCommand = require('../BaseCommand');
 
 class ReactionRolesCommand extends BaseCommand {
@@ -132,12 +132,12 @@ class ReactionRolesCommand extends BaseCommand {
               `${message.member}, Unable to generate reaction roles here. ` +
                 `Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``,
             )
-            .then(msg => delayDelete(msg, 5000));
+            .then(msg => msg.delayDelete(5000));
           message.delete();
           return;
         }
         if (emojis.length < 1) {
-          message.channel.send(`${message.member}, There are no reaction roles yet!`).then(msg => delayDelete(msg, 5000));
+          message.channel.send(`${message.member}, There are no reaction roles yet!`).then(msg => msg.delayDelete(5000));
           message.delete();
           return;
         }
@@ -163,7 +163,7 @@ class ReactionRolesCommand extends BaseCommand {
       case 'update':
         // Check that there is an existing message
         if (!guild.messageID) {
-          message.channel.send(`${message.member}, There is no reaction role message yet, unable to update it!`).then(msg => delayDelete(msg, 5000));
+          message.channel.send(`${message.member}, There is no reaction role message yet, unable to update it!`).then(msg => msg.delayDelete(5000));
           message.delete();
           return;
         }
@@ -171,7 +171,7 @@ class ReactionRolesCommand extends BaseCommand {
         // Check to make sure the message still exists
         oldMsg = await socket.driver.channels.cache.get(guild.channelID).messages.fetch(guild.messageID).catch();
         if (!oldMsg) {
-          message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => delayDelete(msg, 5000));
+          message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => msg.delayDelete(5000));
           guild.messageID = '';
           guild.channelID = '';
           socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
@@ -187,7 +187,7 @@ class ReactionRolesCommand extends BaseCommand {
               `${message.member}, Unable to update reaction roles message, ` +
                 `Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``,
             )
-            .then(msg => delayDelete(msg, 5000));
+            .then(msg => msg.delayDelete(5000));
           message.delete();
           return;
         }
@@ -374,7 +374,7 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
   } else {
     emoteMsg.delete();
     let errorMsg = await initiator.channel.send('I do not have access to that emote at this time, please try again!');
-    delayDelete(errorMsg, 5000);
+    errorMsg.delayDelete(5000);
     return getEmote(sock, initiator, roleList, emojis, add);
   }
 }

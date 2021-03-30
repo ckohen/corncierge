@@ -48,8 +48,8 @@ module.exports = async (socket, message) => {
       const errMsg = await message.channel.send(`You're not allowed to do that, ${message.author}.`).catch(err => {
         socket.app.log.warn(module, err);
       });
-      discord.delayDelete(message, 3000);
-      if (errMsg) discord.delayDelete(errMsg, 3000);
+      message.delayDelete(3000);
+      if (errMsg) errMsg.delayDelete(3000);
       return;
     }
   }
@@ -59,8 +59,8 @@ module.exports = async (socket, message) => {
     const errMsg = await message.channel.send(`You're not allowed to do that, ${message.author}.`).catch(err => {
       socket.app.log.warn(module, err);
     });
-    discord.delayDelete(message, 3000);
-    if (errMsg) discord.delayDelete(errMsg, 3000);
+    message.delayDelete(3000);
+    if (errMsg) errMsg.delayDelete(3000);
     return;
   }
 

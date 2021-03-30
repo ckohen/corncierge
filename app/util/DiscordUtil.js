@@ -29,7 +29,7 @@ class DiscordUtil {
     if (!reacted) {
       const errorMsg = await message.channel.send(`${message.member}, No reaction received, cancelling!`);
       confirmMsg.delete().then(() => (reacted = false));
-      module.exports.delayDelete(errorMsg, 6000);
+      errorMsg.delayDelete(6000);
       return Promise.reject(new Error('No Response'));
     }
 
@@ -37,7 +37,7 @@ class DiscordUtil {
     const reaction = collected.first();
     if (reaction.emoji.name === '❌') {
       const cancelledMsg = await message.channel.send(`${message.member}, Cancelled!`);
-      module.exports.delayDelete(cancelledMsg, 5000);
+      cancelledMsg.delayDelete(5000);
       confirmMsg.delete();
       return false;
     } else {
@@ -46,15 +46,20 @@ class DiscordUtil {
     }
   }
 
-  /**
-   * Deletes a message (if possible) after a specified time
-   * @param {Message} message the message to delete
-   * @param {number} time how long to delay
-   */
-  static delayDelete(message, time) {
-    setTimeout(() => {
-      if (message.deletable) message.delete();
-    }, time);
+  static extendMessage(base) {
+    class CustomMessage extends base {
+      /**
+       * Deletes this message (if possible) after a specified time
+       * @name Message#delayDelete
+       * @param {number} time how long to delay
+       */
+      delayDelete(time) {
+        setTimeout(() => {
+          if (this.deletable) this.delete();
+        }, time);
+      }
+    }
+    return CustomMessage;
   }
 
   /**
