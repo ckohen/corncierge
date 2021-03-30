@@ -23,6 +23,7 @@ class RequestManager {
      */
     this.registered = new Collection();
 
+    this.register(require('./renewCert'), '/api/private/certbot/');
     this.registerGroup(require('./streaming'), 'streaming');
   }
 

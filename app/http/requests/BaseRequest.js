@@ -73,7 +73,8 @@ class BaseRequest {
    * @param {string} method the method used to fetch this request
    * @param {string} url the full uri of the request
    * @param {Object} headers the headers sent with this request
-   * @returns {?RespondData} the data to respond with
+   * @param {?string} data the data recieved with the request
+   * @returns {?(RespondData|Promise<RespondData>)} the data to respond with
    * @abstract
    */
   run() {
