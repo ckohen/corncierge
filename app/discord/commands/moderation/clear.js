@@ -13,13 +13,13 @@ class ClearCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message, [amountRaw]) {
+  run(message, [amountRaw]) {
     const amount = parseInt(amountRaw, 10);
 
     // No numeric amount given
     if (Number.isNaN(amount)) {
       message.channel.send(`Provide an amount to clear, ${message.author}.`).catch(err => {
-        socket.app.log.error(module, err);
+        this.socket.app.log.error(module, err);
       });
       return;
     }
@@ -28,15 +28,15 @@ class ClearCommand extends BaseCommand {
     message.channel
       .bulkDelete(clamp(amount + 1, 2, 100), true)
       .then(deleted => {
-        socket.app.log.debug(module, `Deleted ${deleted.size} messages`);
+        this.socket.app.log.debug(module, `Deleted ${deleted.size} messages`);
       })
       .catch(err => {
-        socket.app.log.warn(module, err);
+        this.socket.app.log.warn(module, err);
       });
-    if (discord.isGuild(message.guild.id, 'platicorn', socket.app.settings)) {
-      socket.sendWebhook('clear', `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);
+    if (discord.isGuild(message.guild.id, 'platicorn', this.socket.app.settings)) {
+      this.socket.sendWebhook('clear', `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);
     } else if (message.guild.id === '756319910191300778') {
-      socket.sendMessage('helpLogs', `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);
+      this.socket.sendMessage('helpLogs', `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);
     }
   }
 }

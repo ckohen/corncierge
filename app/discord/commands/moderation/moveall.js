@@ -14,7 +14,7 @@ class MoveAllCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message, args) {
+  async run(message, args) {
     let voiceChannel;
     let newChannel;
     let toChannel;
@@ -52,7 +52,7 @@ class MoveAllCommand extends BaseCommand {
       // Move members
       voiceChannel.members.forEach(member => {
         member.voice.setChannel(newChannel).catch(err => {
-          socket.app.log.warn(module, err);
+          this.socket.app.log.warn(module, err);
         });
       });
       confMsg = await message.channel.send(`Moving all voice members to ${newChannel.name}`);

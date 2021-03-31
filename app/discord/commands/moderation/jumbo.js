@@ -12,7 +12,7 @@ class JumboCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message, args) {
+  run(message, args) {
     const requestRaw = args[0];
 
     if (new RegExp(/<(a)?:.+:.*>.*/, 'gi').test(requestRaw)) {

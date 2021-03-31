@@ -13,13 +13,13 @@ class PauseCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message) {
+  run(message) {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
       message.channel.send(`${message.member}, Join a channel and try again`);
       return;
     }
-    const musicData = socket.musicData.get(String(message.guild.id));
+    const musicData = this.socket.musicData.get(String(message.guild.id));
 
     if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
       message.channel.send(`${message.member}, There is no song playing right now!`);

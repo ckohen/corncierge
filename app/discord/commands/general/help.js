@@ -14,7 +14,8 @@ class HelpCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message, args) {
+  run(message, args) {
+    const socket = this.socket;
     const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
     if (args[0] === 'legacy') {
       let command = args[1];

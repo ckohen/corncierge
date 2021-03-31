@@ -16,9 +16,9 @@ class EvalCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message, args) {
+  async run(message, args) {
     /* eslint-disable-next-line no-unused-vars */
-    const client = socket.driver;
+    const client = this.socket.driver;
     args = args.join(' ');
     if (args.toLowerCase().includes('token') || args.toLowerCase().includes('secret')) {
       message.channel.send(`Error: Execution of command refused`);

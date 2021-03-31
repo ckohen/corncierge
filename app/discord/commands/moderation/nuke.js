@@ -12,7 +12,7 @@ class NukeCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message) {
+  run(message) {
     // Check if voice channel
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
@@ -23,7 +23,7 @@ class NukeCommand extends BaseCommand {
     // Unmute members
     voiceChannel.members.forEach(member => {
       member.voice.kick().catch(err => {
-        socket.app.log.warn(module, err);
+        this.socket.app.log.warn(module, err);
       });
     });
 

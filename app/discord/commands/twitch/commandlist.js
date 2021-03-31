@@ -15,10 +15,10 @@ class CommandListCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message, [arg]) {
-    if (socket.app.options.disableIRC) {
+  run(message, [arg]) {
+    if (this.socket.app.options.disableIRC) {
       message.channels.send('Twitch is not enabled for this bot (this command should be disabled)').catch(err => {
-        socket.app.log.warn(module, err);
+        this.socket.app.log.warn(module, err);
       });
       return;
     }
@@ -32,8 +32,8 @@ class CommandListCommand extends BaseCommand {
       }
     }
 
-    const row = command ? socket.app.twitch.irc.commands.get(command) : null;
-    const commands = row ? new Collection([[command, row]]) : socket.app.twitch.irc.commands;
+    const row = command ? this.socket.app.twitch.irc.commands.get(command) : null;
+    const commands = row ? new Collection([[command, row]]) : this.socket.app.twitch.irc.commands;
 
     let lines = commands
       .sort((va, vb, ka, kb) => +(ka > kb) || +(ka === kb) - 1)
@@ -62,7 +62,7 @@ class CommandListCommand extends BaseCommand {
     paginated.join('\n\n');
 
     message.channel.send(`\`\`\`${paginated.join('\n\n')}\`\`\``, { split: true }).catch(err => {
-      socket.app.log.warn(module, err);
+      this.socket.app.log.warn(module, err);
     });
   }
 }

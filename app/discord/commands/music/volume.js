@@ -15,7 +15,7 @@ class VolumeCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message, args) {
+  run(message, args) {
     const wantedVolume = Number(args[0]);
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
@@ -23,7 +23,7 @@ class VolumeCommand extends BaseCommand {
       return;
     }
 
-    const musicData = socket.musicData.get(String(message.guild.id));
+    const musicData = this.socket.musicData.get(String(message.guild.id));
     if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;
@@ -33,9 +33,9 @@ class VolumeCommand extends BaseCommand {
       musicData.volume = volume;
       musicData.songDispatcher.setVolume(volume);
       try {
-        socket.app.database.tables.volumes.edit(String(message.guild.id), volume);
+        this.socket.app.database.tables.volumes.edit(String(message.guild.id), volume);
       } catch (err) {
-        socket.app.log.error(module, err);
+        this.socket.app.log.error(module, err);
       }
       message.channel.send(`I set the volume to: ${wantedVolume}%`);
     } else {

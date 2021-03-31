@@ -18,7 +18,7 @@ class PlayCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message, args) {
+  async run(message, args) {
     let query = args.join(' ');
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
@@ -26,7 +26,7 @@ class PlayCommand extends BaseCommand {
       return;
     }
 
-    const musicData = socket.musicData.get(String(message.guild.id));
+    const musicData = this.socket.musicData.get(String(message.guild.id));
 
     if (!message.guild.me.voice.channel) {
       musicData.isPlaying = false;
@@ -38,7 +38,7 @@ class PlayCommand extends BaseCommand {
       }
     }
 
-    const youtube = new discordYoutube(socket.app.options.youtube.token);
+    const youtube = new discordYoutube(this.socket.app.options.youtube.token);
 
     if (
       // If the user entered a youtube playlist url
@@ -70,13 +70,13 @@ class PlayCommand extends BaseCommand {
             }
             */
           } catch (err) {
-            socket.app.log.warn(module, err);
+            this.socket.app.log.warn(module, err);
           }
         }
       }
       waitNotify.delete();
       if (musicData.isPlaying === false) {
-        playSong(musicData.queue, message, socket);
+        playSong(musicData.queue, message, this.socket);
         return;
       } else if (musicData.isPlaying === true) {
         message.channel.send(`Playlist - :musical_note:  ${playlist.title} :musical_note: has been added to queue`);
@@ -109,7 +109,7 @@ class PlayCommand extends BaseCommand {
       musicData.queue.push(constructSongObj(video, voiceChannel, message.member.user));
       if (musicData.isPlaying === false || typeof musicData.isPlaying === 'undefined') {
         musicData.isPlaying = true;
-        playSong(musicData.queue, message, socket);
+        playSong(musicData.queue, message, this.socket);
         return;
       } else if (musicData.isPlaying === true) {
         message.channel.send(`${video.title} added to queue`);
@@ -130,7 +130,7 @@ class PlayCommand extends BaseCommand {
       vidNameArr.push(`${i + 1}: ${videos[i].title}`);
     }
     vidNameArr.push('exit');
-    var songSearch = socket.getEmbed('songSearch', [vidNameArr]);
+    var songSearch = this.socket.getEmbed('songSearch', [vidNameArr]);
     var songEmbed = await message.channel.send(songSearch);
     message.channel
       .awaitMessages(msg => (msg.content > 0 && msg.content < 6) || msg.content === 'exit', { max: 1, time: 60000, errors: ['time'] })
@@ -168,7 +168,7 @@ class PlayCommand extends BaseCommand {
               if (songEmbed) {
                 songEmbed.delete();
               }
-              playSong(musicData.queue, message, socket);
+              playSong(musicData.queue, message, this.socket);
             } else if (musicData.isPlaying === true) {
               if (songEmbed) {
                 songEmbed.delete();

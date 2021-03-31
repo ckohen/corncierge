@@ -21,7 +21,8 @@ class RandomMoveCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message, args) {
+  async run(message, args) {
+    const socket = this.socket;
     const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['to', 'from', 'move'];
 

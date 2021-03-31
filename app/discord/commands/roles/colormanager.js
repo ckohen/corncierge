@@ -15,8 +15,8 @@ class ColorManagerCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message, args) {
-    const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+  async run(message, args) {
+    const commandPrefix = this.socket.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['add', 'remove', 'channel', 'list'];
 
     const [methodRaw, chroleRaw, ...extraArgs] = args;
@@ -31,7 +31,7 @@ class ColorManagerCommand extends BaseCommand {
     let roles = [];
 
     //  A list of key value pairs with channels and available roles
-    let guild = socket.colorManager.get(String(message.guild.id));
+    let guild = this.socket.colorManager.get(String(message.guild.id));
 
     // The second argument changes
     if (method === 'channel') {
@@ -136,13 +136,13 @@ class ColorManagerCommand extends BaseCommand {
       case 'list':
     }
 
-    await socket.app.database.tables.colorManager.edit(String(message.guild.id), guild.roles, guild.snowflakes);
+    await this.socket.app.database.tables.colorManager.edit(String(message.guild.id), guild.roles, guild.snowflakes);
 
     // Determine the number of channels and get ready to loop through them
     let channels = Object.keys(guild.roles);
 
     // Create base embed
-    let msg = socket.getEmbed('colormanager', [message.member, commandPrefix]);
+    let msg = this.socket.getEmbed('colormanager', [message.member, commandPrefix]);
     if (channels.length < 1) {
       message.channel.send('**No channel specified yet**', msg);
       return;
@@ -171,7 +171,7 @@ class ColorManagerCommand extends BaseCommand {
         } else {
           fields = 0;
           message.channel.send(msg);
-          msg = socket.getEmbed('colormanager', [message.member, commandPrefix]);
+          msg = this.socket.getEmbed('colormanager', [message.member, commandPrefix]);
         }
       }
     } else if (outRoles.length > 0) {

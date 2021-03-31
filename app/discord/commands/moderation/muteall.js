@@ -13,7 +13,7 @@ class MuteAllCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message, args) {
+  async run(message, args) {
     // Check if voice channel
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
@@ -37,7 +37,7 @@ class MuteAllCommand extends BaseCommand {
       await voiceChannel.members.forEach(member => {
         if (!member.user.bot && !(member === message.member)) {
           member.voice.setMute(true).catch(err => {
-            socket.app.log.warn(module, err);
+            this.socket.app.log.warn(module, err);
           });
         } else {
           count -= 1;
@@ -56,7 +56,7 @@ class MuteAllCommand extends BaseCommand {
       setTimeout(() => {
         voiceChannel.members.forEach(member => {
           member.voice.setMute(false).catch(err => {
-            socket.app.log.warn(module, err);
+            this.socket.app.log.warn(module, err);
           });
         });
       }, delay);

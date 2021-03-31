@@ -10,7 +10,7 @@ class InviteCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message) {
+  run(message) {
     message.channel.send(
       'Thank you for your interest in corncierge, you can add the bot and see more infomation at <https://www.corncierge.com> \n\n' +
         'and here is a direct invite link: \n' +

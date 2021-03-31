@@ -74,7 +74,7 @@ module.exports = async (socket, message) => {
 
   // Handle command
   try {
-    await handler.run(socket, message, args);
+    await handler.run(message, args);
   } catch (err) {
     socket.app.log.warn(module, `Error occured during command call ${handler.name}: ${util.formatWithOptions({}, err)}`);
   }

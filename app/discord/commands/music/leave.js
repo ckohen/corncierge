@@ -14,9 +14,9 @@ class LeaveCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message) {
+  run(message) {
     var voiceChannel = message.member.voice.channel;
-    let musicData = socket.musicData.get(String(message.guild.id));
+    let musicData = this.socket.musicData.get(String(message.guild.id));
     if (!voiceChannel) {
       message.channel.send(`${message.member}, Join a channel and try again`);
     } else if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {

@@ -14,8 +14,8 @@ class AutoRoleCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message, args) {
-    const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+  async run(message, args) {
+    const commandPrefix = this.socket.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['set', 'remove', 'status'];
 
     const [methodRaw, roleRaw, ...extraArgs] = args;
@@ -30,7 +30,7 @@ class AutoRoleCommand extends BaseCommand {
     let time = 0;
 
     //  A list of key value pairs with current automatic role data
-    let guild = socket.newMemberRole.get(String(message.guild.id));
+    let guild = this.socket.newMemberRole.get(String(message.guild.id));
 
     // Check for actual role
     if (roleRaw && roleRaw.startsWith('<@&') && roleRaw.endsWith('>')) {
@@ -85,14 +85,14 @@ class AutoRoleCommand extends BaseCommand {
         // Remove data
         guild.roleID = '';
         guild.delayTime = '0';
-        await socket.app.database.tables.newMemberRole.edit(String(message.guild.id), guild.roleID, guild.delayTime);
+        await this.socket.app.database.tables.newMemberRole.edit(String(message.guild.id), guild.roleID, guild.delayTime);
         message.channel.send(`${message.member}, I will no longer assign a role to new members!`);
         return;
       case 'status':
     }
 
     // Update database
-    await socket.app.database.tables.newMemberRole.edit(String(message.guild.id), guild.roleID, guild.delayTime);
+    await this.socket.app.database.tables.newMemberRole.edit(String(message.guild.id), guild.roleID, guild.delayTime);
 
     // Variables for response message
     let delay = false;

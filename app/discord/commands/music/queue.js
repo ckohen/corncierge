@@ -13,8 +13,8 @@ class QueueCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message) {
-    const musicData = socket.musicData.get(String(message.guild.id));
+  run(message) {
+    const musicData = this.socket.musicData.get(String(message.guild.id));
     if (musicData.queue.length === 0) {
       return message.channel.send(`${message.member}, There are no songs in queue!`);
     }
@@ -23,7 +23,7 @@ class QueueCommand extends BaseCommand {
     musicData.queue.slice(0, 10).forEach(obj => {
       titleArray.push(obj.title);
     });
-    var queueEmbed = socket.getEmbed('queue', [musicData.queue]);
+    var queueEmbed = this.socket.getEmbed('queue', [musicData.queue]);
     for (let i = 0; i < titleArray.length; i++) {
       queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
     }

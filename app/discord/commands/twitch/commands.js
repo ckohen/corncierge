@@ -12,10 +12,10 @@ class CommandsCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message, args) {
-    if (socket.app.options.disableIRC) {
+  async run(message, args) {
+    if (this.socket.app.options.disableIRC) {
       message.channels.send('Twitch is not enabled for this bot (this command should be disabled)').catch(err => {
-        socket.app.log.warn(module, err);
+        this.socket.app.log.warn(module, err);
       });
       return;
     }
@@ -31,7 +31,7 @@ class CommandsCommand extends BaseCommand {
       if (!content) return;
       const target = mention ? `, ${message.author}` : '';
       message.channel.send(`${content}${target}.`).catch(err => {
-        socket.app.log.warn(module, err);
+        this.socket.app.log.warn(module, err);
       });
     };
 
@@ -46,7 +46,7 @@ class CommandsCommand extends BaseCommand {
       return;
     }
 
-    const command = socket.app.twitch.irc.commands.get(input);
+    const command = this.socket.app.twitch.irc.commands.get(input);
 
     if (command && command.locked) {
       respond("That command is locked and can't be modified");
@@ -146,17 +146,17 @@ class CommandsCommand extends BaseCommand {
 
     try {
       if (method === 'edit') {
-        await socket.app.database.tables.ircCommands[method](submethod, data);
+        await this.socket.app.database.tables.ircCommands[method](submethod, data);
       } else {
-        await socket.app.database.tables.ircCommands[method](data);
+        await this.socket.app.database.tables.ircCommands[method](data);
       }
     } catch (err) {
-      socket.app.log.warn(module, err);
+      this.socket.app.log.warn(module, err);
       respond(failure);
       return;
     }
 
-    await socket.app.twitch.irc.cacheCommands();
+    await this.socket.app.twitch.irc.cacheCommands();
 
     send(success);
   }

@@ -13,9 +13,9 @@ class ReloadCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message) {
-    const { discord, twitch, log, settings, streaming } = socket.app;
-    const ircDisabled = !socket.app.options.disableIRC;
+  run(message) {
+    const { discord, twitch, log, settings, streaming } = this.socket.app;
+    const ircDisabled = !this.socket.app.options.disableIRC;
 
     log(module, 'Reload instruct received');
 
@@ -24,8 +24,8 @@ class ReloadCommand extends BaseCommand {
 
     // Reload application state
     Promise.all([
-      socket.app.setSettings(),
-      socket.app.setStreaming(),
+      this.socket.app.setSettings(),
+      this.socket.app.setStreaming(),
       ircDisabled ? Promise.resolve('Twitch Disabled') : twitch.irc.setCache(),
       discord.setCache(),
     ]).then(async () => {
@@ -41,8 +41,8 @@ class ReloadCommand extends BaseCommand {
         md('total guilds', discord.prefixes.size),
       ];
 
-      await socket.driver.user.setActivity(socket.app.settings.get('discord_activity') || null, {
-        type: socket.app.settings.get('discord_activity_type') || 'PLAYING',
+      await this.socket.driver.user.setActivity(this.socket.app.settings.get('discord_activity') || null, {
+        type: this.socket.app.settings.get('discord_activity_type') || 'PLAYING',
       });
 
       message.channel.send(response).catch(err => {

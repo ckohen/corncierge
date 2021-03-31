@@ -18,8 +18,8 @@ class RoleManagerCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message, args) {
-    const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+  async run(message, args) {
+    const commandPrefix = this.socket.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['add', 'remove', 'list'];
 
     const [methodRaw, channelRaw, roleRaw, ...extraArgs] = args;
@@ -66,7 +66,7 @@ class RoleManagerCommand extends BaseCommand {
     roles.forEach(role => roleNames.push(role.name.toLowerCase()));
 
     //  A list of key value pairs with channels and available roles
-    let guild = socket.roleManager.get(String(message.guild.id));
+    let guild = this.socket.roleManager.get(String(message.guild.id));
 
     switch (method) {
       case 'add':
@@ -127,7 +127,7 @@ class RoleManagerCommand extends BaseCommand {
           if (guild.removeRoles[String(channel.id)]) {
             delete guild.removeRoles[String(channel.id)];
           }
-          await socket.app.database.tables.roleManager.edit(String(message.guild.id), guild.addRoles, guild.removeRoles);
+          await this.socket.app.database.tables.roleManager.edit(String(message.guild.id), guild.addRoles, guild.removeRoles);
           message.channel.send(`Deleted ${channel} from role manager`);
           return;
         }
@@ -153,7 +153,7 @@ class RoleManagerCommand extends BaseCommand {
       case 'list':
     }
 
-    await socket.app.database.tables.roleManager.edit(String(message.guild.id), guild.addRoles, guild.removeRoles);
+    await this.socket.app.database.tables.roleManager.edit(String(message.guild.id), guild.addRoles, guild.removeRoles);
 
     // Determine the number of channels and get ready to loop through them
     let channels = Object.keys(guild.addRoles);
@@ -170,7 +170,7 @@ class RoleManagerCommand extends BaseCommand {
     }
 
     // Create base embed
-    let msg = socket.getEmbed('rolemanager', [message.member, commandPrefix]);
+    let msg = this.socket.getEmbed('rolemanager', [message.member, commandPrefix]);
     if (channels.length < 1) {
       message.channel.send('**No roles specified yet**', msg);
       return;
@@ -227,7 +227,7 @@ class RoleManagerCommand extends BaseCommand {
           } else {
             fields = 0;
             message.channel.send(msg);
-            msg = socket.getEmbed('rolemanager', [message.member, commandPrefix]);
+            msg = this.socket.getEmbed('rolemanager', [message.member, commandPrefix]);
           }
         }
       } else if (compiledRoles.length > 0) {

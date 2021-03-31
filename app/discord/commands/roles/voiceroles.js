@@ -15,8 +15,8 @@ class VoiceRolesCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message, args) {
-    const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+  async run(message, args) {
+    const commandPrefix = this.socket.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['add', 'remove', 'list'];
 
     const [methodRaw, chRoleRaw, ...extraArgs] = args;
@@ -32,7 +32,7 @@ class VoiceRolesCommand extends BaseCommand {
     let channels = [];
 
     //  A list of key value pairs with channels and available roles
-    let guild = socket.voiceRoles.get(String(message.guild.id));
+    let guild = this.socket.voiceRoles.get(String(message.guild.id));
 
     // Check if channel or role and if it's valid
     if (chRoleRaw && chRoleRaw.startsWith('<#') && chRoleRaw.endsWith('>')) {
@@ -182,10 +182,10 @@ class VoiceRolesCommand extends BaseCommand {
       case 'list':
     }
 
-    await socket.app.database.tables.voiceRoles.edit(String(message.guild.id), guild.data);
+    await this.socket.app.database.tables.voiceRoles.edit(String(message.guild.id), guild.data);
 
     // Create base embed
-    let msg = socket.getEmbed('voiceRoles', [message.member, commandPrefix]);
+    let msg = this.socket.getEmbed('voiceRoles', [message.member, commandPrefix]);
     if (roles.length < 1) {
       message.channel.send('**No voice roles specified yet**, a role named `voice` will apply to all voice channels until at least one is specified.', msg);
       return;

@@ -24,6 +24,7 @@ class HelloWorldRequest extends BaseRequest {
   }
 
   // The function that is called when the webpage (/helloworld in this case) is called
+  // There is a 4th parameter which contains the data set with the request if any, for POST, PUT, etc...
   run(method, url, headers) {
     // Use this.socket if you need to talk to the HTTPManager
     this.socket.app.log(module, `Hellow world page served from request with headers: ${headers}`);

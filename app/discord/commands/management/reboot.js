@@ -11,15 +11,15 @@ class RebootCommand extends BaseCommand {
     super(socket, info);
   }
 
-  async run(socket, message) {
-    socket.app.log(module, 'Reboot instruct received');
+  async run(message) {
+    this.socket.app.log(module, 'Reboot instruct received');
 
     await message.channel.send('Rebooting now!').catch(err => {
-      socket.app.log.warn(module, err);
+      this.socket.app.log.warn(module, err);
     });
 
     // Reboot
-    socket.app.end(0);
+    this.socket.app.end(0);
   }
 }
 

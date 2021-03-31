@@ -13,10 +13,10 @@ class StatusCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message) {
-    const { discord, twitch, settings } = socket.app;
+  run(message) {
+    const { discord, twitch, settings } = this.socket.app;
     const { rss, heapUsed } = process.memoryUsage();
-    const ircDisabled = !socket.app.options.disableIRC;
+    const ircDisabled = !this.socket.app.options.disableIRC;
 
     const status = [
       `Uptime: **${humanDuration(process.uptime() * 1000)}**`,
@@ -27,7 +27,7 @@ class StatusCommand extends BaseCommand {
     ];
 
     message.channel.send(status).catch(err => {
-      socket.app.log.warn(module, err);
+      this.socket.app.log.warn(module, err);
     });
   }
 }

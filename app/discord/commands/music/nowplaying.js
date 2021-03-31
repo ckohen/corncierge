@@ -13,8 +13,8 @@ class NowPlayingCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message) {
-    let musicData = socket.musicData.get(String(message.guild.id));
+  run(message) {
+    let musicData = this.socket.musicData.get(String(message.guild.id));
     if (!musicData.isPlaying && !musicData.nowPlaying) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;
@@ -28,7 +28,7 @@ class NowPlayingCommand extends BaseCommand {
       description = playbackBar(musicData, video);
     }
 
-    const videoEmbed = socket.getEmbed('videoEmbed', [video, description]);
+    const videoEmbed = this.socket.getEmbed('videoEmbed', [video, description]);
 
     message.channel.send(videoEmbed);
   }

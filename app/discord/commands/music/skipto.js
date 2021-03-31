@@ -15,9 +15,9 @@ class SkipToCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message, args) {
+  run(message, args) {
     const songNumber = Number(args.join(' '));
-    const musicData = socket.musicData.get(String(message.guild.id));
+    const musicData = this.socket.musicData.get(String(message.guild.id));
     if (songNumber < 1 || songNumber > musicData.queue.length + 1) {
       message.channel.send(`${message.member}, Please enter a valid song number`);
       return;

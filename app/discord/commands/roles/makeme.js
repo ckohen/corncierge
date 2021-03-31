@@ -13,14 +13,14 @@ class MakeMeCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message, args) {
+  run(message, args) {
     args = args.join(' ');
     // A list of key value pairs with channels and available roles
-    let channelName = socket.roleManager.get(String(message.guild.id)).addRoles;
+    let channelName = this.socket.roleManager.get(String(message.guild.id)).addRoles;
 
     // If a role from a valid channel is typed in that channel add the role to the user
     if (channelName[String(message.channel.id)]) {
-      roleAssign(socket, message, channelName[String(message.channel.id)], args);
+      roleAssign(this.socket, message, channelName[String(message.channel.id)], args);
     } else {
       message.delete();
     }

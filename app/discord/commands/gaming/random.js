@@ -13,9 +13,9 @@ class RandomCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(socket, message, args) {
+  run(message, args) {
     // Detect 'flip' without args
-    const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.prefixes.get(String(message.guild.id)).prefix;
     const full = message.content.slice(commandPrefix.length).trim().split(/\s+/g);
     const command = full.shift().toLowerCase();
 
