@@ -21,7 +21,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
     "axios": "^0.21.1",
-    "discord.js": "^12.5.1",
+    "discord.js": "^12.5.2",
     "dotenv": "^8.2.0",
     "ffmpeg-static": "^4.2.6",
     "humanize-duration": "^3.23.1",
