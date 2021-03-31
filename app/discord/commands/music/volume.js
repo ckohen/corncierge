@@ -23,7 +23,7 @@ class VolumeCommand extends BaseCommand {
       return;
     }
 
-    const musicData = this.socket.musicData.get(String(message.guild.id));
+    const musicData = this.socket.cache.musicData.get(String(message.guild.id));
     if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;

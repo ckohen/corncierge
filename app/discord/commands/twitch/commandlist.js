@@ -32,8 +32,8 @@ class CommandListCommand extends BaseCommand {
       }
     }
 
-    const row = command ? this.socket.app.twitch.irc.commands.get(command) : null;
-    const commands = row ? new Collection([[command, row]]) : this.socket.app.twitch.irc.commands;
+    const row = command ? this.socket.app.twitch.irc.cache.commands.get(command) : null;
+    const commands = row ? new Collection([[command, row]]) : this.socket.app.twitch.irc.cache.commands;
 
     let lines = commands
       .sort((va, vb, ka, kb) => +(ka > kb) || +(ka === kb) - 1)

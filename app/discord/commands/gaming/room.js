@@ -26,7 +26,7 @@ class RoomCommand extends BaseCommand {
 
   async run(message, args) {
     const socket = this.socket;
-    const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = socket.cache.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['create', 'set', 'remove', 'list', 'join', 'leave', 'clear', 'fill', 'transfer'];
 
     const [methodRaw, ...extraArgs] = args;
@@ -37,11 +37,11 @@ class RoomCommand extends BaseCommand {
     }
 
     //  A list of key value pairs with room ids and their associated room
-    let rooms = socket.rooms.get(String(message.guild.id));
+    let rooms = socket.cache.rooms.get(String(message.guild.id));
 
     if (typeof rooms === 'undefined' || rooms === null) {
-      socket.rooms.set(String(message.guild.id), new Collection());
-      rooms = socket.rooms.get(String(message.guild.id));
+      socket.cache.rooms.set(String(message.guild.id), new Collection());
+      rooms = socket.cache.rooms.get(String(message.guild.id));
     }
 
     // Get the master room or create it

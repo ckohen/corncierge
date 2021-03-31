@@ -23,7 +23,7 @@ class RandomMoveCommand extends BaseCommand {
 
   async run(message, args) {
     const socket = this.socket;
-    const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = socket.cache.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['to', 'from', 'move'];
 
     let methodRaw = args.shift();
@@ -35,12 +35,12 @@ class RandomMoveCommand extends BaseCommand {
     }
 
     // A list of key value pairs with stored channels for each guild
-    let settings = socket.randomChannels.get(String(message.guild.id));
+    let settings = socket.cache.randomChannels.get(String(message.guild.id));
 
     if (typeof settings === 'undefined' || settings === null) {
-      socket.randomChannels.set(String(message.guild.id), { guildID: String(message.guild.id), toChannel: '', fromChannel: '' });
+      socket.cache.randomChannels.set(String(message.guild.id), { guildID: String(message.guild.id), toChannel: '', fromChannel: '' });
       await socket.app.database.tables.randomChannels.add(String(message.guild.id));
-      settings = socket.randomChannels.get(String(message.guild.id));
+      settings = socket.cache.randomChannels.get(String(message.guild.id));
     }
 
     let voiceChannel;

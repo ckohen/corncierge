@@ -52,58 +52,15 @@ class DiscordManager extends EventManager {
     this.applicationCommands = new Collection();
 
     /**
-     * The color manager settings, mapped by guild.
-     * @type {Collection<string, Object>}
+     * The name of a table from the TableManager
+     * @typedef {string} TableName
      */
-    this.colorManager = new Collection();
 
     /**
-     * The role manager settings, mapped by guild.
-     * @type {Collection<string, Object>}
+     * The local cache of database tables, each mapped by guild id
+     * @type {Object<TableName, Collection<Snowflake, Object>>}
      */
-    this.roleManager = new Collection();
-
-    /**
-     * The reaction role manager settings, mapped by guild.
-     * @type {Collection<string, Object>}
-     */
-    this.reactionRoles = new Collection();
-
-    /**
-     * The voice role manager settings, mapped by guild.
-     * @type {Collection<string, Object>}
-     */
-    this.voiceRoles = new Collection();
-
-    /**
-     * The prefix settings, mapped by guild.
-     * @type {Collection<string, Object>}
-     */
-    this.prefixes = new Collection();
-
-    /**
-     * The rooms currently stored, mapped by guild-roomID.
-     * @type {Collection<string, Object>}
-     */
-    this.rooms = new Collection();
-
-    /**
-     * The random channel movement settings, mapped by guild.
-     * @type {Collection<string, Object>}
-     */
-    this.randomChannels = new Collection();
-
-    /**
-     * The new member role settings, mapped by guild.
-     * @type {Collection<string, Object>}
-     */
-    this.newMemberRole = new Collection();
-
-    /**
-     * The music data, mapped by guild.
-     * @type {Collection<string, Object>}
-     */
-    this.musicData = new Collection();
+    this.cache = {};
   }
 
   /**
@@ -154,7 +111,10 @@ class DiscordManager extends EventManager {
         this.app.database.tables.discord.map(table => {
           const name = table.constructor.name.replace(/Table$/, '');
           this.app.log.debug(module, `Caching ${name}`);
-          return this.cache(table, this[name], 'guildID');
+          if (!this.cache[name]) {
+            this.cache[name] = new Collection();
+          }
+          return this.cacheTable(table, this.cache[name], 'guildID');
         }),
       ),
       this.cacheMusic(),
@@ -169,17 +129,19 @@ class DiscordManager extends EventManager {
    * @returns {Promise<void>}
    * @private
    */
-  cacheMusic() {
+  async cacheMusic() {
     this.app.log.debug(module, 'Caching music');
-    return this.app.database.tables.volumes.get().then(volumes => {
-      this.musicData.clear();
-      volumes.forEach(volume => {
-        if (this.musicData.get(volume.guildID)) {
-          this.musicData.get(volume.guildID).volume = Number(volume.volume);
-        } else {
-          this.musicData.set(volume.guildID, { queue: [], isPlaying: false, nowPlaying: null, songDispatcher: null, volume: Number(volume.volume) });
-        }
-      });
+    const volumes = await this.app.database.tables.volumes.get().catch(err => this.app.log.warn(module, `Error encounted while caching music volumes: ${err}`));
+    if (!this.cache.musicData) {
+      this.cache.musicData = new Collection();
+    }
+    this.cache.musicData.clear();
+    volumes.forEach(volume => {
+      if (this.cache.musicData.get(volume.guildID)) {
+        this.cache.musicData.get(volume.guildID).volume = Number(volume.volume);
+      } else {
+        this.cache.musicData.set(volume.guildID, { queue: [], isPlaying: false, nowPlaying: null, songDispatcher: null, volume: Number(volume.volume) });
+      }
     });
   }
 
@@ -188,21 +150,24 @@ class DiscordManager extends EventManager {
    * @returns {Promise<void>}
    * @private
    */
-  cacheRooms() {
+  async cacheRooms() {
     this.app.log.debug(module, 'Caching rooms');
-    return this.app.database.tables.rooms.get().then(rooms => {
-      this.rooms.clear();
-      let roomGuild, roomID;
-      let guild;
-      rooms.forEach(room => {
-        [roomGuild, roomID] = room.guildRoomID.split('-');
-        guild = this.rooms.get(roomGuild);
-        if (!guild) {
-          this.rooms.set(roomGuild, new Collection());
-          guild = this.rooms.get(roomGuild);
-        }
-        guild.set(roomID, room.data);
-      });
+    const rooms = await this.app.database.tables.rooms.get().catch(err => this.app.log.warn(module, `Error encountered while caching rooms: ${err}`));
+    if (!rooms) return;
+    if (!this.cache.rooms) {
+      this.cache.rooms = new Collection();
+    }
+    this.cache.rooms.clear();
+    let roomGuild, roomID;
+    let guild;
+    rooms.forEach(room => {
+      [roomGuild, roomID] = room.guildRoomID.split('-');
+      guild = this.cache.rooms.get(roomGuild);
+      if (!guild) {
+        this.cache.rooms.set(roomGuild, new Collection());
+        guild = this.cache.rooms.get(roomGuild);
+      }
+      guild.set(roomID, room.data);
     });
   }
 
@@ -215,7 +180,7 @@ class DiscordManager extends EventManager {
    * @returns {Promise}
    * @private
    */
-  cache(table, map, key, secondaryKey = false) {
+  cacheTable(table, map, key, secondaryKey = false) {
     return table.get().then(all => {
       map.clear();
       collect(map, all, key, secondaryKey);

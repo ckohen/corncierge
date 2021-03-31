@@ -21,9 +21,11 @@ class StatusCommand extends BaseCommand {
     const status = [
       `Uptime: **${humanDuration(process.uptime() * 1000)}**`,
       `Memory: **${humanBytes(rss)}** total, **${humanBytes(heapUsed)}** heap`,
-      `State: **${settings.size}** settings ${ircDisabled ? '' : `, **${twitch.irc.filters.size}** filters, **${twitch.irc.commands.size}** commands`}`,
+      `State: **${settings.size}** settings ${
+        ircDisabled ? '' : `, **${twitch.irc.cache.filters.size}** filters, **${twitch.irc.cache.commands.size}** commands`
+      }`,
       `Cache: **${cache.size()}** items`,
-      `Servers: **${discord.prefixes.size}**`,
+      `Servers: **${discord.cache.prefixes.size}**`,
     ];
 
     message.channel.send(status).catch(err => {

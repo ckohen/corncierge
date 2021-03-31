@@ -17,7 +17,7 @@ class ColorsCommand extends BaseCommand {
     args = args.join(' ');
 
     // Get the current guild from the colorManager
-    let guild = this.socket.colorManager.get(String(message.guild.id));
+    let guild = this.socket.cache.colorManager.get(String(message.guild.id));
     // A list of key value pairs with channels and available roles
     let channelName = guild.roles;
 

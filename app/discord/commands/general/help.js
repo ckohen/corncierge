@@ -16,7 +16,7 @@ class HelpCommand extends BaseCommand {
 
   run(message, args) {
     const socket = this.socket;
-    const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = socket.cache.prefixes.get(String(message.guild.id)).prefix;
     if (args[0] === 'legacy') {
       let command = args[1];
       if (command) {
@@ -25,8 +25,8 @@ class HelpCommand extends BaseCommand {
         }
       }
 
-      const handler = command ? socket.commands.get(command.toLowerCase()) : null;
-      const commands = handler ? new Collection([[command, handler]]) : socket.commands;
+      const handler = command ? socket.cache.commands.get(command.toLowerCase()) : null;
+      const commands = handler ? new Collection([[command, handler]]) : socket.cache.commands;
 
       const lines = commands
         .sort((va, vb, ka, kb) => +(ka > kb) || +(ka === kb) - 1)

@@ -6,7 +6,7 @@ module.exports = (socket, before, after) => {
   let embed = false;
   let method = false;
 
-  let voiceRoles = socket.voiceRoles.get(String(after.guild.id));
+  let voiceRoles = socket.cache.voiceRoles.get(String(after.guild.id));
 
   let ignoredRoles = ['140254897479090176', '581396312914919424'];
 

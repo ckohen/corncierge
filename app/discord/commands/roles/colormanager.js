@@ -16,7 +16,7 @@ class ColorManagerCommand extends BaseCommand {
   }
 
   async run(message, args) {
-    const commandPrefix = this.socket.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['add', 'remove', 'channel', 'list'];
 
     const [methodRaw, chroleRaw, ...extraArgs] = args;
@@ -31,7 +31,7 @@ class ColorManagerCommand extends BaseCommand {
     let roles = [];
 
     //  A list of key value pairs with channels and available roles
-    let guild = this.socket.colorManager.get(String(message.guild.id));
+    let guild = this.socket.cache.colorManager.get(String(message.guild.id));
 
     // The second argument changes
     if (method === 'channel') {
