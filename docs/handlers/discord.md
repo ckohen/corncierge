@@ -97,25 +97,18 @@ These commands are mostly self explanatory as they display the information in th
 Because of the unique nature of slash commands, they can be registered per guild or globally. Corncierge provides some helper methods to register commands for you. This is best done using the `eval` command.
 
 ```js
-// Adding all built-in slash commands, globally
-!eval socket.registerCommands(false);
-
-// Adding all built-in slash commands, to a specific guild
-// Checks to see if the commands are registered globally first
-!eval socket.registerCommands(':guildid', false);
-
 // Adding all registered slash commands (yes including custom ones), globally
-// Commands with guild specified will not be registered globally
+// Commands with guilds specified will not be registered globally
 !eval socket.registerCommands();
 
 // Adding all registered slash commands, to a specific guild
 // Checks to see if the commands are registered globally first
-// Commands with guild specified that are not this guild will not get registered to it
+// Commands with guilds specified that are not this guild will not get registered to it
 !eval socket.registerCommands(':guildid');
 
 // Adding a single registered slash command, by name
-// The command will be registered globally if guild is not specified in the command data
-// If guild is specified, it will register to every guild listed
+// The command will be registered globally if guilds is not specified in the command data
+// If guilds is specified in the registration info, it will register to every guild listed
 !eval socket.registerCommand('commandname');
 ```
 

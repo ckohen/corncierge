@@ -1,12 +1,28 @@
 'use strict';
 
-module.exports = {
-  name: 'color',
-  description: 'color [The color from the predefined list of colors]',
-  usage: '<color-role-name>',
-  async run(socket, interaction, args) {
+const BaseAppCommand = require('./BaseAppCommand');
+
+class ColorAppCommand extends BaseAppCommand {
+  constructor(socket) {
+    const info = {
+      definition: {
+        name: 'color',
+        description: 'changes your colorin this server',
+        options: [
+          {
+            type: 8,
+            name: 'color',
+            description: 'the role with the color you want',
+          },
+        ],
+      },
+    };
+    super(socket, info);
+  }
+
+  async run(interaction, args) {
     // Get the current guild from the colorManager
-    let guild = socket.cache.colorManager.get(String(interaction.guild.id));
+    let guild = this.socket.cache.colorManager.get(String(interaction.guild.id));
 
     // An array of snowflakes for all the available color roles to remove all color roles before assigning a new one
     let colorSnowflakes = guild.snowflakes.filter(id => interaction.guild.roles.resolve(id) !== null);
@@ -39,5 +55,7 @@ module.exports = {
       // If the role is invalid, notify user
       interaction.reply(`<@&${roleID}> isn't a valid color role.`, { hideSource: true, ephemeral: true });
     }
-  },
-};
+  }
+}
+
+module.exports = ColorAppCommand;

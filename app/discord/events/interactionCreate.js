@@ -1,10 +1,14 @@
 'use strict';
 
-const message = require('../embeds/message');
+const { discord } = require('../../util/UtilManager');
 
 module.exports = (socket, interaction) => {
   // Check for handler
-  const handler = socket.applicationCommands.get(interaction.commandName);
+  let handler;
+  switch (interaction.type) {
+    case 2:
+      handler = socket.interactions.applicationCommands.get(interaction.commandName);
+  }
 
   if (!handler) {
     interaction.reply('This command has no associated action! Please contact the developer if it is supposed to be doing something!', { ephemeral: true });
@@ -12,9 +16,9 @@ module.exports = (socket, interaction) => {
   }
 
   // Check for channel constraints
-  if (handler.channel) {
-    let valid = socket.app.settings.get(`discord_channel_${handler.channel}`).split(',');
-    if (valid.includes(interaction.channel.id)) return;
+  if (handler.channel && !discord.isChannel(interaction.channel?.id, handler.channel, socket.app.settings)) {
+    interaction.reply('This command is restricted to a specific channel, please go rerun the command there!', { ephemeral: true });
+    return;
   }
 
   // Check for role constraints
@@ -25,11 +29,11 @@ module.exports = (socket, interaction) => {
     }
   }
   // Check permissions
-  if (handler.permissions && !message.member?.permissions.has(handler.permissions)) {
+  if (handler.permissions && !interaction.member?.permissions.has(handler.permissions)) {
     interaction.reply(`You do not have adequate permissions to perform that action!`, { ephemeral: true });
     return;
   }
 
   // Handle command
-  handler.run(socket, interaction, interaction.options);
+  handler.run(interaction, interaction.options);
 };

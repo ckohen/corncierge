@@ -2,22 +2,18 @@
 
 const { MessageEmbed, Constants } = require('discord.js');
 const cache = require('memory-cache');
+const BaseAppCommand = require('./BaseAppCommand');
 
-module.exports = {
-  name: 'prediction',
-  description: 'prediction annoucments',
-  usage: [
-    'redeemed',
-    'start [title] [option1] [option2]',
-    'end <result> [predictionID]',
-    'set <title|option1|option2> [predictionID]',
-    'stats <odds1|odds2|total> [predictionID]',
-    'stucture',
-    'bastion',
-    'win',
-  ],
+class PredictionAppCommand extends BaseAppCommand {
+  constructor(socket) {
+    const info = {
+      guilds: '766024758319120455',
+      definition: getDefinition(),
+    };
+    super(socket, info);
+  }
 
-  async run(socket, interaction, args) {
+  async run(interaction, args) {
     interaction.acknowledge({ ephemeral: true });
 
     const predictionChannel = '806665141466693723';
@@ -241,8 +237,8 @@ module.exports = {
     }
 
     await toEdit.edit(newEmbed);
-  },
-};
+  }
+}
 
 function checkEnded(predictionEmbed) {
   return predictionEmbed.color === Constants.Colors.PURPLE;
@@ -263,135 +259,138 @@ function getPrediction(predictions, id) {
   return predictions.size > 0 ? predictions.first() : null;
 }
 
+module.exports = PredictionAppCommand;
+
 // Command Structure
-/* eslint-disable-next-line no-unused-vars */
-const command = {
-  name: 'prediction',
-  description: 'Manage Predictions',
-  options: [
-    {
-      type: 1,
-      name: 'redeemed',
-      description: 'Pings to let people know a prediction was redeemed',
-    },
-    {
-      type: 1,
-      name: 'start',
-      description: 'Starts a new prediction',
-      options: [
-        {
-          type: 3,
-          name: 'title',
-          description: 'the title of this prediction',
-        },
-        {
-          type: 3,
-          name: 'option1',
-          description: 'the outcome for Blue to win',
-        },
-        {
-          type: 3,
-          name: 'option2',
-          description: 'the outcome for Pink to win',
-        },
-      ],
-    },
-    {
-      type: 1,
-      name: 'structure',
-      description: 'Starts a new structure prediction',
-    },
-    {
-      type: 1,
-      name: 'bastion',
-      description: 'Starts a new bastion prediction',
-    },
-    {
-      type: 1,
-      name: 'win',
-      description: 'Starts a new basic "win" prediction',
-    },
-    {
-      type: 1,
-      name: 'end',
-      description: 'Ends a prediction (newest by default)',
-      options: [
-        {
-          type: 4,
-          name: 'result',
-          description: 'the outcome of the prediction',
-          choices: [
-            {
-              name: 'Blue wins (option 1)',
-              value: 0,
-            },
-            {
-              name: 'Pink wins (option 2)',
-              value: 1,
-            },
-          ],
-          required: true,
-        },
-        {
-          type: 4,
-          name: 'predictionID',
-          description: 'The ID of the prediction to end (default is newest prediction)',
-        },
-      ],
-    },
-    {
-      type: 1,
-      name: 'set',
-      description: 'Change details of a running prediction (newest by default)',
-      options: [
-        {
-          type: 3,
-          name: 'title',
-          description: 'the title for this prediction',
-        },
-        {
-          type: 3,
-          name: 'option1',
-          description: 'the outcome for Blue to win',
-        },
-        {
-          type: 3,
-          name: 'option2',
-          description: 'the outcome for Pink to win',
-        },
-        {
-          type: 4,
-          name: 'predictionID',
-          description: 'The ID of the prediction to edit (default is newest prediction)',
-        },
-      ],
-    },
-    {
-      type: 1,
-      name: 'stats',
-      description: 'Change statistics of a prediction (newest by defaullt)',
-      options: [
-        {
-          type: 3,
-          name: 'odds1',
-          description: 'the odds for Blue to win',
-        },
-        {
-          type: 3,
-          name: 'odds2',
-          description: 'the odds for Pink to win',
-        },
-        {
-          type: 3,
-          name: 'total',
-          description: 'the total number of points spent',
-        },
-        {
-          type: 4,
-          name: 'predictionID',
-          description: 'The ID of the prediction to edit (default is newest prediction)',
-        },
-      ],
-    },
-  ],
-};
+function getDefinition() {
+  return {
+    name: 'prediction',
+    description: 'Manage Predictions',
+    options: [
+      {
+        type: 1,
+        name: 'redeemed',
+        description: 'Pings to let people know a prediction was redeemed',
+      },
+      {
+        type: 1,
+        name: 'start',
+        description: 'Starts a new prediction',
+        options: [
+          {
+            type: 3,
+            name: 'title',
+            description: 'the title of this prediction',
+          },
+          {
+            type: 3,
+            name: 'option1',
+            description: 'the outcome for Blue to win',
+          },
+          {
+            type: 3,
+            name: 'option2',
+            description: 'the outcome for Pink to win',
+          },
+        ],
+      },
+      {
+        type: 1,
+        name: 'structure',
+        description: 'Starts a new structure prediction',
+      },
+      {
+        type: 1,
+        name: 'bastion',
+        description: 'Starts a new bastion prediction',
+      },
+      {
+        type: 1,
+        name: 'win',
+        description: 'Starts a new basic "win" prediction',
+      },
+      {
+        type: 1,
+        name: 'end',
+        description: 'Ends a prediction (newest by default)',
+        options: [
+          {
+            type: 4,
+            name: 'result',
+            description: 'the outcome of the prediction',
+            choices: [
+              {
+                name: 'Blue wins (option 1)',
+                value: 0,
+              },
+              {
+                name: 'Pink wins (option 2)',
+                value: 1,
+              },
+            ],
+            required: true,
+          },
+          {
+            type: 4,
+            name: 'predictionID',
+            description: 'The ID of the prediction to end (default is newest prediction)',
+          },
+        ],
+      },
+      {
+        type: 1,
+        name: 'set',
+        description: 'Change details of a running prediction (newest by default)',
+        options: [
+          {
+            type: 3,
+            name: 'title',
+            description: 'the title for this prediction',
+          },
+          {
+            type: 3,
+            name: 'option1',
+            description: 'the outcome for Blue to win',
+          },
+          {
+            type: 3,
+            name: 'option2',
+            description: 'the outcome for Pink to win',
+          },
+          {
+            type: 4,
+            name: 'predictionID',
+            description: 'The ID of the prediction to edit (default is newest prediction)',
+          },
+        ],
+      },
+      {
+        type: 1,
+        name: 'stats',
+        description: 'Change statistics of a prediction (newest by defaullt)',
+        options: [
+          {
+            type: 3,
+            name: 'odds1',
+            description: 'the odds for Blue to win',
+          },
+          {
+            type: 3,
+            name: 'odds2',
+            description: 'the odds for Pink to win',
+          },
+          {
+            type: 3,
+            name: 'total',
+            description: 'the total number of points spent',
+          },
+          {
+            type: 4,
+            name: 'predictionID',
+            description: 'The ID of the prediction to edit (default is newest prediction)',
+          },
+        ],
+      },
+    ],
+  };
+}
