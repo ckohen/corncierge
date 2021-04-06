@@ -160,7 +160,7 @@ class Application {
       await new Promise(resolve => this.http.driver.close(resolve)).catch(err => this.log.debug(module, err));
     }
     /* eslint-disable-next-line no-empty-function */
-    await new Promise(resolve => this.logger.end(resolve)).catch(() => {});
+    await new Promise(resolve => this.logger.driver.end(resolve)).catch(() => {});
     clearTimeout(panic);
     process.exit(code);
   }
