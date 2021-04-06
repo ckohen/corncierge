@@ -16,6 +16,8 @@ class CommandInteraction extends Interaction {
   }
 
   _patch(data) {
+    this.type = data.type;
+
     /**
      * The ID of this interaction.
      * @type {Snowflake}

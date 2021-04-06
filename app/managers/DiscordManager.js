@@ -1,13 +1,14 @@
 'use strict';
 
 const { Client, Collection, MessageEmbed, Structures } = require('discord.js');
+const lodash = require('lodash');
 
 const EventManager = require('./EventManager');
 const CommandManager = require('../discord/commands/CommandManager');
 const embeds = require('../discord/embeds');
 const events = require('../discord/events');
 const interactionHandler = require('../discord/interactionHandler');
-const applicationCommands = require('../discord/interactions/applicationCommands');
+const InteractionManager = require('../discord/interactions/InteractionManager');
 
 const { collect, constants, discord: util } = require('../util/UtilManager');
 
@@ -46,10 +47,10 @@ class DiscordManager extends EventManager {
     this.commandManager = new CommandManager(this);
 
     /**
-     * The application commands for the socket, mapped by input.
-     * @type {Collection<string, Object>}
+     * The interaction manager that registers all interactions
+     * @type {InteractionManager}
      */
-    this.applicationCommands = new Collection();
+    this.interactionManager = new InteractionManager(this);
 
     /**
      * The name of a table from the TableManager
@@ -89,9 +90,11 @@ class DiscordManager extends EventManager {
     this.commands = this.commandManager.registered;
 
     this.app.log.debug(module, 'Registering interactions');
-    Object.entries(applicationCommands).forEach(([command, handler]) => {
-      this.applicationCommands.set(command, handler);
-    });
+    /**
+     * The interactions for the socket, mapped by type and then by name. Only available after DiscordManager#init()
+     * @type {Interactions}
+     */
+    this.interactions = this.interactionManager.registered;
 
     await this.setCache();
 
@@ -99,6 +102,73 @@ class DiscordManager extends EventManager {
     return this.driver.login(this.options.token).catch(err => {
       this.app.log.critical(module, `Login: ${err}`);
     });
+  }
+
+  /**
+   * Sends global registration data to discord for all application commands that do not have guilds specified
+   * OR
+   * when guildID is provided, register all global commands (that are not yet registered globally) and commands for the guild specified
+   * WARNING: this overwrites all existing global / guild commands, if you do not want this to happen, use `registerCommand`
+   * @param {Snowflake} [guildId] the id of the guild whose application command to register
+   * @returns {Promise<Object[]>}
+   */
+  async registerCommands(guildId) {
+    let path = this.driver.api.applications(this.driver.user.id);
+    let data = [];
+    let global;
+    if (guildId) {
+      const res = await this.driver.api.applications(this.driver.user.id).commands.get();
+      global = new Collection();
+      res.forEach(command => global.set(command.name, command));
+      path = path.guilds(guildId);
+    }
+    function isEqual(obj1, obj2) {
+      if (obj1 === obj2) return true;
+      if (typeof obj1 !== 'object' || typeof obj2 !== 'object') return false;
+      if (obj1.description !== obj2.description) return false;
+      if (!!obj1.default_permission !== !!obj2.default_permission) return false;
+      return lodash.isEqual(obj1.options, obj2.options);
+    }
+    this.interactions.applicationCommands.forEach(interaction => {
+      if (guildId) {
+        if (Array.isArray(interaction.guilds) && !interaction.guilds.includes(guildId)) return;
+        if (typeof interaction.guilds === 'string' && interaction.guilds !== guildId) return;
+        if (isEqual(global.get(interaction.name), interaction.definition)) return;
+        data.push(interaction.definition);
+        return;
+      }
+      if (interaction.guilds) return;
+      data.push(interaction.definition);
+    });
+    return path.commands.put({ data });
+  }
+
+  /**
+   * Register an interaction
+   * @param {string} name the name of the application command to register
+   * @returns {*}
+   */
+  async registerCommand(name) {
+    let path = this.driver.api;
+    let promises = [];
+    let results;
+    const interaction = this.interactions.applicationCommands.get(name);
+    if (!interaction) return 'No such interaction';
+    if (!interaction.definition) return 'This command has no definition';
+    path = path.applications(this.driver.user.id);
+    if (Array.isArray(interaction.guilds)) {
+      interaction.guilds.forEach(guild => {
+        promises.push(path.guilds(guild).commands.post({ data: interaction.definition }));
+      });
+      results = await Promise.all(promises).catch(err => this.app.log.warn(module, `Error encountered while registering commmand: ${err.stack ?? err}`));
+      return results.map(result => ({ guild: result.guild_id, id: result.id, name: result.name }));
+    }
+    if (interaction.guilds) {
+      path = path.guilds(interaction.guilds);
+    }
+    return path.commands
+      .post({ data: interaction.definition })
+      .catch(err => this.app.log.warn(module, `Error encountered while registering commmand: ${err.stack ?? err}`));
   }
 
   /**
