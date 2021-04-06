@@ -18,7 +18,7 @@ class InteractionManager {
   constructor(socket) {
     /**
      * The discord manager that handles these commands
-     * @name CommandManager#socket
+     * @name InteractionManager#socket
      * @type {DiscordManager}
      * @private
      */
