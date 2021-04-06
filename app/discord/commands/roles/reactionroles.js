@@ -17,7 +17,7 @@ class ReactionRolesCommand extends BaseCommand {
 
   async run(message, args) {
     const socket = this.socket;
-    const commandPrefix = socket.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = socket.cache.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['add', 'remove', 'create', 'update', 'list'];
 
     const [methodRaw, roleRaw, ...extraArgs] = args;
@@ -31,7 +31,7 @@ class ReactionRolesCommand extends BaseCommand {
     let roles = [];
 
     //  A list of key value pairs with channels and available roles
-    let guild = socket.reactionRoles.get(String(message.guild.id));
+    let guild = socket.cache.reactionRoles.get(String(message.guild.id));
 
     // Check for actual role
     if (roleRaw && roleRaw.startsWith('<@&') && roleRaw.endsWith('>')) {

@@ -21,7 +21,7 @@ class PrefixCommand extends BaseCommand {
     }
 
     try {
-      this.socket.prefixes.get(String(message.guild.id)).prefix = args;
+      this.socket.cache.prefixes.get(String(message.guild.id)).prefix = args;
       await this.socket.app.database.tables.prefixes.edit(String(message.guild.id), args);
     } catch (err) {
       this.socket.app.log.error(module, err);
