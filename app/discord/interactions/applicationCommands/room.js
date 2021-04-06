@@ -23,11 +23,11 @@ module.exports = {
     args = args[0].options;
 
     // A list of key value pairs with room ids and their associated room
-    let rooms = socket.rooms.get(String(interaction.guild.id));
+    let rooms = socket.cache.rooms.get(String(interaction.guild.id));
 
     if (typeof rooms === 'undefined' || rooms === null) {
-      socket.rooms.set(String(interaction.guild.id), new Collection());
-      rooms = socket.rooms.get(String(interaction.guild.id));
+      socket.cache.rooms.set(String(interaction.guild.id), new Collection());
+      rooms = socket.cache.rooms.get(String(interaction.guild.id));
     }
 
     // Get the master room or create it

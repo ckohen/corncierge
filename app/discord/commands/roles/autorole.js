@@ -15,7 +15,7 @@ class AutoRoleCommand extends BaseCommand {
   }
 
   async run(message, args) {
-    const commandPrefix = this.socket.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['set', 'remove', 'status'];
 
     const [methodRaw, roleRaw, ...extraArgs] = args;
@@ -30,7 +30,7 @@ class AutoRoleCommand extends BaseCommand {
     let time = 0;
 
     //  A list of key value pairs with current automatic role data
-    let guild = this.socket.newMemberRole.get(String(message.guild.id));
+    let guild = this.socket.cache.newMemberRole.get(String(message.guild.id));
 
     // Check for actual role
     if (roleRaw && roleRaw.startsWith('<@&') && roleRaw.endsWith('>')) {

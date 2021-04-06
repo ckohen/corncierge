@@ -46,7 +46,7 @@ class CommandsCommand extends BaseCommand {
       return;
     }
 
-    const command = this.socket.app.twitch.irc.commands.get(input);
+    const command = this.socket.app.twitch.irc.cache.commands.get(input);
 
     if (command && command.locked) {
       respond("That command is locked and can't be modified");

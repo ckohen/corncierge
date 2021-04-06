@@ -12,7 +12,7 @@ module.exports = async (socket, channel, user, messageRaw, self) => {
   const isPrivileged = twitch.isPrivileged(user, channelData);
 
   // Check for moderation filters
-  const filter = socket.filters.find(item => new RegExp(item.input, 'gi').test(message));
+  const filter = socket.cache.filters.find(item => new RegExp(item.input, 'gi').test(message));
 
   if (filter && !isPrivileged) {
     // Handle moderation
@@ -29,11 +29,11 @@ module.exports = async (socket, channel, user, messageRaw, self) => {
   let input = args.shift().toLowerCase();
 
   // Check for existing commands
-  let command = socket.commands.get(input);
+  let command = socket.cache.commands.get(input);
 
   if (!command) {
     if (message.indexOf('bonk') > -1) {
-      command = socket.commands.get('!bonk');
+      command = socket.cache.commands.get('!bonk');
     } else {
       return;
     }

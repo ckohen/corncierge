@@ -38,22 +38,15 @@ class IrcManager extends EventManager {
     Object.defineProperty(this, 'twitch', { value: twitch });
 
     /**
-     * The jokes for the IRC joke command.
-     * @type {Array<Object>}
+     * The name of a table from the TableManager
+     * @typedef {string} TableName
      */
-    this.jokes = [];
 
     /**
-     * The moderation filters for the socket, mapped by ID.
-     * @type {Collection<number, Object>}
+     * The local cache of database tables, each mapped by guild id
+     * @type {Object<TableName, *>}
      */
-    this.filters = new Collection();
-
-    /**
-     * The commands for the socket, mapped by input.
-     * @type {Collection<string, Object>}
-     */
-    this.commands = new Collection();
+    this.cache = {};
 
     /**
      * The command manager that stores specially handled commands
@@ -185,12 +178,14 @@ class IrcManager extends EventManager {
    * Cache the jokes.
    * @returns {Promise<void>}
    */
-  cacheJokes() {
+  async cacheJokes() {
     this.app.log.debug(module, 'Caching jokes');
-    return this.app.database.tables.jokes.get().then(all => {
-      this.jokes.length = 0;
-      all.forEach(item => this.jokes.push(item));
-    });
+    const jokes = await this.app.database.tables.jokes.get().catch(err => this.app.log.warn(module, `Error encountered while caching jokes: ${err}`));
+    if (!this.cache.jokes) {
+      this.cache.jokes = [];
+    }
+    this.cache.jokes.length = 0;
+    jokes.forEach(item => this.cache.jokes.push(item));
   }
 
   /**
@@ -199,7 +194,10 @@ class IrcManager extends EventManager {
    */
   cacheFilters() {
     this.app.log.debug(module, 'Caching filters');
-    return this.cache('ircFilters', this.filters, 'id');
+    if (!this.cache.filters) {
+      this.cache.filters = new Collection();
+    }
+    return this.cacheTable('ircFilters', this.cache.filters, 'id');
   }
 
   /**
@@ -208,7 +206,10 @@ class IrcManager extends EventManager {
    */
   cacheCommands() {
     this.app.log.debug(module, 'Caching commands');
-    return this.cache('ircCommands', this.commands, 'input');
+    if (!this.cache.commands) {
+      this.cache.commands = new Collection();
+    }
+    return this.cacheTable('ircCommands', this.cache.commands, 'input');
   }
 
   /**
@@ -219,7 +220,7 @@ class IrcManager extends EventManager {
    * @param {string} [secondaryKey=false] a dashed key to use for the new map
    * @returns {Promise<void>}
    */
-  cache(table, map, key, secondaryKey = false) {
+  cacheTable(table, map, key, secondaryKey = false) {
     return this.app.database.tables[table].get().then(all => {
       map.clear();
       collect(map, all, key, secondaryKey);

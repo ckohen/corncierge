@@ -34,11 +34,11 @@ class ReloadCommand extends BaseCommand {
         'Reload complete.',
         `>>> ${md('settings', settings.size)}`,
         md('streaming users', streaming.size),
-        md('filters', ircDisabled ? 'N/A' : twitch.irc.filters.size),
-        md('commands', ircDisabled ? 'N/A' : twitch.irc.commands.size),
-        md('jokes', ircDisabled ? 'N/A' : twitch.irc.jokes.length),
-        md('music guilds', discord.musicData.size),
-        md('total guilds', discord.prefixes.size),
+        md('filters', ircDisabled ? 'N/A' : twitch.irc.cache.filters.size),
+        md('commands', ircDisabled ? 'N/A' : twitch.irc.cache.commands.size),
+        md('jokes', ircDisabled ? 'N/A' : twitch.irc.cache.jokes.length),
+        md('music guilds', discord.cache.musicData.size),
+        md('total guilds', discord.cache.prefixes.size),
       ];
 
       await this.socket.driver.user.setActivity(this.socket.app.settings.get('discord_activity') || null, {

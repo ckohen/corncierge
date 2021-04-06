@@ -5,7 +5,7 @@ module.exports = (socket, before, after) => {
 
   let afterRole = after.guild.roles.cache.find(item => item.name.toLowerCase() === 'voice');
   let beforeRole = afterRole;
-  let roleData = socket.voiceRoles.get(String(after.member.guild.id));
+  let roleData = socket.cache.voiceRoles.get(String(after.member.guild.id));
 
   if (Object.keys(roleData.data).length > 0) {
     afterRole = null;
@@ -30,7 +30,7 @@ module.exports = (socket, before, after) => {
     }
   }
 
-  let musicData = socket.musicData.get(String(after.guild.id));
+  let musicData = socket.cache.musicData.get(String(after.guild.id));
 
   if (after.channelID !== null) {
     if (after.member.user.id === socket.driver.user.id && !after.selfDeaf) {

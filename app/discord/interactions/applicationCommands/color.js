@@ -6,7 +6,7 @@ module.exports = {
   usage: '<color-role-name>',
   async run(socket, interaction, args) {
     // Get the current guild from the colorManager
-    let guild = socket.colorManager.get(String(interaction.guild.id));
+    let guild = socket.cache.colorManager.get(String(interaction.guild.id));
 
     // An array of snowflakes for all the available color roles to remove all color roles before assigning a new one
     let colorSnowflakes = guild.snowflakes.filter(id => interaction.guild.roles.resolve(id) !== null);

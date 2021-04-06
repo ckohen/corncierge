@@ -11,7 +11,7 @@ class JokeTwitchCommand extends TwitchCommand {
   }
 
   run(handler) {
-    const { jokes } = this.socket;
+    const { jokes } = this.socket.cache;
 
     if (!Array.isArray(jokes) || jokes.length === 0) return Promise.resolve(false);
 

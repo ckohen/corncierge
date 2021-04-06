@@ -16,7 +16,7 @@ class VoiceRolesCommand extends BaseCommand {
   }
 
   async run(message, args) {
-    const commandPrefix = this.socket.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
     const routines = ['add', 'remove', 'list'];
 
     const [methodRaw, chRoleRaw, ...extraArgs] = args;
@@ -32,7 +32,7 @@ class VoiceRolesCommand extends BaseCommand {
     let channels = [];
 
     //  A list of key value pairs with channels and available roles
-    let guild = this.socket.voiceRoles.get(String(message.guild.id));
+    let guild = this.socket.cache.voiceRoles.get(String(message.guild.id));
 
     // Check if channel or role and if it's valid
     if (chRoleRaw && chRoleRaw.startsWith('<#') && chRoleRaw.endsWith('>')) {
