@@ -25,6 +25,11 @@ class CommandsCommand extends BaseCommand {
     const [actionRaw, inputRaw, ...outputRaw] = args;
     const action = actionRaw ? actionRaw.toLowerCase() : null;
     const input = inputRaw ? inputRaw.trim() : null;
+    outputRaw.forEach((chunk, index) => {
+      if (chunk.startsWith('<') && chunk.endsWith('>')) {
+        outputRaw[index] = chunk.split(':')[1];
+      }
+    });
     const output = outputRaw.length > 0 ? outputRaw.join(' ').trim() : null;
 
     const send = (content, mention = false) => {
@@ -146,9 +151,9 @@ class CommandsCommand extends BaseCommand {
 
     try {
       if (method === 'edit') {
-        await this.socket.app.database.tables.ircCommands[method](submethod, data);
+        await this.socket.app.database.tables.ircCommands[method](submethod, ...data);
       } else {
-        await this.socket.app.database.tables.ircCommands[method](data);
+        await this.socket.app.database.tables.ircCommands[method](...data);
       }
     } catch (err) {
       this.socket.app.log.warn(module, err);
