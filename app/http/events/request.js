@@ -50,7 +50,7 @@ module.exports = async (socket, request, response) => {
   }
 
   // Check method restrictions
-  if (request.method !== 'GET' && request.method !== 'HEAD' && !handler.methods.includes(request.method)) {
+  if (!handler.methods.includes(request.method)) {
     response.statusCode = 405;
     return response.end();
   }

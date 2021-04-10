@@ -17,6 +17,8 @@ class TwitchCommand {
    * @param {TwitchCommandData} data the data that defines the command
    */
   constructor(socket, data) {
+    if (typeof data !== 'object') throw new TypeError('The data to construct the command must be an object');
+
     /**
      * The twitch manager that calls this command
      * @name TwitchCommand#socket

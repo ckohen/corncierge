@@ -19,6 +19,8 @@ class BaseInteraction {
    * @param {InteractionData} data the data that defines the interaction
    */
   constructor(socket, data) {
+    if (typeof data !== 'object') throw new TypeError('The data to construct the intertaction must be an object');
+
     /**
      * The discord manager that calls this interaction
      * @name BaseInteraction#socket

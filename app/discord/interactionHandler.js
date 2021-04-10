@@ -33,6 +33,7 @@ module.exports = (client, data) => {
               type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
               data: ephemeral ? { flags: 64 } : undefined,
             });
+            timedOut = true;
           }
         },
         reply(resolved) {
@@ -43,6 +44,7 @@ module.exports = (client, data) => {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: resolved.data,
           });
+          timedOut = true;
           return true;
         },
       };

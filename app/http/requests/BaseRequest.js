@@ -20,6 +20,8 @@ class BaseRequest {
    * @param {RequestData} data the data that defines the request
    */
   constructor(socket, data) {
+    if (typeof data !== 'object') throw new TypeError('The data to construct the request must be an object');
+
     /**
      * The discord manager that calls this request
      * @name BaseRequest#socket
@@ -39,7 +41,7 @@ class BaseRequest {
      * @name BaseRequest#methods
      * @type {string[]}
      */
-    Object.defineProperty(this, 'methods', { value: typeof data.methods === 'string' ? [data.methods] : data.methods });
+    Object.defineProperty(this, 'methods', { value: !Array.isArray(data.methods) ? [data.methods] : data.methods });
 
     if ('description' in data) {
       /**
