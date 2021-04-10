@@ -1,5 +1,6 @@
 'use strict';
 
+const { confirmAction } = require('../../../util/DiscordUtil');
 const BaseCommand = require('../BaseCommand');
 
 class CommandsCommand extends BaseCommand {
@@ -19,7 +20,7 @@ class CommandsCommand extends BaseCommand {
       });
       return;
     }
-    const routines = ['add', 'edit', 'rename', 'delete', 'level'];
+    const routines = ['add', 'edit', 'rename', 'delete', 'level', 'link'];
     const levels = ['broadcaster', 'moderator', 'vip', 'everyone'];
 
     const [actionRaw, inputRaw, ...outputRaw] = args;
@@ -51,9 +52,9 @@ class CommandsCommand extends BaseCommand {
       return;
     }
 
-    const command = this.socket.app.twitch.irc.cache.commands.get(input);
+    const command = this.socket.app.twitch.irc.cache.commands.get(input.toLowerCase());
 
-    if (command && command.locked) {
+    if (command?.locked && action !== 'level') {
       respond("That command is locked and can't be modified");
       return;
     }
@@ -142,6 +143,37 @@ class CommandsCommand extends BaseCommand {
         data = [command.id, output.toLowerCase()];
         success = `Command Level for \`${input}\` updated`;
         failure = "Couldn't edit command. Please try again";
+        break;
+      case 'link':
+        if (!command) {
+          respond("That command doesn't exist. A standard command is needed first so your custom error is set");
+          return;
+        }
+        if (!output && !command.method) {
+          respond('Please provide a function name that this command should call on execution');
+          return;
+        }
+        if (!output) {
+          const confirmed = await confirmAction(
+            message,
+            `Completing this command will remove the associated function from ${input}, are you sure?`,
+            30000,
+          ).catch(() => false);
+          if (!confirmed) return;
+        }
+        if (output && !this.socket.app.twitch.irc.commandResponders.registered.get(output)) {
+          const confirmed = await confirmAction(
+            message,
+            `The method requested does not exist yet, would you still like to set the method to ${output}?`,
+            30000,
+          ).catch(() => false);
+          if (!confirmed) return;
+        }
+        method = 'edit';
+        submethod = 'method';
+        data = [command.id, output];
+        success = `Function associated with \`${input}\` ${output ? `updated to \`${output}\`` : 'removed'}`;
+        failure = "Couldn't edit the function for the command. Please try again";
         break;
       default:
         return;
