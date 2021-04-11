@@ -8,7 +8,7 @@
 require('dotenv').config();
 
 // Run
-let app = require('./app');
+let corncierge = require('./app').default;
 
 const oneMin = 60000;
 const fiveMins = 300000;
@@ -56,7 +56,7 @@ const config = {
   },
 };
 
-app = app(config);
+const app = corncierge(config);
 
 app.log('#', 'Starting...');
 

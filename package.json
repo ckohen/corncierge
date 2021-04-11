@@ -2,7 +2,15 @@
   "name": "corncierge",
   "version": "1.1.0",
   "description": "A moderation and command bot for Twitch and a fully integrated Discord bot.",
-  "main": "index.js",
+  "main": "./app/index.js",
+  "exports": {
+    ".": [
+      {
+        "require": "./app/index.js"
+      },
+      "./app/index.js"
+    ]
+  },
   "scripts": {
     "test": "npm run lint && npm run docs:test",
     "docs": "docgen --source app --custom docs/index.yml --output docs/docs.json",
@@ -18,6 +26,10 @@
   },
   "author": "ckohen",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ckohen/corncierge/issues"
+  },
+  "homepage": "https://github.com/ckohen/corncierge#readme",
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
     "axios": "^0.21.1",
