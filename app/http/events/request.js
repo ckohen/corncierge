@@ -2,7 +2,7 @@
 
 module.exports = async (socket, request, response) => {
   // Handle incoming data
-  let data;
+  let data = '';
   request.on('data', chunk => (data += chunk));
   await new Promise(res => request.on('end', res));
   // Ignore aborted requests

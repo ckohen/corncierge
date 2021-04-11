@@ -65,6 +65,8 @@ class ircCommandsTable extends BaseTable {
         return this.socket.query('UPDATE `commands` SET `restriction` = ?, `updated_at` = NOW() WHERE `id` = ?', [updated, id]);
       case 'rename':
         return this.socket.query('UPDATE `commands` SET `input` = ?, `updated_at` = NOW() WHERE `id` = ?', [updated, id]);
+      case 'method':
+        return this.socket.query('UPDATE `commands` SET `method` = ?, `updated_at` = NOW() WHERE `id` = ?', [updated, id]);
       default:
     }
     return Promise.reject(new Error(`Invalid Property: ${property}`));

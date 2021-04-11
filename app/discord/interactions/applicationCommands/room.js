@@ -371,7 +371,7 @@ class RoomAppCommand extends BaseAppCommand {
             .then(oldMsg => {
               oldMsg.delete();
             })
-            .catch();
+            .catch(() => undefined);
         }
       }
       return interaction.channel.send('**No rooms have been created yet**', msg).then(sentMsg => {
@@ -395,7 +395,7 @@ class RoomAppCommand extends BaseAppCommand {
             .then(oldMsg => {
               oldMsg.delete();
             })
-            .catch();
+            .catch(() => undefined);
         }
       }
       // Store discord's copy of the owner
@@ -438,7 +438,7 @@ class RoomAppCommand extends BaseAppCommand {
             .then(oldMsg => {
               oldMsg.delete();
             })
-            .catch();
+            .catch(() => undefined);
         }
       }
       // Create arrays for each embed

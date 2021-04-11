@@ -84,6 +84,7 @@ These commands are for interfacing with the built in twitch IRC bot. Locked to a
 
 * `commandlist`: lists all the currently registerd twitch commands
 * `commands`: allows creating, editing, and removing twitch commands
+* `variables`: allows creating, editing, and removing custom twitch replaceable variables
 
 ## Slash Commands
 

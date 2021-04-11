@@ -32,6 +32,7 @@ class TableManager {
     this.register(require('./humanLog'));
     this.register(require('./ircCommands'));
     this.register(require('./ircFilters'));
+    this.register(require('./ircVariables'));
     this.register(require('./jokes'));
     this.register(require('./newMemberRole'), 'discord');
     this.register(require('./prefixes'), 'discord');

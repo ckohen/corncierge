@@ -23,7 +23,7 @@ class TestTwitchCommand extends TwitchCommand {
   // The function that is called when the command responder is run
   run(handler, hasArgs) {
     this.socket.app.log(module, 'Test twitch command used!');
-    handler.respond(`Whoa, nice useage of the command${hasArgs ? ', I see you are a mod ang can use arguments!' : '.'}`);
+    handler.respond(`Whoa, nice useage of the command${hasArgs ? ', I see you are a mod and can use arguments!' : '.'}`);
   }
 }
 

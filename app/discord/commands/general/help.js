@@ -25,8 +25,8 @@ class HelpCommand extends BaseCommand {
         }
       }
 
-      const handler = command ? socket.cache.commands.get(command.toLowerCase()) : null;
-      const commands = handler ? new Collection([[command, handler]]) : socket.cache.commands;
+      const handler = command ? socket.commands.get(command.toLowerCase()) : null;
+      const commands = handler ? new Collection([[command, handler]]) : socket.commands;
 
       const lines = commands
         .sort((va, vb, ka, kb) => +(ka > kb) || +(ka === kb) - 1)

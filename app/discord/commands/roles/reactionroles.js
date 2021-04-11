@@ -110,7 +110,10 @@ class ReactionRolesCommand extends BaseCommand {
           let deleted = false;
           delete guild.roles[String(emote)];
           if (Object.keys(guild.roles).length < 1) {
-            let reactionsMsg = await socket.driver.channels.cache.get(guild.channelID).messages.fetch(guild.messageID).catch();
+            let reactionsMsg = await socket.driver.channels.cache
+              .get(guild.channelID)
+              .messages.fetch(guild.messageID)
+              .catch(() => undefined);
             if (reactionsMsg && reactionsMsg.author.id === bot.id) {
               reactionsMsg.delete();
               guild.channelID = '';
@@ -148,14 +151,17 @@ class ReactionRolesCommand extends BaseCommand {
             message,
             'The reaction role message already exists in this server, performing this action will erase it. Are you sure? ✅ (yes) or ❌(cancel)',
             60000,
-          ).catch(() => false);
+          ).catch(() => undefined);
           if (!confirm) {
             if (message.deletable) {
               message.delete();
             }
             return;
           } else {
-            oldMsg = await socket.driver.channels.cache.get(guild.channelID).messages.fetch(guild.messageID).catch();
+            oldMsg = await socket.driver.channels.cache
+              .get(guild.channelID)
+              .messages.fetch(guild.messageID)
+              .catch(() => undefined);
             if (oldMsg?.deletable) oldMsg.delete();
           }
         }
@@ -170,7 +176,10 @@ class ReactionRolesCommand extends BaseCommand {
         }
 
         // Check to make sure the message still exists
-        oldMsg = await socket.driver.channels.cache.get(guild.channelID).messages.fetch(guild.messageID).catch();
+        oldMsg = await socket.driver.channels.cache
+          .get(guild.channelID)
+          .messages.fetch(guild.messageID)
+          .catch(() => undefined);
         if (!oldMsg) {
           message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => msg.delayDelete(5000));
           guild.messageID = '';
@@ -199,7 +208,7 @@ class ReactionRolesCommand extends BaseCommand {
             message,
             'There are no longer any reaction roles assigned, performing this action will erase the message. Are you sure? ✅ (yes) or ❌(cancel)',
             60000,
-          ).catch(() => false);
+          ).catch(() => undefined);
           if (!confirm) {
             if (message.deletable) message.delete();
           } else {
