@@ -169,7 +169,7 @@ class IrcManager extends EventManager {
    * @returns {Promise}
    */
   setCache() {
-    return Promise.all([this.cacheJokes(), this.cacheFilters(), this.cacheCommands()]).catch(err => {
+    return Promise.all([this.cacheJokes(), this.cacheFilters(), this.cacheCommands(), this.cacheVariables()]).catch(err => {
       this.app.log.fatal(module, `Cache: ${err}`);
     });
   }
@@ -210,6 +210,30 @@ class IrcManager extends EventManager {
       this.cache.commands = new Collection();
     }
     return this.cacheTable('ircCommands', this.cache.commands, 'input');
+  }
+
+  /**
+   * Cache the variables
+   * @returns {Promise<void>}
+   */
+  async cacheVariables() {
+    this.app.log.debug(module, 'Caching variables');
+    const variables = await this.app.database.tables.ircVariables
+      .get()
+      .catch(err => this.app.log.warn(module, `Error encountered while caching variables: ${err}`));
+    if (!variables) return;
+    if (!this.cache.variables) {
+      this.cache.variables = new Collection();
+    }
+    this.cache.variables.clear();
+    variables.forEach(variable => {
+      let channel = this.cache.variables.get(variable.channel);
+      if (!channel) {
+        this.cache.variables.set(variable.channel, new Collection());
+        channel = this.cache.variables.get(variable.channel);
+      }
+      channel.set(variable.name, variable);
+    });
   }
 
   /**
