@@ -157,24 +157,19 @@ class CommandHandler {
   /**
    * Responds to the command with formatted content (can be used multiple times)
    * @param {string} message the message to say
-   * @param {boolean} mention whether to mention the targetted user
+   * @param {boolean} [mention=false] whether to mention the targetted user
    */
   respond(message, mention = false) {
     if (this.handled) return;
     if (!message) return;
-    this.socket.say(
-      this.channel.handle,
-      util.mentionable(
-        this.isPrivileged && mention,
-        this.target,
-        util.format(message, {
-          user: util.twitch.handle(this.user),
-          touser: this.target,
-          count: this.command.count,
-          caster: this.channel.name,
-        }),
-      ),
-    );
+    const replaceables = {
+      user: util.twitch.handle(this.user),
+      touser: this.target,
+      count: this.command.count,
+      caster: this.channel.name,
+    };
+    this.socket.cache.variables.get(this.channel.name)?.forEach(variable => (replaceables[`var-${variable.name.toLowerCase()}`] = variable.value));
+    this.socket.say(this.channel.handle, util.mentionable(this.isPrivileged && mention, this.target, util.format(message, replaceables)));
   }
 }
 
