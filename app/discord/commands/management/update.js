@@ -8,7 +8,7 @@ class UpdateCommand extends BaseCommand {
     const info = {
       name: 'update',
       description: 'updates to the latest master (make sure .env is still good!)',
-      user: '140214425276776449',
+      user: 'owner',
     };
     super(socket, info);
   }

@@ -26,14 +26,14 @@ These commands are message based commands that will be supported until slash com
 
 ### Management
 
-These are commands that essentially act as the console for the bot, most are locked to a console channel.
+These are commands that essentially act as the console for the bot, most are locked to the `console` channel.
 
-* `eval`: runs the code specified using eval, the nodejs util and the discord.js client are imported for use, locked to the owner user
+* `eval`: runs the code specified using eval, the nodejs util and the discord.js client are imported for use, locked to the `owner` user
 * `reboot`: cleanly reboots the bot
 * `reload`: reloads the cache, i.e. everything in the database
 * `setstatus`: sets the bots discord status, at this time it cannot be fully custom
 * `status`: sends a message with the current status of the bot
-* `update`: executes `git pull` and then `npm install` on the command line to update the bot, automatically restarts to apply changes, locked to the owner user
+* `update`: executes `git pull` and then `npm install` on the command line to update the bot, automatically restarts to apply changes, locked to the `owner` user
 
 ### Moderation
 

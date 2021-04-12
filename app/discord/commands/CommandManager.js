@@ -31,13 +31,13 @@ class CommandManager {
    */
   registerBuiltIn() {
     if (!this.socket.options.disabledCommands.includes('all')) {
-      this.registerGroup(require('./gaming'), 'gaming');
-      this.registerGroup(require('./general'), 'general');
-      this.registerGroup(require('./management'), 'management');
-      this.registerGroup(require('./moderation'), 'moderation');
-      this.registerGroup(require('./music'), 'music');
-      this.registerGroup(require('./roles'), 'roles');
-      this.registerGroup(require('./twitch'), 'twitch');
+      this.registerGroup(require('./gaming'), 'gaming', true);
+      this.registerGroup(require('./general'), 'general', true);
+      this.registerGroup(require('./management'), 'management', true);
+      this.registerGroup(require('./moderation'), 'moderation', true);
+      this.registerGroup(require('./music'), 'music', true);
+      this.registerGroup(require('./roles'), 'roles', true);
+      this.registerGroup(require('./twitch'), 'twitch', true);
     }
   }
 
@@ -45,9 +45,10 @@ class CommandManager {
    * Registers a group of commands
    * @param {BaseCommand[]} commands the commands to register
    * @param {string} group the group to which this command resides (if disabledCommands includes this group name it will disable this command)
+   * @param {boolean} [builtIn=false] whether this command is built in or not (used to disable commands, do not set this)
    */
-  registerGroup(commands, group) {
-    if (this.socket.options.disabledCommands.includes(group)) return;
+  registerGroup(commands, group, builtIn = false) {
+    if (builtIn && this.socket.options.disabledCommands.includes(group)) return;
     for (const command of commands) {
       this.register(command);
     }
@@ -56,11 +57,12 @@ class CommandManager {
   /**
    * Registers a command in the manager for use throughout the application
    * @param {BaseCommand} command the command to register
+   * @param {boolean} [builtIn = false] whether this command is built in or not (used to disable commands, do not set this)
    */
-  register(command) {
+  register(command, builtIn = false) {
     const handler = new command(this.socket);
     if (!(handler instanceof BaseCommand)) throw new TypeError(`Discord commands must extend BaseCommand: ${command.name}`);
-    if (this.socket.options.disabledCommands.includes(handler.name)) return;
+    if (builtIn && this.socket.options.disabledCommands.includes(handler.name)) return;
     this.registered.set(handler.name, handler);
   }
 }

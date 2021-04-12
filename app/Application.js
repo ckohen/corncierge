@@ -197,6 +197,9 @@ class Application {
       }
     }
     if (typeof merged.debug !== 'boolean') throw new TypeError('Debug must be a boolean');
+    if (typeof merged.name !== 'string') throw new TypeError('Bot name must be a string');
+    if (typeof merged.website !== 'string') throw new TypeError('Bot website link must be a string');
+    if (typeof merged.donate !== 'string') throw new TypeError('Bot donation link must be a string');
     if (typeof merged.disableDiscord !== 'boolean') throw new TypeError('Disable Discord must be a boolean');
     if (typeof merged.disableIRC !== 'boolean') throw new TypeError('Disable IRC must be a boolean');
     if (typeof merged.disableServer !== 'boolean') throw new TypeError('Disable Server must be a boolean');
@@ -294,7 +297,10 @@ class Application {
       disableServer: options.disableServer,
       disableTwitch: options.disableTwitch,
       database: options.database,
+      donate: options.donate,
       log: options.log,
+      name: options.name,
+      website: options.website,
     };
     if (!options.disableDiscord) {
       formatted.discord = options.discord;

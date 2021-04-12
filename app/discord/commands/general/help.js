@@ -15,8 +15,8 @@ class HelpCommand extends BaseCommand {
   }
 
   run(message, args) {
-    const socket = this.socket;
-    const commandPrefix = socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const appOpts = this.socket.app.options;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
     if (args[0] === 'legacy') {
       let command = args[1];
       if (command) {
@@ -25,8 +25,8 @@ class HelpCommand extends BaseCommand {
         }
       }
 
-      const handler = command ? socket.commands.get(command.toLowerCase()) : null;
-      const commands = handler ? new Collection([[command, handler]]) : socket.commands;
+      const handler = command ? this.socket.commands.get(command.toLowerCase()) : null;
+      const commands = handler ? new Collection([[command, handler]]) : this.socket.commands;
 
       const lines = commands
         .sort((va, vb, ka, kb) => +(ka > kb) || +(ka === kb) - 1)
@@ -37,12 +37,12 @@ class HelpCommand extends BaseCommand {
       if (!lines) return;
 
       message.channel.send(`\`\`\`${lines}\`\`\``, { split: true }).catch(err => {
-        socket.app.log.warn(module, err);
+        this.socket.app.log.warn(module, err);
       });
     } else {
       let request = args.join(' ');
 
-      let msg = socket.getEmbed('help', [commandPrefix]);
+      let msg = this.socket.getEmbed('help', [commandPrefix, appOpts.name]);
 
       if (!request) {
         request = 'none';
@@ -50,9 +50,9 @@ class HelpCommand extends BaseCommand {
       request = request.toLowerCase();
 
       let music = false;
-      for (let channel of socket.app.settings.get(`discord_channel_music`).split(',')) {
+      for (let channel of this.socket.app.settings.get(`discord_channel_music`).split(',')) {
         try {
-          if (socket.driver.channels.cache.get(channel).guild.id === message.guild.id) {
+          if (this.socket.driver.channels.cache.get(channel).guild.id === message.guild.id) {
             music = true;
           }
         } catch {
@@ -274,7 +274,7 @@ class HelpCommand extends BaseCommand {
               'You will also get first access when the music commands are being rolled out.',
           );
           msg.addField('\u200b', '\u200b');
-          msg.addField('Donation Link', '<https://www.paypal.me/corncierge>');
+          msg.addField('Donation Link', `<${appOpts.donate}>`);
           break;
         case 'room':
         case 'rooms':
@@ -380,12 +380,12 @@ class HelpCommand extends BaseCommand {
           msg.addField('\u200b', '\u200b');
           msg.addField(
             'Donate',
-            'Thanks for using corncierge, if you would like to donate to support, you can do that [here](https://www.paypal.me/corncierge). Thank you!',
+            `Thanks for using ${appOpts.name}, if you would like to donate to support, you can do that [here](${appOpts.donate}). Thank you!`,
             true,
           );
           msg.addField(
             'Invite',
-            `If you want to add this bot to your server, head on over to [the website](https://www.corncierge.com) (or use \`${commandPrefix}invite`,
+            `If you want to add this bot to your server, head on over to [the website](${appOpts.website}) (or use \`${commandPrefix}invite`,
           );
       }
       message.channel.send(msg);

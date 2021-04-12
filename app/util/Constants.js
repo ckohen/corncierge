@@ -9,10 +9,13 @@
  * @property {boolean} [disableIRC=false] whether to disable Twitch IRC
  * @property {boolean} [disableServer=false] whether to disable the built in HTTP server
  * @property {boolean} [disableTwitch=false] whether to completely disable twitch (forces disableIRC to true)
+ * @property {string} [donate=https://www.paypal.me/corncierge] the donation link for your bot
  * @property {DiscordOptions} discord options for discord (does not need to be present if disableDiscord is true)
  * @property {HTTPOptions} [http] options for http (does not need to be present if disableServer is true)
  * @property {LogOptions} log options for logging
+ * @property {string} [name=Corncierge] the name of the bot (used in help command)
  * @property {TwitchOptions} twitch options for twitch (does not need to be present if disableTwitch is true)
+ * @property {string} [website=https://www.corncierge.com] the website to link to for more information on your bot
  * @property {string} [youtubeToken] the token used for connecting to youtubes API (for music bot) (YOUTUBE_TOKEN in env if not provided)
  */
 exports.DefaultOptions = {
@@ -21,6 +24,9 @@ exports.DefaultOptions = {
   disableIRC: false,
   disableServer: false,
   disableTwitch: false,
+  donate: 'https://www.paypal.me/corncierge',
+  name: 'Corncierge',
+  website: 'https://www.corncierge.com',
 
   /**
    * The database options
