@@ -38,6 +38,7 @@
     "ffmpeg-static": "^4.2.6",
     "humanize-duration": "^3.23.1",
     "limiter": "^1.1.5",
+    "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "moment": "^2.27.0",
     "mysql2": "^1.7.0",
