@@ -1,5 +1,4 @@
 # Packages
-node_modules/
 yarn.lock
 
 # Log files
@@ -25,6 +24,6 @@ test/
 tsconfig.json
 tslint.json
 seeds/
-seed.js
-database.json
-index.js
+/seed.js
+/database.json
+/index.js
