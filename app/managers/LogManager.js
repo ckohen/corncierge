@@ -152,8 +152,12 @@ class LogManager extends BaseManager {
    */
   path(source) {
     if (!source.id) return source;
-    /* eslint-disable-next-line newline-per-chained-call */
-    return source.id.split('.').shift().replace(`${this.app.options.basepath}/`, '').replace(/\//g, '.');
+    return source.id
+      .split('.')
+      .shift()
+      .replace(`${this.app.options.basepath}/`, '')
+      .replace(`${this.app.options.basepath.split('node_modules')[0]}/`, '')
+      .replace(/\//g, '.');
   }
 }
 
