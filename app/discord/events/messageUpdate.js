@@ -7,7 +7,7 @@ module.exports = async (socket, before, after) => {
     try {
       before = await before.fetch();
     } catch (err) {
-      socket.app.log.verbose(module, `Could not get partial message:${err}`);
+      socket.app.log.verbose(module, `Could not get partial message`, err);
       return;
     }
   }
@@ -15,7 +15,7 @@ module.exports = async (socket, before, after) => {
     try {
       await after.fetch();
     } catch (err) {
-      socket.app.log.verbose(module, `Could not get partial message: ${err}`);
+      socket.app.log.verbose(module, `Could not get partial message`, err);
       return;
     }
   }

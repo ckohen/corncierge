@@ -1,7 +1,7 @@
 'use strict';
 
-const axios = require('axios');
-const moment = require('moment');
+const util = require('util');
+const { WebhookClient, MessageEmbed, MessageAttachment } = require('discord.js');
 const wn = require('winston');
 const BaseManager = require('./BaseManager');
 const Constants = require('../util/Constants');
@@ -46,19 +46,35 @@ class LogManager extends BaseManager {
      */
 
     wn.addColors(Constants.LogColors);
+
+    /**
+     * The webhook client that handles sending error logs to discord
+     * @type {WebhookClient}
+     * @private
+     */
+    this.webhookClient = new WebhookClient(...this.options.webhookToken.split('/'));
   }
 
   /**
    * Write a message to the log.
    * @param {LogLevel} level the log level
    * @param {Module} source the module sourcing this log
-   * @param {string} message the message to output
+   * @param {string} [message] the message to output
+   * @param {Error} [error] the full error object to use for a stacktrace
    */
-  async out(level, source, message) {
+  async out(level, source, message = 'No message specified', error) {
     const path = this.path(source);
-    this.driver.log(level, `[${path}] ${message}`);
+    if (!error && message instanceof Error) {
+      error = message;
+      message = '';
+    }
+    let formattedError = '';
+    if (error) {
+      formattedError = util.inspect(error, { depth: 6, colors: true });
+    }
+    this.driver.log(level, `[${path}] ${message}${message && formattedError ? `: ` : ''}${formattedError}`);
     if (Constants.LogLevels.webhook[level]) {
-      await this.webhook(level, path, message);
+      await this.webhook(level, path, message, error);
     }
   }
 
@@ -66,11 +82,12 @@ class LogManager extends BaseManager {
    * Exit the process after writing a message to the log.
    * @param {LogLevel} level the log level
    * @param {Module} source the module sourcing this log
-   * @param {string} message the message to output
+   * @param {string} [message] the message to output
+   * @param {Error} [error] the full error object to use for a stacktrace
    */
-  async fatal(level, source, message) {
+  async fatal(level, source, message = 'No message specified', error) {
     const path = this.path(source);
-    await this.out(level, path, message);
+    await this.out(level, path, message, error);
     this.app.end(1);
   }
 
@@ -79,16 +96,29 @@ class LogManager extends BaseManager {
    * @param {LogLevel} level the log level
    * @param {string} path the path to the module that this occured in
    * @param {string} message the message to send
+   * @param {Error} [error] the full error object to use for a stacktrace
    * @returns {Promise<axiosRequest, axiosResponse>}
    * @private
    */
-  webhook(level, path, message) {
+  webhook(level, path, message, error) {
     const levels = Constants.LogLevels.webhook;
 
     if (!Object.prototype.hasOwnProperty.call(levels, level)) return Promise.reject(new Error('Invalid level'));
 
+    if (!error && message instanceof Error) {
+      error = message;
+      message = '';
+    }
+    let formattedError;
+    if (error) {
+      formattedError = util.inspect(error, { depth: 6 });
+    }
+
     let formatted = typeof message === 'string' ? message : String(message);
-    formatted = formatted.split('\n').slice(0, 5);
+    if (formattedError) {
+      formatted += `: ${formattedError}`;
+    }
+    formatted = formatted.split('\n').slice(0, 4);
     let code = false;
     for (const i in formatted) {
       let line = formatted[i];
@@ -100,23 +130,18 @@ class LogManager extends BaseManager {
     }
     formatted = `${formatted.join('\n')}${code ? '```' : ''}`;
 
-    return axios({
-      method: 'POST',
-      baseURL: this.options.webhookBase,
-      url: this.options.webhookToken.toString(),
-      data: {
-        embeds: [
-          {
-            description: formatted,
-            timestamp: moment().utcOffset(0).format(),
-            title: `${level} \u00B7 ${path}`,
-            color: Constants.Colors[levels[level] || 'CYAN'],
-          },
-        ],
-      },
-    }).catch(err => {
-      this.driver.log('error', `[${this.path(module)}] Failed to send webhook: ${err}`);
-    });
+    const embed = new MessageEmbed()
+      .setDescription(formatted)
+      .setTimestamp(Date.now())
+      .setTitle(`${level} \u00B7 ${path}`)
+      .setColor(Constants.Colors[levels[level] || 'CYAN']);
+
+    const attachments = [embed];
+
+    if (error?.stack && formattedError.length > 100) {
+      attachments.push(new MessageAttachment(Buffer.from(formattedError), 'stacktrace.ada'));
+    }
+    return this.webhookClient.send(attachments).catch(err => this.driver.log('error', `[${this.path(module)}] Failed to send webhook: ${err}`));
   }
 
   /**

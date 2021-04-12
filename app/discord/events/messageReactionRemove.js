@@ -6,7 +6,7 @@ module.exports = async (socket, reaction, user) => {
     try {
       await reaction.fetch();
     } catch (error) {
-      socket.app.log.verbose(module, `Could not get partial reaction: ${error}`);
+      socket.app.log.verbose(module, `Could not get partial reaction`, error);
       return;
     }
   }

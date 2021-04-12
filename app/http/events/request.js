@@ -70,7 +70,7 @@ module.exports = async (socket, request, response) => {
       }
     }
   } catch (err) {
-    socket.app.log.warn(module, `Error occured during request call ${handler.name}: ${err.stack ? err.stack : err}`);
+    socket.app.log.warn(module, `Error occured during request call ${handler.name}`, err);
     response.statusCode = 503;
     response.write('Error Encountered by server while processing request!');
   }

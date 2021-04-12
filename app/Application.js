@@ -159,6 +159,7 @@ class Application {
     if (!this.options.disableServer) {
       await new Promise(resolve => this.http.driver.close(resolve)).catch(err => this.log.debug(module, err));
     }
+    this.logger.webhookClient.destroy();
     /* eslint-disable-next-line no-empty-function */
     await new Promise(resolve => this.logger.driver.end(resolve)).catch(() => {});
     clearTimeout(panic);
@@ -238,7 +239,6 @@ class Application {
       if (typeof merged.log.maxLevel !== 'string') throw new TypeError('The max level option must be a string');
       if (typeof merged.log.outputFile !== 'string') throw new TypeError('The output file path must be a string');
       if (typeof merged.log.verbose !== 'boolean') throw new TypeError('The verbose toggle must be a boolean');
-      if (typeof merged.log.webhookBase !== 'string') throw new TypeError('The webhook base url must be a string');
       if (!merged.disableDiscord && typeof merged.log.webhookToken !== 'string') {
         if ('LOG_WEBHOOK_TOKEN' in process.env) {
           merged.log.webhookToken = process.env.LOG_WEBHOOK_TOKEN;
@@ -357,7 +357,7 @@ class Application {
       .get()
       .then(all => collect(this.settings, all, 'name', null, 'value'))
       .catch(err => {
-        this.log.fatal(module, `Settings: ${err}`);
+        this.log.fatal(module, err);
       });
   }
 
@@ -372,7 +372,7 @@ class Application {
       .get()
       .then(all => collect(this.streaming, all, 'name', null))
       .catch(err => {
-        this.log.fatal(module, `Streaming Settings: ${err}`);
+        this.log.fatal(module, err);
       });
   }
 }

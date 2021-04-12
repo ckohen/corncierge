@@ -114,13 +114,11 @@ exports.DefaultOptions = {
    * @property {LogLevel} [maxLevel=error] the maximum level of logging to allow in the output file
    * @property {string} outputFile the location of the output file, either relative or direct path
    * @property {boolean} [verbose=false] whether to log verbose to the console
-   * @property {string} [webhookBase=https://discord.com/api/webhooks] the webhook base url for discord webhooks
    * @property {string} webhookToken the token for the logging webhook (LOG_WEBHOOK_TOKEN in env if not provided)
    */
   log: {
     maxLevel: 'error',
     verbose: false,
-    webhookBase: 'https://discord.com/api/webhooks',
   },
 
   /**

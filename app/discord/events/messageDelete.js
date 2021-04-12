@@ -4,7 +4,7 @@ const { isGuild } = require('../../util/UtilManager').discord;
 
 module.exports = (socket, message) => {
   if (message.partial) {
-    socket.app.log.verbose(module, `Recieved partial message in delete event:${message.id}`);
+    socket.app.log.verbose(module, `Recieved partial message in delete event: ${message.id}`);
     return;
   }
 

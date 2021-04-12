@@ -100,7 +100,7 @@ class DiscordManager extends EventManager {
 
     this.app.log.debug(module, 'Logging in');
     return this.driver.login(this.options.token).catch(err => {
-      this.app.log.critical(module, `Login: ${err}`);
+      this.app.log.critical(module, `Login`, err);
     });
   }
 
@@ -160,15 +160,13 @@ class DiscordManager extends EventManager {
       interaction.guilds.forEach(guild => {
         promises.push(path.guilds(guild).commands.post({ data: interaction.definition }));
       });
-      results = await Promise.all(promises).catch(err => this.app.log.warn(module, `Error encountered while registering commmand: ${err.stack ?? err}`));
+      results = await Promise.all(promises).catch(err => this.app.log.warn(module, `Error encountered while registering commmand`, err));
       return results.map(result => ({ guild: result.guild_id, id: result.id, name: result.name }));
     }
     if (interaction.guilds) {
       path = path.guilds(interaction.guilds);
     }
-    return path.commands
-      .post({ data: interaction.definition })
-      .catch(err => this.app.log.warn(module, `Error encountered while registering commmand: ${err.stack ?? err}`));
+    return path.commands.post({ data: interaction.definition }).catch(err => this.app.log.warn(module, `Error encountered while registering commmand`, err));
   }
 
   /**
@@ -190,7 +188,7 @@ class DiscordManager extends EventManager {
       this.cacheMusic(),
       this.cacheRooms(),
     ]).catch(err => {
-      this.app.log.fatal(module, `Cache: ${err}`);
+      this.app.log.fatal(module, `Cache`, err);
     });
   }
 
@@ -201,7 +199,7 @@ class DiscordManager extends EventManager {
    */
   async cacheMusic() {
     this.app.log.debug(module, 'Caching music');
-    const volumes = await this.app.database.tables.volumes.get().catch(err => this.app.log.warn(module, `Error encounted while caching music volumes: ${err}`));
+    const volumes = await this.app.database.tables.volumes.get().catch(err => this.app.log.warn(module, `Error encounted while caching music volumes`, err));
     if (!this.cache.musicData) {
       this.cache.musicData = new Collection();
     }
@@ -222,7 +220,7 @@ class DiscordManager extends EventManager {
    */
   async cacheRooms() {
     this.app.log.debug(module, 'Caching rooms');
-    const rooms = await this.app.database.tables.rooms.get().catch(err => this.app.log.warn(module, `Error encountered while caching rooms: ${err}`));
+    const rooms = await this.app.database.tables.rooms.get().catch(err => this.app.log.warn(module, `Error encountered while caching rooms`, err));
     if (!rooms) return;
     if (!this.cache.rooms) {
       this.cache.rooms = new Collection();
@@ -332,7 +330,7 @@ class DiscordManager extends EventManager {
     }
 
     channel.send(content, options).catch(err => {
-      this.app.log.warn(module, `Send message: ${err}`);
+      this.app.log.warn(module, `Send message`, err);
     });
   }
 
@@ -350,7 +348,7 @@ class DiscordManager extends EventManager {
       }
 
       webhook.send(content, options).catch(err => {
-        this.app.log.warn(module, `Send webhook: ${err}`);
+        this.app.log.warn(module, `Send webhook`, err);
       });
     });
   }

@@ -131,7 +131,7 @@ class IrcManager extends EventManager {
           callback();
         })
         .catch(err => {
-          this.app.log.error(module, `Timeout: ${err}`);
+          this.app.log.error(module, `Timeout`, err);
         });
     });
   }
@@ -151,7 +151,7 @@ class IrcManager extends EventManager {
           callback();
         })
         .catch(err => {
-          this.app.log.error(module, `Ban: ${err}`);
+          this.app.log.error(module, `Ban`, err);
         });
     });
   }
@@ -170,7 +170,7 @@ class IrcManager extends EventManager {
    */
   setCache() {
     return Promise.all([this.cacheJokes(), this.cacheFilters(), this.cacheCommands(), this.cacheVariables()]).catch(err => {
-      this.app.log.fatal(module, `Cache: ${err}`);
+      this.app.log.fatal(module, `Cache`, err);
     });
   }
 
@@ -180,7 +180,7 @@ class IrcManager extends EventManager {
    */
   async cacheJokes() {
     this.app.log.debug(module, 'Caching jokes');
-    const jokes = await this.app.database.tables.jokes.get().catch(err => this.app.log.warn(module, `Error encountered while caching jokes: ${err}`));
+    const jokes = await this.app.database.tables.jokes.get().catch(err => this.app.log.warn(module, `Error encountered while caching jokes`, err));
     if (!this.cache.jokes) {
       this.cache.jokes = [];
     }
@@ -220,7 +220,7 @@ class IrcManager extends EventManager {
     this.app.log.debug(module, 'Caching variables');
     const variables = await this.app.database.tables.ircVariables
       .get()
-      .catch(err => this.app.log.warn(module, `Error encountered while caching variables: ${err}`));
+      .catch(err => this.app.log.warn(module, `Error encountered while caching variables`, err));
     if (!variables) return;
     if (!this.cache.variables) {
       this.cache.variables = new Collection();
