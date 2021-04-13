@@ -5,7 +5,6 @@ const filterTypes = util.constants.IRCFilterTypes;
 
 module.exports = (socket, channel, tags, message, filter) => {
   const { discord } = socket.app;
-  const externalLog = !socket.app.options.disableDiscord;
 
   let action = 'none';
   let duration = null;
@@ -15,7 +14,7 @@ module.exports = (socket, channel, tags, message, filter) => {
     case filterTypes.BAN:
       action = 'ban';
       socket.ban(channel, tags.username, () => {
-        webhookLog(discord, externalLog, 'userBan', 'banAutomatic', [tags.username], [tags.username, message]);
+        emitLog(action, 'banAutomatic', [tags.username], [tags.username, message]);
       });
       break;
     // Timeout
@@ -23,14 +22,14 @@ module.exports = (socket, channel, tags, message, filter) => {
       action = 'timeout';
       ({ duration } = filter);
       socket.timeout(channel, tags.username, filter.duration, () => {
-        webhookLog(discord, externalLog, 'twitch', 'timeoutAutomatic', [tags.username, util.humanDuration(filter.duration * 1000)], [tags.username, message]);
+        emitLog(action, 'timeoutAutomatic', [tags.username, util.humanDuration(filter.duration * 1000)], [tags.username, message]);
       });
       break;
     // Delete
     case filterTypes.DELETE:
       action = 'delete';
       socket.delete(channel, tags.id, () => {
-        webhookLog(discord, externalLog, 'twitch', 'deleteAutomatic', [tags.username], [tags.username, message]);
+        emitLog(action, 'deleteAutomatic', [tags.username], [tags.username, message]);
       });
       break;
     // Warning
@@ -42,18 +41,27 @@ module.exports = (socket, channel, tags, message, filter) => {
     // Review
     case filterTypes.REVIEW:
       action = 'review';
-      webhookLog(discord, externalLog, 'twitch', 'review', [tags.username], [tags.username, message]);
+      emitLog(action, 'review', [tags.username], [tags.username, message]);
       break;
     default:
       socket.app.log.warn(module, `Unknown moderation type: ${filter.type}`);
       break;
   }
 
+  function emitLog(act, contentType, contentArgs, embedArgs) {
+    const content = discord.getContent(contentType, contentArgs);
+    const embed = discord.getEmbed('message', embedArgs);
+    /**
+     * Emitted whenever an automatic moderation action on twitch occurs
+     * @event EventLogger#twitchAutoMod
+     * @param {string} action The action taken in this moderation event
+     * @param {string} content The automatically generated content for this moderation event
+     * @param {MessageEmbed} embed The automatically generated embed for this moderation event
+     * @param {string} channel The irc channel name (including #) where this event occured
+     * @param {Object} filter The filter that triggered this action
+     */
+    socket.app.eventLogger.emit('twitchAutoMod', act, content, embed, channel, filter);
+  }
+
   return { action, duration };
 };
-
-function webhookLog(discord, enabled, webhook, contentType, contentArgs, embedArgs) {
-  if (enabled) {
-    discord.sendWebhook(webhook, discord.getContent(contentType, contentArgs), discord.getEmbed('message', embedArgs));
-  }
-}

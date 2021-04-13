@@ -1,6 +1,6 @@
 'use strict';
 
-const { clamp, discord } = require('../../../util/UtilManager');
+const { clamp } = require('../../../util/UtilManager');
 const BaseCommand = require('../BaseCommand');
 
 class ClearCommand extends BaseCommand {
@@ -13,7 +13,7 @@ class ClearCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(message, [amountRaw]) {
+  async run(message, [amountRaw]) {
     const amount = parseInt(amountRaw, 10);
 
     // No numeric amount given
@@ -25,19 +25,24 @@ class ClearCommand extends BaseCommand {
     }
 
     // Clear messages
-    message.channel
+    const success = await message.channel
       .bulkDelete(clamp(amount + 1, 2, 100), true)
       .then(deleted => {
         this.socket.app.log.debug(module, `Deleted ${deleted.size} messages`);
+        return true;
       })
       .catch(err => {
         this.socket.app.log.warn(module, err);
+        return false;
       });
-    if (discord.isGuild(message.guild.id, 'platicorn', this.socket.app.settings)) {
-      this.socket.sendWebhook('clear', `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);
-    } else if (message.guild.id === '756319910191300778') {
-      this.socket.sendMessage('helpLogs', `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);
-    }
+    if (!success) return;
+    /**
+     * Emitted whenever a user sucessfully executes the clear command
+     * @event EventLogger#discordMessageClear
+     * @param {Message} message The original clear command message
+     * @param {string} clearMessage The automatically generated log string for this message clear
+     */
+    this.socket.app.eventLogger.emit('discordMessageClear', message, `**${message.member.displayName}** cleared **${amount}** line(s) in ${message.channel}.`);
   }
 }
 

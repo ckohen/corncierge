@@ -1,14 +1,15 @@
 'use strict';
 
-const { constants, discord } = require('../../util/UtilManager');
+const { constants } = require('../../util/UtilManager');
 
 module.exports = (socket, guild, user) => {
   let embed = socket.getEmbed('userBanChange', [user, 'Pardon', constants.Colors.BRIGHT_GREEN]);
-  if (discord.isGuild(guild.id, 'platicorn', socket.app.settings)) {
-    socket.sendWebhook('userBan', embed);
-  } else if (guild.id === '756319910191300778') {
-    socket.sendMessage('helpLogs', embed);
-  } else if (discord.isGuild(guild.id, 'daytone', socket.app.settings)) {
-    if (user.id === '178733052762128385') guild.members.ban(user, { reason: 'Requested autoban.' });
-  }
+  /**
+   * Emitted whenever a member is unbanned from a guild.
+   * @event EventLogger#discordBanRemove
+   * @param {Guild} guild The guild the unban occured in
+   * @param {User} user The user that was unbanned
+   * @param {MessageEmbed} embed The automatically generated embed for this unban
+   */
+  socket.app.eventLogger.emit('discordBanRemove', guild, user, embed);
 };

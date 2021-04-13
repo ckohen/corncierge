@@ -1,7 +1,5 @@
 'use strict';
 
-const { isGuild } = require('../../util/UtilManager').discord;
-
 module.exports = (socket, message) => {
   if (message.partial) {
     socket.app.log.verbose(module, `Recieved partial message in delete event: ${message.id}`);
@@ -18,9 +16,11 @@ module.exports = (socket, message) => {
 
   let embed = socket.getEmbed('messageRemove', [message, message.content]);
 
-  if (isGuild(message.guild.id, 'platicorn', socket.app.settings)) {
-    socket.sendWebhook('msgDelete', embed);
-  } else if (message.guild.id === '756319910191300778') {
-    socket.sendMessage('helpLogs', embed);
-  }
+  /**
+   * Emitted whenever a message is deleted. Does not emit for uncached messages
+   * @event EventLogger#discordMessageDelete
+   * @param {Message} message The deleted message
+   * @param {MessageEmbed} embed The automatically generated embed for this message deletion
+   */
+  socket.app.eventLogger.emit('discordMessageDelete', message, embed);
 };

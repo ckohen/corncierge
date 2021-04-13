@@ -1,7 +1,5 @@
 'use strict';
 
-const { isGuild } = require('../../util/UtilManager').discord;
-
 module.exports = (socket, before, after) => {
   let embed = false;
   let method = false;
@@ -48,15 +46,15 @@ module.exports = (socket, before, after) => {
     method = 'roleUpdate';
   }
 
-  if (isGuild(before.guild.id, 'platicorn', socket.app.settings)) {
-    if (embed) {
-      socket.sendWebhook(method, embed);
-    }
-  } else if (before.guild.id === '756319910191300778') {
-    if (embed) {
-      socket.sendMessage('helpLogs', embed);
-    }
-  }
+  /**
+   * Emitted whenever a guild member changes - i.e. new role, removed role, nickname.
+   * @event EventLogger#discordMemberUpdate
+   * @param {GuildMember} oldMember The member before the update
+   * @param {GuildMember} newMember The member after the update
+   * @param {MessageEmbed?} embed The automatically generated embed for this member update
+   * @param {string} type the type of change that occurred (roleUpdate or nickChange)
+   */
+  socket.app.eventLogger.emit('discordMemberUpdate', before, after, embed, method);
 
   function testRole(role, findRoles) {
     if (findRoles.find(foundRole => foundRole.name === role.name)) {

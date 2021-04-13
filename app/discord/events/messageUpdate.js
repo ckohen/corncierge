@@ -1,7 +1,5 @@
 'use strict';
 
-const { isGuild } = require('../../util/UtilManager').discord;
-
 module.exports = async (socket, before, after) => {
   if (before.partial) {
     try {
@@ -36,9 +34,12 @@ module.exports = async (socket, before, after) => {
   }
 
   let embed = socket.getEmbed('messageEdit', [after, before.content, after.content]);
-  if (isGuild(before.guild.id, 'platicorn', socket.app.settings)) {
-    socket.sendWebhook('msgEdit', embed);
-  } else if (before.guild.id === '756319910191300778') {
-    socket.sendMessage('helpLogs', embed);
-  }
+  /**
+   * Emitted whenever a message is updated - e.g. embed or content change.
+   * @event EventLogger#discordMessageUpdate
+   * @param {Message} oldMessage The message before the update
+   * @param {Messaage} newMessage The message after the update
+   * @param {MessageEmbed} embed The automatically generated embed for this message update
+   */
+  socket.app.eventLogger.emit('discordMessageUpdate', before, after, embed);
 };

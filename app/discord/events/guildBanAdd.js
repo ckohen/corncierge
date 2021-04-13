@@ -1,12 +1,15 @@
 'use strict';
 
-const { constants, discord } = require('../../util/UtilManager');
+const { constants } = require('../../util/UtilManager');
 
 module.exports = (socket, guild, user) => {
   let embed = socket.getEmbed('userBanChange', [user, 'Ban', constants.Colors.BRIGHT_RED]);
-  if (discord.isGuild(guild.id, 'platicorn', socket.app.settings)) {
-    socket.sendWebhook('userBan', embed);
-  } else if (guild.id === '756319910191300778') {
-    socket.sendMessage('helpLogs', embed);
-  }
+  /**
+   * Emitted whenever a member is banned from a guild.
+   * @event EventLogger#discordBanAdd
+   * @param {Guild} guild The guild the ban occured in
+   * @param {User} user The user that was banned
+   * @param {MessageEmbed} embed The automatically generated embed for this ban
+   */
+  socket.app.eventLogger.emit('discordBanAdd', guild, user, embed);
 };

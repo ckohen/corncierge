@@ -4,6 +4,7 @@ const { Collection } = require('discord.js');
 
 const DatabaseManager = require('./managers/DatabaseManager');
 const DiscordManager = require('./managers/DiscordManager');
+const EventLogger = require('./managers/EventLogger');
 const HTTPManager = require('./managers/HTTPManager');
 const LogManager = require('./managers/LogManager');
 const TwitchManager = require('./managers/TwitchManager');
@@ -79,6 +80,12 @@ class Application {
      * @type {DatabaseManager}
      */
     this.database = new DatabaseManager(this);
+
+    /**
+     * The event log emitter that emits structured responses for events that log to discord (not debug logs)
+     * @type {EventLogger}
+     */
+    this.eventLogger = new EventLogger(this);
 
     /**
      * True when intentionally ending the application so subapplications do not restart

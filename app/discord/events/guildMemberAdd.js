@@ -6,11 +6,13 @@ module.exports = (socket, member) => {
   const created = util.humanDate(member.user.createdAt);
   let embed = socket.getEmbed('memberAdd', [member.user.displayAvatarURL(), member, member.user.tag, created, member.user.id]);
 
-  if (util.discord.isGuild(member.guild.id, 'platicorn', socket.app.settings)) {
-    socket.sendWebhook('userJoin', embed);
-  } else if (member.guild.id === '756319910191300778') {
-    socket.sendMessage('helpLogs', embed);
-  }
+  /**
+   * Emitted whenever a user joins a guild.
+   * @event EventLogger#discordMemberAdd
+   * @param {GuildMember} member The member that has joined a guild
+   * @param {MessageEmbed} embed The automatically generated embed for this member add
+   */
+  socket.app.eventLogger.emit('discordMemberAdd', member, embed);
 
   let roleData = socket.cache.newMemberRole.get(String(member.guild.id));
 
