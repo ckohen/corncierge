@@ -47,6 +47,7 @@ class InteractionManager {
    * @param {InteractionType} type the type of interaction to register as
    */
   registerMultiple(interactions, type) {
+    if (!InteractionTypes.includes(type)) throw new RangeError(`Type ${type} is not a valid interaction type`);
     for (const interaction of interactions) {
       this.register(interaction, type);
     }
