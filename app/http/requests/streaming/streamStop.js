@@ -28,8 +28,8 @@ class StreamStopRequest extends BaseRequest {
 
     if (!socket.app.options.disableIRC && !testing) {
       let farewell;
-      switch (user) {
-        case 'platicorn':
+      switch (user.toLowerCase()) {
+        case socket.app.options.twitch?.channel?.name?.toLowerCase():
           farewell = socket.app.settings.get('irc_message_stream_down');
           socket.app.twitch.irc.say(user, farewell);
           break;

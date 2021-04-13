@@ -26,8 +26,8 @@ class StreamStartRequest extends BaseRequest {
 
     if (!socket.app.options.disableIRC && !testing) {
       let greeting;
-      switch (user) {
-        case 'platicorn':
+      switch (user.toLowerCase()) {
+        case socket.app.options.twitch?.channel?.name?.toLowerCase():
           greeting = socket.app.settings.get('irc_message_stream_up');
           socket.app.twitch.irc.say(user, greeting);
           break;
