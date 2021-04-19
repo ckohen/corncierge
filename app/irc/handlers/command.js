@@ -104,7 +104,7 @@ class CommandHandler {
           if (!this.isPrivileged) return;
           break;
         case 'vip':
-          if (!this.isPrivileged || !this.isVip) return;
+          if (!(this.isPrivileged || this.isVip)) return;
           break;
         default:
       }

@@ -37,7 +37,7 @@ class TwitchUtil {
     const badges = ['admin', 'global_mod', 'moderator', 'staff'];
     const isMod = user.badges && Object.keys(user.badges).some(key => badges.includes(key));
     const isCaster = user['user-id'] === channel.id;
-    return isMod ?? isCaster;
+    return isMod || isCaster;
   }
 
   /**

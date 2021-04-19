@@ -15,7 +15,7 @@ class ReloadCommand extends BaseCommand {
 
   run(message) {
     const { discord, twitch, log, settings, streaming } = this.socket.app;
-    const ircDisabled = !this.socket.app.options.disableIRC;
+    const ircDisabled = this.socket.app.options.disableIRC;
 
     log(module, 'Reload instruct received');
 

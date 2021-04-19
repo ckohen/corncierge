@@ -17,7 +17,7 @@ class StreamStartRequest extends BaseRequest {
     const socket = this.socket;
     // Different handling for different users
     const user = headers.user;
-    const testing = headers.test;
+    const testing = headers.test === 'true';
 
     // Ignore empty or default users
     if (!user || user === 'default') {
