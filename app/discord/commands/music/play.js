@@ -193,7 +193,7 @@ class PlayCommand extends BaseCommand {
 }
 
 function playSong(queue, message, socket) {
-  const musicData = socket.musicData.get(String(message.guild.id));
+  const musicData = socket.cache.musicData.get(String(message.guild.id));
   queue[0].voiceChannel
     .join()
     .then(connection => {
