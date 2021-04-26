@@ -132,21 +132,18 @@ exports.DefaultOptions = {
    * @typedef {Object} TwitchOptions
    * @property {string} [api=https://api.twitch.tv/kraken] Base url of the api
    * @property {string} [authapi=https://id.twitch.tv/oauth2] Base url for the authentication api
-   * @property {string} [botCode] the code used to generate tokens for the bot user, must have token or code in the database if not provided
-   * @property {string} [channel.id] the channel id for the 'default' listening twitch channel
+   * @property {number} [channel.id] the channel id for the 'default' listening twitch channel
    * @property {string} [channel.name] the channel name for the 'default' listening twitch channel
    * @property {string} clientID the id of the api application uses (TWITCH_CLIENT_ID in env if not provided)
    * @property {string} clientSecret the client secret for the api application (TWITCH_CLIENT_SECRET in env if not provided)
    * @property {IRCOptions} [irc] options for the irc client
    * @property {ThrottleOptions} [ircThrottle] options for throttling irc commands
+   * @property {Object} [headers] extra headers to pass to the twitch api on every request
    * @property {string} redirectUri a registered redirect URI for your application
    */
   twitch: {
-    api: 'https://api.twitch.tv/kraken/',
+    api: 'https://api.twitch.tv/helix/',
     authapi: 'https://id.twitch.tv/oauth2',
-    headers: {
-      Accept: 'application/vnd.twitchtv.v5+json',
-    },
 
     /**
      * IRC connection options for tmi.js
@@ -165,15 +162,20 @@ exports.DefaultOptions = {
     /**
      * IRC connection options (these are tmi.js options)
      * @typedef {Object} IRCOptions
+     * @property {number} [botID] the id of the bot that posts in chat
      * @property {IRCConnectionOptions} [connection] the options for the IRC Connection
      * @property {boolean} [options.debug] whether the irc client is in debug mode
      * @property {string} [identity.username] the username of the bot that posts in chat
      * @property {string|Function} [identity.password=auth.getAccessToken] the password or a password generator function
      * @property {string[]} [channels] list of channels to join on startup
+     * @property {boolean} [options.skipMembership=true] whether to stop recieving JOIN / PART messages for other users
+     * @property {boolean} [options.skipUpdatingEmotesets=false] whether to skip calling the emoticon_images API
+     * @property {number|boolean} [options.updateEmotesetsTimer=false] how long to wait between automatic updates of emote sets
      */
     irc: {
-      connection: {
-        reconnect: true,
+      options: {
+        skipMembership: true,
+        updateEmotesetsTimer: false,
       },
     },
 

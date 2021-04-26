@@ -42,6 +42,7 @@ class TableManager {
     this.register(require('./rooms'));
     this.register(require('./settings'));
     this.register(require('./streaming'));
+    this.register(require('./twitchAuth'));
     this.register(require('./voiceRoles'), 'discord');
     this.register(require('./volumes'));
   }

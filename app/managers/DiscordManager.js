@@ -244,14 +244,13 @@ class DiscordManager extends EventManager {
    * @param {BaseTable} table the database table to get from
    * @param {Collection} map the map to store data in
    * @param {string} key a key to use for the new map
-   * @param {string} [secondaryKey=false] a dashed key to use for the new map
    * @returns {Promise}
    * @private
    */
-  cacheTable(table, map, key, secondaryKey = false) {
+  cacheTable(table, map, key) {
     return table.get().then(all => {
       map.clear();
-      collect(map, all, key, secondaryKey);
+      collect(map, all, key);
     });
   }
 

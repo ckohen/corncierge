@@ -1,6 +1,8 @@
 'use strict';
 
+const { Collection } = require('discord.js');
 const APIManager = require('./APIManager');
+const { collect } = require('../util/UtilManager');
 
 /**
  * Auth manager for the application.
@@ -24,94 +26,171 @@ class AuthManager extends APIManager {
      * @readonly
      */
     Object.defineProperty(this, 'twitch', { value: twitch });
+
+    /**
+     * @typedef {Object} TwitchAuthData
+     * @prop {number} id The id of this user
+     * @prop {string} accessToken The access token for this user
+     * @prop {string} refreshToken The refresh token for this user
+     * @prop {Object|Array} scopes The scopes that are authorized for this user
+     */
+
+    /**
+     * The cache of auth data
+     * @type {Collection<number, TwitchAuthData>}
+     */
+    this.cache = new Collection();
   }
 
   /**
-   * Generates the twitch api tokens for the given slug
-   * @param {string} slug the user to generate the token for (_code must be in database)
+   * Generates the twitch api tokens using the code provided
+   * @param {string} code the oauth code to generate tokens from
    * @returns {Promise<string>} token
    * @private
    */
-  async generateToken(slug) {
-    try {
-      this.app.log.debug(module, `Generating token for ${slug}`);
-      const res = await this.api.token.post({
-        params: {
-          client_id: this.options.clientID,
-          client_secret: this.options.clientSecret,
-          code: slug === this.twitch.options.irc?.identity?.username ? this.options.botCode : this.app.settings.get(`twitch_code_${slug}`),
-          grant_type: 'authorization_code',
-          redirect_uri: this.options.redirectUri,
-        },
-      });
-      this.app.log.debug(module, 'Successfull Generation');
-      this.app.database.tables.settings.add(`twitch_access_${slug}`, res.data.access_token);
-      this.app.database.tables.settings.add(`twitch_refresh_${slug}`, res.data.refresh_token);
-      this.app.log.debug(module, 'Added tokens to database.');
-      return res.data.access_token;
-    } catch {
-      return Promise.reject(new Error('Generate Token'));
-    }
+  async generateToken(code) {
+    this.app.log.verbose(module, `Generating token with code ${code}`);
+    const res = await this.api.token.post({
+      params: {
+        client_id: this.options.clientID,
+        client_secret: this.options.clientSecret,
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: this.options.redirectUri,
+      },
+    });
+    this.app.log.verbose(module, 'Successful Generation');
+    const validateRes = await this.validateToken(res.data.access_token, true);
+    if (!validateRes) throw new Error();
+    await this.app.database.tables.twitchAuth.add(validateRes.user_id, res.data.access_token, res.data.refresh_token ?? null, validateRes.scopes ?? null);
+    this.cache.set(validateRes.user_id, {
+      id: validateRes.user_id,
+      accessToken: res.data.access_token,
+      refreshToken: res.data.refresh_token ?? null,
+      scopes: validateRes.scopes,
+    });
+    this.app.log.verbose(module, 'Added tokens to database.');
+    return res.data.access_token;
   }
 
   /**
-   * Gets the twitch api access token for the given slug
-   * @param {string} [slug=ApplicationOptions.twitch.irc?.identity?.username] the user to get the token for
+   * Generates the twitch api app access token for this app
    * @returns {Promise<string>} token
    */
-  async getAccessToken(slug = this.twitch.options.irc?.identity?.username) {
-    this.app.log.debug(module, `Getting access token for ${slug}`);
-    const token = this.app.settings.get(`twitch_access_${slug}`);
+  async generateAppToken() {
+    this.app.log.verbose(module, `Generating app access token`);
+    const res = await this.api.token.post({
+      params: {
+        client_id: this.options.clientID,
+        client_secret: this.options.clientSecret,
+        grant_type: 'client_credentials',
+        scope: 'channel:edit:commercial channel:read:hype_train channel:manage:broadcast clips:edit',
+      },
+    });
+    this.app.log.verbose(module, `Successful Generation`);
+    const cached = this.cache.has(0);
+    let method = 'edit';
+    if (!cached) method = 'add';
+    await this.app.database.tables.twitchAuth[method](0, res.data.access_token, res.data.refresh_token ?? null, res.data.scope ?? null);
+    this.cache.set(0, {
+      id: 0,
+      accessToken: res.data.access_token,
+      refreshToken: res.data.refresh_token,
+      scopes: res.data.scope,
+    });
+    this.app.log.verbose(module, 'Updated tokens to database');
+    return res.data.access_token;
+  }
+
+  /**
+   * Gets the twitch api access token for the given user id
+   * @param {number} [id=0] the id of the user to get the token for, or 0 for the app access token
+   * @param {boolean} [skipValidation=false] whether to skip the validation request and just return the cached token
+   * @returns {Promise<string>} token
+   */
+  async getAccessToken(id = 0, skipValidation = false) {
+    this.app.log.verbose(module, `Getting access token for ${id}`);
+    const token = this.cache.get(id)?.accessToken;
     if (token) {
+      if (skipValidation) return token;
       if (await this.validateToken(token)) return token;
-      return this.refreshToken(slug);
+      if (id === 0) return this.generateAppToken();
+      return this.refreshToken(id);
     }
-    return this.generateToken(slug);
+    if (id === 0) return this.generateAppToken();
+    throw new Error(`Token not found for user id ${id}`);
   }
 
   /**
-   * Refreshes the tokens for the given slug
-   * @param {string} slug the user to refresh the tokens for
+   * Refreshes the tokens for the given id
+   * @param {number} id the user id to refresh the tokens for
    * @returns {Promise<string>} token
    * @private
    */
-  async refreshToken(slug) {
-    try {
-      this.app.log.debug(module, `Refreshing Access Token for ${slug}`);
-      const res = await this.api.token.post({
+  async refreshToken(id) {
+    const refresh = this.cache.get(id)?.refreshToken;
+    if (!refresh) throw new Error(`Refresh token not found for user id ${id}`);
+    this.app.log.verbose(module, `Refreshing Access Token for id ${id}`);
+    const res = await this.api.token
+      .post({
         params: {
           client_id: this.options.clientID,
           client_secret: this.options.clientSecret,
-          refresh_token: this.app.settings.get(`twitch_refresh_${slug}`),
+          refresh_token: refresh,
           grant_type: 'refresh_token',
         },
+      })
+      .catch(err => {
+        if (err.response?.status === 401) {
+          this.app.database.tables.twitchAuth.delete(id);
+          this.cache.delete(id);
+          throw new Error('Refresh Token: Authorization Removed');
+        }
+        throw err;
       });
-      this.app.log.debug(module, 'Successfully refreshed.');
-      this.app.database.tables.settings.edit(`twitch_access_${slug}`, res.data.access_token);
-      this.app.database.tables.settings.edit(`twitch_refresh_${slug}`, res.data.refresh_token);
-      this.app.log.debug(module, 'Updated Database with refreshed tokens.');
-      return res.data.access_token;
-    } catch {
-      return Promise.reject(new Error('Refresh Token'));
-    }
+    const validateRes = await this.validateToken(res.data.access_token, true);
+    if (!validateRes) throw new Error();
+    this.app.log.verbose(module, 'Successfully refreshed.');
+    await this.app.database.tables.twitchAuth.edit(id, res.data.access_token, res.data.refresh_token ?? null, validateRes.scopes);
+    this.cache.set(id, {
+      id,
+      accessToken: res.data.access_token,
+      refreshToken: res.data.refresh_token ?? null,
+      scopes: validateRes.scopes,
+    });
+    this.app.log.verbose(module, 'Updated Database with refreshed tokens.');
+    return res.data.access_token;
   }
 
   /**
    * Validates the token provided
    * @param {string} token a twitch api token
+   * @param {boolean} [fullResponse=false] whether to return the full response when successful
    * @returns {Promise<boolean>}
    * @private
    */
-  async validateToken(token) {
+  async validateToken(token, fullResponse = false) {
     try {
       this.app.log.debug(module, 'Validating token.');
-      await this.api.validate.get({ headers: { Authorization: `OAuth ${token}` } });
+      const res = await this.api.validate.get({ headers: { Authorization: `OAuth ${token}` } });
       this.app.log.debug(module, 'Token valid.');
-      return true;
+      return fullResponse ? res.data : true;
     } catch (error) {
       this.app.log.debug(module, 'Token Invalid.');
       return false;
     }
+  }
+
+  /**
+   * Set the cache of twitch authenticated users.
+   * @returns {Promise}
+   */
+  setCache() {
+    this.app.log.debug(module, 'Caching Twitch Authentication');
+    return this.app.database.tables.twitchAuth.get().then(all => {
+      this.cache.clear();
+      collect(this.cache, all, 'id');
+    });
   }
 }
 

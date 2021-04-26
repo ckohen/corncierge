@@ -65,16 +65,15 @@ class UtilManager {
    * @param {Collection} map the collection to arrange the data in
    * @param {Object[]} items the data to rearrange
    * @param {string} key the element key to use as the identifier in the collection
-   * @param {string} [secondaryKey] the second half of a hyphenated key
    * @param {string} [val] only store a specific value (secondaryKey must be set (can be false) to use this)
    */
-  static collect(map, items, key, secondaryKey, val = null) {
+  static collect(map, items, key, val = null) {
     if (!(map instanceof Collection)) return;
     if (Array.isArray(items) && items.length === 0) return;
 
     items.forEach(element => {
-      if (!element[key]) return;
-      map.set(element[key] + (secondaryKey ? `-${element[secondaryKey]}` : ''), val && element[val] ? element[val] : element);
+      if (typeof element[key] === 'undefined' || element[key] === null) return;
+      map.set(element[key], val && element[val] ? element[val] : element);
     });
   }
 

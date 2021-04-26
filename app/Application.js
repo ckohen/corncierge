@@ -125,6 +125,10 @@ class Application {
       if (this.options.disableIRC) return resolve('IRC Disabled');
       return resolve(this.twitch.irc.init());
     });
+    await new Promise(resolve => {
+      if (this.options.disableTwitch) return resolve('Twitch Disabled');
+      return resolve(this.twitch.auth.setCache());
+    });
     await Promise.all([discordInit, httpInit, ircInit]);
 
     this.log(module, 'Boot complete');
@@ -262,8 +266,8 @@ class Application {
     } else {
       if (typeof merged.twitch.api !== 'string') throw new TypeError('The base api url must be a string');
       if (typeof merged.twitch.authapi !== 'string') throw new TypeError('The base auth api url must be a string');
-      if (merged.twitch.botCode && typeof merged.twitch.botCode !== 'string') throw new TypeError('The bot auth code must be a string');
-      if (merged.twitch.channel?.id && typeof merged.twitch.channel.id !== 'string') throw new TypeError('The default channel id must be a string');
+      if (merged.twitch.headers && typeof merged.twitch.headers !== 'object') throw new TypeError('Extra headers must be an object');
+      if (merged.twitch.channel?.id && typeof merged.twitch.channel.id !== 'number') throw new TypeError('The default channel id must be a number');
       if (merged.twitch.channel?.name && typeof merged.twitch.channel.name !== 'string') throw new TypeError('The default channel name must be a string');
       if (typeof merged.twitch.clientID !== 'string') {
         if ('TWITCH_CLIENT_ID' in process.env) {
@@ -337,7 +341,6 @@ class Application {
           apiConfig: {
             baseURL: options.twitch.authapi,
           },
-          botCode: options.twitch.botCode,
           clientID: options.twitch.clientID,
           clientSecret: options.twitch.clientSecret,
         },
@@ -368,7 +371,7 @@ class Application {
     this.log.debug(module, 'Initializing Settings.');
     return this.database.tables.settings
       .get()
-      .then(all => collect(this.settings, all, 'name', null, 'value'))
+      .then(all => collect(this.settings, all, 'name', 'value'))
       .catch(err => {
         this.log.fatal(module, err);
       });
@@ -383,7 +386,7 @@ class Application {
     this.log.debug(module, 'Initializing Streaming Settings.');
     return this.database.tables.streaming
       .get()
-      .then(all => collect(this.streaming, all, 'name', null))
+      .then(all => collect(this.streaming, all, 'name'))
       .catch(err => {
         this.log.fatal(module, err);
       });

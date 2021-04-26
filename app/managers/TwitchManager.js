@@ -1,5 +1,6 @@
 'use strict';
 
+const { Collection, HTTPError } = require('discord.js');
 const cache = require('memory-cache');
 const moment = require('moment');
 const APIManager = require('./APIManager');
@@ -33,6 +34,31 @@ class TwitchManager extends APIManager {
        */
       this.irc = new IrcManager(app, this);
     }
+
+    /**
+     * The data for a ratelimit on any route
+     * @typedef {Object} RatelimitData
+     * @prop {number} limit The average number of requests per minute that can be made
+     * @prop {number} remaining The number of points left in this minute
+     * @prop {number} reset The timestamp at which the points are reset to full
+     */
+
+    /**
+     * Data for queueing and ratelimiting requests for the keyed token
+     * @typedef {Object} RatelimitedRequestData
+     * @prop {Array<{promise: Promise, resolve: Function}>} promises The promise queue for this key
+     * @prop {RatelimitData} ratelimit The ratelimit data for this key
+     */
+
+    /**
+     * The queued requests and their ratelimits
+     * @type {Collection<string, RatelimitedRequestData>}
+     * @private
+     */
+    this._requests = new Collection();
+
+    this.driver.interceptors.request.use(this._preRequest.bind(this));
+    this.driver.interceptors.response.use(this._postRequest.bind(this), this._postErrorRequest.bind(this));
   }
 
   /**
@@ -42,10 +68,7 @@ class TwitchManager extends APIManager {
    */
   fetchChannel(userId = this.options.channel?.id) {
     this.app.log.debug(module, `Fetching channel: ${userId}`);
-    return this.api
-      .channels(userId)
-      .get()
-      .then(res => res.data);
+    return this.api.channels().get({ params: { broadcaster_id: userId }, authID: userId, allowApp: true });
   }
 
   /**
@@ -71,12 +94,12 @@ class TwitchManager extends APIManager {
       this.app.log.verbose(module, `ID was cached: ${id}`);
     } else {
       this.app.log.verbose(module, 'ID not cached');
-      const data = await this.fetchUser(user).catch(err => this.app.log.warn(module, err));
-      if (!data) return Promise.reject(new Error('User not fetched'));
-      id = data.users[0]._id;
+      const data = await this.fetchUser({ name: user }).catch(err => this.app.log.warn(module, err));
+      if (!data) throw new Error('User not fetched');
+      id = data.data[0].id;
       cache.put(`twitch.id.${user}`, id);
     }
-    return Promise.resolve(id);
+    return id;
   }
 
   /**
@@ -87,50 +110,132 @@ class TwitchManager extends APIManager {
    */
   follow(userId, streamerId = this.options.channel?.id) {
     this.app.log.debug(module, `Fetching follow: ${userId} to ${streamerId}`);
-    return this.api
-      .users(userId)
-      .follows.channels(streamerId)
-      .get()
-      .then(res => res.data);
+    return this.api.users.follows.get({ params: { from_id: userId, to_id: streamerId }, authID: streamerId, allowApp: true });
   }
 
   /**
    * Fetch the stream for the application's channel ID.
-   * @param {number} [userId=ApplicationOptions.twitch.channel?.id] fetch stream data from a specific user id
+   * @param {number} [options.userId=ApplicationOptions.twitch.channel?.id] fetch stream data from a specific user id
+   * @param {string} [options.userName] fetch stream data from a specific user name
    * @returns {void}
    */
-  fetchStream(userId = this.options.channel?.id) {
-    this.app.log.debug(module, `Fetching stream: ${userId}`);
-    return this.api
-      .streams(userId)
-      .get()
-      .then(res => res.data);
+  fetchStream({ userId, userName } = {}) {
+    if (typeof userId === 'undefined' && typeof userName === 'undefined') userId = this.options.channel?.id;
+    this.app.log.debug(module, `Fetching stream: ${userName ?? userId}`);
+    return this.api.streams.get({ params: { user_login: userName, user_id: userId }, authID: userId, allowApp: true });
   }
 
   /**
-   * Fetch a user for the given login name.
-   * @param {string} name the login name to check
+   * Fetch a user
+   * @param {string} [options.name] the login name to check
+   * @param {number} [options.id] the id of the nameto check
    * @returns {Promise<Object>}
    */
-  fetchUser(name) {
-    this.app.log.debug(module, `Fetching user: ${name}`);
-    return this.api.users.get({ params: { login: name } }).then(res => res.data);
+  fetchUser({ name, id } = {}) {
+    if (typeof name === 'undefined' && typeof id === 'undefined') throw new RangeError('A query parameter must be specified');
+    this.app.log.debug(module, `Fetching user: ${name ?? id}`);
+    return this.api.users.get({ params: { login: name, id }, authID: id, allowApp: true });
   }
 
   /**
    * Fetch the uptime for the specified stream.
-   * @param {string} [user = ApplicationOptions.twitch.channel?.name] the user to fetch uptime for
+   * @param {number} [options.userId=ApplicationOptions.twitch.channel?.id] the user id to fetch uptime for
+   * @param {string} [options.userName] the user to fetch uptime for
    * @returns {Promise<number>}
    */
-  fetchUptime(user = this.options.channel?.name) {
-    this.app.log.debug(module, `Fetching uptime: ${user}`);
-    return this.getID(user)
-      .then(id => this.fetchStream(id))
-      .then(body => {
-        if (body.stream == null) return Promise.reject(new Error('Stream Offline')); // eslint-disable-line eqeqeq
-        return moment(body.stream.created_at).valueOf();
-      });
+  fetchUptime({ userId, userName } = {}) {
+    if (typeof userId === 'undefined' && typeof userName === 'undefined') userId = this.options.channel?.id;
+    this.app.log.debug(module, `Fetching uptime: ${userName ?? userId}`);
+    return this.fetchStream({ userId, userName }).then(body => {
+      if (body.data == null) return Promise.reject(new Error('Stream Offline')); // eslint-disable-line eqeqeq
+      return moment(body.data[0].started_at).valueOf();
+    });
   }
+
+  /**
+   * The function called before each axios request automatically
+   * @param {Object} config The axios configuration generated for this request
+   * @param {number} [config.authID] The id of the user whose auth token to use
+   * @param {boolean} [config.allowApp] Whether to allow use of the app access token if the user token is not found
+   * @returns {Object} config
+   * @private
+   */
+  async _preRequest(config) {
+    let token = await this.auth.getAccessToken(config.authID, true).catch(() => undefined);
+    if (!token && config.allowApp) {
+      token = await this.auth.getAccessToken(0, true);
+    }
+    if (typeof token === 'string') {
+      config.headers.Authorization = `Bearer ${token}`;
+      config.token = token;
+    }
+    let requestData = this._requests.get(token);
+    if (!requestData) {
+      this._requests.set(token, { promises: [], ratelimit: { limit: -1, remaining: -1, reset: -1 } });
+      requestData = this._requests.get(token);
+    }
+    if (!config.isRetry) {
+      await this._awaitQueue(requestData.promises);
+    }
+
+    if (requestData.ratelimit.remaining <= 0 && Date.now() < requestData.ratelimit.reset) {
+      await new Promise(resolve => setTimeout(() => resolve, requestData.ratelimit.rest - Date.now()));
+    }
+
+    return config;
+  }
+
+  _awaitQueue(queue) {
+    const waitFor = queue.length ? queue[queue.length - 1].promise : Promise.resolve();
+    let resolve;
+    const promise = new Promise(res => (resolve = res));
+
+    queue.push({ resolve, promise });
+
+    return waitFor;
+  }
+
+  _postRequest(response) {
+    const requestData = this._requests.get(response.config?.token);
+    if (response?.headers) {
+      const offset = response.headers.date ? new Date(response.headers.date).getTime() - Date.now() : 0;
+      requestData.ratelimit = {
+        limit: response.headers['ratelimit-limit'] ? Number(response.headers['ratelimit-limit']) : Infinity,
+        remaining: response.headers['ratelimit-remaining'] ? Number(response.headers['ratelimit-remaining']) : 1,
+        reset: response.headers['ratelimit-reset'] ? new Date(Number(response.headers['ratelimit-reset'])).getTime() - offset : Date.now(),
+      };
+    }
+    requestData.promises.shift()?.resolve();
+    return response.data ?? response;
+  }
+
+  async _postErrorRequest(error) {
+    const requestData = this._requests.get(error.config?.token);
+    if (error.response?.status === 401 && error.response.config?.headers?.authorization) {
+      await this.auth.getAccessToken(error.config.authID);
+      const res = await this.driver
+        .request({ isRetry: true, ...error.response.config })
+        .catch(err => this.app.log.debug(module, 'Error during request after refreshing token', makeLoggable(err)));
+      return res;
+    }
+    if (requestData?.promises) {
+      requestData.promises.shift()?.resolve();
+    }
+    throw makeLoggable(error);
+  }
+}
+
+function makeLoggable(error) {
+  const err = new HTTPError(error.message, error.constructor?.name, error.response?.status, error.config?.method, error.config?.url);
+  if (error.isAxiosError) {
+    if (error.config?.baseURL) {
+      err.baseURL = error.config.baseURL;
+    }
+    if (error.response?.data) {
+      err.response = error.response.data;
+    }
+  }
+  return err;
 }
 
 module.exports = TwitchManager;
