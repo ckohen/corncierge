@@ -68,7 +68,10 @@ class TwitchManager extends APIManager {
    */
   fetchChannel(userId = this.options.channel?.id) {
     this.app.log.debug(module, `Fetching channel: ${userId}`);
-    return this.api.channels().get({ params: { broadcaster_id: userId }, authID: userId, allowApp: true });
+    return this.api
+      .channels()
+      .get({ params: { broadcaster_id: userId }, authID: userId, allowApp: true })
+      .then(res => res.data?.[0]);
   }
 
   /**
@@ -94,9 +97,9 @@ class TwitchManager extends APIManager {
       this.app.log.verbose(module, `ID was cached: ${id}`);
     } else {
       this.app.log.verbose(module, 'ID not cached');
-      const data = await this.fetchUser({ name: user }).catch(err => this.app.log.warn(module, err));
+      const data = await this.fetchUser({ userName: user }).catch(err => this.app.log.warn(module, err));
       if (!data) throw new Error('User not fetched');
-      id = data.data[0].id;
+      id = data.id;
       cache.put(`twitch.id.${user}`, id);
     }
     return id;
@@ -114,6 +117,17 @@ class TwitchManager extends APIManager {
   }
 
   /**
+   * Fetch the followers for a streamer
+   * @param {number} [streamerId=ApplicationOptions.twitch.channel?.id] The id of the broadcaster to fetch follower count for
+   * @param {boolean} [fullResponse=false] Whether to return the full data structure response
+   * @returns {Promise<number|Object>}
+   */
+  fetchFollowers(streamerId = this.options.channel?.id, fullResponse = false) {
+    this.app.log.debug(module, `Fetching followers: ${streamerId}`);
+    return this.api.users.follows.get({ params: { to_id: streamerId }, authID: streamerId, allowApp: true }).then(res => (fullResponse ? res : res?.total));
+  }
+
+  /**
    * Fetch the stream for the application's channel ID.
    * @param {number} [options.userId=ApplicationOptions.twitch.channel?.id] fetch stream data from a specific user id
    * @param {string} [options.userName] fetch stream data from a specific user name
@@ -127,14 +141,14 @@ class TwitchManager extends APIManager {
 
   /**
    * Fetch a user
-   * @param {string} [options.name] the login name to check
-   * @param {number} [options.id] the id of the nameto check
+   * @param {string} [options.userName] the login name to check
+   * @param {number} [options.userId] the id of the nameto check
    * @returns {Promise<Object>}
    */
-  fetchUser({ name, id } = {}) {
-    if (typeof name === 'undefined' && typeof id === 'undefined') throw new RangeError('A query parameter must be specified');
-    this.app.log.debug(module, `Fetching user: ${name ?? id}`);
-    return this.api.users.get({ params: { login: name, id }, authID: id, allowApp: true });
+  fetchUser({ userName, userId } = {}) {
+    if (typeof userName === 'undefined' && typeof userId === 'undefined') throw new RangeError('A query parameter must be specified');
+    this.app.log.debug(module, `Fetching user: ${userName ?? userId}`);
+    return this.api.users.get({ params: { login: userName, id: userId }, authID: userId, allowApp: true }).then(res => res.data?.[0]);
   }
 
   /**
@@ -147,7 +161,7 @@ class TwitchManager extends APIManager {
     if (typeof userId === 'undefined' && typeof userName === 'undefined') userId = this.options.channel?.id;
     this.app.log.debug(module, `Fetching uptime: ${userName ?? userId}`);
     return this.fetchStream({ userId, userName }).then(body => {
-      if (body.data == null) return Promise.reject(new Error('Stream Offline')); // eslint-disable-line eqeqeq
+      if (body.data?.[0] == null) return Promise.reject(new Error('Stream Offline')); // eslint-disable-line eqeqeq
       return moment(body.data[0].started_at).valueOf();
     });
   }

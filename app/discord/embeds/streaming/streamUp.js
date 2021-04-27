@@ -2,14 +2,13 @@
 
 const { Colors } = require('../../../util/Constants');
 
-module.exports = (comp, streamData) =>
+module.exports = (comp, channel, user, followers) =>
   comp
-    .setTitle(streamData.status)
+    .setTitle(channel.title)
     .setColor(Colors.BRIGHT_RED)
-    .setAuthor(`${streamData.display_name}`, '', streamData.url)
-    .setURL(streamData.url)
-    .setThumbnail(streamData.logo)
-    .addField('Category', streamData.game || 'No game', true)
-    .addField('Followers', streamData.followers || 'Unknown', true)
-    .setImage(streamData.profile_banner)
+    .setAuthor(`${user?.display_name ?? channel.broadcaster_name}`, '', `https://www.twitch.tv/${channel.broadcaster_name}`)
+    .setURL(`https://www.twitch.tv/${channel.broadcaster_name}`)
+    .setThumbnail(user?.profile_image_url)
+    .addField('Category', channel.game_name || 'No game', true)
+    .addField('Followers', followers || 'Unknown', true)
     .setTimestamp(Date.now());

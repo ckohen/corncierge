@@ -17,17 +17,19 @@ class FollowageTwitchCommand extends TwitchCommand {
     let id = handler.user['user-id'];
     let name = util.twitch.handle(handler.user);
     if (hasArgs) {
-      const twitchUser = await this.socket.twitch.fetchUser(handler.target).catch(err => this.socket.app.log.warn(module, err));
-      if (!twitchUser || twitchUser.users.length === 0) return false;
+      const twitchUser = await this.socket.twitch.fetchUser({ userName: handler.target }).catch(err => this.socket.app.log.warn(module, err));
+      if (!twitchUser) return false;
 
-      const obj = twitchUser.users[0];
-      id = obj._id;
-      name = obj.display_name || obj.name;
+      id = Number(twitchUser.id);
+      name = twitchUser.display_name;
     }
 
-    const followData = await this.socket.twitch.follow(id, handler.channel.id).catch(err => this.socket.app.log.warn(module, err));
-    if (!followData || followData.created_at == null) return false; // eslint-disable-line eqeqeq
-    const age = moment(followData.created_at).valueOf();
+    const followData = await this.socket.twitch.follow(id, handler.channel.id).then(
+      data => data?.data?.[0],
+      err => this.socket.app.log.warn(module, err),
+    );
+    if (!followData || followData.followed_at == null) return false; // eslint-disable-line eqeqeq
+    const age = moment(followData.followed_at).valueOf();
     handler.respond(util.constants.IRCResponders.followage(name, util.humanDate(age), util.relativeTime(age)));
     return true;
   }

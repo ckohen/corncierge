@@ -2,12 +2,12 @@
 
 const { Colors } = require('../../../util/Constants');
 
-module.exports = (comp, streamData, game, duration) =>
+module.exports = (comp, stream, user, duration) =>
   comp
     .setTitle('Thank You For The Fun Stream!')
     .setColor(Colors.TWITCH)
-    .setAuthor(`${streamData.display_name}`, '', streamData.url)
-    .setThumbnail(streamData.logo)
-    .addField('OFFLINE', `Played ${game} ${duration}`, true)
-    .setImage(streamData.profile_banner)
+    .setAuthor(`${stream.user_name}`, '', `https://www.twitch.tv/${stream.user_login}`)
+    .setThumbnail(user?.profile_image_url)
+    .addField('OFFLINE', `Played ${stream.game_name} ${duration}`, true)
+    .setImage(user?.offline_image_url)
     .setTimestamp(Date.now());
