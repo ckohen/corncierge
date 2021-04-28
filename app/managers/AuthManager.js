@@ -40,6 +40,8 @@ class AuthManager extends APIManager {
      * @type {Collection<number, TwitchAuthData>}
      */
     this.cache = new Collection();
+
+    this.driver.interceptors.response.use(null, (err => Promise.reject(this.makeLoggable(err))).bind(this));
   }
 
   /**
@@ -62,7 +64,10 @@ class AuthManager extends APIManager {
     this.app.log.verbose(module, 'Successful Generation');
     const validateRes = await this.validateToken(res.data.access_token, true);
     if (!validateRes) throw new Error();
-    await this.app.database.tables.twitchAuth.add(validateRes.user_id, res.data.access_token, res.data.refresh_token ?? null, validateRes.scopes ?? null);
+    const cached = this.cache.has(validateRes.user_id);
+    let method = 'edit';
+    if (!cached) method = 'add';
+    await this.app.database.tables.twitchAuth[method](validateRes.user_id, res.data.access_token, res.data.refresh_token ?? null, validateRes.scopes ?? null);
     this.cache.set(validateRes.user_id, {
       id: validateRes.user_id,
       accessToken: res.data.access_token,

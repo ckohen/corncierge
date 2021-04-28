@@ -49,9 +49,11 @@ module.exports = async (socket, request, response) => {
     return response.end();
   }
 
+  const constantHeaders = { 'Access-Control-Allow-Methods': handler.methods.join(', ') };
+
   // Check method restrictions
   if (!handler.methods.includes(request.method)) {
-    response.statusCode = 405;
+    response.writeHead(405, { 'Access-Control-Allow-Methods': handler.methods.join(', ') });
     return response.end();
   }
 
@@ -59,14 +61,16 @@ module.exports = async (socket, request, response) => {
   try {
     if (!handler.responds) {
       await handler.run(request.method, request.url, request.headers, data);
-      response.statusCode = 202;
+      response.writeHead(204, constantHeaders);
     } else {
       const res = await handler.run(request.method, request.url, request.headers, data);
       if (res) {
-        response.writeHead(res.statusCode, res.headers);
+        response.writeHead(res.statusCode, Object.assign(constantHeaders, res.headers));
         if (res.data && request.method !== 'HEAD') {
           response.write(Buffer.from(res.data));
         }
+      } else {
+        response.writeHead(204, constantHeaders);
       }
     }
   } catch (err) {

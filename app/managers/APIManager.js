@@ -1,6 +1,7 @@
 'use strict';
 
 const axios = require('axios');
+const { HTTPError } = require('discord.js');
 const BaseManager = require('./BaseManager');
 const apiRouter = require('../util/APIRouter');
 
@@ -38,6 +39,24 @@ class APIManager extends BaseManager {
       url: uri,
       ...data,
     });
+  }
+
+  /**
+   * Makes a request error more readable in logs.
+   * @param {Object} error the original error
+   * @returns {HTTPError}
+   */
+  makeLoggable(error) {
+    const err = new HTTPError(error.message, error.constructor?.name, error.response?.status, error.config?.method, error.config?.url);
+    if (error.isAxiosError) {
+      if (error.config?.baseURL) {
+        err.baseURL = error.config.baseURL;
+      }
+      if (error.response?.data) {
+        err.response = error.response.data;
+      }
+    }
+    return err;
   }
 }
 

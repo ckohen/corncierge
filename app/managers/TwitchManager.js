@@ -1,6 +1,6 @@
 'use strict';
 
-const { Collection, HTTPError } = require('discord.js');
+const { Collection } = require('discord.js');
 const cache = require('memory-cache');
 const moment = require('moment');
 const APIManager = require('./APIManager');
@@ -229,27 +229,14 @@ class TwitchManager extends APIManager {
       await this.auth.getAccessToken(error.config.authID);
       const res = await this.driver
         .request({ isRetry: true, ...error.response.config })
-        .catch(err => this.app.log.debug(module, 'Error during request after refreshing token', makeLoggable(err)));
+        .catch(err => this.app.log.debug(module, 'Error during request after refreshing token', this.makeLoggable(err)));
       return res;
     }
     if (requestData?.promises) {
       requestData.promises.shift()?.resolve();
     }
-    throw makeLoggable(error);
+    throw this.makeLoggable(error);
   }
-}
-
-function makeLoggable(error) {
-  const err = new HTTPError(error.message, error.constructor?.name, error.response?.status, error.config?.method, error.config?.url);
-  if (error.isAxiosError) {
-    if (error.config?.baseURL) {
-      err.baseURL = error.config.baseURL;
-    }
-    if (error.response?.data) {
-      err.response = error.response.data;
-    }
-  }
-  return err;
 }
 
 module.exports = TwitchManager;
