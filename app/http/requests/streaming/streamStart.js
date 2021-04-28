@@ -49,12 +49,20 @@ class StreamStartRequest extends BaseRequest {
       return;
     }
 
-    const twitchChannel = await socket.app.twitch.userChannel(user).catch(err => socket.app.log.warn(module, err));
+    const twitchID = await socket.app.twitch.getID(user).catch(err => socket.app.log.warn(module, err));
+    if (!twitchID) return;
+    const twitchChannel = await socket.app.twitch.fetchChannel(twitchID).catch(err => socket.app.log.warn(module, err));
+    const twitchUser = await socket.app.twitch.fetchUser({ userId: twitchID }).catch(err => socket.app.log.warn(module, err));
+    const followers = await socket.app.twitch.fetchFollowers(twitchID).catch(err => socket.app.log.warn(module, err));
     if (!twitchChannel) {
       return;
     }
-    const content = socket.app.discord.getContent('streamUp', [role, twitchChannel.display_name, twitchChannel.url]);
-    const embed = socket.app.discord.getEmbed('streamUp', [twitchChannel]);
+    const content = socket.app.discord.getContent('streamUp', [
+      role,
+      twitchUser?.display_name ?? twitchChannel.broadcaster_name,
+      `https://www.twitch.tv/${twitchChannel.broadcaster_name}`,
+    ]);
+    const embed = socket.app.discord.getEmbed('streamUp', [twitchChannel, twitchUser, followers]);
     // Check if throttled
     let msg;
     /* eslint-disable-next-line eqeqeq */

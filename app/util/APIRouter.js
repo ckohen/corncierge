@@ -56,12 +56,7 @@ function buildRoute(manager) {
     get(target, name) {
       if (reflectors.includes(name)) return () => route.join('/');
       if (methods.includes(name)) {
-        return data =>
-          manager.driver.request({
-            method: name,
-            url: `${route.join('/')}`,
-            ...data,
-          });
+        return data => manager._request(name, `${route.join('/')}`, data);
       }
       route.push(name);
       return new Proxy(noop, handler);

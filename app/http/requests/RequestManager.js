@@ -25,6 +25,16 @@ class RequestManager {
 
     this.register(require('./renewCert'), '/api/private/certbot/');
     this.registerGroup(require('./streaming'), 'streaming');
+    for (const group of require('./api')) {
+      if (Array.isArray(group)) {
+        this.registerGroup(group, 'api');
+        continue;
+      }
+      if (typeof group === 'object') {
+        this.registerGroup(group.requests, `api/${group.name}`);
+      }
+    }
+    this.register(require('./success'));
   }
 
   /**

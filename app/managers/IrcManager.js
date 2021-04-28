@@ -19,7 +19,7 @@ const thirtySecs = 30000;
 class IrcManager extends EventManager {
   constructor(app, twitch) {
     if (!twitch.options.irc.identity?.password && twitch.options.irc.identity) {
-      twitch.options.irc.identity.password = twitch.auth.getAccessToken.bind(twitch.auth);
+      twitch.options.irc.identity.password = twitch.auth.getAccessToken.bind(twitch.auth, twitch.options.irc.botID);
     }
     super(app, new Client(twitch.options.irc), twitch.options.irc, events);
 
@@ -241,13 +241,12 @@ class IrcManager extends EventManager {
    * @param {string} table the database table to get
    * @param {Collection} map the map to store data in
    * @param {string} [key] a key to use for the new map
-   * @param {string} [secondaryKey=false] a dashed key to use for the new map
    * @returns {Promise<void>}
    */
-  cacheTable(table, map, key, secondaryKey = false) {
+  cacheTable(table, map, key) {
     return this.app.database.tables[table].get().then(all => {
       map.clear();
-      collect(map, all, key, secondaryKey);
+      collect(map, all, key);
     });
   }
 }

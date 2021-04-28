@@ -16,6 +16,7 @@ class ReloadCommand extends BaseCommand {
   run(message) {
     const { discord, twitch, log, settings, streaming } = this.socket.app;
     const ircDisabled = this.socket.app.options.disableIRC;
+    const twitchDisabled = this.socket.app.options.disableTwitch;
 
     log(module, 'Reload instruct received');
 
@@ -27,6 +28,7 @@ class ReloadCommand extends BaseCommand {
       this.socket.app.setSettings(),
       this.socket.app.setStreaming(),
       ircDisabled ? Promise.resolve('Twitch Disabled') : twitch.irc.setCache(),
+      twitchDisabled ? Promise.resolve('Twitch Disabled') : twitch.auth.setCache(),
       discord.setCache(),
     ]).then(async () => {
       const md = (name, metric) => `**${metric}** ${plural(name, metric)}`;
@@ -37,7 +39,7 @@ class ReloadCommand extends BaseCommand {
         md('filters', ircDisabled ? 'N/A' : twitch.irc.cache.filters.size),
         md('commands', ircDisabled ? 'N/A' : twitch.irc.cache.commands.size),
         md('jokes', ircDisabled ? 'N/A' : twitch.irc.cache.jokes.length),
-        md('music guilds', discord.cache.musicData.size),
+        md('music guilds', settings.get('discord_channel_music').split(',').length),
         md('total guilds', discord.cache.prefixes.size),
       ];
 

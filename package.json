@@ -1,6 +1,6 @@
 {
   "name": "corncierge",
-  "version": "1.8.3",
+  "version": "1.9.0",
   "description": "A moderation and command bot for Twitch and a fully integrated Discord bot.",
   "main": "./app/index.js",
   "exports": {
@@ -44,7 +44,7 @@
     "mysql2": "^1.7.0",
     "pluralize": "^8.0.0",
     "simple-youtube-api": "^5.2.1",
-    "tmi.js": "^1.7.1",
+    "tmi.js": "^1.8.3",
     "tokenthrottle": "^1.3.0",
     "winston": "^3.3.3",
     "ytdl-core": "^4.4.0"

@@ -35,7 +35,12 @@ class EvalCommand extends BaseCommand {
     if (args.toLowerCase().includes('token') || args.toLowerCase().includes('secret')) {
       return message.channel.send(`Error: Execution of command refused`);
     }
-    let evaluated = await eval(args);
+    let evaluated;
+    try {
+      evaluated = await eval(args);
+    } catch (error) {
+      evaluated = error;
+    }
     let cleaned = await this.clean(util.inspect(evaluated, { depth }));
     if (cleaned.split(/\r\n|\r|\n/).length > 8) {
       if (nofile) {
@@ -49,7 +54,8 @@ class EvalCommand extends BaseCommand {
 
   clean(text) {
     if (typeof text === 'string') {
-      const tokens = findTokens(this.socket.app.options);
+      let tokens = findTokens(this.socket.app.options);
+      tokens = tokens.concat(findTokens(collectionObject(this.socket.app.twitch.auth.cache)));
       tokens.forEach(token => (text = text.replace(new RegExp(token, 'gi'), 'Redacted')));
       return text.replace(/` /g, `\`${String.fromCharCode(8203)}`);
     }
@@ -57,8 +63,20 @@ class EvalCommand extends BaseCommand {
   }
 }
 
+function collectionObject(collection) {
+  return collection.reduce(
+    (acc, val, key) =>
+      (acc = {
+        [key]: val,
+        ...acc,
+      }),
+    {},
+  );
+}
+
 function findTokens(options, includeAll = false) {
   let tokens = [];
+  if (options === null) return tokens;
   const keys = Object.keys(options);
   keys.forEach(key => {
     if (typeof options[key] === 'object') {
