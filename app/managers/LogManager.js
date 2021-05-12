@@ -156,7 +156,7 @@ class LogManager extends BaseManager {
       .split('.')
       .shift()
       .replace(`${this.app.options.basepath}/`, '')
-      .replace(`${this.app.options.basepath.split('node_modules')[0]}/`, '')
+      .replace(`${this.app.options.basepath.split('node_modules')[0]}`, '')
       .replace(/\//g, '.');
   }
 }
