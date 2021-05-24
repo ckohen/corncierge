@@ -59,7 +59,7 @@ class IrcManager extends EventManager {
      * Twitch IRC only allows 100 requests every 30 seconds.
      * @type {RateLimiter}
      */
-    this.limiter = new RateLimiter(95, thirtySecs);
+    this.limiter = new RateLimiter({ tokensPerInterval: 95, interval: thirtySecs });
 
     /**
      * The command throttle.
@@ -88,11 +88,10 @@ class IrcManager extends EventManager {
    * @param {string} channel the twitch channel to post in
    * @param {string} message the message to post
    */
-  say(channel, message) {
+  async say(channel, message) {
     if (!message) return;
-    this.limiter.removeTokens(1, () => {
-      this.driver.say(channel, message);
-    });
+    await this.limiter.removeTokens(1);
+    this.driver.say(channel, message);
   }
 
   /**
@@ -101,18 +100,17 @@ class IrcManager extends EventManager {
    * @param {string} uuid the unique id of the message
    * @param {Function} [callback] called after succesfull deletion
    */
-  delete(channel, uuid, callback = null) {
-    this.limiter.removeTokens(1, () => {
-      this.driver
-        .deletemessage(channel, uuid)
-        .then(() => {
-          if (typeof callback !== 'function') return;
-          callback();
-        })
-        .catch(err => {
-          this.app.log.error(module, `Delete: ${err}`);
-        });
-    });
+  async delete(channel, uuid, callback = null) {
+    await this.limiter.removeTokens(1);
+    this.driver
+      .deletemessage(channel, uuid)
+      .then(() => {
+        if (typeof callback !== 'function') return;
+        callback();
+      })
+      .catch(err => {
+        this.app.log.error(module, `Delete: ${err}`);
+      });
   }
 
   /**
@@ -122,18 +120,17 @@ class IrcManager extends EventManager {
    * @param {number} duration the duration of the timeout
    * @param {Function} [callback] called after succesfull timeout
    */
-  timeout(channel, username, duration, callback = null) {
-    this.limiter.removeTokens(1, () => {
-      this.driver
-        .timeout(channel, username, duration)
-        .then(() => {
-          if (typeof callback !== 'function') return;
-          callback();
-        })
-        .catch(err => {
-          this.app.log.error(module, `Timeout`, err);
-        });
-    });
+  async timeout(channel, username, duration, callback = null) {
+    await this.limiter.removeTokens(1);
+    this.driver
+      .timeout(channel, username, duration)
+      .then(() => {
+        if (typeof callback !== 'function') return;
+        callback();
+      })
+      .catch(err => {
+        this.app.log.error(module, `Timeout`, err);
+      });
   }
 
   /**
@@ -142,18 +139,17 @@ class IrcManager extends EventManager {
    * @param {string} username the twitch user to ban
    * @param {Function} [callback] called after succesfull ban
    */
-  ban(channel, username, callback = null) {
-    this.limiter.removeTokens(1, () => {
-      this.driver
-        .ban(channel, username)
-        .then(() => {
-          if (typeof callback !== 'function') return;
-          callback();
-        })
-        .catch(err => {
-          this.app.log.error(module, `Ban`, err);
-        });
-    });
+  async ban(channel, username, callback = null) {
+    await this.limiter.removeTokens(1);
+    this.driver
+      .ban(channel, username)
+      .then(() => {
+        if (typeof callback !== 'function') return;
+        callback();
+      })
+      .catch(err => {
+        this.app.log.error(module, `Ban`, err);
+      });
   }
 
   /**
