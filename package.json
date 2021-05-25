@@ -57,11 +57,16 @@
     "eslint-plugin-import": "^2.23.3",
     "eslint-plugin-prettier": "^3.4.0",
     "husky": "^6.0.0",
-    "prettier": "^2.3.0",
-    "pretty-quick": "^3.1.0"
+    "is-ci": "^3.0.0",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.3.0"
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "lint-staged": {
+    "*.{mjs,js,ts}": "eslint --fix --ext mjs,js,ts",
+    "*.{json,yml,yaml}": "prettier --write"
   },
   "prettier": {
     "singleQuote": true,
