@@ -170,7 +170,13 @@ class ButtonRoleAppCommand extends BaseAppCommand {
       if (data.messageID) {
         sent = await path(data.messageID).patch({ data: message });
       } else {
-        sent = await path.post({ data: message }).catch(err => this.socket.app.log.warn(module, '[Post Button Roles]', err));
+        if (!message.embed) {
+          message.embed = { description: 'Hello there' };
+        }
+        sent = await path
+          .post({ data: message })
+          .then(msg => path(msg.id).patch({ data: { flags: 1 << 2 } }))
+          .catch(err => this.socket.app.log.warn(module, '[Post Button Roles]', err));
       }
       if (!sent) {
         interaction.reply('There was an error sending the message, please try again.');
