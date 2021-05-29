@@ -48,6 +48,11 @@ class DiscordUtil {
 
   static extendMessage(base) {
     class CustomMessage extends base {
+      constructor(client, data, channel) {
+        super(client, data, channel);
+        if ('components' in data) this.components = data.components;
+        else this.components = this.components.slice();
+      }
       /**
        * Deletes this message (if possible) after a specified time
        * @name Message#delayDelete

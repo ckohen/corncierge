@@ -3,13 +3,14 @@
 const { Collection } = require('discord.js');
 const BaseInteraction = require('./BaseInteraction');
 const applicationCommands = require('./applicationCommands');
+const { buttonComponents } = require('./components');
 
 /**
  * One of
  * * `applicationCommands`
  * @typedef {string} InteractionType
  */
-const InteractionTypes = ['applicationCommands'];
+const InteractionTypes = ['applicationCommands', 'buttonComponents'];
 
 /**
  * Stores the interactions for a discord manager
@@ -28,6 +29,7 @@ class InteractionManager {
      * The interactions by type
      * @typedef {Object} Interactions
      * @property {Collection<string, BaseAppCommand>} applicationCommands the appliction (slash) command interactions
+     * @property {Collection<string, BaseButtonComponent>} buttonComponents the button component interactions
      */
 
     /**
@@ -37,8 +39,10 @@ class InteractionManager {
      */
     this.registered = {
       applicationCommands: new Collection(),
+      buttonComponents: new Collection(),
     };
     this.registerMultiple(applicationCommands, 'applicationCommands');
+    this.registerMultiple(buttonComponents, 'buttonComponents');
   }
 
   /**

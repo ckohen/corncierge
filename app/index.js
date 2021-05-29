@@ -27,6 +27,7 @@ module.exports = {
   // Handlers
   BaseAppCommand: require('./discord/interactions/applicationCommands/BaseAppCommand'),
   BaseCommand: require('./discord/commands/BaseCommand'),
+  BaseComponent: require('./discord/interactions/components/BaseComponent'),
   BaseInteraction: require('./discord/interactions/BaseInteraction'),
   BaseRequest: require('./http/requests/BaseRequest'),
   BaseTable: require('./database/tables/BaseTable'),

@@ -18,7 +18,10 @@ class RoomAppCommand extends BaseAppCommand {
     args = args[0].options;
 
     // A list of key value pairs with room ids and their associated room
-    let rooms = socket.cache.rooms.get(String(interaction.guild.id));
+    let rooms = socket.cache.rooms.get(String(interaction.guildID));
+    if (!rooms) {
+      return interaction.reply('This command does not work without a bot in the server or in DMs.', { ephemeral: true });
+    }
 
     if (typeof rooms === 'undefined' || rooms === null) {
       socket.cache.rooms.set(String(interaction.guild.id), new Collection());

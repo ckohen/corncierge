@@ -1,17 +1,33 @@
 'use strict';
 
-const { discord } = require('../../util/UtilManager');
+const { discord, constants } = require('../../util/UtilManager');
 
 module.exports = (socket, interaction) => {
   // Check for handler
   let handler;
-  switch (interaction.type) {
-    case 2:
-      handler = socket.interactions.applicationCommands.get(interaction.commandName);
+  if (interaction.isCommand()) {
+    handler = socket.interactions.applicationCommands.get(interaction.commandName);
+  }
+  if (interaction.isMessageComponent()) {
+    if (!verifyCustomId(interaction.customID, interaction.message.components)) {
+      interaction.reply('You think you are sneaky huh, well, no such luck here!', { ephemeral: true });
+      return;
+    }
+    const name = constants.ComponentFunctions[Number(interaction.customID.split(':')[0])];
+    switch (interaction.componentType) {
+      case 'BUTTON':
+        handler = socket.interactions.buttonComponents.get(name);
+        break;
+    }
   }
 
   if (!handler) {
-    interaction.reply('This command has no associated action! Please contact the developer if it is supposed to be doing something!', { ephemeral: true });
+    interaction.reply('This interaction has no associated action! Please contact the developer if it is supposed to be doing something!', { ephemeral: true });
+    return;
+  }
+
+  if (handler.requiresBot && !interaction.guild) {
+    interaction.reply('This command does not work without a bot in the server or in DMs.', { ephemeral: true });
     return;
   }
 
@@ -35,5 +51,12 @@ module.exports = (socket, interaction) => {
   }
 
   // Handle command
-  handler.run(interaction, interaction.options);
+  handler.run(interaction, interaction.options ?? null);
 };
+
+function verifyCustomId(id, components) {
+  if (!components) return true;
+  const found = components.find(component => component.type === 1 && component.components.find(c => c.custom_id === id));
+  if (found) return true;
+  return false;
+}

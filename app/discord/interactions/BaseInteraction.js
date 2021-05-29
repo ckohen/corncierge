@@ -7,9 +7,18 @@
 class BaseInteraction {
   /**
    * Data that defines an interaction
-   * @typedef {Object} InteractionDefinition
-   * @param {Object} definition the definition of the interaction (the data sent to discord)
-   * @param {Snowflake|Snowflake[]} [guilds] register the interaction to specific guild(s)
+   * If restrictions are present they are checked in the following order:
+   * * `Role`
+   * * `Permissions`
+   *
+   *   e.g. if a command is executed and has role and permissions set, if the user sending does not have the role, it will not run
+   * Restrictions on guild, channel, or user level should be done with discords built in methods.
+   * If role names are not the appropriate way to handle your restriction needs, again use discords built in method.
+   * @typedef {Object} InteractionData
+   * @param {Object} [definition] the definition of the interaction (the data sent to discord)
+   * @param {string} name the name of the interaction
+   * @param {boolean} [requiresBot=false] whether the interaction needs a bot in the guild to function
+   * @param {string} [role] restrict the command to a specific role (those with `Manage Roles` bypass this)
    * @param {PermissionResolvable} [permissions] restrict the interaction to users with certain permissions
    */
 
@@ -29,25 +38,24 @@ class BaseInteraction {
     Object.defineProperty(this, 'socket', { value: socket });
 
     /**
-     * The definition of the interaction as discord expects it
-     */
-    Object.defineProperty(this, 'definition', { value: data.definition });
-
-    /**
-     * The base name for this interaction, pulled from the definition
+     * The base name for this interaction
      * @name BaseInteraction#name
      * @type {string}
      */
-    Object.defineProperty(this, 'name', { value: data.definition?.name });
+    Object.defineProperty(this, 'name', { value: data.name });
 
-    if ('guilds' in data) {
-      /**
-       * The specific guild(s) this interaction is registered to, if not, global
-       * @name BaseInteraction#guild
-       * @type {Snowflake|Snowflake[]}
-       */
-      Object.defineProperty(this, 'guilds', { value: data.guilds });
-    }
+    /**
+     * Whether the interaction needs a bot in the guild to function
+     * @name BaseInteraction#requiresBot
+     * @type {boolean}
+     */
+    Object.defineProperty(this, 'requiresBot', { value: data.requiresBot ?? false });
+
+    /**
+     * The definition of the interaction as discord expects it
+     * @type {Object}
+     */
+    Object.defineProperty(this, 'definition', { value: data.definition, writable: true });
 
     if ('permissions' in data) {
       /**
@@ -57,12 +65,21 @@ class BaseInteraction {
        */
       Object.defineProperty(this, 'permissions', { value: data.permissions });
     }
+
+    if ('role' in data) {
+      /**
+       * The role this application command is restricted to, if any
+       * @name BaseAppCommand#role
+       * @type {?string}
+       */
+      Object.defineProperty(this, 'role', { value: data.role });
+    }
   }
 
   /**
    * Runs the command
    * @param {Interaction} interaction the interaction that was executed
-   * @param {Object} options the options provided with this interaction
+   * @param {?Object} [options] the options provided with this interaction
    * @abstract
    */
   run() {

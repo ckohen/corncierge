@@ -3,25 +3,20 @@
 const BaseInteraction = require('../BaseInteraction');
 
 /**
- * Represents an application commandthat can be triggered in discord
+ * Represents an application command that can be triggered in discord
  * @abstract
  */
 class BaseAppCommand extends BaseInteraction {
   /**
    * Data that defines an application command interaction
-   * If restrictions are present they are checked in the following order:
-   * * `Channel`
-   * * `Role`
-   * * `Permissions`
-   *
-   *  e.g. if a command is executed and has role and channel set, if it is not sent in the channel specified, it will not run
+   * Channel restrictions are checked before the other two restriction checks.
    *
    * Restrictions on guild or user level should be done with discords built in method.
    * If role names are not the appropriate way to handle your restriction needs, again use discords built in method.
-   * @typedef {Object} AppplicationCommandData
-   * @param {Object} definition the definition of the interaction (the data sent to discord)
+   * <info> `data.name` is pulled from the definition on application commands </info>
+   * @typedef {InteractionData} AppplicationCommandData
+   * @param {string|Snowflake|Snowflake[]} [channel] restrict the command to a specific channel (or set of channels if specified in database)
    * @param {Snowflake|Snowflake[]} [guilds] register the interaction to specific guild(s)
-   * @param {PermissionResolvable} [permissions] restrict the interaction to users with certain permissions
    */
 
   /**
@@ -30,7 +25,7 @@ class BaseAppCommand extends BaseInteraction {
    * @param {AppplicationCommandData} data the data that defines the interaction
    */
   constructor(socket, data) {
-    super(socket, data);
+    super(socket, { ...data, name: data.definition.name });
     if ('channel' in data) {
       /**
        * The channel this application command is restricted to, if any
@@ -40,13 +35,13 @@ class BaseAppCommand extends BaseInteraction {
       Object.defineProperty(this, 'channel', { value: data.channel });
     }
 
-    if ('role' in data) {
+    if ('guilds' in data) {
       /**
-       * The role this application command is restricted to, if any
-       * @name BaseAppCommand#role
-       * @type {?string}
+       * The specific guild(s) this interaction is registered to, if not, global
+       * @name BaseAppCommand#guild
+       * @type {?Snowflake|Snowflake[]}
        */
-      Object.defineProperty(this, 'role', { value: data.role });
+      Object.defineProperty(this, 'guilds', { value: data.guilds });
     }
   }
 }

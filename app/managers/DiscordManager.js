@@ -4,10 +4,11 @@ const { Client, Collection, MessageEmbed, Structures } = require('discord.js');
 const lodash = require('lodash');
 
 const EventManager = require('./EventManager');
+const CommandInteraction = require('../discord/CommandInteraction');
+const ComponentInteraction = require('../discord/MessageComponentInteraction');
 const CommandManager = require('../discord/commands/CommandManager');
 const embeds = require('../discord/embeds');
 const events = require('../discord/events');
-const interactionHandler = require('../discord/interactionHandler');
 const InteractionManager = require('../discord/interactions/InteractionManager');
 
 const { collect, constants, discord: util } = require('../util/UtilManager');
@@ -61,7 +62,9 @@ class DiscordManager extends EventManager {
      * The local cache of database tables, each mapped by guild id
      * @type {Object<TableName, Collection<Snowflake, Object>>}
      */
-    this.cache = {};
+    this.cache = {
+      buttonRoles: new Collection(),
+    };
   }
 
   /**
@@ -72,12 +75,30 @@ class DiscordManager extends EventManager {
     this.app.log.debug(module, 'Registering events');
     this.attach();
     // Temporary Addition to handle interactions before discord.js does
-    this.driver.ws.on('INTERACTION_CREATE', async packet => {
-      const result = await interactionHandler(this.driver, packet);
+    this.driver.ws.on('INTERACTION_CREATE', data => {
+      const client = this.driver;
+      const { InteractionTypes } = constants;
+      let interaction;
+      switch (data.type) {
+        case InteractionTypes.APPLICATION_COMMAND: {
+          interaction = new CommandInteraction(client, data);
+          break;
+        }
+        case InteractionTypes.MESSAGE_COMPONENT: {
+          interaction = new ComponentInteraction(client, data);
+          break;
+        }
+        default:
+          this.app.log.debug(module, `[INTERACTION] Received interaction with unknown type: ${data.type}`);
+          return;
+      }
 
-      await this.driver.api.interactions(packet.id, packet.token).callback.post({
-        data: result,
-      });
+      /**
+       * Emitted when an interaction is created.
+       * @event Client#interaction
+       * @param {Interaction} interaction The interaction which was created
+       */
+      client.emit('interactionCreate', interaction);
     });
     // End addition
 
