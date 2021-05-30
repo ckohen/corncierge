@@ -55,7 +55,14 @@ class RoleAssignComponent extends BaseComponent {
       output.push({ type: 1, components: [] });
     }
     formatted.forEach((button, index) => {
-      output[Math.ceil((index + 1) / 5) - 1].components.push(button);
+      if (button) {
+        output[Math.ceil((index + 1) / 5) - 1].components.push(button);
+      }
+    });
+    output.forEach((row, index) => {
+      if (row.components.length === 0) {
+        output.splice(index, 1);
+      }
     });
     return output;
   }
@@ -67,6 +74,7 @@ class RoleAssignComponent extends BaseComponent {
    * @private
    */
   generateButton(button) {
+    if (button === undefined) return undefined;
     const custom_id = `${ComponentFunctions[this.name]}:${button.roles.length}:${button.roles.join('-')}`;
     const formatted = {
       type: 2,

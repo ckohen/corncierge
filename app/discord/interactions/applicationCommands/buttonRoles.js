@@ -22,7 +22,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
     const cacheID = `${interaction.guildID}-${interaction.member.id}`;
     let data = this.socket.cache.buttonRoles.get(cacheID);
     if (!data) {
-      this.socket.cache.buttonRoles.set(cacheID, { messageID: null, embed: { title: null, description: null }, buttons: null });
+      this.socket.cache.buttonRoles.set(cacheID, { messageID: null, embed: { color: null, title: null, description: null }, buttons: null });
       data = this.socket.cache.buttonRoles.get(cacheID);
     }
 
@@ -49,6 +49,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
         if (message.embeds?.[0]) {
           data.embed.title = message.embeds[0].title;
           data.embed.description = message.embeds[0].description;
+          data.embed.color = message.embeds[0].color;
         }
         data.messageID = messageID;
         const buttons = formatFetchedButtons(message.components);
@@ -57,20 +58,28 @@ class ButtonRoleAppCommand extends BaseAppCommand {
           return;
         }
         data.buttons = buttons;
-      }
-      // eslint-disable-next-line no-fallthrough
-      case 'new': {
-        const title = getArg(args, 'title');
-        const description = getArg(args, 'description');
-        if (method === 'new') {
-          data.messageID = null;
-          data.embed = { title: null, description: null };
-          data.buttons = [];
-        }
-        if (title) data.embed.title = title;
-        if (description) data.embed.description = description;
+        setEmbed(args, data);
         break;
       }
+      case 'embed': {
+        const submethod = args[0].name;
+        args = args[0].options;
+        switch (submethod) {
+          case 'edit':
+            setEmbed(args, data);
+            break;
+          case 'remove':
+            data.embed = { color: null, title: null, description: null };
+            break;
+        }
+        break;
+      }
+      case 'new':
+        data.messageID = null;
+        data.embed = { color: null, title: null, description: null };
+        data.buttons = [];
+        setEmbed(args, data);
+        break;
       case 'buttons': {
         if (!data.buttons) {
           interaction.reply('Please initiate a new button role message or edit an existing one before modifying buttons!');
@@ -82,15 +91,37 @@ class ButtonRoleAppCommand extends BaseAppCommand {
         switch (submethod) {
           case 'edit': {
             buttonID = getArg(args, 'buttonid') - 1;
-            if (!data.buttons[buttonID]) {
+            if (data.buttons.length < buttonID) {
               interaction.reply('That button does not exist yet, try creating it!');
+              return;
+            }
+            if (!data.buttons[buttonID]) {
+              interaction.reply('You cannot edit blank buttons!');
               return;
             }
             const disabled = getArg(args, 'disable');
             if (disabled !== null) data.buttons[buttonID].disabled = disabled;
+            const color = getArg(args, 'color');
+            const label = getArg(args, 'label');
+            if (color) data.buttons[buttonID].color = color;
+            if (label) data.buttons[buttonID].name = label;
           }
           // eslint-disable-next-line no-fallthrough
           case 'add': {
+            const newLine = getArg(args, 'newline');
+            if (newLine) {
+              if (buttonID > 20) {
+                interaction.reply('Unable to add a new row of buttons here (There are already 5 rows!)');
+                return;
+              }
+              const newButtonID = Math.ceil(buttonID / 5) * 5;
+              data.buttons.push(...Array(newButtonID - buttonID).fill(undefined));
+              buttonID = newButtonID;
+            }
+            if (buttonID >= 25) {
+              interaction.reply('You can only have 25 buttons (including spacers)!');
+              return;
+            }
             let botHighest = interaction.guild.me.roles.highest;
             let button = data.buttons[buttonID];
             if (!button) {
@@ -132,9 +163,26 @@ class ButtonRoleAppCommand extends BaseAppCommand {
             data.buttons[buttonID] = button;
             break;
           }
+          case 'addspace':
+            if (buttonID > 25) {
+              interaction.reply('You can only have 25 buttons (including spacers)!');
+              return;
+            }
+            data.buttons[buttonID] = undefined;
+            break;
+          case 'swap': {
+            const button1ID = getArg(args, 'button1') - 1;
+            const button2ID = getArg(args, 'button2') - 1;
+            if (data.buttons.length <= button1ID || data.buttons.length <= button2ID) {
+              interaction.reply('One of the specified buttons does not exist');
+              return;
+            }
+            data.buttons[button1ID] = data.buttons.splice(button2ID, 1, data.buttons[button1ID])[0];
+            break;
+          }
           case 'remove':
             buttonID = getArg(args, 'buttonid') - 1;
-            if (!data.buttons[buttonID]) {
+            if (data.buttons.length < buttonID) {
               interaction.reply('The specified button does not exist');
               return;
             }
@@ -157,25 +205,52 @@ class ButtonRoleAppCommand extends BaseAppCommand {
       message.content = 'Creating a new button role message!';
     }
     if (!finalizedDisplay) {
-      buttons = buttons.map((button, index) => ({ ...button, disabled: true, name: `ID: ${index + 1} ${button.name}` }));
+      buttons = buttons.map((button, index) => {
+        if (button) {
+          return { ...button, disabled: true, name: `ID: ${index + 1} ${button.name ?? ''}` };
+        }
+        return { color: 2, roles: [], disabled: true, name: `ID: ${index + 1} DISAPPEARS` };
+      });
     }
     let title = data.embed.title;
     if (data.embed.title || data.embed.description) {
-      message.embed = { title, description: data.embed.description };
+      message.embed = { title, description: data.embed.description, color: data.embed.color };
     }
     message.components = this.socket.interactions.buttonComponents.get('ROLE_ASSIGN').definition(buttons);
+    if (message.components.length === 0) {
+      message.components = [
+        {
+          type: 1,
+          components: [
+            {
+              type: 2,
+              style: 2,
+              custom_id: `${ComponentFunctions.ROLE_ASSIGN}:999:`,
+              label: 'No button roles',
+              emoji: {
+                name: '😕',
+              },
+              disabled: true,
+            },
+          ],
+        },
+      ];
+    }
     let sent;
     if (method === 'save') {
       let path = interaction.client.api.channels(interaction.channel.id).messages;
       if (data.messageID) {
+        message.flags = message.embed ? 0 : 1 << 2;
         sent = await path(data.messageID).patch({ data: message });
       } else {
+        let suppress = false;
         if (!message.embed) {
           message.embed = { description: 'Hello there' };
+          suppress = true;
         }
         sent = await path
           .post({ data: message })
-          .then(msg => path(msg.id).patch({ data: { flags: 1 << 2 } }))
+          .then(msg => (suppress ? path(msg.id).patch({ data: { flags: 1 << 2 } }) : msg))
           .catch(err => this.socket.app.log.warn(module, '[Post Button Roles]', err));
       }
       if (!sent) {
@@ -201,6 +276,15 @@ function getArg(args, argName) {
   return foundArg?.value ?? null;
 }
 
+function setEmbed(args, data) {
+  const title = getArg(args, 'title');
+  const description = getArg(args, 'description');
+  const color = getArg(args, 'color');
+  if (title) data.embed.title = title;
+  if (description) data.embed.description = description;
+  if (color) data.embed.color = color;
+}
+
 function parseEmote(emoteString) {
   let emote = {
     name: emoteString,
@@ -215,7 +299,7 @@ function parseEmote(emoteString) {
 
 function formatFetchedButtons(components) {
   const buttons = [];
-  components.forEach(component => {
+  components.forEach((component, index) => {
     if (component.type !== 1) return;
     component.components.forEach(c => {
       if (c.type !== 2) return;
@@ -228,7 +312,17 @@ function formatFetchedButtons(components) {
         disabled: c.disabled,
       });
     });
+    if (components[index + 1]) {
+      const needs = 5 - (buttons.length % 5);
+      if (needs) {
+        buttons.push(...Array(needs).fill(undefined));
+      }
+    }
   });
+  if (buttons.length === 0) return false;
+  if (buttons.length === 1 && components[0].components[0].custom_id === `${ComponentFunctions.ROLE_ASSIGN}:999:`) {
+    buttons.shift();
+  }
   return buttons;
 }
 
@@ -255,6 +349,11 @@ function getDefinition() {
             name: 'description',
             description: 'A short description to show along with this set of buttons',
           },
+          {
+            type: 4,
+            name: 'color',
+            description: 'A color for the embed, you can enter hex color codes here by prefixing it with 0x (e.g. 0xFF0000)',
+          },
         ],
       },
       {
@@ -277,6 +376,11 @@ function getDefinition() {
             type: 3,
             name: 'description',
             description: 'A short description to show along with this set of buttons',
+          },
+          {
+            type: 4,
+            name: 'color',
+            description: 'A color for the embed, you can enter hex color codes here by prefixing it with 0x (e.g. 0xFF0000)',
           },
         ],
       },
@@ -329,6 +433,11 @@ function getDefinition() {
                 type: 3,
                 name: 'emoji',
                 description: 'An emoji to display next to the label',
+              },
+              {
+                type: 5,
+                name: 'newline',
+                description: 'Whether to skip the rest of this row and place this button on the next line',
               },
               {
                 type: 8,
@@ -420,6 +529,64 @@ function getDefinition() {
                 description: 'A third role that this button toggles',
               },
             ],
+          },
+          {
+            type: 1,
+            name: 'swap',
+            description: 'Swap the position of two buttons',
+            options: [
+              {
+                type: 4,
+                name: 'button1',
+                description: 'The id of the first button',
+                required: true,
+              },
+              {
+                type: 4,
+                name: 'button2',
+                description: 'The id of the second button',
+                required: true,
+              },
+            ],
+          },
+          {
+            type: 1,
+            name: 'addspace',
+            description: 'Add a button that will not appear in the final output, for end of row spacing purposes',
+          },
+        ],
+      },
+      {
+        type: 2,
+        name: 'embed',
+        description: 'Control the embed on the currently selected button role message',
+        options: [
+          {
+            type: 1,
+            name: 'edit',
+            description: 'Edit the embed',
+            options: [
+              {
+                type: 3,
+                name: 'title',
+                description: 'The title to display for this set of buttons',
+              },
+              {
+                type: 3,
+                name: 'description',
+                description: 'A short description to show along with this set of buttons',
+              },
+              {
+                type: 4,
+                name: 'color',
+                description: 'A color for the embed, you can enter hex color codes here by prefixing it with 0x (e.g. 0xFF0000)',
+              },
+            ],
+          },
+          {
+            type: 1,
+            name: 'remove',
+            description: 'Remove the embed',
           },
         ],
       },

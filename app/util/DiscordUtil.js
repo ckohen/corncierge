@@ -48,10 +48,16 @@ class DiscordUtil {
 
   static extendMessage(base) {
     class CustomMessage extends base {
-      constructor(client, data, channel) {
-        super(client, data, channel);
+      _patch(data) {
+        super._patch(data);
+        this.components = data.components ?? [];
+      }
+
+      patch(data) {
+        const clone = super.patch(data);
         if ('components' in data) this.components = data.components;
         else this.components = this.components.slice();
+        return clone;
       }
       /**
        * Deletes this message (if possible) after a specified time
