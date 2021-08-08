@@ -106,9 +106,7 @@ class RandomMoveCommand extends BaseCommand {
           if (args.length > 0) {
             toChannel = args.join(' ');
             // Check for new channel
-            newChannel = await message.member.guild.channels.cache.find(
-              channel => channel.name.toLowerCase() === toChannel.toLowerCase() && channel.type === 'voice',
-            );
+            newChannel = message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === toChannel.toLowerCase() && channel.isVoice());
           }
           if (!newChannel) {
             message.channel.send(
@@ -120,12 +118,8 @@ class RandomMoveCommand extends BaseCommand {
           // Move users in specified channel
           fromChannel = args.slice(0, args.indexOf('->')).join(' ');
           toChannel = args.slice(args.indexOf('->') + 1).join(' ');
-          voiceChannel = await message.member.guild.channels.cache.find(
-            channel => channel.name.toLowerCase() === fromChannel.toLowerCase() && channel.type === 'voice',
-          );
-          newChannel = await message.member.guild.channels.cache.find(
-            channel => channel.name.toLowerCase() === toChannel.toLowerCase() && channel.type === 'voice',
-          );
+          voiceChannel = message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === fromChannel.toLowerCase() && channel.isVoice());
+          newChannel = message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === toChannel.toLowerCase() && channel.isVoice());
         }
         if (num === clamp(num, 1, voiceChannel.members.size)) {
           moving = voiceChannel.members.filter(member => !member.user.bot).random(num);

@@ -73,7 +73,7 @@ class StreamStartRequest extends BaseRequest {
       }
     } else {
       msg = await channel.send({ content, embeds: [embed], allowedMentions: testing ? { parse: [] } : undefined });
-      if (msg.channel.type === 'news') {
+      if (msg.crosspostable) {
         msg.crosspost().catch(err => socket.app.log.warn(module, err));
       }
       socket.setMessage(user, msg.id);

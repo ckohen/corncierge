@@ -49,7 +49,7 @@ class VoiceRolesCommand extends BaseCommand {
         if (elem.startsWith('<#') && elem.endsWith('>')) {
           // Check if the current channel is a voice channel
           channelObj = message.guild.channels.cache.get(elem.slice(2, -1));
-          if (channelObj && channelObj.type === 'voice') {
+          if (channelObj && channelObj.isVoice()) {
             channels.push(elem.slice(2, -1));
           }
         }
@@ -70,7 +70,7 @@ class VoiceRolesCommand extends BaseCommand {
         namedChannel = `${chRoleRaw} ${namedChannel}`;
       }
       namedChannel = await message.guild.channels.cache.find(
-        channel => channel.name.toLowerCase().trim() === namedChannel.toLowerCase().trim() && channel.type === 'voice',
+        channel => channel.name.toLowerCase().trim() === namedChannel.toLowerCase().trim() && channel.isVoice(),
       );
       if (namedChannel) {
         channels[0] = namedChannel.id;
