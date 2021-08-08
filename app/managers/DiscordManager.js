@@ -195,7 +195,7 @@ class DiscordManager extends EventManager {
       if (this.cache.musicData.get(volume.guildId)) {
         this.cache.musicData.get(volume.guildId).volume = Number(volume.volume);
       } else {
-        this.cache.musicData.set(volume.guildId, { queue: [], isPlaying: false, nowPlaying: null, songDispatcher: null, volume: Number(volume.volume) });
+        this.cache.musicData.set(volume.guildId, { subscription: null, volume: Number(volume.volume) });
       }
     });
   }

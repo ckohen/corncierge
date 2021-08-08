@@ -19,14 +19,14 @@ class SkipAllCommand extends BaseCommand {
     if (!voiceChannel) return message.channel.send(`${message.member}, Join a channel and try again`);
 
     const musicData = this.socket.cache.musicData.get(String(message.guildId));
-    if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
+    if (!musicData?.subscription?.isPlaying) {
       return message.channel.send(`${message.member}, There is no song playing right now!`);
     }
-    if (!musicData.queue) {
+    if (!musicData.subscription.queue.length) {
       return message.channel.send(`${message.member}, There are no songs in queue`);
     }
     // Clear Queue
-    musicData.queue.length = 0;
+    musicData.subscription.queue.length = 0;
     return message.channel.send(`The queue has been cleared!`);
   }
 }

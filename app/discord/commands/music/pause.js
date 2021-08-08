@@ -21,14 +21,13 @@ class PauseCommand extends BaseCommand {
     }
     const musicData = this.socket.cache.musicData.get(String(message.guildId));
 
-    if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
+    if (!musicData?.subscription?.isPlaying) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;
     }
 
+    musicData.subscription.audioPlayer.pause(true);
     message.channel.send('Song paused :pause_button:');
-
-    musicData.songDispatcher.pause(true);
   }
 }
 

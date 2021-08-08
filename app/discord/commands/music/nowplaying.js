@@ -15,17 +15,17 @@ class NowPlayingCommand extends BaseCommand {
 
   run(message) {
     let musicData = this.socket.cache.musicData.get(String(message.guildId));
-    if (!musicData.isPlaying && !musicData.nowPlaying) {
+    if (!musicData?.subscription?.nowPlaying) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;
     }
 
-    const video = musicData.nowPlaying;
+    const video = musicData.subscription.nowPlaying;
     let description;
     if (video.duration === 'Live Stream') {
       description = 'Live Stream';
     } else {
-      description = playbackBar(musicData, video);
+      description = playbackBar(video, musicData.subscription.audioPlayer.state.resource.playbackDuration);
     }
 
     const videoEmbed = this.socket.getEmbed('videoEmbed', [video, description]);
@@ -34,8 +34,8 @@ class NowPlayingCommand extends BaseCommand {
   }
 }
 
-function playbackBar(data, video) {
-  const passedTimeInMS = data.songDispatcher.streamTime - data.songDispatcher.pausedTime;
+function playbackBar(video, playbackDuration) {
+  const passedTimeInMS = playbackDuration;
   const passedTimeInMSObj = {
     seconds: Math.floor((passedTimeInMS / 1000) % 60),
     minutes: Math.floor((passedTimeInMS / (1000 * 60)) % 60),

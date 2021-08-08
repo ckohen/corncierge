@@ -24,11 +24,11 @@ class RemoveCommand extends BaseCommand {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.channel.send(`${message.member}, Join a channel and try again`);
 
-    if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
+    if (!musicData?.subscription?.isPlaying) {
       return message.channel.send(`${message.member}, There is no song playing right now!`);
     }
 
-    musicData.queue.splice(songNumber - 1, 1);
+    musicData.subscription.queue.splice(songNumber - 1, 1);
     return message.channel.send(`Removed song number ${songNumber} from queue`);
   }
 }

@@ -30,8 +30,6 @@ module.exports = (socket, before, after) => {
     }
   }
 
-  let musicData = socket.cache.musicData.get(String(after.guild.id));
-
   if (after.channelId !== null) {
     if (after.member.user.id === socket.driver.user.id && !after.selfDeaf) {
       after.setSelfDeaf(true);
@@ -51,12 +49,6 @@ module.exports = (socket, before, after) => {
         socket.app.log.warn(module, err);
       });
     }
-    return;
-  }
-
-  if (after.member.user.bot && musicData.songDispatcher && after.member.user.id === socket.driver.user.id) {
-    musicData.queue.length = 0;
-    musicData.songDispatcher.end();
     return;
   }
 

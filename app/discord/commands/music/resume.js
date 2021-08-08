@@ -21,14 +21,13 @@ class ResumeCommand extends BaseCommand {
     }
 
     const musicData = this.socket.cache.musicData.get(String(message.guildId));
-    if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
+    if (!musicData?.subscription?.isPlaying) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;
     }
 
+    musicData.subscription.audioPlayer.unpause();
     message.channel.send('Song resumed :play_pause:');
-
-    musicData.songDispatcher.resume();
   }
 }
 

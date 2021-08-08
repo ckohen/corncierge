@@ -24,14 +24,13 @@ class VolumeCommand extends BaseCommand {
     }
 
     const musicData = this.socket.cache.musicData.get(String(message.guildId));
-    if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
+    if (!musicData?.subscription?.isPlaying) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;
     }
     if (wantedVolume <= 100 && wantedVolume >= 0) {
       const volume = wantedVolume / 100;
-      musicData.volume = volume;
-      musicData.songDispatcher.setVolume(volume);
+      musicData.subscription.volume = musicData.volume = volume;
       try {
         this.socket.app.database.tables.volumes.edit(String(message.guildId), volume);
       } catch (err) {
