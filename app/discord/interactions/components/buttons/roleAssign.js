@@ -17,7 +17,7 @@ class RoleAssignComponent extends BaseComponent {
     const [, expectedNum, rawRoles] = interaction.customID.split(':');
     const roles = rawRoles?.split('-');
     if (Number(expectedNum) !== roles?.length) {
-      interaction.reply('An error occured, please try again!', { ephemeral: true });
+      interaction.reply({ content: 'An error occured, please try again!', ephemeral: true });
       return;
     }
     interaction.defer({ ephemeral: true });

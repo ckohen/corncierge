@@ -338,8 +338,8 @@ class DiscordManager extends EventManager {
   /**
    * Send a message with the given content and embed.
    * @param {string} slug the channel name in settings to get and send to
-   * @param {StringResolvable|APIMessage} [content] the content to send
-   * @param {MessageOptions|MessageAdditions} [options] The options to provide
+   * @param {StringResolvable|MessagePayload} [content] the content to send
+   * @param {MessageOptions} [options] The options to provide
    */
   sendMessage(slug, content, options) {
     const channel = this.getChannel(slug);
@@ -349,7 +349,7 @@ class DiscordManager extends EventManager {
       return;
     }
 
-    channel.send(content, options).catch(err => {
+    channel.send({ content, ...options }).catch(err => {
       this.app.log.warn(module, `Send message`, err);
     });
   }
@@ -357,8 +357,8 @@ class DiscordManager extends EventManager {
   /**
    * Send a webhook with the given content and embed.
    * @param {string} slug the webhook name in settings to get and send to
-   * @param {StringResolvable|APIMessage} [content] the content to send
-   * @param {MessageOptions|MessageAdditions} [options] The options to provide
+   * @param {StringResolvable|MessagePayload} [content] the content to send
+   * @param {MessageOptions} [options] The options to provide
    */
   sendWebhook(slug, content, options) {
     this.getWebhook(slug).then(webhook => {
@@ -367,7 +367,7 @@ class DiscordManager extends EventManager {
         return;
       }
 
-      webhook.send(content, options).catch(err => {
+      webhook.send({ content, ...options }).catch(err => {
         this.app.log.warn(module, `Send webhook`, err);
       });
     });

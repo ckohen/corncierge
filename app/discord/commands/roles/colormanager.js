@@ -144,7 +144,7 @@ class ColorManagerCommand extends BaseCommand {
     // Create base embed
     let msg = this.socket.getEmbed('colormanager', [message.member, commandPrefix]);
     if (channels.length < 1) {
-      message.channel.send('**No channel specified yet**', msg);
+      message.channel.send({ content: '**No channel specified yet**', embeds: [msg] });
       return;
     }
     // Variables for counting to limt
@@ -170,7 +170,7 @@ class ColorManagerCommand extends BaseCommand {
           fields += 1;
         } else {
           fields = 0;
-          message.channel.send(msg);
+          message.channel.send({ embeds: [msg] });
           msg = this.socket.getEmbed('colormanager', [message.member, commandPrefix]);
         }
       }
@@ -182,7 +182,7 @@ class ColorManagerCommand extends BaseCommand {
     outRoles = [];
 
     msg.addField('Remove Color', 'remove', true);
-    message.channel.send(msg);
+    message.channel.send({ embeds: [msg] });
   }
 }
 

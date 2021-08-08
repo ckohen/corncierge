@@ -27,7 +27,7 @@ class QueueCommand extends BaseCommand {
     for (let i = 0; i < titleArray.length; i++) {
       queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
     }
-    return message.channel.send(queueEmbed);
+    return message.channel.send({ embeds: [queueEmbed] });
   }
 }
 

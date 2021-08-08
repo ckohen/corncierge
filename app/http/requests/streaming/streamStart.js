@@ -69,10 +69,10 @@ class StreamStartRequest extends BaseRequest {
     if (cache.get(`video.stream.up.${user}`) != null) {
       msg = await socket.getMessage(user);
       if (msg && msg instanceof Message) {
-        msg.edit(content, { embed, allowedMentions: testing ? { parse: [] } : undefined });
+        msg.edit({ content, embeds: [embed], allowedMentions: testing ? { parse: [] } : undefined });
       }
     } else {
-      msg = await channel.send(content, { embed, allowedMentions: testing ? { parse: [] } : undefined });
+      msg = await channel.send({ content, embeds: [embed], allowedMentions: testing ? { parse: [] } : undefined });
       if (msg.channel.type === 'news') {
         msg.crosspost().catch(err => socket.app.log.warn(module, err));
       }

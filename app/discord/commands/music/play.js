@@ -131,7 +131,7 @@ class PlayCommand extends BaseCommand {
     }
     vidNameArr.push('exit');
     var songSearch = this.socket.getEmbed('songSearch', [vidNameArr]);
-    var songEmbed = await message.channel.send(songSearch);
+    var songEmbed = await message.channel.send({ embeds: [songSearch] });
     message.channel
       .awaitMessages(msg => (msg.content > 0 && msg.content < 6) || msg.content === 'exit', { max: 1, time: 60000, errors: ['time'] })
       .then(response => {
@@ -211,7 +211,7 @@ function playSong(queue, message, socket) {
           const videoEmbed = socket.getEmbed('play', [queue]);
           if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);
           // Comment out to disable auto notify on next song
-          message.channel.send(videoEmbed);
+          message.channel.send({ embeds: [videoEmbed] });
           musicData.nowPlaying = queue[0];
           return queue.shift();
         })
@@ -229,7 +229,7 @@ function playSong(queue, message, socket) {
           }
         })
         .on('error', e => {
-          message.reply(`Cannot play song \`${queue[0].title}\`, skipping`, { allowedMentions: { repliedUser: true } });
+          message.reply({ content: `Cannot play song \`${queue[0].title}\`, skipping`, allowedMentions: { repliedUser: true } });
           socket.app.log.warn(module, e);
           if (queue.length > 1) {
             queue.shift();

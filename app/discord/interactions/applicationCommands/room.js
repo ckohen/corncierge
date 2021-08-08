@@ -20,7 +20,7 @@ class RoomAppCommand extends BaseAppCommand {
     // A list of key value pairs with room ids and their associated room
     let rooms = socket.cache.rooms.get(String(interaction.guildID));
     if (!rooms) {
-      return interaction.reply('This command does not work without a bot in the server or in DMs.', { ephemeral: true });
+      return interaction.reply({ content: 'This command does not work without a bot in the server or in DMs.', ephemeral: true });
     }
 
     if (typeof rooms === 'undefined' || rooms === null) {
@@ -59,13 +59,14 @@ class RoomAppCommand extends BaseAppCommand {
       case 'create':
         // Only allow each server to have 25 rooms
         if (rooms.size > 25) {
-          return interaction.reply(`There are already 25 rooms in this server, please wait for another room to close!`, { ephemeral: true });
+          return interaction.reply({ content: `There are already 25 rooms in this server, please wait for another room to close!`, ephemeral: true });
         }
 
         // Don't let a user own more than one room
         existing = rooms.find(data => data.owner === String(interaction.member.id));
         if (existing) {
-          interaction.reply(`You already own a room: **ID**: ${existing.id}, **Name**: ${existing.name}. Please delete it to create a new room!`, {
+          interaction.reply({
+            content: `You already own a room: **ID**: ${existing.id}, **Name**: ${existing.name}. Please delete it to create a new room!`,
             ephemeral: true,
           });
           room = existing;
@@ -109,14 +110,14 @@ class RoomAppCommand extends BaseAppCommand {
           room = rooms.get(String(requested));
           if (typeof room === 'undefined' || rooms === null) {
             room = false;
-            interaction.reply(`There is no room with room id ${requested}!`, { ephemeral: true });
+            interaction.reply({ content: `There is no room with room id ${requested}!`, ephemeral: true });
             break;
           }
         } else {
           room = rooms.find(data => data.players.includes(String(interaction.member.id)));
           if (typeof room === 'undefined' || rooms === null) {
             room = false;
-            interaction.reply(`You must be in a room to use that command!`, { ephemeral: true });
+            interaction.reply({ content: `You must be in a room to use that command!`, ephemeral: true });
             break;
           }
         }
@@ -125,7 +126,7 @@ class RoomAppCommand extends BaseAppCommand {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can manage it!`, { ephemeral: true });
+          return interaction.reply({ content: `Only the owner of a room and admins/mods can manage it!`, ephemeral: true });
         }
         // Set each option accordingly
         switch (submethod) {
@@ -143,11 +144,11 @@ class RoomAppCommand extends BaseAppCommand {
             if (newMax === clamp(newMax, 0, 35)) {
               room.playerCount = newMax;
             } else {
-              return interaction.reply(`The player count must be a number between 1 and 35!`, { ephemeral: true });
+              return interaction.reply({ content: `The player count must be a number between 1 and 35!`, ephemeral: true });
             }
             break;
         }
-        interaction.reply(`Updated settings for room ${room.id}`, { ephemeral: true });
+        interaction.reply({ content: `Updated settings for room ${room.id}`, ephemeral: true });
         break;
       case 'remove':
         // Check if the room exists
@@ -161,7 +162,7 @@ class RoomAppCommand extends BaseAppCommand {
             msg = `You must be in a room or specify a room id to use that command!`;
           }
           if (!room) {
-            interaction.reply(msg, { ephemeral: true });
+            interaction.reply({ content: msg, ephemeral: true });
             break;
           }
         }
@@ -170,7 +171,7 @@ class RoomAppCommand extends BaseAppCommand {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can remove it!`, { ephemeral: true });
+          return interaction.reply({ content: `Only the owner of a room and admins/mods can remove it!`, ephemeral: true });
         }
         // Delete the room
         interaction.reply(`Room ${room.id}: **${room.name}** has been successfully removed, the new list of rooms can be found below.`);
@@ -183,7 +184,7 @@ class RoomAppCommand extends BaseAppCommand {
         room = rooms.get(String(roomID));
         if (typeof room === 'undefined' || rooms === null) {
           room = false;
-          interaction.reply(`There is no room with room id ${roomID}!`, { ephemeral: true });
+          interaction.reply({ content: `There is no room with room id ${roomID}!`, ephemeral: true });
           break;
         }
         // Check if the user is already in a room
@@ -192,9 +193,10 @@ class RoomAppCommand extends BaseAppCommand {
           if (!room.waiting.includes(interaction.member.id)) {
             room.waiting.push(String(interaction.member.id));
           }
-          interaction.reply(`Succesfully joined room ${room.id}.`, { ephemeral: true });
+          interaction.reply({ content: `Succesfully joined room ${room.id}.`, ephemeral: true });
         } else {
-          return interaction.reply(`You cannot join a room while playing in another room! Use \`/room leave\` to leave your current room.`, {
+          return interaction.reply({
+            content: `You cannot join a room while playing in another room! Use \`/room leave\` to leave your current room.`,
             ephemeral: true,
           });
         }
@@ -215,7 +217,7 @@ class RoomAppCommand extends BaseAppCommand {
           room = rooms.find(data => data.waiting.includes(member));
           if (typeof room === 'undefined' || room === null) {
             room = false;
-            return interaction.reply(`That member is not currently in a room!`, { ephemeral: true });
+            return interaction.reply({ content: `That member is not currently in a room!`, ephemeral: true });
           }
         }
         // Check Permissions for forced leave
@@ -224,7 +226,7 @@ class RoomAppCommand extends BaseAppCommand {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can force users to leave!`, { ephemeral: true });
+          return interaction.reply({ content: `Only the owner of a room and admins/mods can force users to leave!`, ephemeral: true });
         }
         // Transfer ownership to next player in list
         if (member === room.owner) {
@@ -241,14 +243,14 @@ class RoomAppCommand extends BaseAppCommand {
           }
         } else if (alreadyPlaying) {
           room.players.splice(room.players.indexOf(member), 1);
-          interaction.reply(`Successfully left room ${room.id}`, { ephemeral: true });
+          interaction.reply({ content: `Successfully left room ${room.id}`, ephemeral: true });
         } else {
           rooms.each(index => {
             if (index.waiting.includes(member)) {
               index.waiting.splice(index.waiting.indexOf(member), 1);
             }
           });
-          interaction.reply(`Successfully left all waiting rooms.`, { ephemeral: true });
+          interaction.reply({ content: `Successfully left all waiting rooms.`, ephemeral: true });
         }
         break;
       case 'clear':
@@ -256,7 +258,7 @@ class RoomAppCommand extends BaseAppCommand {
         room = rooms.get(String(roomID));
         if (typeof room === 'undefined' || room === null) {
           room = false;
-          interaction.reply(`There is no room with room id ${roomID}!`, { ephemeral: true });
+          interaction.reply({ content: `There is no room with room id ${roomID}!`, ephemeral: true });
           break;
         }
         // Check Permissions
@@ -281,7 +283,7 @@ class RoomAppCommand extends BaseAppCommand {
             msg = `You must be in a room to use that command!`;
           }
           if (!room) {
-            interaction.reply(msg, { ephemeral: true });
+            interaction.reply({ content: msg, ephemeral: true });
             break;
           }
         }
@@ -290,7 +292,7 @@ class RoomAppCommand extends BaseAppCommand {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can manage it!`, { hephemeral: true });
+          return interaction.reply({ content: `Only the owner of a room and admins/mods can manage it!`, ephemeral: true });
         }
 
         interaction.reply(`Filling room ${room.id} right up to the brim!`);
@@ -322,7 +324,7 @@ class RoomAppCommand extends BaseAppCommand {
             msg = `You must be in a room to use that command!`;
           }
           if (!room) {
-            interaction.reply(msg, { ephemeral: true });
+            interaction.reply({ content: msg, ephemeral: true });
             break;
           }
         }
@@ -331,11 +333,11 @@ class RoomAppCommand extends BaseAppCommand {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can transfer ownership!`, { ephemeral: true });
+          return interaction.reply({ content: `Only the owner of a room and admins/mods can transfer ownership!`, ephemeral: true });
         }
         // Check if the new user is in the room
         if (!room.players.includes(member)) {
-          return interaction.reply(`The new owner must be a player in the room!`, { ephemeral: true });
+          return interaction.reply({ content: `The new owner must be a player in the room!`, ephemeral: true });
         }
         room.players.splice(room.players.indexOf(member), 1);
         room.owner = member;
@@ -359,7 +361,7 @@ class RoomAppCommand extends BaseAppCommand {
         if (!room) {
           room = false;
         }
-        interaction.reply(`Listing Rooms!`, { ephemeral: true });
+        interaction.reply({ content: `Listing Rooms!`, ephemeral: true });
     }
 
     // Create base embed
@@ -377,7 +379,7 @@ class RoomAppCommand extends BaseAppCommand {
             .catch(() => undefined);
         }
       }
-      return interaction.channel.send('**No rooms have been created yet**', msg).then(sentMsg => {
+      return interaction.channel.send({ content: '**No rooms have been created yet**', embeds: [msg] }).then(sentMsg => {
         if (masterRoom) {
           masterRoom.lastChannelID = sentMsg.channel.id;
           masterRoom.lastMessageID = sentMsg.id;
@@ -496,7 +498,7 @@ class RoomAppCommand extends BaseAppCommand {
         default:
       }
     }
-    let lastMessage = await interaction.channel.send(msg);
+    let lastMessage = await interaction.channel.send({ embeds: [msg] });
     if (room) {
       // Store last message information
       room.lastChannelID = lastMessage.channel.id;

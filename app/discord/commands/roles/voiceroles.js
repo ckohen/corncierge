@@ -187,7 +187,10 @@ class VoiceRolesCommand extends BaseCommand {
     // Create base embed
     let msg = this.socket.getEmbed('voiceRoles', [message.member, commandPrefix]);
     if (roles.length < 1) {
-      message.channel.send('**No voice roles specified yet**, a role named `voice` will apply to all voice channels until at least one is specified.', msg);
+      message.channel.send({
+        content: '**No voice roles specified yet**, a role named `voice` will apply to all voice channels until at least one is specified.',
+        embeds: [msg],
+      });
       return;
     }
     // Variables to store looped information
@@ -213,7 +216,7 @@ class VoiceRolesCommand extends BaseCommand {
       // Clear arrays
       outChannels = [];
     }
-    message.channel.send(msg);
+    message.channel.send({ embeds: [msg] });
   }
 }
 

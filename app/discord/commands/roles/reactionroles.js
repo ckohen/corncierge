@@ -233,7 +233,7 @@ class ReactionRolesCommand extends BaseCommand {
       msg.setFooter('');
     }
     if (emojis.length < 1) {
-      message.channel.send('**No reactions specified yet**', msg);
+      message.channel.send({ content: '**No reactions specified yet**', embeds: [msg] });
       return;
     }
     // Variables for counting to limt
@@ -260,7 +260,7 @@ class ReactionRolesCommand extends BaseCommand {
             fields += 1;
           } else {
             fields = 0;
-            message.channel.send(msg);
+            message.channel.send({ embeds: [msg] });
             msg = socket.getEmbed('reationRoles', [message.member, commandPrefix]);
             if (create) {
               msg.setDescription('');
@@ -279,10 +279,10 @@ class ReactionRolesCommand extends BaseCommand {
     let reactionMsg;
     if (!update) {
       // Send the message
-      reactionMsg = await message.channel.send(msg);
+      reactionMsg = await message.channel.send({ embeds: [msg] });
     } else if (update.author === bot) {
       // If the message was sent by the bot, update the embed, otherwise just use the authors message.
-      reactionMsg = await update.edit(msg);
+      reactionMsg = await update.edit({ embeds: [msg] });
     } else {
       reactionMsg = update;
     }
@@ -329,7 +329,7 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
           fieldNum += 1;
         } else {
           fieldNum = 0;
-          initiator.channel.send(embed);
+          initiator.channel.send({ embeds: [embed] });
           embed = sock.getEmbed('reactionRoles', [initiator.member]);
           embed.setDescription('');
           embed.setTitle('');
@@ -338,7 +338,7 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
     } else {
       embed.addField('Roles', roleList.join('\n'), true);
     }
-    emoteMsg = await initiator.channel.send(embed);
+    emoteMsg = await initiator.channel.send({ embeds: [embed] });
   } else {
     embed.setDescription('React to this message with the emote you would like to remove from reactions.');
     let printableEmojis = [];
@@ -348,7 +348,7 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
       printableEmojis.push(printableEmote);
     }
     embed.addField('Current Reactions', printableEmojis.join(' '));
-    emoteMsg = await initiator.channel.send(embed);
+    emoteMsg = await initiator.channel.send({ embeds: [embed] });
     for (const emoteID of emojis) {
       emoteMsg.react(emoteID);
     }

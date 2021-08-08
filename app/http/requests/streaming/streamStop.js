@@ -67,7 +67,7 @@ class StreamStopRequest extends BaseRequest {
     const content = socket.app.discord.getContent('streamDown', [twitchStream.user_name]);
     const embed = socket.app.discord.getEmbed('streamDown', [twitchStream, twitchUser, duration]);
     if (msg && msg instanceof Message) {
-      msg.edit(content, { embed, allowedMentions: testing ? { parse: [] } : undefined });
+      msg.edit({ content, embeds: [embed], allowedMentions: testing ? { parse: [] } : undefined });
     }
 
     cache.del(`stream.uptime.${user}`);

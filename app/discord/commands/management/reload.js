@@ -47,7 +47,7 @@ class ReloadCommand extends BaseCommand {
         type: this.socket.app.settings.get('discord_activity_type') || 'PLAYING',
       });
 
-      message.channel.send(response).catch(err => {
+      message.channel.send(response.join('\n')).catch(err => {
         log.warn(module, err);
       });
 

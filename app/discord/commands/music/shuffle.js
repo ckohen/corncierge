@@ -43,7 +43,7 @@ class ShuffleCommand extends BaseCommand {
     for (let i = 0; i < numOfEmbedFields; i++) {
       queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
     }
-    message.channel.send(queueEmbed);
+    message.channel.send({ embeds: [queueEmbed] });
   }
 }
 

@@ -172,7 +172,7 @@ class RoleManagerCommand extends BaseCommand {
     // Create base embed
     let msg = this.socket.getEmbed('rolemanager', [message.member, commandPrefix]);
     if (channels.length < 1) {
-      message.channel.send('**No roles specified yet**', msg);
+      message.channel.send({ content: '**No roles specified yet**', embeds: [msg] });
       return;
     }
     // Variables for counting to limt
@@ -226,7 +226,7 @@ class RoleManagerCommand extends BaseCommand {
             fields += 1;
           } else {
             fields = 0;
-            message.channel.send(msg);
+            message.channel.send({ embeds: [msg] });
             msg = this.socket.getEmbed('rolemanager', [message.member, commandPrefix]);
           }
         }
@@ -241,7 +241,7 @@ class RoleManagerCommand extends BaseCommand {
       removeRoles = [];
     });
 
-    message.channel.send(msg);
+    message.channel.send({ embeds: [msg] });
   }
 }
 

@@ -120,13 +120,14 @@ class AutoRoleCommand extends BaseCommand {
       roleMention = `<@&${guild.roleID}>`;
     }
 
-    message.channel.send(
-      `Currently ${
+    message.channel.send({
+      content: `Currently ${
         roleMention
           ? `assigning ${roleMention} to new members ${delay === '' ? `with ${delay} delay.` : 'immediately.'}`
           : 'not assigning any role to new members.'
       }`,
-    );
+      allowedMentions: { parse: [] },
+    });
   }
 }
 

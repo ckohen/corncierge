@@ -24,7 +24,7 @@ class ColorAppCommand extends BaseAppCommand {
     // Get the current guild from the colorManager
     let guild = this.socket.cache.colorManager.get(String(interaction.guildID));
     if (!guild) {
-      interaction.reply('This command does not work without a bot in the server or in DMs.', { ephemeral: true });
+      interaction.reply({ content: 'This command does not work without a bot in the server or in DMs.', ephemeral: true });
       return;
     }
 
@@ -41,7 +41,7 @@ class ColorAppCommand extends BaseAppCommand {
       // Remove all predefined colors *Does not remove specialty colors*
       await member.roles.remove(colorSnowflakes);
       if (typeof args === `undefined`) {
-        interaction.reply(`Your color has been removed.`, { ephemeral: true });
+        interaction.reply({ content: `Your color has been removed.`, ephemeral: true });
       } else {
         // Add the role requested
         const assigned = await member.roles.add(roleID).catch(() => false);
@@ -51,12 +51,12 @@ class ColorAppCommand extends BaseAppCommand {
           });
         } else {
           // Notify user of role addition
-          interaction.reply(`Your color has been changed t0o <@&${roleID}>.`, { ephemeral: true });
+          interaction.reply({ content: `Your color has been changed t0o <@&${roleID}>.`, ephemeral: true });
         }
       }
     } else {
       // If the role is invalid, notify user
-      interaction.reply(`<@&${roleID}> isn't a valid color role.`, { ephemeral: true });
+      interaction.reply({ content: `<@&${roleID}> isn't a valid color role.`, ephemeral: true });
     }
   }
 }

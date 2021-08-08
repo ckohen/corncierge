@@ -30,7 +30,7 @@ class NowPlayingCommand extends BaseCommand {
 
     const videoEmbed = this.socket.getEmbed('videoEmbed', [video, description]);
 
-    message.channel.send(videoEmbed);
+    message.channel.send({ embeds: [videoEmbed] });
   }
 }
 

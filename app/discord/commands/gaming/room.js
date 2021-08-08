@@ -374,7 +374,7 @@ class RoomCommand extends BaseCommand {
     }
 
     // Create base embed
-    let msg = socket.getEmbed('rooms', [message.member, commandPrefix]);
+    let embed = socket.getEmbed('rooms', [message.member, commandPrefix]);
     if (rooms.size < 2) {
       // Delete old master room information if it exists
       if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
@@ -388,7 +388,7 @@ class RoomCommand extends BaseCommand {
             .catch(() => undefined);
         }
       }
-      return message.channel.send('**No rooms have been created yet**', msg).then(sentMsg => {
+      return message.channel.send({ content: '**No rooms have been created yet**', embeds: [embed] }).then(sentMsg => {
         if (masterRoom) {
           masterRoom.lastChannelID = sentMsg.channel.id;
           masterRoom.lastMessageID = sentMsg.id;
@@ -415,14 +415,14 @@ class RoomCommand extends BaseCommand {
       // Store discord's copy of the owner
       owner = message.guild.members.cache.get(room.owner);
       // Change the default description to be more acdurate for a single room
-      msg.setDescription(
+      embed.setDescription(
         `Join this room by typing \`${commandPrefix}room join ${room.id}\`. See a list of all rooms by typing \`${commandPrefix}room list all\``,
       );
       // Add Room name and code (if applicable)
       if (room.code) {
-        msg.addField(`Room Name`, `${room.name} \n**Current code**: \`${room.code}\``);
+        embed.addField(`Room Name`, `${room.name} \n**Current code**: \`${room.code}\``);
       } else {
-        msg.addField('Room Name', `${room.name}`);
+        embed.addField('Room Name', `${room.name}`);
       }
       // Create the list of users in the room
       let playing = [];
@@ -440,10 +440,10 @@ class RoomCommand extends BaseCommand {
         waiting.push(`...and ${extra} more members`);
       }
       // Add lists to the embed
-      msg.addField(`Players (${playing.length}/${room.playerCount})`, playing.join('\n'), true);
-      msg.addField(`Waiting Room (${len})`, waiting.join('\n'), true);
+      embed.addField(`Players (${playing.length}/${room.playerCount})`, playing.join('\n'), true);
+      embed.addField(`Waiting Room (${len})`, waiting.join('\n'), true);
       // Change footer from default to room owner
-      msg.setFooter(`Room Owner: ${owner.user.username}`, owner.user.displayAvatarURL());
+      embed.setFooter(`Room Owner: ${owner.user.username}`, owner.user.displayAvatarURL());
     } else {
       // Delete old master room information if it exists
       if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
@@ -495,21 +495,21 @@ class RoomCommand extends BaseCommand {
       }
       switch (fields) {
         case 1:
-          msg.addField(`Rooms`, set1.join('\n'));
+          embed.addField(`Rooms`, set1.join('\n'));
           break;
         case 2:
-          msg.addField(`Rooms (1/${fields})`, set1.join('\n'));
-          msg.addField(`Rooms (2/${fields})`, set2.join('\n'));
+          embed.addField(`Rooms (1/${fields})`, set1.join('\n'));
+          embed.addField(`Rooms (2/${fields})`, set2.join('\n'));
           break;
         case 3:
-          msg.addField(`Rooms (1/${fields})`, set1.join('\n'));
-          msg.addField(`Rooms (2/${fields})`, set2.join('\n'));
-          msg.addField(`Rooms (3/${fields})`, set3.join('\n'));
+          embed.addField(`Rooms (1/${fields})`, set1.join('\n'));
+          embed.addField(`Rooms (2/${fields})`, set2.join('\n'));
+          embed.addField(`Rooms (3/${fields})`, set3.join('\n'));
           break;
         default:
       }
     }
-    let lastMessage = await message.channel.send(msg);
+    let lastMessage = await message.channel.send({ embeds: [embed] });
     if (room) {
       // Store last message information
       room.lastChannelID = lastMessage.channel.id;
