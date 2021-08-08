@@ -96,6 +96,7 @@ exports.DefaultOptions = {
   discord: {
     clientOptions: {
       partials: ['MESSAGE', 'REACTION'],
+      allowedMentions: { repliedUser: false },
     },
     disabledCommands: [],
   },
