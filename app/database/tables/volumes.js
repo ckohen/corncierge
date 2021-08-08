@@ -12,7 +12,7 @@ class volumesTable extends BaseTable {
    * @returns {Promise<Object[]>}
    */
   get() {
-    return this.socket.query('SELECT guildID, volume FROM `volumes`');
+    return this.socket.query('SELECT guildID as guildId, volume FROM `volumes`');
   }
 
   /**

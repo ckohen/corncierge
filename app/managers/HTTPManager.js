@@ -116,15 +116,15 @@ class HTTPManager extends EventManager {
   }
 
   /**
-   * Update the messageID for stream stop editing
+   * Update the messageId for stream stop editing
    * @param {string} slug the username of the stream to edit a notification for
-   * @param {string} msgID the original snowflake message id
+   * @param {string} msgId the original snowflake message id
    * @returns {Promise<void>}
    */
-  setMessage(slug, msgID) {
+  setMessage(slug, msgId) {
     let user = this.app.streaming.get(`notification_${slug}`);
-    user.lastMessage = msgID;
-    return this.app.database.tables.streaming.edit(`notification_${slug}`, msgID);
+    user.lastMessage = msgId;
+    return this.app.database.tables.streaming.edit(`notification_${slug}`, msgId);
   }
 }
 

@@ -209,8 +209,8 @@ function modifyRoles(existingRoles, changedRoles, add = true) {
 function modifySnowflakes(existingSnowflakes, changedSnwoflakes, add = true) {
   let newSnowflakes = [];
   // Add all existing Roles to newRole array
-  existingSnowflakes.forEach(roleID => {
-    newSnowflakes.push(roleID);
+  existingSnowflakes.forEach(roleId => {
+    newSnowflakes.push(roleId);
   });
   changedSnwoflakes.forEach(id => {
     // Mode add

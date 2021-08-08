@@ -14,7 +14,7 @@ module.exports = async (socket, reaction, user) => {
   //  A list of key value pairs with channels and available roles
   let guild = socket.cache.reactionRoles.get(String(reaction.message.guild.id));
   if (!guild) return;
-  if (!guild.messageID || guild.messageID !== reaction.message.id) return;
+  if (!guild.messageId || guild.messageId !== reaction.message.id) return;
 
   let emojis = Object.keys(guild.roles);
 

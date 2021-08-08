@@ -146,7 +146,7 @@ exports.DefaultOptions = {
    * @property {string} [authapi=https://id.twitch.tv/oauth2] Base url for the authentication api
    * @property {number} [channel.id] the channel id for the 'default' listening twitch channel
    * @property {string} [channel.name] the channel name for the 'default' listening twitch channel
-   * @property {string} clientID the id of the api application uses (TWITCH_CLIENT_ID in env if not provided)
+   * @property {string} clientId the id of the api application uses (TWITCH_CLIENT_Id in env if not provided)
    * @property {string} clientSecret the client secret for the api application (TWITCH_CLIENT_SECRET in env if not provided)
    * @property {IRCOptions} [irc] options for the irc client
    * @property {ThrottleOptions} [ircThrottle] options for throttling irc commands
@@ -174,7 +174,7 @@ exports.DefaultOptions = {
     /**
      * IRC connection options (these are tmi.js options)
      * @typedef {Object} IRCOptions
-     * @property {number} [botID] the id of the bot that posts in chat
+     * @property {number} [botId] the id of the bot that posts in chat
      * @property {IRCConnectionOptions} [connection] the options for the IRC Connection
      * @property {boolean} [options.debug] whether the irc client is in debug mode
      * @property {string} [identity.username] the username of the bot that posts in chat

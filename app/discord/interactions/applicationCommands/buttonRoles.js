@@ -19,11 +19,11 @@ class ButtonRoleAppCommand extends BaseAppCommand {
     const method = args[0].name;
     args = args[0].options;
 
-    const cacheID = `${interaction.guildID}-${interaction.member.id}`;
-    let data = this.socket.cache.buttonRoles.get(cacheID);
+    const cacheId = `${interaction.guildId}-${interaction.member.id}`;
+    let data = this.socket.cache.buttonRoles.get(cacheId);
     if (!data) {
-      this.socket.cache.buttonRoles.set(cacheID, { messageID: null, embed: { color: null, title: null, description: null }, buttons: null });
-      data = this.socket.cache.buttonRoles.get(cacheID);
+      this.socket.cache.buttonRoles.set(cacheId, { messageId: null, embed: { color: null, title: null, description: null }, buttons: null });
+      data = this.socket.cache.buttonRoles.get(cacheId);
     }
 
     interaction.defer({ ephemeral: true });
@@ -32,12 +32,12 @@ class ButtonRoleAppCommand extends BaseAppCommand {
 
     switch (method) {
       case 'edit': {
-        const messageID = getArg(args, 'messageid');
-        if (!isSnowflake(messageID)) {
+        const messageId = getArg(args, 'messageid');
+        if (!isSnowflake(messageId)) {
           interaction.reply('The message id provided was not a valid message id');
           return;
         }
-        const message = await interaction.channel.messages.fetch(messageID).catch(err => this.socket.app.log.debug(module, err));
+        const message = await interaction.channel.messages.fetch(messageId).catch(err => this.socket.app.log.debug(module, err));
         if (!message) {
           interaction.reply('That message does not seem to be in this channel, or it was deleted.');
           return;
@@ -51,7 +51,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
           data.embed.description = message.embeds[0].description;
           data.embed.color = message.embeds[0].color;
         }
-        data.messageID = messageID;
+        data.messageId = messageId;
         const buttons = formatFetchedButtons(message.components);
         if (!buttons) {
           interaction.reply('The message id provided was for a message that is not a button role message!');
@@ -79,7 +79,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
         break;
       }
       case 'new':
-        data.messageID = null;
+        data.messageId = null;
         data.embed = { color: null, title: null, description: null };
         data.buttons = [];
         setEmbed(args, data);
@@ -91,43 +91,43 @@ class ButtonRoleAppCommand extends BaseAppCommand {
         }
         const submethod = args[0].name;
         args = args[0].options;
-        let buttonID = data.buttons.length;
+        let buttonId = data.buttons.length;
         switch (submethod) {
           case 'edit': {
-            buttonID = getArg(args, 'buttonid') - 1;
-            if (data.buttons.length < buttonID) {
+            buttonId = getArg(args, 'buttonid') - 1;
+            if (data.buttons.length < buttonId) {
               interaction.reply('That button does not exist yet, try creating it!');
               return;
             }
-            if (!data.buttons[buttonID]) {
+            if (!data.buttons[buttonId]) {
               interaction.reply('You cannot edit blank buttons!');
               return;
             }
             const disabled = getArg(args, 'disable');
-            if (disabled !== null) data.buttons[buttonID].disabled = disabled;
+            if (disabled !== null) data.buttons[buttonId].disabled = disabled;
             const color = getArg(args, 'color');
             const label = getArg(args, 'label');
-            if (color) data.buttons[buttonID].color = color;
-            if (label) data.buttons[buttonID].name = label;
+            if (color) data.buttons[buttonId].color = color;
+            if (label) data.buttons[buttonId].name = label;
           }
           // eslint-disable-next-line no-fallthrough
           case 'add': {
             const newLine = getArg(args, 'newline');
             if (newLine) {
-              if (buttonID > 20) {
+              if (buttonId > 20) {
                 interaction.reply('Unable to add a new row of buttons here (There are already 5 rows!)');
                 return;
               }
-              const newButtonID = Math.ceil(buttonID / 5) * 5;
-              data.buttons.push(...Array(newButtonID - buttonID).fill(undefined));
-              buttonID = newButtonID;
+              const newButtonId = Math.ceil(buttonId / 5) * 5;
+              data.buttons.push(...Array(newButtonId - buttonId).fill(undefined));
+              buttonId = newButtonId;
             }
-            if (buttonID >= 25) {
+            if (buttonId >= 25) {
               interaction.reply('You can only have 25 buttons (including spacers)!');
               return;
             }
             let botHighest = interaction.guild.me.roles.highest;
-            let button = data.buttons[buttonID];
+            let button = data.buttons[buttonId];
             if (!button) {
               button = {
                 color: getArg(args, 'color'),
@@ -147,8 +147,8 @@ class ButtonRoleAppCommand extends BaseAppCommand {
               if (role) newRoles.push(role);
             });
             let allBelow = true;
-            newRoles.forEach(roleID => {
-              const role = interaction.guild.roles.cache.get(roleID);
+            newRoles.forEach(roleId => {
+              const role = interaction.guild.roles.cache.get(roleId);
               if (role.comparePositionTo(botHighest) >= 0 || role.managed) allBelow = false;
             });
             if (!allBelow) {
@@ -164,33 +164,33 @@ class ButtonRoleAppCommand extends BaseAppCommand {
             if (!button.name && !button.emoji) {
               button.name = interaction.guild.roles.cache.get(newRoles[0]).name;
             }
-            data.buttons[buttonID] = button;
+            data.buttons[buttonId] = button;
             break;
           }
           case 'addspace':
-            if (buttonID > 25) {
+            if (buttonId > 25) {
               interaction.reply('You can only have 25 buttons (including spacers)!');
               return;
             }
-            data.buttons[buttonID] = undefined;
+            data.buttons[buttonId] = undefined;
             break;
           case 'swap': {
-            const button1ID = getArg(args, 'button1') - 1;
-            const button2ID = getArg(args, 'button2') - 1;
-            if (data.buttons.length <= button1ID || data.buttons.length <= button2ID) {
+            const button1Id = getArg(args, 'button1') - 1;
+            const button2Id = getArg(args, 'button2') - 1;
+            if (data.buttons.length <= button1Id || data.buttons.length <= button2Id) {
               interaction.reply('One of the specified buttons does not exist');
               return;
             }
-            data.buttons[button1ID] = data.buttons.splice(button2ID, 1, data.buttons[button1ID])[0];
+            data.buttons[button1Id] = data.buttons.splice(button2Id, 1, data.buttons[button1Id])[0];
             break;
           }
           case 'remove':
-            buttonID = getArg(args, 'buttonid') - 1;
-            if (data.buttons.length < buttonID) {
+            buttonId = getArg(args, 'buttonid') - 1;
+            if (data.buttons.length < buttonId) {
               interaction.reply('The specified button does not exist');
               return;
             }
-            data.buttons.splice(buttonID, 1);
+            data.buttons.splice(buttonId, 1);
         }
         break;
       }
@@ -243,9 +243,9 @@ class ButtonRoleAppCommand extends BaseAppCommand {
     let sent;
     if (method === 'save') {
       let path = interaction.client.api.channels(interaction.channel.id).messages;
-      if (data.messageID) {
+      if (data.messageId) {
         message.flags = message.embed ? 0 : 1 << 2;
-        sent = await path(data.messageID).patch({ data: message });
+        sent = await path(data.messageId).patch({ data: message });
       } else {
         let suppress = false;
         if (!message.embed) {
@@ -262,12 +262,12 @@ class ButtonRoleAppCommand extends BaseAppCommand {
         return;
       }
       interaction.reply('Success!');
-      this.socket.cache.buttonRoles.delete(cacheID);
+      this.socket.cache.buttonRoles.delete(cacheId);
     } else {
       message.embeds = message.embed ? [message.embed] : [];
       delete message.embed;
       sent = await interaction.client.api
-        .webhooks(interaction.applicationID, interaction.token)
+        .webhooks(interaction.applicationId, interaction.token)
         .messages('@original')
         .patch({ data: message })
         .catch(err => this.socket.app.log.warn(module, '[Respond Button Roles]', err));

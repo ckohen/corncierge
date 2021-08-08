@@ -12,7 +12,7 @@ class prefixesTable extends BaseTable {
    * @returns {Promise<Object[]>}
    */
   get() {
-    return this.socket.query('SELECT guildID, prefix FROM `prefixes`');
+    return this.socket.query('SELECT guildID as guildId, prefix FROM `prefixes`');
   }
 
   /**

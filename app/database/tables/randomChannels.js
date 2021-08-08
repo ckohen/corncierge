@@ -12,7 +12,7 @@ class randomChannelsTable extends BaseTable {
    * @returns {Promise<Object[]>}
    */
   get() {
-    return this.socket.query('SELECT guildID, toChannel, fromChannel FROM `randomchannels`');
+    return this.socket.query('SELECT guildID as guildId, toChannel, fromChannel FROM `randomchannels`');
   }
 
   /**

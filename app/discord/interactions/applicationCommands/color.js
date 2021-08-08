@@ -22,7 +22,7 @@ class ColorAppCommand extends BaseAppCommand {
 
   async run(interaction, args) {
     // Get the current guild from the colorManager
-    let guild = this.socket.cache.colorManager.get(String(interaction.guildID));
+    let guild = this.socket.cache.colorManager.get(String(interaction.guildId));
     if (!guild) {
       interaction.reply({ content: 'This command does not work without a bot in the server or in DMs.', ephemeral: true });
       return;
@@ -35,28 +35,28 @@ class ColorAppCommand extends BaseAppCommand {
     let member = interaction.member;
 
     // Set role if it exists
-    let roleID = args?.find(arg => arg.name === `color`)?.value;
+    let roleId = args?.find(arg => arg.name === `color`)?.value;
 
-    if (colorSnowflakes.includes(roleID) || typeof args === `undefined`) {
+    if (colorSnowflakes.includes(roleId) || typeof args === `undefined`) {
       // Remove all predefined colors *Does not remove specialty colors*
       await member.roles.remove(colorSnowflakes);
       if (typeof args === `undefined`) {
         interaction.reply({ content: `Your color has been removed.`, ephemeral: true });
       } else {
         // Add the role requested
-        const assigned = await member.roles.add(roleID).catch(() => false);
+        const assigned = await member.roles.add(roleId).catch(() => false);
         if (!assigned) {
-          interaction.reply(`I was unable to assign <@&${roleID}>, please contact a mod to ensure all permissions are adequate.`, {
+          interaction.reply(`I was unable to assign <@&${roleId}>, please contact a mod to ensure all permissions are adequate.`, {
             ephemeral: true,
           });
         } else {
           // Notify user of role addition
-          interaction.reply({ content: `Your color has been changed t0o <@&${roleID}>.`, ephemeral: true });
+          interaction.reply({ content: `Your color has been changed t0o <@&${roleId}>.`, ephemeral: true });
         }
       }
     } else {
       // If the role is invalid, notify user
-      interaction.reply({ content: `<@&${roleID}> isn't a valid color role.`, ephemeral: true });
+      interaction.reply({ content: `<@&${roleId}> isn't a valid color role.`, ephemeral: true });
     }
   }
 }

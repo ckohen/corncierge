@@ -16,10 +16,10 @@ module.exports = (socket, member) => {
 
   let roleData = socket.cache.newMemberRole.get(String(member.guild.id));
 
-  if (roleData.roleID) {
+  if (roleData.roleId) {
     let time = Number(roleData.delayTime) ? Number(roleData.delayTime) : 0;
     setTimeout(() => {
-      member.roles.add(roleData.roleID);
+      member.roles.add(roleData.roleId);
     }, time);
   }
 };

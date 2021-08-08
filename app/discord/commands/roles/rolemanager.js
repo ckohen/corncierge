@@ -185,24 +185,24 @@ class RoleManagerCommand extends BaseCommand {
     let removeRoles = [];
     let compiledRoles = [];
     // Loop through each channel found
-    channels.forEach(channelID => {
-      channelObj = message.guild.channels.cache.get(channelID);
+    channels.forEach(channelId => {
+      channelObj = message.guild.channels.cache.get(channelId);
       // Get role objects so discord can embed properly
-      if (guild.addRoles[channelID]) {
-        guild.addRoles[channelID].forEach(role => {
+      if (guild.addRoles[channelId]) {
+        guild.addRoles[channelId].forEach(role => {
           roleObj = message.guild.roles.cache.find(data => data.name.toLowerCase() === role.toLowerCase());
           // Add roles in both list to the both array
-          if (guild.removeRoles[channelID] && guild.removeRoles[channelID].indexOf(role) > -1) {
+          if (guild.removeRoles[channelId] && guild.removeRoles[channelId].indexOf(role) > -1) {
             bothRoles.push(roleObj);
           } else {
             addRoles.push(roleObj);
           }
         });
       }
-      if (guild.removeRoles[channelID]) {
-        guild.removeRoles[channelID].forEach(role => {
+      if (guild.removeRoles[channelId]) {
+        guild.removeRoles[channelId].forEach(role => {
           roleObj = message.guild.roles.cache.find(data => data.name.toLowerCase() === role.toLowerCase());
-          if (!guild.addRoles[channelID] || guild.addRoles[channelID].indexOf(role) < 0) {
+          if (!guild.addRoles[channelId] || guild.addRoles[channelId].indexOf(role) < 0) {
             removeRoles.push(roleObj);
           }
         });

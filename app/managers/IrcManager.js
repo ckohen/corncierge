@@ -19,7 +19,7 @@ const thirtySecs = 30000;
 class IrcManager extends EventManager {
   constructor(app, twitch) {
     if (!twitch.options.irc.identity?.password && twitch.options.irc.identity) {
-      twitch.options.irc.identity.password = twitch.auth.getAccessToken.bind(twitch.auth, twitch.options.irc.botID);
+      twitch.options.irc.identity.password = twitch.auth.getAccessToken.bind(twitch.auth, twitch.options.irc.botId);
     }
     super(app, new Client(twitch.options.irc), twitch.options.irc, events);
 

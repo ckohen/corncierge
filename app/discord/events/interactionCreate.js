@@ -9,11 +9,11 @@ module.exports = async (socket, interaction) => {
     handler = socket.interactions.applicationCommands.get(interaction.commandName);
   }
   if (interaction.isMessageComponent()) {
-    if (!verifyCustomId(interaction.customID, interaction.message.components)) {
+    if (!verifyCustomId(interaction.customId, interaction.message.components)) {
       interaction.reply({ content: 'You think you are sneaky huh, well, no such luck here!', ephemeral: true });
       return;
     }
-    const name = constants.ComponentFunctions[Number(interaction.customID.split(':')[0])];
+    const name = constants.ComponentFunctions[Number(interaction.customId.split(':')[0])];
     switch (interaction.componentType) {
       case 'BUTTON':
         handler = socket.interactions.buttonComponents.get(name);

@@ -38,7 +38,7 @@ class RandomMoveCommand extends BaseCommand {
     let settings = socket.cache.randomChannels.get(String(message.guild.id));
 
     if (typeof settings === 'undefined' || settings === null) {
-      socket.cache.randomChannels.set(String(message.guild.id), { guildID: String(message.guild.id), toChannel: '', fromChannel: '' });
+      socket.cache.randomChannels.set(String(message.guild.id), { guildId: String(message.guild.id), toChannel: '', fromChannel: '' });
       await socket.app.database.tables.randomChannels.add(String(message.guild.id));
       settings = socket.cache.randomChannels.get(String(message.guild.id));
     }

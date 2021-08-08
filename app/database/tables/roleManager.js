@@ -12,7 +12,9 @@ class roleManagerTable extends BaseTable {
    * @returns {Promise<Object[]>}
    */
   get() {
-    return this.socket.query('SELECT guildID, addRoles, removeRoles FROM `rolemanager`').then(this.parseJSON.bind(null, ['addRoles', 'removeRoles']));
+    return this.socket
+      .query('SELECT guildID as guildId, addRoles, removeRoles FROM `rolemanager`')
+      .then(this.parseJSON.bind(null, ['addRoles', 'removeRoles']));
   }
 
   /**

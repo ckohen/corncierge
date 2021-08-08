@@ -55,8 +55,8 @@ class RoomCommand extends BaseCommand {
         code: null,
         players: [],
         waiting: [],
-        lastChannelID: null,
-        lastMessageID: null,
+        lastChannelId: null,
+        lastMessageId: null,
       });
       masterRoom = rooms.get('master');
     }
@@ -96,8 +96,8 @@ class RoomCommand extends BaseCommand {
               code: null,
               players: [String(message.member.id)],
               waiting: [],
-              lastChannelID: null,
-              lastMessageID: null,
+              lastChannelId: null,
+              lastMessageId: null,
             });
             socket.app.database.table.rooms.add(`${message.guild.id}-${String(i)}`);
             room = rooms.get(String(i));
@@ -377,11 +377,11 @@ class RoomCommand extends BaseCommand {
     let embed = socket.getEmbed('rooms', [message.member, commandPrefix]);
     if (rooms.size < 2) {
       // Delete old master room information if it exists
-      if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
-        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelID);
+      if (masterRoom && masterRoom.lastChannelId && masterRoom.lastMessageId) {
+        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelId);
         if (lastMasterMessageChannel) {
           lastMasterMessageChannel.messages
-            .fetch(masterRoom.lastMessageID)
+            .fetch(masterRoom.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
@@ -390,8 +390,8 @@ class RoomCommand extends BaseCommand {
       }
       return message.channel.send({ content: '**No rooms have been created yet**', embeds: [embed] }).then(sentMsg => {
         if (masterRoom) {
-          masterRoom.lastChannelID = sentMsg.channel.id;
-          masterRoom.lastMessageID = sentMsg.id;
+          masterRoom.lastChannelId = sentMsg.channel.id;
+          masterRoom.lastMessageId = sentMsg.id;
         }
       });
     }
@@ -401,11 +401,11 @@ class RoomCommand extends BaseCommand {
     let owner;
     if (room) {
       // Delete old room information if it exists
-      if (room.lastChannelID && room.lastMessageID) {
-        let lastMessageChannel = await socket.driver.channels.cache.get(room.lastChannelID);
+      if (room.lastChannelId && room.lastMessageId) {
+        let lastMessageChannel = await socket.driver.channels.cache.get(room.lastChannelId);
         if (lastMessageChannel) {
           lastMessageChannel.messages
-            .fetch(room.lastMessageID)
+            .fetch(room.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
@@ -446,11 +446,11 @@ class RoomCommand extends BaseCommand {
       embed.setFooter(`Room Owner: ${owner.user.username}`, owner.user.displayAvatarURL());
     } else {
       // Delete old master room information if it exists
-      if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
-        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelID);
+      if (masterRoom && masterRoom.lastChannelId && masterRoom.lastMessageId) {
+        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelId);
         if (lastMasterMessageChannel) {
           lastMasterMessageChannel.messages
-            .fetch(masterRoom.lastMessageID)
+            .fetch(masterRoom.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
@@ -512,14 +512,14 @@ class RoomCommand extends BaseCommand {
     let lastMessage = await message.channel.send({ embeds: [embed] });
     if (room) {
       // Store last message information
-      room.lastChannelID = lastMessage.channel.id;
-      room.lastMessageID = lastMessage.id;
+      room.lastChannelId = lastMessage.channel.id;
+      room.lastMessageId = lastMessage.id;
       // Update database
       socket.app.database.tables.rooms.edit(`${message.guild.id}-${room.id}`, room);
     } else if (masterRoom) {
       // Store last message information
-      masterRoom.lastChannelID = lastMessage.channel.id;
-      masterRoom.lastMessageID = lastMessage.id;
+      masterRoom.lastChannelId = lastMessage.channel.id;
+      masterRoom.lastMessageId = lastMessage.id;
     }
     return true;
   }

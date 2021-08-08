@@ -14,7 +14,7 @@ class RoleAssignComponent extends BaseComponent {
   }
 
   async run(interaction) {
-    const [, expectedNum, rawRoles] = interaction.customID.split(':');
+    const [, expectedNum, rawRoles] = interaction.customId.split(':');
     const roles = rawRoles?.split('-');
     if (Number(expectedNum) !== roles?.length) {
       interaction.reply({ content: 'An error occured, please try again!', ephemeral: true });
@@ -22,7 +22,7 @@ class RoleAssignComponent extends BaseComponent {
     }
     interaction.defer({ ephemeral: true });
     let method = 'add';
-    if (roles.every(roleID => interaction.member.roles.cache.has(roleID))) {
+    if (roles.every(roleId => interaction.member.roles.cache.has(roleId))) {
       method = 'remove';
     }
     const changed = await interaction.member.roles[method](roles).catch(err => this.socket.app.log.warn(module, '[Button Roles]', err));

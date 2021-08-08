@@ -72,7 +72,7 @@ class DiscordUtil {
   }
 
   /**
-   * Test a guild ID against the setting for the given key
+   * Test a guild id against the setting for the given key
    * @param {string} id the id of the guild to test
    * @param {string|Snowflake|Snowflake[]} slugOrId the guild name or id(s)
    * @param {Collection} settings the app settings for checking slugs
@@ -88,7 +88,7 @@ class DiscordUtil {
   }
 
   /**
-   * Test a channel ID against the setting for the given key
+   * Test a channel id against the setting for the given key
    * @param {string} id the id of the channel to test
    * @param {string|Snowflake|Snowflake[]} slugOrId the channel name or id(s)
    * @param {Collection} settings the app settings for checking slugs
@@ -104,7 +104,7 @@ class DiscordUtil {
   }
 
   /**
-   * Test a user ID against the setting for the given key
+   * Test a user id against the setting for the given key
    * @param {string} id the id of the user to test
    * @param {string|Snowflake|Snowflake[]} slugOrId the user name or id(s)
    * @param {Collection} settings the app settings for checking slugs

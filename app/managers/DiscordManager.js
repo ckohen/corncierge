@@ -126,7 +126,7 @@ class DiscordManager extends EventManager {
   /**
    * Sends global registration data to discord for all application commands that do not have guilds specified
    * OR
-   * when guildID is provided, register all global commands (that are not yet registered globally) and commands for the guild specified
+   * when guildId is provided, register all global commands (that are not yet registered globally) and commands for the guild specified
    * WARNING: this overwrites all existing global / guild commands, if you do not want this to happen, use `registerCommand`
    * @param {Snowflake} [guildId] the id of the guild whose application command to register
    * @returns {Promise<Object[]>}
@@ -201,7 +201,7 @@ class DiscordManager extends EventManager {
           if (!this.cache[name]) {
             this.cache[name] = new Collection();
           }
-          return this.cacheTable(table, this.cache[name], 'guildID');
+          return this.cacheTable(table, this.cache[name], 'guildId');
         }),
       ),
       this.cacheMusic(),
@@ -224,10 +224,10 @@ class DiscordManager extends EventManager {
     }
     this.cache.musicData.clear();
     volumes.forEach(volume => {
-      if (this.cache.musicData.get(volume.guildID)) {
-        this.cache.musicData.get(volume.guildID).volume = Number(volume.volume);
+      if (this.cache.musicData.get(volume.guildId)) {
+        this.cache.musicData.get(volume.guildId).volume = Number(volume.volume);
       } else {
-        this.cache.musicData.set(volume.guildID, { queue: [], isPlaying: false, nowPlaying: null, songDispatcher: null, volume: Number(volume.volume) });
+        this.cache.musicData.set(volume.guildId, { queue: [], isPlaying: false, nowPlaying: null, songDispatcher: null, volume: Number(volume.volume) });
       }
     });
   }
@@ -245,16 +245,16 @@ class DiscordManager extends EventManager {
       this.cache.rooms = new Collection();
     }
     this.cache.rooms.clear();
-    let roomGuild, roomID;
+    let roomGuild, roomId;
     let guild;
     rooms.forEach(room => {
-      [roomGuild, roomID] = room.guildRoomID.split('-');
+      [roomGuild, roomId] = room.guildRoomId.split('-');
       guild = this.cache.rooms.get(roomGuild);
       if (!guild) {
         this.cache.rooms.set(roomGuild, new Collection());
         guild = this.cache.rooms.get(roomGuild);
       }
-      guild.set(roomID, room.data);
+      guild.set(roomId, room.data);
     });
   }
 

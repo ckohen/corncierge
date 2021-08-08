@@ -18,7 +18,7 @@ class RoomAppCommand extends BaseAppCommand {
     args = args[0].options;
 
     // A list of key value pairs with room ids and their associated room
-    let rooms = socket.cache.rooms.get(String(interaction.guildID));
+    let rooms = socket.cache.rooms.get(String(interaction.guildId));
     if (!rooms) {
       return interaction.reply({ content: 'This command does not work without a bot in the server or in DMs.', ephemeral: true });
     }
@@ -39,13 +39,13 @@ class RoomAppCommand extends BaseAppCommand {
         code: null,
         players: [],
         waiting: [],
-        lastChannelID: null,
-        lastMessageID: null,
+        lastChannelId: null,
+        lastMessageId: null,
       });
       masterRoom = rooms.get('master');
     }
     let room = false;
-    const roomID = args?.find(arg => arg.name === `roomid`)?.value;
+    const roomId = args?.find(arg => arg.name === `roomid`)?.value;
     let member;
     let inRoom;
     let existing;
@@ -85,8 +85,8 @@ class RoomAppCommand extends BaseAppCommand {
               code: null,
               players: [String(interaction.member.id)],
               waiting: [],
-              lastChannelID: null,
-              lastMessageID: null,
+              lastChannelId: null,
+              lastMessageId: null,
             });
             socket.app.database.tables.rooms.add(`${interaction.guild.id}-${String(i)}`);
             room = rooms.get(String(i));
@@ -153,11 +153,11 @@ class RoomAppCommand extends BaseAppCommand {
       case 'remove':
         // Check if the room exists
 
-        room = rooms.get(String(roomID));
+        room = rooms.get(String(roomId));
         if (typeof room === 'undefined' || rooms === null) {
-          let msg = `There is no room with room id ${roomID}!`;
-          room = roomID ? false : rooms.find(data => data.players.includes(String(interaction.member.id)));
-          if (!roomID && (typeof room === 'undefined' || rooms === null)) {
+          let msg = `There is no room with room id ${roomId}!`;
+          room = roomId ? false : rooms.find(data => data.players.includes(String(interaction.member.id)));
+          if (!roomId && (typeof room === 'undefined' || rooms === null)) {
             room = false;
             msg = `You must be in a room or specify a room id to use that command!`;
           }
@@ -181,10 +181,10 @@ class RoomAppCommand extends BaseAppCommand {
         break;
       case 'join':
         // Check if the room exists
-        room = rooms.get(String(roomID));
+        room = rooms.get(String(roomId));
         if (typeof room === 'undefined' || rooms === null) {
           room = false;
-          interaction.reply({ content: `There is no room with room id ${roomID}!`, ephemeral: true });
+          interaction.reply({ content: `There is no room with room id ${roomId}!`, ephemeral: true });
           break;
         }
         // Check if the user is already in a room
@@ -255,10 +255,10 @@ class RoomAppCommand extends BaseAppCommand {
         break;
       case 'clear':
         // Check if the room exists
-        room = rooms.get(String(roomID));
+        room = rooms.get(String(roomId));
         if (typeof room === 'undefined' || room === null) {
           room = false;
-          interaction.reply({ content: `There is no room with room id ${roomID}!`, ephemeral: true });
+          interaction.reply({ content: `There is no room with room id ${roomId}!`, ephemeral: true });
           break;
         }
         // Check Permissions
@@ -274,11 +274,11 @@ class RoomAppCommand extends BaseAppCommand {
         break;
       case 'fill':
         // Check if the room exists
-        room = rooms.get(String(roomID));
+        room = rooms.get(String(roomId));
         if (typeof room === 'undefined' || room === null) {
-          let msg = `There is no room with room id ${roomID}!`;
-          room = roomID ? false : rooms.find(data => data.players.indexOf(String(interaction.member.id)) > -1);
-          if (!roomID && (typeof room === 'undefined' || room === null)) {
+          let msg = `There is no room with room id ${roomId}!`;
+          room = roomId ? false : rooms.find(data => data.players.indexOf(String(interaction.member.id)) > -1);
+          if (!roomId && (typeof room === 'undefined' || room === null)) {
             room = false;
             msg = `You must be in a room to use that command!`;
           }
@@ -315,11 +315,11 @@ class RoomAppCommand extends BaseAppCommand {
         member = args?.find(arg => arg.name === `newowner`).value;
 
         // Check if the room exists
-        room = rooms.get(String(roomID));
+        room = rooms.get(String(roomId));
         if (typeof room === 'undefined' || room === null) {
-          let msg = `There is no room with room id ${roomID}!`;
-          room = roomID ? false : rooms.find(data => data.players.indexOf(String(interaction.member.id))) > -1;
-          if (!roomID && (typeof room === 'undefined' || room === null)) {
+          let msg = `There is no room with room id ${roomId}!`;
+          room = roomId ? false : rooms.find(data => data.players.indexOf(String(interaction.member.id))) > -1;
+          if (!roomId && (typeof room === 'undefined' || room === null)) {
             room = false;
             msg = `You must be in a room to use that command!`;
           }
@@ -351,11 +351,11 @@ class RoomAppCommand extends BaseAppCommand {
           room = inRoom;
         }
         // Check if user specified a specific room
-        if (roomID) {
-          if (roomID === 0) {
+        if (roomId) {
+          if (roomId === 0) {
             room = false;
           } else {
-            room = rooms.get(roomID);
+            room = rooms.get(roomId);
           }
         }
         if (!room) {
@@ -368,11 +368,11 @@ class RoomAppCommand extends BaseAppCommand {
     let msg = socket.getEmbed('rooms', [interaction.member, '/']);
     if (rooms.size < 2) {
       // Delete old master room information if it exists
-      if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
-        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelID);
+      if (masterRoom && masterRoom.lastChannelId && masterRoom.lastMessageId) {
+        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelId);
         if (lastMasterMessageChannel) {
           lastMasterMessageChannel.messages
-            .fetch(masterRoom.lastMessageID)
+            .fetch(masterRoom.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
@@ -381,8 +381,8 @@ class RoomAppCommand extends BaseAppCommand {
       }
       return interaction.channel.send({ content: '**No rooms have been created yet**', embeds: [msg] }).then(sentMsg => {
         if (masterRoom) {
-          masterRoom.lastChannelID = sentMsg.channel.id;
-          masterRoom.lastMessageID = sentMsg.id;
+          masterRoom.lastChannelId = sentMsg.channel.id;
+          masterRoom.lastMessageId = sentMsg.id;
         }
       });
     }
@@ -392,11 +392,11 @@ class RoomAppCommand extends BaseAppCommand {
     let owner;
     if (room) {
       // Delete old room information if it exists
-      if (room.lastChannelID && room.lastMessageID) {
-        let lastMessageChannel = await socket.driver.channels.cache.get(room.lastChannelID);
+      if (room.lastChannelId && room.lastMessageId) {
+        let lastMessageChannel = await socket.driver.channels.cache.get(room.lastChannelId);
         if (lastMessageChannel) {
           lastMessageChannel.messages
-            .fetch(room.lastMessageID)
+            .fetch(room.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
@@ -435,11 +435,11 @@ class RoomAppCommand extends BaseAppCommand {
       msg.setFooter(`Room Owner: ${owner?.user.username}`, owner.user.displayAvatarURL());
     } else {
       // Delete old master room information if it exists
-      if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
-        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelID);
+      if (masterRoom && masterRoom.lastChannelId && masterRoom.lastMessageId) {
+        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelId);
         if (lastMasterMessageChannel) {
           lastMasterMessageChannel.messages
-            .fetch(masterRoom.lastMessageID)
+            .fetch(masterRoom.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
@@ -501,14 +501,14 @@ class RoomAppCommand extends BaseAppCommand {
     let lastMessage = await interaction.channel.send({ embeds: [msg] });
     if (room) {
       // Store last message information
-      room.lastChannelID = lastMessage.channel.id;
-      room.lastMessageID = lastMessage.id;
+      room.lastChannelId = lastMessage.channel.id;
+      room.lastMessageId = lastMessage.id;
       // Update database
       socket.app.database.tables.rooms.edit(`${interaction.guild.id}-${room.id}`, room);
     } else if (masterRoom) {
       // Store last message information
-      masterRoom.lastChannelID = lastMessage.channel.id;
-      masterRoom.lastMessageID = lastMessage.id;
+      masterRoom.lastChannelId = lastMessage.channel.id;
+      masterRoom.lastMessageId = lastMessage.id;
     }
     return true;
   }
@@ -529,7 +529,7 @@ function getDefinition() {
         options: [
           {
             type: 4,
-            name: 'roomID',
+            name: 'roomId',
             description: 'list a specific room',
           },
         ],
@@ -541,7 +541,7 @@ function getDefinition() {
         options: [
           {
             type: 4,
-            name: 'roomID',
+            name: 'roomId',
             description: 'the room to join',
             required: true,
           },
@@ -590,7 +590,7 @@ function getDefinition() {
               },
               {
                 type: 4,
-                name: 'roomID',
+                name: 'roomId',
                 description: 'the room to edit',
               },
             ],
@@ -608,7 +608,7 @@ function getDefinition() {
               },
               {
                 type: 4,
-                name: 'roomID',
+                name: 'roomId',
                 description: 'the room to edit',
               },
             ],
@@ -622,7 +622,7 @@ function getDefinition() {
         options: [
           {
             type: 4,
-            name: 'roomID',
+            name: 'roomId',
             description: 'the room to remove',
           },
         ],
@@ -634,7 +634,7 @@ function getDefinition() {
         options: [
           {
             type: 4,
-            name: 'roomID',
+            name: 'roomId',
             description: 'the room to clear',
             required: true,
           },
@@ -647,7 +647,7 @@ function getDefinition() {
         options: [
           {
             type: 4,
-            name: 'roomID',
+            name: 'roomId',
             description: 'the room to edit',
           },
         ],
@@ -665,7 +665,7 @@ function getDefinition() {
           },
           {
             type: 4,
-            name: 'roomID',
+            name: 'roomId',
             description: 'the room to transfer',
           },
         ],

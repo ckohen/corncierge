@@ -62,7 +62,7 @@ class TwitchManager extends APIManager {
   }
 
   /**
-   * Fetch the channel for the application's channel ID.
+   * Fetch the channel for the application's channel id.
    * @param {number} [userId=ApplicationOptions.twitch.channel?.id] fetch channel data from a specific user id
    * @returns {Promise<Object>}
    */
@@ -70,7 +70,7 @@ class TwitchManager extends APIManager {
     this.app.log.debug(module, `Fetching channel: ${userId}`);
     return this.api
       .channels()
-      .get({ params: { broadcaster_id: userId }, authID: userId, allowApp: true })
+      .get({ params: { broadcaster_id: userId }, authId: userId, allowApp: true })
       .then(res => res.data?.[0]);
   }
 
@@ -80,7 +80,7 @@ class TwitchManager extends APIManager {
    * @returns {Promise<Object>}
    */
   userChannel(user) {
-    return this.getID(user).then(id => this.fetchChannel(id));
+    return this.getId(user).then(id => this.fetchChannel(id));
   }
 
   /**
@@ -88,7 +88,7 @@ class TwitchManager extends APIManager {
    * @param {string} user the username to fetch the id of
    * @returns {Promise<string>}
    */
-  async getID(user) {
+  async getId(user) {
     this.app.log.verbose(module, `Getting id for channel: ${user}`);
     let id;
     /* eslint-disable-next-line eqeqeq */
@@ -106,14 +106,14 @@ class TwitchManager extends APIManager {
   }
 
   /**
-   * Fetch a follow object for the given user ID.
+   * Fetch a follow object for the given user id.
    * @param {number} userId the user id to check the follow for
    * @param {number} [streamerId=ApplicationOptions.twitch.channel?.id] the channel id to check if following
    * @returns {Promise<Object>}
    */
   follow(userId, streamerId = this.options.channel?.id) {
     this.app.log.debug(module, `Fetching follow: ${userId} to ${streamerId}`);
-    return this.api.users.follows.get({ params: { from_id: userId, to_id: streamerId }, authID: streamerId, allowApp: true });
+    return this.api.users.follows.get({ params: { from_id: userId, to_id: streamerId }, authId: streamerId, allowApp: true });
   }
 
   /**
@@ -124,11 +124,11 @@ class TwitchManager extends APIManager {
    */
   fetchFollowers(streamerId = this.options.channel?.id, fullResponse = false) {
     this.app.log.debug(module, `Fetching followers: ${streamerId}`);
-    return this.api.users.follows.get({ params: { to_id: streamerId }, authID: streamerId, allowApp: true }).then(res => (fullResponse ? res : res?.total));
+    return this.api.users.follows.get({ params: { to_id: streamerId }, authId: streamerId, allowApp: true }).then(res => (fullResponse ? res : res?.total));
   }
 
   /**
-   * Fetch the stream for the application's channel ID.
+   * Fetch the stream for the application's channel id.
    * @param {number} [options.userId=ApplicationOptions.twitch.channel?.id] fetch stream data from a specific user id
    * @param {string} [options.userName] fetch stream data from a specific user name
    * @returns {void}
@@ -136,7 +136,7 @@ class TwitchManager extends APIManager {
   fetchStream({ userId, userName } = {}) {
     if (typeof userId === 'undefined' && typeof userName === 'undefined') userId = this.options.channel?.id;
     this.app.log.debug(module, `Fetching stream: ${userName ?? userId}`);
-    return this.api.streams.get({ params: { user_login: userName, user_id: userId }, authID: userId, allowApp: true });
+    return this.api.streams.get({ params: { user_login: userName, user_id: userId }, authId: userId, allowApp: true });
   }
 
   /**
@@ -148,7 +148,7 @@ class TwitchManager extends APIManager {
   fetchUser({ userName, userId } = {}) {
     if (typeof userName === 'undefined' && typeof userId === 'undefined') throw new RangeError('A query parameter must be specified');
     this.app.log.debug(module, `Fetching user: ${userName ?? userId}`);
-    return this.api.users.get({ params: { login: userName, id: userId }, authID: userId, allowApp: true }).then(res => res.data?.[0]);
+    return this.api.users.get({ params: { login: userName, id: userId }, authId: userId, allowApp: true }).then(res => res.data?.[0]);
   }
 
   /**
@@ -169,13 +169,13 @@ class TwitchManager extends APIManager {
   /**
    * The function called before each axios request automatically
    * @param {Object} config The axios configuration generated for this request
-   * @param {number} [config.authID] The id of the user whose auth token to use
+   * @param {number} [config.authId] The id of the user whose auth token to use
    * @param {boolean} [config.allowApp] Whether to allow use of the app access token if the user token is not found
    * @returns {Object} config
    * @private
    */
   async _preRequest(config) {
-    let token = await this.auth.getAccessToken(config.authID, true).catch(() => undefined);
+    let token = await this.auth.getAccessToken(config.authId, true).catch(() => undefined);
     if (!token && config.allowApp) {
       token = await this.auth.getAccessToken(0, true);
     }
@@ -226,7 +226,7 @@ class TwitchManager extends APIManager {
   async _postErrorRequest(error) {
     const requestData = this._requests.get(error.config?.token);
     if (error.response?.status === 401 && error.response.config?.headers?.authorization) {
-      await this.auth.getAccessToken(error.config.authID);
+      await this.auth.getAccessToken(error.config.authId);
       const res = await this.driver
         .request({ isRetry: true, ...error.response.config })
         .catch(err => this.app.log.debug(module, 'Error during request after refreshing token', this.makeLoggable(err)));
