@@ -19,7 +19,7 @@ class RoleManagerCommand extends BaseCommand {
   }
 
   async run(message, args) {
-    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guildId)).prefix;
     const routines = ['add', 'remove', 'list'];
 
     const [methodRaw, channelRaw, roleRaw, ...extraArgs] = args;
@@ -66,7 +66,7 @@ class RoleManagerCommand extends BaseCommand {
     roles.forEach(role => roleNames.push(role.name.toLowerCase()));
 
     //  A list of key value pairs with channels and available roles
-    let guild = this.socket.cache.roleManager.get(String(message.guild.id));
+    let guild = this.socket.cache.roleManager.get(String(message.guildId));
 
     switch (method) {
       case 'add':
@@ -127,7 +127,7 @@ class RoleManagerCommand extends BaseCommand {
           if (guild.removeRoles[String(channel.id)]) {
             delete guild.removeRoles[String(channel.id)];
           }
-          await this.socket.app.database.tables.roleManager.edit(String(message.guild.id), guild.addRoles, guild.removeRoles);
+          await this.socket.app.database.tables.roleManager.edit(String(message.guildId), guild.addRoles, guild.removeRoles);
           message.channel.send(`Deleted ${channel} from role manager`);
           return;
         }
@@ -153,7 +153,7 @@ class RoleManagerCommand extends BaseCommand {
       case 'list':
     }
 
-    await this.socket.app.database.tables.roleManager.edit(String(message.guild.id), guild.addRoles, guild.removeRoles);
+    await this.socket.app.database.tables.roleManager.edit(String(message.guildId), guild.addRoles, guild.removeRoles);
 
     // Determine the number of channels and get ready to loop through them
     let channels = Object.keys(guild.addRoles);

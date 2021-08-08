@@ -17,7 +17,7 @@ class ReactionRolesCommand extends BaseCommand {
 
   async run(message, args) {
     const socket = this.socket;
-    const commandPrefix = socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = socket.cache.prefixes.get(String(message.guildId)).prefix;
     const routines = ['add', 'remove', 'create', 'update', 'list'];
 
     const [methodRaw, roleRaw, ...extraArgs] = args;
@@ -31,7 +31,7 @@ class ReactionRolesCommand extends BaseCommand {
     let roles = [];
 
     //  A list of key value pairs with channels and available roles
-    let guild = socket.cache.reactionRoles.get(String(message.guild.id));
+    let guild = socket.cache.reactionRoles.get(String(message.guildId));
 
     // Check for actual role
     if (roleRaw && roleRaw.startsWith('<@&') && roleRaw.endsWith('>')) {
@@ -121,7 +121,7 @@ class ReactionRolesCommand extends BaseCommand {
               deleted = true;
             }
           }
-          await socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelId, guild.messageId, guild.roles);
+          await socket.app.database.tables.reactionRoles.edit(String(message.guildId), guild.channelId, guild.messageId, guild.roles);
           message.reply(
             `Deleted ${printableEmote} and associated roles from reaction roles.` +
               `${deleted ? 'There are no more reactions roles left, the reaction message has been deleted.' : ''}`,
@@ -184,7 +184,7 @@ class ReactionRolesCommand extends BaseCommand {
           message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => delayDelete(msg, 5000));
           guild.messageId = '';
           guild.channelId = '';
-          socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelId, guild.messageId, guild.roles);
+          socket.app.database.tables.reactionRoles.edit(String(message.guildId), guild.channelId, guild.messageId, guild.roles);
           message.delete();
           return;
         }
@@ -223,7 +223,7 @@ class ReactionRolesCommand extends BaseCommand {
       case 'list':
     }
 
-    await socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelId, guild.messageId, guild.roles);
+    await socket.app.database.tables.reactionRoles.edit(String(message.guildId), guild.channelId, guild.messageId, guild.roles);
 
     emojis = Object.keys(guild.roles);
     // Create base embed
@@ -309,7 +309,7 @@ class ReactionRolesCommand extends BaseCommand {
       }
       guild.messageId = String(reactionMsg.id);
       guild.channelId = String(reactionMsg.channel.id);
-      socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelId, guild.messageId, guild.roles);
+      socket.app.database.tables.reactionRoles.edit(String(message.guildId), guild.channelId, guild.messageId, guild.roles);
       message.delete();
     }
   }

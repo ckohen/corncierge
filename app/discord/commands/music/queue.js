@@ -14,7 +14,7 @@ class QueueCommand extends BaseCommand {
   }
 
   run(message) {
-    const musicData = this.socket.cache.musicData.get(String(message.guild.id));
+    const musicData = this.socket.cache.musicData.get(String(message.guildId));
     if (musicData.queue.length === 0) {
       return message.channel.send(`${message.member}, There are no songs in queue!`);
     }

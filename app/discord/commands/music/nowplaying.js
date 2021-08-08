@@ -14,7 +14,7 @@ class NowPlayingCommand extends BaseCommand {
   }
 
   run(message) {
-    let musicData = this.socket.cache.musicData.get(String(message.guild.id));
+    let musicData = this.socket.cache.musicData.get(String(message.guildId));
     if (!musicData.isPlaying && !musicData.nowPlaying) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;

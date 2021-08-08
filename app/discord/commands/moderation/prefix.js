@@ -21,8 +21,8 @@ class PrefixCommand extends BaseCommand {
     }
 
     try {
-      this.socket.cache.prefixes.get(String(message.guild.id)).prefix = args;
-      await this.socket.app.database.tables.prefixes.edit(String(message.guild.id), args);
+      this.socket.cache.prefixes.get(String(message.guildId)).prefix = args;
+      await this.socket.app.database.tables.prefixes.edit(String(message.guildId), args);
     } catch (err) {
       this.socket.app.log.error(module, err);
       return message.channel.send(`${message.member}, There was an error changing the prefix!`);

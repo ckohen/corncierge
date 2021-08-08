@@ -18,7 +18,7 @@ module.exports = async (socket, message) => {
   // React only in guild text channels
   if (!message.channel.isText()) return;
 
-  const commandPrefix = socket.cache.prefixes.get(String(message.guild.id))?.prefix ?? '!';
+  const commandPrefix = socket.cache.prefixes.get(String(message.guildId))?.prefix ?? '!';
 
   // Check for commands
   if (!message.content.startsWith(commandPrefix)) return;
@@ -33,10 +33,16 @@ module.exports = async (socket, message) => {
   if (!handler) return;
 
   // Check for guild constraints
-  if (handler.guild && !discord.isGuild(message.guild.id, handler.guild, socket.app.settings)) return;
+  if (handler.guild && !discord.isGuild(message.guildId, handler.guild, socket.app.settings)) return;
 
   // Check for channel constraints
-  if (handler.channel && !discord.isChannel(message.channel.id, handler.channel, socket.app.settings)) return;
+  if (
+    handler.channel &&
+    !discord.isChannel(message.channelId, handler.channel, socket.app.settings) &&
+    !discord.isChannel(message.channel?.parentId, handler.channel, socket.app.settings)
+  ) {
+    return;
+  }
 
   // Check user
   if (handler.user && !discord.isUser(message.author.id, handler.user, socket.app.settings)) return;

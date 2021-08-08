@@ -16,7 +16,7 @@ class ColorManagerCommand extends BaseCommand {
   }
 
   async run(message, args) {
-    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guildId)).prefix;
     const routines = ['add', 'remove', 'channel', 'list'];
 
     const [methodRaw, chroleRaw, ...extraArgs] = args;
@@ -31,7 +31,7 @@ class ColorManagerCommand extends BaseCommand {
     let roles = [];
 
     //  A list of key value pairs with channels and available roles
-    let guild = this.socket.cache.colorManager.get(String(message.guild.id));
+    let guild = this.socket.cache.colorManager.get(String(message.guildId));
 
     // The second argument changes
     if (method === 'channel') {
@@ -136,7 +136,7 @@ class ColorManagerCommand extends BaseCommand {
       case 'list':
     }
 
-    await this.socket.app.database.tables.colorManager.edit(String(message.guild.id), guild.roles, guild.snowflakes);
+    await this.socket.app.database.tables.colorManager.edit(String(message.guildId), guild.roles, guild.snowflakes);
 
     // Determine the number of channels and get ready to loop through them
     let channels = Object.keys(guild.roles);

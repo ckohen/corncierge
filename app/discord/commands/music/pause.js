@@ -19,7 +19,7 @@ class PauseCommand extends BaseCommand {
       message.channel.send(`${message.member}, Join a channel and try again`);
       return;
     }
-    const musicData = this.socket.cache.musicData.get(String(message.guild.id));
+    const musicData = this.socket.cache.musicData.get(String(message.guildId));
 
     if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
       message.channel.send(`${message.member}, There is no song playing right now!`);

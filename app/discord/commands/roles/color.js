@@ -17,7 +17,7 @@ class ColorsCommand extends BaseCommand {
     args = args.join(' ');
 
     // Get the current guild from the colorManager
-    let guild = this.socket.cache.colorManager.get(String(message.guild.id));
+    let guild = this.socket.cache.colorManager.get(String(message.guildId));
     // A list of key value pairs with channels and available roles
     let channelName = guild.roles;
 
@@ -25,9 +25,10 @@ class ColorsCommand extends BaseCommand {
     let colorSnowflakes = guild.snowflakes.filter(id => message.guild.roles.resolve(id) !== null);
 
     // If a role from a valid channel is typed in that channel add the role to the user
-    if (channelName[String(message.channel.id)]) {
-      if (!roleAssign(this.socket, message, channelName[String(message.channel.id)], colorSnowflakes, args)) {
-        this.socket.app.database.tables.colorManager.edit(String(message.guild.id), guild.roles, guild.snowflakes);
+    const chan = channelName[String(message.channelId)] ?? channelName[String(message.channel?.parentId)];
+    if (chan) {
+      if (!roleAssign(this.socket, message, chan, colorSnowflakes, args)) {
+        this.socket.app.database.tables.colorManager.edit(String(message.guildId), guild.roles, guild.snowflakes);
       }
     } else {
       message.delete();

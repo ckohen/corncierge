@@ -14,7 +14,7 @@ class HelpCommand extends BaseCommand {
 
   run(message, args) {
     const appOpts = this.socket.app.options;
-    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guildId)).prefix;
     let request = args.join(' ');
 
     let embed = this.socket.getEmbed('help', [commandPrefix, appOpts.name]);
@@ -27,7 +27,7 @@ class HelpCommand extends BaseCommand {
     let music = false;
     for (let channel of this.socket.app.settings.get(`discord_channel_music`).split(',')) {
       try {
-        if (this.socket.driver.channels.cache.get(channel).guild.id === message.guild.id) {
+        if (this.socket.driver.channels.cache.get(channel).guild.id === message.guildId) {
           music = true;
         }
       } catch {

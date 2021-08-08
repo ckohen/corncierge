@@ -35,7 +35,11 @@ module.exports = async (socket, interaction) => {
   }
 
   // Check for channel constraints
-  if (handler.channel && !discord.isChannel(interaction.channel?.id, handler.channel, socket.app.settings)) {
+  if (
+    handler.channel &&
+    !discord.isChannel(interaction.channelId, handler.channel, socket.app.settings) &&
+    !discord.isChannel(interaction.channel?.parentId, handler.channel, socket.app.settings)
+  ) {
     interaction.reply({ content: 'This command is restricted to a specific channel, please go rerun the command there!', ephemeral: true });
     return;
   }

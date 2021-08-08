@@ -173,7 +173,7 @@ class RoomAppCommand extends BaseAppCommand {
         }
         // Delete the room
         interaction.reply(`Room ${room.id}: **${room.name}** has been successfully removed, the new list of rooms can be found below.`);
-        socket.app.database.tables.rooms.delete(`${interaction.guild.id}-${room.id}`);
+        socket.app.database.tables.rooms.delete(`${interaction.guildId}-${room.id}`);
         rooms.delete(room.id);
         room = false;
         break;
@@ -235,7 +235,7 @@ class RoomAppCommand extends BaseAppCommand {
             room.players.shift();
           } else {
             // Delete the room if there is no new possible owner
-            socket.app.database.tables.rooms.delete(`${interaction.guild.id}-${room.id}`);
+            socket.app.database.tables.rooms.delete(`${interaction.guildId}-${room.id}`);
             rooms.delete(room.id);
             return interaction.reply(`You were the last player in ${room.name}, it has been deleted.`);
           }
@@ -499,13 +499,13 @@ class RoomAppCommand extends BaseAppCommand {
     let lastMessage = await interaction.followUp({ embeds: [msg] });
     if (room) {
       // Store last message information
-      room.lastChannelId = lastMessage.channel.id;
+      room.lastChannelId = lastMessage.channelId;
       room.lastMessageId = lastMessage.id;
       // Update database
       socket.app.database.tables.rooms.edit(`${interaction.guildId}-${room.id}`, room);
     } else if (masterRoom) {
       // Store last message information
-      masterRoom.lastChannelId = lastMessage.channel.id;
+      masterRoom.lastChannelId = lastMessage.channelId;
       masterRoom.lastMessageId = lastMessage.id;
     }
     return true;

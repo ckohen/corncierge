@@ -26,7 +26,7 @@ class PlayCommand extends BaseCommand {
       return;
     }
 
-    const musicData = this.socket.cache.musicData.get(String(message.guild.id));
+    const musicData = this.socket.cache.musicData.get(String(message.guildId));
 
     if (!message.guild.me.voice.channel) {
       musicData.isPlaying = false;
@@ -193,7 +193,7 @@ class PlayCommand extends BaseCommand {
 }
 
 function playSong(queue, message, socket) {
-  const musicData = socket.cache.musicData.get(String(message.guild.id));
+  const musicData = socket.cache.musicData.get(String(message.guildId));
   queue[0].voiceChannel
     .join()
     .then(connection => {
