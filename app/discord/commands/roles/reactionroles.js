@@ -356,7 +356,7 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
   let collect = true;
   // Wait for reaction from the original message sender
   let collected = await emoteMsg
-    .awaitReactions((reaction, user) => user.id === initiator.author.id, { max: 1, time: 60000, errors: ['time'] })
+    .awaitReactions({ filter: (reaction, user) => user.id === initiator.author.id, max: 1, time: 60000, errors: ['time'] })
     .catch(() => {
       initiator.channel.send(`${initiator.member}, Error getting emote`);
       collect = false;

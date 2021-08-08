@@ -20,7 +20,8 @@ class DiscordUtil {
     await confirmMsg.react('❌');
     let reacted = true;
     let collected = await confirmMsg
-      .awaitReactions((reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id, {
+      .awaitReactions({
+        filter: (reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id,
         max: 1,
         time: time,
         errors: ['time'],

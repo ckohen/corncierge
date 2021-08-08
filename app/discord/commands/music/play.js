@@ -133,7 +133,7 @@ class PlayCommand extends BaseCommand {
     var songSearch = this.socket.getEmbed('songSearch', [vidNameArr]);
     var songEmbed = await message.channel.send({ embeds: [songSearch] });
     message.channel
-      .awaitMessages(msg => (msg.content > 0 && msg.content < 6) || msg.content === 'exit', { max: 1, time: 60000, errors: ['time'] })
+      .awaitMessages({ filter: msg => (msg.content > 0 && msg.content < 6) || msg.content === 'exit', max: 1, time: 60000, errors: ['time'] })
       .then(response => {
         const videoIndex = parseInt(response.first().content);
         if (response.first().content === 'exit') {
