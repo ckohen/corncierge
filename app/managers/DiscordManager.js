@@ -1,6 +1,6 @@
 'use strict';
 
-const { Client, Collection, MessageEmbed, Structures } = require('discord.js');
+const { Client, Collection, MessageEmbed } = require('discord.js');
 const lodash = require('lodash');
 
 const EventManager = require('./EventManager');
@@ -11,9 +11,7 @@ const embeds = require('../discord/embeds');
 const events = require('../discord/events');
 const InteractionManager = require('../discord/interactions/InteractionManager');
 
-const { collect, constants, discord: util } = require('../util/UtilManager');
-
-Structures.extend('Message', util.extendMessage);
+const { collect, constants } = require('../util/UtilManager');
 
 /**
  * Discord manager for the application.
