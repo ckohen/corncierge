@@ -1,5 +1,7 @@
 'use strict';
 
+const { MessageActionRow, Constants } = require('discord.js');
+const { ApplicationCommandOptionTypes, MessageButtonStyles } = Constants;
 const BaseAppCommand = require('./BaseAppCommand');
 const { ComponentFunctions } = require('../../../util/Constants');
 const { isSnowflake } = require('../../../util/DiscordUtil');
@@ -16,8 +18,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
   }
 
   async run(interaction, args) {
-    const method = args[0].name;
-    args = args[0].options;
+    const method = args.getSubcommand(false) ?? args.getSubcommandGroup();
 
     const cacheId = `${interaction.guildId}-${interaction.member.id}`;
     let data = this.socket.cache.buttonRoles.get(cacheId);
@@ -26,24 +27,24 @@ class ButtonRoleAppCommand extends BaseAppCommand {
       data = this.socket.cache.buttonRoles.get(cacheId);
     }
 
-    interaction.defer({ ephemeral: true });
+    await interaction.defer({ ephemeral: true });
 
     let finalizedDisplay = false;
 
     switch (method) {
       case 'edit': {
-        const messageId = getArg(args, 'messageid');
+        const messageId = args.getString('messageid');
         if (!isSnowflake(messageId)) {
-          interaction.reply('The message id provided was not a valid message id');
+          interaction.editReply('The message id provided was not a valid message id');
           return;
         }
-        const message = await interaction.channel.messages.fetch(messageId).catch(err => this.socket.app.log.debug(module, err));
+        const message = await interaction.channel?.messages.fetch(messageId).catch(err => this.socket.app.log.debug(module, err));
         if (!message) {
-          interaction.reply('That message does not seem to be in this channel, or it was deleted.');
+          interaction.editReply('That message does not seem to be in this channel, or it was deleted.');
           return;
         }
         if (message.author.id !== interaction.client.user.id || !message.components?.length) {
-          interaction.reply('The message id provided was for a message that is not a button role message!');
+          interaction.editReply('The message id provided was for a message that is not a button role message!');
           return;
         }
         if (message.embeds?.[0]) {
@@ -54,7 +55,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
         data.messageId = messageId;
         const buttons = formatFetchedButtons(message.components);
         if (!buttons) {
-          interaction.reply('The message id provided was for a message that is not a button role message!');
+          interaction.editReply('The message id provided was for a message that is not a button role message!');
           return;
         }
         data.buttons = buttons;
@@ -63,11 +64,10 @@ class ButtonRoleAppCommand extends BaseAppCommand {
       }
       case 'embed': {
         if (!data.buttons) {
-          interaction.reply('Please initiate a new button role message or edit an existing one before modifying the embed!');
+          interaction.editReply('Please initiate a new button role message or edit an existing one before modifying the embed!');
           return;
         }
-        const submethod = args[0].name;
-        args = args[0].options;
+        const submethod = args.getSubcommand();
         switch (submethod) {
           case 'edit':
             setEmbed(args, data);
@@ -86,36 +86,35 @@ class ButtonRoleAppCommand extends BaseAppCommand {
         break;
       case 'buttons': {
         if (!data.buttons) {
-          interaction.reply('Please initiate a new button role message or edit an existing one before modifying buttons!');
+          interaction.editReply('Please initiate a new button role message or edit an existing one before modifying buttons!');
           return;
         }
-        const submethod = args[0].name;
-        args = args[0].options;
+        const submethod = args.getSubcommand();
         let buttonId = data.buttons.length;
         switch (submethod) {
           case 'edit': {
-            buttonId = getArg(args, 'buttonid') - 1;
+            buttonId = args.getInteger('buttonid', true) - 1;
             if (data.buttons.length < buttonId) {
-              interaction.reply('That button does not exist yet, try creating it!');
+              interaction.editReply('That button does not exist yet, try creating it!');
               return;
             }
             if (!data.buttons[buttonId]) {
-              interaction.reply('You cannot edit blank buttons!');
+              interaction.editReply('You cannot edit blank buttons!');
               return;
             }
-            const disabled = getArg(args, 'disable');
+            const disabled = args.getBoolean('disable');
             if (disabled !== null) data.buttons[buttonId].disabled = disabled;
-            const color = getArg(args, 'color');
-            const label = getArg(args, 'label');
+            const color = args.getInteger('color');
+            const label = args.getString('label');
             if (color) data.buttons[buttonId].color = color;
             if (label) data.buttons[buttonId].name = label;
           }
           // eslint-disable-next-line no-fallthrough
           case 'add': {
-            const newLine = getArg(args, 'newline');
+            const newLine = args.getBoolean('newline');
             if (newLine) {
               if (buttonId > 20) {
-                interaction.reply('Unable to add a new row of buttons here (There are already 5 rows!)');
+                interaction.editReply('Unable to add a new row of buttons here (There are already 5 rows!)');
                 return;
               }
               const newButtonId = Math.ceil(buttonId / 5) * 5;
@@ -123,25 +122,25 @@ class ButtonRoleAppCommand extends BaseAppCommand {
               buttonId = newButtonId;
             }
             if (buttonId >= 25) {
-              interaction.reply('You can only have 25 buttons (including spacers)!');
+              interaction.editReply('You can only have 25 buttons (including spacers)!');
               return;
             }
             let botHighest = interaction.guild.me.roles.highest;
             let button = data.buttons[buttonId];
             if (!button) {
               button = {
-                color: getArg(args, 'color'),
+                color: args.getInteger('color', true),
                 roles: [],
-                name: getArg(args, 'label'),
+                name: args.getString('label'),
                 disabled: false,
               };
             }
-            const role1 = getArg(args, 'role');
-            const role2 = getArg(args, 'role2');
-            const role3 = getArg(args, 'role3');
-            if (role1) button.roles[0] = role1;
-            if (role2) button.roles[1] = role2;
-            if (role3) button.roles[2] = role3;
+            const role1 = args.getRole('role', true);
+            const role2 = args.getRole('role2');
+            const role3 = args.getRole('role3');
+            if (role1) button.roles[0] = role1.id;
+            if (role2) button.roles[1] = role2.id;
+            if (role3) button.roles[2] = role3.id;
             const newRoles = [];
             button.roles.forEach(role => {
               if (role) newRoles.push(role);
@@ -152,11 +151,11 @@ class ButtonRoleAppCommand extends BaseAppCommand {
               if (role.comparePositionTo(botHighest) >= 0 || role.managed) allBelow = false;
             });
             if (!allBelow) {
-              interaction.reply('Please only select roles below the bots highest role');
+              interaction.editReply('Please only select roles below the bots highest role');
               return;
             }
             button.roles = newRoles;
-            let emote = getArg(args, 'emoji');
+            let emote = args.getString('emoji');
             if (emote) {
               emote = parseEmote(emote);
               button.emoji = emote;
@@ -169,25 +168,25 @@ class ButtonRoleAppCommand extends BaseAppCommand {
           }
           case 'addspace':
             if (buttonId > 25) {
-              interaction.reply('You can only have 25 buttons (including spacers)!');
+              interaction.editReply('You can only have 25 buttons (including spacers)!');
               return;
             }
             data.buttons[buttonId] = undefined;
             break;
           case 'swap': {
-            const button1Id = getArg(args, 'button1') - 1;
-            const button2Id = getArg(args, 'button2') - 1;
+            const button1Id = args.getInteger('button1', true) - 1;
+            const button2Id = args.getInteger('button2', true) - 1;
             if (data.buttons.length <= button1Id || data.buttons.length <= button2Id) {
-              interaction.reply('One of the specified buttons does not exist');
+              interaction.editReply('One of the specified buttons does not exist');
               return;
             }
             data.buttons[button1Id] = data.buttons.splice(button2Id, 1, data.buttons[button1Id])[0];
             break;
           }
           case 'remove':
-            buttonId = getArg(args, 'buttonid') - 1;
+            buttonId = args.getInteger('buttonid', true) - 1;
             if (data.buttons.length < buttonId) {
-              interaction.reply('The specified button does not exist');
+              interaction.editReply('The specified button does not exist');
               return;
             }
             data.buttons.splice(buttonId, 1);
@@ -197,7 +196,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
       case 'preview':
       case 'save':
         if (!data.buttons) {
-          interaction.reply('Please initiate a new button role message or edit an existing one first!');
+          interaction.editReply('Please initiate a new button role message or edit an existing one first!');
           return;
         }
         finalizedDisplay = true;
@@ -213,23 +212,22 @@ class ButtonRoleAppCommand extends BaseAppCommand {
         if (button) {
           return { ...button, disabled: true, name: `ID: ${index + 1} ${button.name ?? ''}` };
         }
-        return { color: 2, roles: [], disabled: true, name: `ID: ${index + 1} DISAPPEARS` };
+        return { color: 'SECONDARY', roles: [], disabled: true, name: `ID: ${index + 1} DISAPPEARS` };
       });
     }
     let title = data.embed.title;
-    if (data.embed.title || data.embed.description) {
-      message.embed = { title, description: data.embed.description, color: data.embed.color };
+    if (title || data.embed.description) {
+      message.embeds = [{ title, description: data.embed.description, color: data.embed.color }];
     }
     message.components = this.socket.interactions.buttonComponents.get('ROLE_ASSIGN').definition(buttons);
     if (message.components.length === 0) {
       message.components = [
-        {
-          type: 1,
+        new MessageActionRow({
           components: [
             {
-              type: 2,
-              style: 2,
-              custom_id: `${ComponentFunctions.ROLE_ASSIGN}:999:`,
+              type: 'BUTTON',
+              style: 'SECONDARY',
+              customId: `${ComponentFunctions.ROLE_ASSIGN}:999:`,
               label: 'No button roles',
               emoji: {
                 name: '😕',
@@ -237,53 +235,42 @@ class ButtonRoleAppCommand extends BaseAppCommand {
               disabled: true,
             },
           ],
-        },
+        }),
       ];
     }
     let sent;
     if (method === 'save') {
-      let path = interaction.client.api.channels(interaction.channel.id).messages;
       if (data.messageId) {
-        message.flags = message.embed ? 0 : 1 << 2;
-        sent = await path(data.messageId).patch({ data: message });
+        message.flags = message.embeds ? 0 : 1 << 2;
+        sent = await interaction.channel?.messages.edit(message).catch(() => false);
       } else {
         let suppress = false;
-        if (!message.embed) {
-          message.embed = { description: 'Hello there' };
+        if (!message.embeds) {
+          message.embeds = [{ description: 'Hello there' }];
           suppress = true;
         }
-        sent = await path
-          .post({ data: message })
-          .then(msg => (suppress ? path(msg.id).patch({ data: { flags: 1 << 2 } }) : msg))
+        sent = await interaction.channel
+          ?.send(message)
+          .then(msg => msg.suppressEmbeds(suppress))
           .catch(err => this.socket.app.log.warn(module, '[Post Button Roles]', err));
       }
       if (!sent) {
-        interaction.reply('There was an error sending the message, please try again.');
+        interaction.editReply('There was an error sending the message, please try again.');
         return;
       }
-      interaction.reply('Success!');
+      interaction.editReply('Success!');
       this.socket.cache.buttonRoles.delete(cacheId);
     } else {
-      message.embeds = message.embed ? [message.embed] : [];
-      delete message.embed;
-      sent = await interaction.client.api
-        .webhooks(interaction.applicationId, interaction.token)
-        .messages('@original')
-        .patch({ data: message })
-        .catch(err => this.socket.app.log.warn(module, '[Respond Button Roles]', err));
+      message.embeds ??= [];
+      await interaction.editReply(message).catch(err => this.socket.app.log.warn(module, '[Respond Button Roles]', err));
     }
   }
 }
 
-function getArg(args, argName) {
-  let foundArg = args?.find(arg => arg.name.toLowerCase() === argName.toLowerCase());
-  return foundArg?.value ?? null;
-}
-
 function setEmbed(args, data) {
-  const title = getArg(args, 'title');
-  const description = getArg(args, 'description');
-  const color = getArg(args, 'color');
+  const title = args.getString('title');
+  const description = args.getString('description');
+  const color = args.getInteger('color');
   if (title) data.embed.title = title;
   if (description) data.embed.description = description;
   if (color) data.embed.color = color;
@@ -304,13 +291,14 @@ function parseEmote(emoteString) {
 function formatFetchedButtons(components) {
   const buttons = [];
   components.forEach((component, index) => {
-    if (component.type !== 1) return;
+    if (component.type !== 'ACTION_ROW' && component.type !== 1) return;
     component.components.forEach(c => {
-      if (c.type !== 2) return;
-      if (!c.custom_id.startsWith(String(ComponentFunctions.ROLE_ASSIGN))) return;
+      if (c.type !== 'BUTTON' && c.type !== 2) return;
+      const customId = c.customId ?? c.custom_id;
+      if (!customId.startsWith(String(ComponentFunctions.ROLE_ASSIGN))) return;
       buttons.push({
         color: c.style,
-        roles: c.custom_id.split(':')[2].split('-'),
+        roles: customId.split(':')[2].split('-'),
         name: c.label,
         emoji: c.emoji,
         disabled: c.disabled,
@@ -324,7 +312,11 @@ function formatFetchedButtons(components) {
     }
   });
   if (buttons.length === 0) return false;
-  if (buttons.length === 1 && components[0].components[0].custom_id === `${ComponentFunctions.ROLE_ASSIGN}:999:`) {
+  if (
+    buttons.length === 1 &&
+    (components[0].components[0].customId === `${ComponentFunctions.ROLE_ASSIGN}:999:` ||
+      components[0].components[0].custom_id === `${ComponentFunctions.ROLE_ASSIGN}:999:`)
+  ) {
     buttons.shift();
   }
   return buttons;
@@ -339,50 +331,50 @@ function getDefinition() {
     default_permission: true,
     options: [
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'new',
         description: 'Create a new button role message. ERASES ANY IN PROGRESS CREATIONS / EDITS',
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionTypes.STRING,
             name: 'title',
             description: 'The title to display for this set of buttons',
           },
           {
-            type: 3,
+            type: ApplicationCommandOptionTypes.STRING,
             name: 'description',
             description: 'A short description to show along with this set of buttons',
           },
           {
-            type: 4,
+            type: ApplicationCommandOptionTypes.INTEGER,
             name: 'color',
             description: 'A color for the embed, you can enter hex color codes here by prefixing it with 0x (e.g. 0xFF0000)',
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'edit',
         description: 'Edit an already existing button role message',
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionTypes.STRING,
             name: 'messageid',
             description: 'The id of the buton role message to edit, it must be in the current channel',
             required: true,
           },
           {
-            type: 3,
+            type: ApplicationCommandOptionTypes.STRING,
             name: 'title',
             description: 'The title to display for this set of buttons',
           },
           {
-            type: 3,
+            type: ApplicationCommandOptionTypes.STRING,
             name: 'description',
             description: 'A short description to show along with this set of buttons',
           },
           {
-            type: 4,
+            type: ApplicationCommandOptionTypes.INTEGER,
             name: 'color',
             description: 'A color for the embed, you can enter hex color codes here by prefixing it with 0x (e.g. 0xFF0000)',
           },
@@ -394,74 +386,74 @@ function getDefinition() {
         description: 'Edit buttons on the currently selected button role message',
         options: [
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'add',
             description: 'Add a role button',
             options: [
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'color',
                 description: 'The color of the button',
                 required: true,
                 choices: [
                   {
                     name: 'Blurple',
-                    value: 1,
+                    value: MessageButtonStyles.PRIMARY,
                   },
                   {
                     name: 'Grey',
-                    value: 2,
+                    value: MessageButtonStyles.SECONDARY,
                   },
                   {
                     name: 'Green',
-                    value: 3,
+                    value: MessageButtonStyles.SUCCESS,
                   },
                   {
                     name: 'Red',
-                    value: 4,
+                    value: MessageButtonStyles.DANGER,
                   },
                 ],
               },
               {
-                type: 8,
+                type: ApplicationCommandOptionTypes.ROLE,
                 name: 'role',
                 description: 'The role that this button toggles',
                 required: true,
               },
               {
-                type: 3,
+                type: ApplicationCommandOptionTypes.STRING,
                 name: 'label',
                 description: 'The label to display on the button, defaults to the name of the first role',
               },
               {
-                type: 3,
+                type: ApplicationCommandOptionTypes.STRING,
                 name: 'emoji',
                 description: 'An emoji to display next to the label',
               },
               {
-                type: 5,
+                type: ApplicationCommandOptionTypes.BOOLEAN,
                 name: 'newline',
                 description: 'Whether to skip the rest of this row and place this button on the next line',
               },
               {
-                type: 8,
+                type: ApplicationCommandOptionTypes.ROLE,
                 name: 'role2',
                 description: 'An additional role that this button toggles',
               },
               {
-                type: 8,
+                type: ApplicationCommandOptionTypes.ROLE,
                 name: 'role3',
                 description: 'A third role that this button toggles',
               },
             ],
           },
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'remove',
             description: 'Remove a role button',
             options: [
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'buttonid',
                 description: 'The id of the button to remove displayed in the last message',
                 required: true,
@@ -469,84 +461,84 @@ function getDefinition() {
             ],
           },
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'edit',
             description: 'Edit a role button',
             options: [
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'buttonid',
                 description: 'The id of the button to remove displayed in the last message',
                 required: true,
               },
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'color',
                 description: 'The color for the button',
                 choices: [
                   {
                     name: 'Blurple',
-                    value: 1,
+                    value: MessageButtonStyles.PRIMARY,
                   },
                   {
                     name: 'Grey',
-                    value: 2,
+                    value: MessageButtonStyles.SECONDARY,
                   },
                   {
                     name: 'Green',
-                    value: 3,
+                    value: MessageButtonStyles.SUCCESS,
                   },
                   {
                     name: 'Red',
-                    value: 4,
+                    value: MessageButtonStyles.DANGER,
                   },
                 ],
               },
               {
-                type: 3,
+                type: ApplicationCommandOptionTypes.STRING,
                 name: 'label',
                 description: 'The label to display on the button, defaults to the name of the first role',
               },
               {
-                type: 3,
+                type: ApplicationCommandOptionTypes.STRING,
                 name: 'emoji',
                 description: 'An emoji to display next to the label',
               },
               {
-                type: 5,
+                type: ApplicationCommandOptionTypes.BOOLEAN,
                 name: 'disable',
                 description: 'Temporarily disable the button while keeping it visible',
               },
               {
-                type: 8,
+                type: ApplicationCommandOptionTypes.ROLE,
                 name: 'role',
                 description: 'The role that this button toggles',
               },
               {
-                type: 8,
+                type: ApplicationCommandOptionTypes.ROLE,
                 name: 'role2',
                 description: 'An additional role that this button toggles',
               },
               {
-                type: 8,
+                type: ApplicationCommandOptionTypes.ROLE,
                 name: 'role3',
                 description: 'A third role that this button toggles',
               },
             ],
           },
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'swap',
             description: 'Swap the position of two buttons',
             options: [
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'button1',
                 description: 'The id of the first button',
                 required: true,
               },
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'button2',
                 description: 'The id of the second button',
                 required: true,
@@ -554,7 +546,7 @@ function getDefinition() {
             ],
           },
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'addspace',
             description: 'Add a button that will not appear in the final output, for end of row spacing purposes',
           },
@@ -566,41 +558,41 @@ function getDefinition() {
         description: 'Control the embed on the currently selected button role message',
         options: [
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'edit',
             description: 'Edit the embed',
             options: [
               {
-                type: 3,
+                type: ApplicationCommandOptionTypes.STRING,
                 name: 'title',
                 description: 'The title to display for this set of buttons',
               },
               {
-                type: 3,
+                type: ApplicationCommandOptionTypes.STRING,
                 name: 'description',
                 description: 'A short description to show along with this set of buttons',
               },
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'color',
                 description: 'A color for the embed, you can enter hex color codes here by prefixing it with 0x (e.g. 0xFF0000)',
               },
             ],
           },
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'remove',
             description: 'Remove the embed',
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'preview',
         description: 'Preview the final output that is displayed after saving',
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'save',
         description: 'Update or send the button roles',
       },

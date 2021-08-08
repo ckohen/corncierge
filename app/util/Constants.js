@@ -271,42 +271,7 @@ exports.discordMessages = {
   },
 };
 
-exports.ApplicationCommandOptionTypes = createEnum([
-  null,
-  'SUB_COMMAND',
-  'SUB_COMMAND_GROUP',
-  'STRING',
-  'INTEGER',
-  'BOOLEAN',
-  'USER',
-  'CHANNEL',
-  'ROLE',
-  'MENTIONABLE',
-]);
-
 exports.ComponentFunctions = createEnum(['ROLE_ASSIGN']);
-
-exports.InteractionResponseTypes = {
-  PONG: 1,
-  CHANNEL_MESSAGE_WITH_SOURCE: 4,
-  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
-  DEFERRED_MESSAGE_UPDATE: 6,
-  UPDATE_MESSAGE: 7,
-  1: 'PONG',
-  4: 'CHANNEL_MESSAGE_WITH_SOURCE',
-  5: 'DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE',
-  6: 'DEFERRED_MESSAGE_UPDATE',
-  7: 'UPDATE_MESSAGE',
-};
-
-exports.InteractionTypes = {
-  PING: 1,
-  APPLICATION_COMMAND: 2,
-  MESSAGE_COMPONENT: 3,
-  1: 'PING',
-  2: 'APPLICATION_COMMAND',
-  3: 'MESSAGE_COMPONENT',
-};
 
 exports.IRCFilterTypes = {
   BAN: 1,

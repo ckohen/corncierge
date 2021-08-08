@@ -63,7 +63,9 @@ module.exports = async (socket, interaction) => {
 
 function verifyCustomId(id, components) {
   if (!components) return true;
-  const found = components.find(component => component.type === 1 && component.components.find(c => c.custom_id === id));
+  const found = components.find(
+    component => (component.type === 1 || component.type === 'ACTION_ROW') && component.components.find(c => (c.customId ?? c.custom_id) === id),
+  );
   if (found) return true;
   return false;
 }

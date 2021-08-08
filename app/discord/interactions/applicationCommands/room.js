@@ -1,6 +1,7 @@
 'use strict';
 
-const { Collection } = require('discord.js');
+const { Collection, Constants } = require('discord.js');
+const { ApplicationCommandOptionTypes } = Constants;
 const BaseAppCommand = require('./BaseAppCommand');
 const { clamp } = require('../../../util/UtilManager');
 
@@ -14,8 +15,7 @@ class RoomAppCommand extends BaseAppCommand {
 
   async run(interaction, args) {
     const socket = this.socket;
-    const method = args[0].name;
-    args = args[0].options;
+    const method = args.getSubcommand(false) ?? args.getSubcommandGroup();
 
     // A list of key value pairs with room ids and their associated room
     let rooms = socket.cache.rooms.get(String(interaction.guildId));
@@ -24,8 +24,8 @@ class RoomAppCommand extends BaseAppCommand {
     }
 
     if (typeof rooms === 'undefined' || rooms === null) {
-      socket.cache.rooms.set(String(interaction.guild.id), new Collection());
-      rooms = socket.cache.rooms.get(String(interaction.guild.id));
+      socket.cache.rooms.set(String(interaction.guildId), new Collection());
+      rooms = socket.cache.rooms.get(String(interaction.guildId));
     }
 
     // Get the master room or create it
@@ -45,7 +45,7 @@ class RoomAppCommand extends BaseAppCommand {
       masterRoom = rooms.get('master');
     }
     let room = false;
-    const roomId = args?.find(arg => arg.name === `roomid`)?.value;
+    const roomId = args.getInteger(`roomid`);
     let member;
     let inRoom;
     let existing;
@@ -79,7 +79,7 @@ class RoomAppCommand extends BaseAppCommand {
             // Create the new room
             rooms.set(String(i), {
               id: String(i),
-              name: args.find(arg => arg.name === `name`).value.substring(0, 30),
+              name: args.getString(`name`, true).substring(0, 30),
               owner: String(interaction.member.id),
               playerCount: 10,
               code: null,
@@ -88,7 +88,7 @@ class RoomAppCommand extends BaseAppCommand {
               lastChannelId: null,
               lastMessageId: null,
             });
-            socket.app.database.tables.rooms.add(`${interaction.guild.id}-${String(i)}`);
+            socket.app.database.tables.rooms.add(`${interaction.guildId}-${String(i)}`);
             room = rooms.get(String(i));
             interaction.reply(`Room ${i} created!`);
             break;
@@ -102,15 +102,13 @@ class RoomAppCommand extends BaseAppCommand {
         });
         break;
       case 'set':
-        submethod = args[0].name;
-        args = args[0].options;
+        submethod = args.getSubcommand();
         // Check if the requested room exists
-        if (args?.find(arg => arg.name === `roomid`)?.value) {
-          let requested = args.find(arg => arg.name === `roomid`).value;
-          room = rooms.get(String(requested));
+        if (roomId) {
+          room = rooms.get(String(roomId));
           if (typeof room === 'undefined' || rooms === null) {
             room = false;
-            interaction.reply({ content: `There is no room with room id ${requested}!`, ephemeral: true });
+            interaction.reply({ content: `There is no room with room id ${roomId}!`, ephemeral: true });
             break;
           }
         } else {
@@ -131,7 +129,7 @@ class RoomAppCommand extends BaseAppCommand {
         // Set each option accordingly
         switch (submethod) {
           case 'code':
-            newCode = args.find(arg => arg.name === `code`).value;
+            newCode = args.getString(`code`);
             if (typeof newCode === 'undefined' || newCode === `~`) {
               room.code = null;
             } else {
@@ -139,7 +137,7 @@ class RoomAppCommand extends BaseAppCommand {
             }
             break;
           case 'players':
-            newMax = args.find(arg => arg.name === `max`).value;
+            newMax = args.getInteger(`max`, true);
             // Allow up to 35 players in a room
             if (newMax === clamp(newMax, 0, 35)) {
               room.playerCount = newMax;
@@ -204,9 +202,9 @@ class RoomAppCommand extends BaseAppCommand {
       case 'leave':
         // Mentioned user or user
         member = interaction.member.id;
-        forcedUser = args?.find(arg => arg.name === `user`)?.value;
+        forcedUser = args.getUser(`user`);
         if (forcedUser) {
-          member = forcedUser;
+          member = forcedUser.id;
         }
 
         // Find the room and determine whether they are a player or waiting
@@ -312,7 +310,7 @@ class RoomAppCommand extends BaseAppCommand {
         break;
       case 'transfer':
         // Check if the member exists
-        member = args?.find(arg => arg.name === `newowner`).value;
+        member = args.getUser(`newowner`, true).id;
 
         // Check if the room exists
         room = rooms.get(String(roomId));
@@ -379,7 +377,7 @@ class RoomAppCommand extends BaseAppCommand {
             .catch(() => undefined);
         }
       }
-      return interaction.channel.send({ content: '**No rooms have been created yet**', embeds: [msg] }).then(sentMsg => {
+      return interaction.followUp({ content: '**No rooms have been created yet**', embeds: [msg] }).then(sentMsg => {
         if (masterRoom) {
           masterRoom.lastChannelId = sentMsg.channel.id;
           masterRoom.lastMessageId = sentMsg.id;
@@ -498,13 +496,13 @@ class RoomAppCommand extends BaseAppCommand {
         default:
       }
     }
-    let lastMessage = await interaction.channel.send({ embeds: [msg] });
+    let lastMessage = await interaction.followUp({ embeds: [msg] });
     if (room) {
       // Store last message information
       room.lastChannelId = lastMessage.channel.id;
       room.lastMessageId = lastMessage.id;
       // Update database
-      socket.app.database.tables.rooms.edit(`${interaction.guild.id}-${room.id}`, room);
+      socket.app.database.tables.rooms.edit(`${interaction.guildId}-${room.id}`, room);
     } else if (masterRoom) {
       // Store last message information
       masterRoom.lastChannelId = lastMessage.channel.id;
@@ -523,24 +521,24 @@ function getDefinition() {
     description: 'handles room management',
     options: [
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'list',
         description: 'lists the existing rooms',
         options: [
           {
-            type: 4,
+            type: ApplicationCommandOptionTypes.INTEGER,
             name: 'roomId',
             description: 'list a specific room',
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'join',
         description: 'joins the room specified',
         options: [
           {
-            type: 4,
+            type: ApplicationCommandOptionTypes.INTEGER,
             name: 'roomId',
             description: 'the room to join',
             required: true,
@@ -548,24 +546,24 @@ function getDefinition() {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'leave',
         description: 'leaves all rooms',
         options: [
           {
-            type: 6,
+            type: ApplicationCommandOptionTypes.USER,
             name: 'user',
             description: 'the user to force leave',
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'create',
         description: 'creates a new room',
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionTypes.STRING,
             name: 'name',
             description: 'the name of the new room',
             required: true,
@@ -573,41 +571,41 @@ function getDefinition() {
         ],
       },
       {
-        type: 2,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
         name: 'set',
         description: 'changes settings for a room',
         options: [
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'code',
             description: 'edits the code',
             options: [
               {
-                type: 3,
+                type: ApplicationCommandOptionTypes.STRING,
                 name: 'code',
                 description: 'the new room code',
                 required: true,
               },
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'roomId',
                 description: 'the room to edit',
               },
             ],
           },
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'players',
             description: 'edits the max player number',
             options: [
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'max',
                 description: 'the new max players',
                 required: true,
               },
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'roomId',
                 description: 'the room to edit',
               },
@@ -616,24 +614,24 @@ function getDefinition() {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'remove',
         description: 'removes a room',
         options: [
           {
-            type: 4,
+            type: ApplicationCommandOptionTypes.INTEGER,
             name: 'roomId',
             description: 'the room to remove',
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'clear',
         description: 'removes all players from the room except the owner',
         options: [
           {
-            type: 4,
+            type: ApplicationCommandOptionTypes.INTEGER,
             name: 'roomId',
             description: 'the room to clear',
             required: true,
@@ -641,30 +639,30 @@ function getDefinition() {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'fill',
         description: 'fills players from the waiting list',
         options: [
           {
-            type: 4,
+            type: ApplicationCommandOptionTypes.INTEGER,
             name: 'roomId',
             description: 'the room to edit',
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'transfer',
         description: 'transfers ownership of a room',
         options: [
           {
-            type: 6,
+            type: ApplicationCommandOptionTypes.USER,
             name: 'newOwner',
             description: 'the user to transfer to',
             required: true,
           },
           {
-            type: 4,
+            type: ApplicationCommandOptionTypes.INTEGER,
             name: 'roomId',
             description: 'the room to transfer',
           },

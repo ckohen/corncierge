@@ -4,8 +4,6 @@ const { Client, Collection, MessageEmbed } = require('discord.js');
 const lodash = require('lodash');
 
 const EventManager = require('./EventManager');
-const CommandInteraction = require('../discord/CommandInteraction');
-const ComponentInteraction = require('../discord/MessageComponentInteraction');
 const CommandManager = require('../discord/commands/CommandManager');
 const embeds = require('../discord/embeds');
 const events = require('../discord/events');
@@ -72,33 +70,6 @@ class DiscordManager extends EventManager {
   async init() {
     this.app.log.debug(module, 'Registering events');
     this.attach();
-    // Temporary Addition to handle interactions before discord.js does
-    this.driver.ws.on('INTERACTION_CREATE', data => {
-      const client = this.driver;
-      const { InteractionTypes } = constants;
-      let interaction;
-      switch (data.type) {
-        case InteractionTypes.APPLICATION_COMMAND: {
-          interaction = new CommandInteraction(client, data);
-          break;
-        }
-        case InteractionTypes.MESSAGE_COMPONENT: {
-          interaction = new ComponentInteraction(client, data);
-          break;
-        }
-        default:
-          this.app.log.debug(module, `[INTERACTION] Received interaction with unknown type: ${data.type}`);
-          return;
-      }
-
-      /**
-       * Emitted when an interaction is created.
-       * @event Client#interaction
-       * @param {Interaction} interaction The interaction which was created
-       */
-      client.emit('interactionCreate', interaction);
-    });
-    // End addition
 
     this.app.log.debug(module, 'Registering commands');
     this.commandManager.registerBuiltIn();
@@ -132,14 +103,14 @@ class DiscordManager extends EventManager {
    * @returns {Promise<Object[]>}
    */
   async registerCommands(guildId) {
-    let path = this.driver.api.applications(this.driver.user.id);
     let data = [];
     let global;
     if (guildId) {
-      const res = await this.driver.api.applications(this.driver.user.id).commands.get();
+      const commands = await this.driver.application.commands.fetch();
       global = new Collection();
-      res.forEach(command => global.set(command.name, command));
-      path = path.guilds(guildId);
+      for (const command of commands.values()) {
+        global.set(command.name, command);
+      }
     }
     function isEqual(obj1, obj2) {
       if (obj1 === obj2) return true;
@@ -159,7 +130,7 @@ class DiscordManager extends EventManager {
       if (interaction.guilds) return;
       data.push(interaction.definition);
     });
-    return path.commands.put({ data });
+    return this.driver.application.commands.set(data, guildId);
   }
 
   /**
@@ -168,24 +139,21 @@ class DiscordManager extends EventManager {
    * @returns {*}
    */
   async registerCommand(name) {
-    let path = this.driver.api;
     let promises = [];
     let results;
     const interaction = this.interactions.applicationCommands.get(name);
     if (!interaction) return 'No such interaction';
     if (!interaction.definition) return 'This command has no definition';
-    path = path.applications(this.driver.user.id);
     if (Array.isArray(interaction.guilds)) {
-      interaction.guilds.forEach(guild => {
-        promises.push(path.guilds(guild).commands.post({ data: interaction.definition }));
+      interaction.guilds.forEach(guildId => {
+        promises.push(this.driver.application.commands.create(interaction.definition, guildId));
       });
       results = await Promise.all(promises).catch(err => this.app.log.warn(module, `Error encountered while registering commmand`, err));
       return results.map(result => ({ guild: result.guild_id, id: result.id, name: result.name }));
     }
-    if (interaction.guilds) {
-      path = path.guilds(interaction.guilds);
-    }
-    return path.commands.post({ data: interaction.definition }).catch(err => this.app.log.warn(module, `Error encountered while registering commmand`, err));
+    return this.driver.application.commands
+      .create(interaction.definition, interaction.guilds)
+      .catch(err => this.app.log.warn(module, `Error encountered while registering commmand`, err));
   }
 
   /**
