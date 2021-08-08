@@ -25,7 +25,7 @@ module.exports = (socket, before, after) => {
     let roleChanged = '';
     let rolesChanged;
     let type;
-    if (before.roles.cache.array().length > after.roles.cache.array().length) {
+    if (before.roles.cache.size > after.roles.cache.size) {
       // Role Removed
       rolesChanged = before.roles.cache.filter(role => testRole(role, after.roles.cache));
       rolesChanged = rolesChanged.filter(role => ignoreRoles(role));
