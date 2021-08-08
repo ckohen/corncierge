@@ -2,7 +2,7 @@
 
 const { discord, constants } = require('../../util/UtilManager');
 
-module.exports = (socket, interaction) => {
+module.exports = async (socket, interaction) => {
   // Check for handler
   let handler;
   if (interaction.isCommand()) {
@@ -51,7 +51,11 @@ module.exports = (socket, interaction) => {
   }
 
   // Handle command
-  handler.run(interaction, interaction.options ?? null);
+  try {
+    await handler.run(interaction, interaction.options ?? null);
+  } catch (err) {
+    socket.app.log.warn(module, `Error occured during command call ${handler.name}`, err);
+  }
 };
 
 function verifyCustomId(id, components) {

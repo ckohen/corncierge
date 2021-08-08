@@ -62,6 +62,10 @@ class ButtonRoleAppCommand extends BaseAppCommand {
         break;
       }
       case 'embed': {
+        if (!data.buttons) {
+          interaction.reply('Please initiate a new button role message or edit an existing one before modifying the embed!');
+          return;
+        }
         const submethod = args[0].name;
         args = args[0].options;
         switch (submethod) {
@@ -193,7 +197,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
       case 'preview':
       case 'save':
         if (!data.buttons) {
-          interaction.reply('Please initiate a new button role message or edit an existing one!');
+          interaction.reply('Please initiate a new button role message or edit an existing one first!');
           return;
         }
         finalizedDisplay = true;

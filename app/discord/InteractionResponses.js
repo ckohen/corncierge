@@ -91,7 +91,7 @@ class InteractionResponses {
     const apiMessage = content instanceof APIMessage ? content.resolveData() : APIMessage.create(this, content, options).resolveData();
 
     Object.defineProperty(apiMessage.data, 'flags', {
-      value: options?.ephemeral ? 64 : 0,
+      value: apiMessage.options?.ephemeral ? 64 : 0,
       writable: true,
     });
 

@@ -47,7 +47,7 @@ class EvalCommand extends BaseCommand {
         return message.channel.send(`\`\`\`js\n${cleaned.slice(0, 1950)}\n\`\`\``);
       }
       let attachment = new MessageAttachment(Buffer.from(cleaned, 'utf-8'), 'eval.js');
-      return message.channel.send('Eval output too long, see the attached file', attachment);
+      return message.channel.send({ content: 'Eval output too long, see the attached file', files: [attachment] });
     }
     return message.channel.send(`\`\`\`js\n${cleaned}\n\`\`\``);
   }
@@ -84,6 +84,7 @@ function findTokens(options, includeAll = false) {
       return (tokens = tokens.concat(findTokens(options[key], nextIncludesAll)));
     }
     if (includeAll || key.toLowerCase().includes('token') || key.toLowerCase().includes('secret')) {
+      if (typeof options[key] === 'undefined') return tokens;
       return tokens.push(options[key]);
     }
     return tokens;
