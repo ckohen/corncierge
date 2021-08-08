@@ -47,12 +47,14 @@ class LogManager extends BaseManager {
 
     wn.addColors(Constants.LogColors);
 
+    const splitWebhookToken = this.options.webhookToken.split('/');
+
     /**
      * The webhook client that handles sending error logs to discord
      * @type {WebhookClient}
      * @private
      */
-    this.webhookClient = new WebhookClient(...this.options.webhookToken.split('/'));
+    this.webhookClient = new WebhookClient({ id: splitWebhookToken[0], token: splitWebhookToken[1] });
   }
 
   /**

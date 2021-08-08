@@ -67,9 +67,11 @@ class PlayCommand extends BaseCommand {
       return;
     }
 
+    const socket = this.socket;
+
     const callbackMethods = {
       onStart(resource) {
-        const embed = this.socket.getEmbed('play', [resource.metadata]);
+        const embed = socket.getEmbed('play', [resource.metadata]);
         if (musicData.subscription.length) {
           embed.addField('Next Song:', musicData.subscription.queue[0].title);
         }
@@ -79,7 +81,7 @@ class PlayCommand extends BaseCommand {
       onFinish() {},
       onError(err) {
         message.reply(`Cannot play song, skipping`, { allowedMentions: { repliedUser: true } });
-        this.socket.app.log.debug(module, 'Error playing song', err);
+        socket.app.log.debug(module, 'Error playing song', err);
       },
     };
 

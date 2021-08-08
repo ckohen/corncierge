@@ -34,12 +34,12 @@ const config = {
     outputFile: process.env.LOG_LOCATION,
   },
   twitch: {
-    botCode: process.env.BOT_TWITCH_CODE,
     channel: {
-      id: process.env.LISTEN_TWITCH_ID,
+      id: Number(process.env.LISTEN_TWITCH_ID),
       name: process.env.LISTEN_TWITCH_NAME,
     },
     irc: {
+      botId: Number(process.env.BOT_TWITCH_ID),
       channels: [`#${process.env.LISTEN_TWITCH_NAME}`],
       identity: {
         username: process.env.BOT_TWITCH_NAME,

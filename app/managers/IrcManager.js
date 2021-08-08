@@ -78,7 +78,7 @@ class IrcManager extends EventManager {
     this.app.log.debug(module, 'Registering events');
     this.attach();
     this.app.log.debug(module, 'Connecting');
-    this.driver.connect();
+    this.driver.connect().catch(() => false);
 
     return cp;
   }
