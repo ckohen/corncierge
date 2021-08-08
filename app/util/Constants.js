@@ -1,5 +1,7 @@
 'use strict';
 
+const { Intents } = require('discord.js');
+
 /**
  * Options for the application
  * @typedef {Object} ApplicationOptions
@@ -97,6 +99,15 @@ exports.DefaultOptions = {
     clientOptions: {
       partials: ['MESSAGE', 'REACTION'],
       allowedMentions: { repliedUser: false },
+      intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_BANS,
+        Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+      ],
     },
     disabledCommands: [],
   },
