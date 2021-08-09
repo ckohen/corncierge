@@ -53,6 +53,8 @@
     "ytdl-core": "^4.9.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-angular": "^13.1.0",
     "@discordjs/docgen": "^0.10.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
@@ -65,16 +67,5 @@
   },
   "engines": {
     "node": ">=16.0.0"
-  },
-  "lint-staged": {
-    "*.{mjs,js,ts}": "eslint --fix --ext mjs,js,ts",
-    "*.{json,yml,yaml}": "prettier --write"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "printWidth": 160,
-    "trailingComma": "all",
-    "endOfLine": "lf",
-    "arrowParens": "avoid"
   }
 }
