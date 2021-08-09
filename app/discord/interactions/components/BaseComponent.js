@@ -4,6 +4,7 @@ const BaseInteraction = require('../BaseInteraction');
 
 /**
  * Represents a component that can be triggered in discord
+ * @extends {BaseInteraction}
  * @abstract
  */
 class BaseComponent extends BaseInteraction {
@@ -15,6 +16,7 @@ class BaseComponent extends BaseInteraction {
    * Create a new interaction
    * @param {DiscordManager} socket the handler that will call the interaction
    * @param {ComponentData} data the data that defines the interaction
+   * @name BaseComponent
    * @constructor
    */
   /**

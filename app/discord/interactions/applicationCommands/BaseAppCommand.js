@@ -4,6 +4,7 @@ const BaseInteraction = require('../BaseInteraction');
 
 /**
  * Represents an application command that can be triggered in discord
+ * @extends {BaseInteraction}
  * @abstract
  */
 class BaseAppCommand extends BaseInteraction {
