@@ -30,7 +30,7 @@ class ReloadCommand extends BaseCommand {
       ircDisabled ? Promise.resolve('Twitch Disabled') : twitch.irc.setCache(),
       twitchDisabled ? Promise.resolve('Twitch Disabled') : twitch.auth.setCache(),
       discord.setCache(),
-    ]).then(async () => {
+    ]).then(() => {
       const md = (name, metric) => `**${metric}** ${plural(name, metric)}`;
       const response = [
         'Reload complete.',
@@ -43,11 +43,12 @@ class ReloadCommand extends BaseCommand {
         md('total guilds', discord.cache.prefixes.size),
       ];
 
-      await this.socket.driver.user.setActivity(this.socket.app.settings.get('discord_activity') || null, {
+      this.socket.driver.user.setActivity({
+        name: this.socket.app.settings.get('discord_activity') ?? '',
         type: this.socket.app.settings.get('discord_activity_type') || 'PLAYING',
       });
 
-      message.channel.send(response).catch(err => {
+      message.channel.send(response.join('\n')).catch(err => {
         log.warn(module, err);
       });
 

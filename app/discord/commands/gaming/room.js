@@ -26,7 +26,7 @@ class RoomCommand extends BaseCommand {
 
   async run(message, args) {
     const socket = this.socket;
-    const commandPrefix = socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = socket.cache.prefixes.get(String(message.guildId)).prefix;
     const routines = ['create', 'set', 'remove', 'list', 'join', 'leave', 'clear', 'fill', 'transfer'];
 
     const [methodRaw, ...extraArgs] = args;
@@ -37,11 +37,11 @@ class RoomCommand extends BaseCommand {
     }
 
     //  A list of key value pairs with room ids and their associated room
-    let rooms = socket.cache.rooms.get(String(message.guild.id));
+    let rooms = socket.cache.rooms.get(String(message.guildId));
 
     if (typeof rooms === 'undefined' || rooms === null) {
-      socket.cache.rooms.set(String(message.guild.id), new Collection());
-      rooms = socket.cache.rooms.get(String(message.guild.id));
+      socket.cache.rooms.set(String(message.guildId), new Collection());
+      rooms = socket.cache.rooms.get(String(message.guildId));
     }
 
     // Get the master room or create it
@@ -55,8 +55,8 @@ class RoomCommand extends BaseCommand {
         code: null,
         players: [],
         waiting: [],
-        lastChannelID: null,
-        lastMessageID: null,
+        lastChannelId: null,
+        lastMessageId: null,
       });
       masterRoom = rooms.get('master');
     }
@@ -96,10 +96,10 @@ class RoomCommand extends BaseCommand {
               code: null,
               players: [String(message.member.id)],
               waiting: [],
-              lastChannelID: null,
-              lastMessageID: null,
+              lastChannelId: null,
+              lastMessageId: null,
             });
-            socket.app.database.table.rooms.add(`${message.guild.id}-${String(i)}`);
+            socket.app.database.table.rooms.add(`${message.guildId}-${String(i)}`);
             room = rooms.get(String(i));
             break;
           }
@@ -182,7 +182,7 @@ class RoomCommand extends BaseCommand {
         }
         // Delete the room
         message.channel.send(`Room ${room.id}: **${room.name}** has been successfully removed, the new list of rooms can be found below.`);
-        socket.app.database.tables.rooms.delete(`${message.guild.id}-${room.id}`);
+        socket.app.database.tables.rooms.delete(`${message.guildId}-${room.id}`);
         rooms.delete(room.id);
         room = false;
         break;
@@ -249,7 +249,7 @@ class RoomCommand extends BaseCommand {
             room.players.shift();
           } else {
             // Delete the room if there is no new possible owner
-            socket.app.database.tables.rooms.delete(`${message.guild.id}-${room.id}`);
+            socket.app.database.tables.rooms.delete(`${message.guildId}-${room.id}`);
             rooms.delete(room.id);
             return message.channel.send(`${message.member}, You were the last player in ${room.name}, it has been deleted.`);
           }
@@ -374,24 +374,24 @@ class RoomCommand extends BaseCommand {
     }
 
     // Create base embed
-    let msg = socket.getEmbed('rooms', [message.member, commandPrefix]);
+    let embed = socket.getEmbed('rooms', [message.member, commandPrefix]);
     if (rooms.size < 2) {
       // Delete old master room information if it exists
-      if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
-        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelID);
+      if (masterRoom && masterRoom.lastChannelId && masterRoom.lastMessageId) {
+        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelId);
         if (lastMasterMessageChannel) {
           lastMasterMessageChannel.messages
-            .fetch(masterRoom.lastMessageID)
+            .fetch(masterRoom.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
             .catch(() => undefined);
         }
       }
-      return message.channel.send('**No rooms have been created yet**', msg).then(sentMsg => {
+      return message.channel.send({ content: '**No rooms have been created yet**', embeds: [embed] }).then(sentMsg => {
         if (masterRoom) {
-          masterRoom.lastChannelID = sentMsg.channel.id;
-          masterRoom.lastMessageID = sentMsg.id;
+          masterRoom.lastChannelId = sentMsg.channel.id;
+          masterRoom.lastMessageId = sentMsg.id;
         }
       });
     }
@@ -401,11 +401,11 @@ class RoomCommand extends BaseCommand {
     let owner;
     if (room) {
       // Delete old room information if it exists
-      if (room.lastChannelID && room.lastMessageID) {
-        let lastMessageChannel = await socket.driver.channels.cache.get(room.lastChannelID);
+      if (room.lastChannelId && room.lastMessageId) {
+        let lastMessageChannel = await socket.driver.channels.cache.get(room.lastChannelId);
         if (lastMessageChannel) {
           lastMessageChannel.messages
-            .fetch(room.lastMessageID)
+            .fetch(room.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
@@ -415,14 +415,14 @@ class RoomCommand extends BaseCommand {
       // Store discord's copy of the owner
       owner = message.guild.members.cache.get(room.owner);
       // Change the default description to be more acdurate for a single room
-      msg.setDescription(
+      embed.setDescription(
         `Join this room by typing \`${commandPrefix}room join ${room.id}\`. See a list of all rooms by typing \`${commandPrefix}room list all\``,
       );
       // Add Room name and code (if applicable)
       if (room.code) {
-        msg.addField(`Room Name`, `${room.name} \n**Current code**: \`${room.code}\``);
+        embed.addField(`Room Name`, `${room.name} \n**Current code**: \`${room.code}\``);
       } else {
-        msg.addField('Room Name', `${room.name}`);
+        embed.addField('Room Name', `${room.name}`);
       }
       // Create the list of users in the room
       let playing = [];
@@ -440,17 +440,17 @@ class RoomCommand extends BaseCommand {
         waiting.push(`...and ${extra} more members`);
       }
       // Add lists to the embed
-      msg.addField(`Players (${playing.length}/${room.playerCount})`, playing.join('\n'), true);
-      msg.addField(`Waiting Room (${len})`, waiting.join('\n'), true);
+      embed.addField(`Players (${playing.length}/${room.playerCount})`, playing.join('\n'), true);
+      embed.addField(`Waiting Room (${len})`, waiting.join('\n'), true);
       // Change footer from default to room owner
-      msg.setFooter(`Room Owner: ${owner.user.username}`, owner.user.displayAvatarURL());
+      embed.setFooter(`Room Owner: ${owner.user.username}`, owner.user.displayAvatarURL());
     } else {
       // Delete old master room information if it exists
-      if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
-        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelID);
+      if (masterRoom && masterRoom.lastChannelId && masterRoom.lastMessageId) {
+        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelId);
         if (lastMasterMessageChannel) {
           lastMasterMessageChannel.messages
-            .fetch(masterRoom.lastMessageID)
+            .fetch(masterRoom.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
@@ -495,31 +495,31 @@ class RoomCommand extends BaseCommand {
       }
       switch (fields) {
         case 1:
-          msg.addField(`Rooms`, set1.join('\n'));
+          embed.addField(`Rooms`, set1.join('\n'));
           break;
         case 2:
-          msg.addField(`Rooms (1/${fields})`, set1.join('\n'));
-          msg.addField(`Rooms (2/${fields})`, set2.join('\n'));
+          embed.addField(`Rooms (1/${fields})`, set1.join('\n'));
+          embed.addField(`Rooms (2/${fields})`, set2.join('\n'));
           break;
         case 3:
-          msg.addField(`Rooms (1/${fields})`, set1.join('\n'));
-          msg.addField(`Rooms (2/${fields})`, set2.join('\n'));
-          msg.addField(`Rooms (3/${fields})`, set3.join('\n'));
+          embed.addField(`Rooms (1/${fields})`, set1.join('\n'));
+          embed.addField(`Rooms (2/${fields})`, set2.join('\n'));
+          embed.addField(`Rooms (3/${fields})`, set3.join('\n'));
           break;
         default:
       }
     }
-    let lastMessage = await message.channel.send(msg);
+    let lastMessage = await message.channel.send({ embeds: [embed] });
     if (room) {
       // Store last message information
-      room.lastChannelID = lastMessage.channel.id;
-      room.lastMessageID = lastMessage.id;
+      room.lastChannelId = lastMessage.channelId;
+      room.lastMessageId = lastMessage.id;
       // Update database
-      socket.app.database.tables.rooms.edit(`${message.guild.id}-${room.id}`, room);
+      socket.app.database.tables.rooms.edit(`${message.guildId}-${room.id}`, room);
     } else if (masterRoom) {
       // Store last message information
-      masterRoom.lastChannelID = lastMessage.channel.id;
-      masterRoom.lastMessageID = lastMessage.id;
+      masterRoom.lastChannelId = lastMessage.channelId;
+      masterRoom.lastMessageId = lastMessage.id;
     }
     return true;
   }

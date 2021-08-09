@@ -15,7 +15,7 @@ class AutoRoleCommand extends BaseCommand {
   }
 
   async run(message, args) {
-    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guildId)).prefix;
     const routines = ['set', 'remove', 'status'];
 
     const [methodRaw, roleRaw, ...extraArgs] = args;
@@ -30,7 +30,7 @@ class AutoRoleCommand extends BaseCommand {
     let time = 0;
 
     //  A list of key value pairs with current automatic role data
-    let guild = this.socket.cache.newMemberRole.get(String(message.guild.id));
+    let guild = this.socket.cache.newMemberRole.get(String(message.guildId));
 
     // Check for actual role
     if (roleRaw && roleRaw.startsWith('<@&') && roleRaw.endsWith('>')) {
@@ -78,21 +78,21 @@ class AutoRoleCommand extends BaseCommand {
     switch (method) {
       case 'set':
         // Set data
-        guild.roleID = String(roleSnowflake);
+        guild.roleId = String(roleSnowflake);
         guild.delayTime = String(time);
         break;
       case 'remove':
         // Remove data
-        guild.roleID = '';
+        guild.roleId = '';
         guild.delayTime = '0';
-        await this.socket.app.database.tables.newMemberRole.edit(String(message.guild.id), guild.roleID, guild.delayTime);
+        await this.socket.app.database.tables.newMemberRole.edit(String(message.guildId), guild.roleId, guild.delayTime);
         message.channel.send(`${message.member}, I will no longer assign a role to new members!`);
         return;
       case 'status':
     }
 
     // Update database
-    await this.socket.app.database.tables.newMemberRole.edit(String(message.guild.id), guild.roleID, guild.delayTime);
+    await this.socket.app.database.tables.newMemberRole.edit(String(message.guildId), guild.roleId, guild.delayTime);
 
     // Variables for response message
     let delay = false;
@@ -116,17 +116,18 @@ class AutoRoleCommand extends BaseCommand {
     }
 
     // Determine whether there is an auto role
-    if (guild.roleID) {
-      roleMention = `<@&${guild.roleID}>`;
+    if (guild.roleId) {
+      roleMention = `<@&${guild.roleId}>`;
     }
 
-    message.channel.send(
-      `Currently ${
+    message.channel.send({
+      content: `Currently ${
         roleMention
           ? `assigning ${roleMention} to new members ${delay === '' ? `with ${delay} delay.` : 'immediately.'}`
           : 'not assigning any role to new members.'
       }`,
-    );
+      allowedMentions: { parse: [] },
+    });
   }
 }
 

@@ -16,7 +16,7 @@ class ColorManagerCommand extends BaseCommand {
   }
 
   async run(message, args) {
-    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guildId)).prefix;
     const routines = ['add', 'remove', 'channel', 'list'];
 
     const [methodRaw, chroleRaw, ...extraArgs] = args;
@@ -31,7 +31,7 @@ class ColorManagerCommand extends BaseCommand {
     let roles = [];
 
     //  A list of key value pairs with channels and available roles
-    let guild = this.socket.cache.colorManager.get(String(message.guild.id));
+    let guild = this.socket.cache.colorManager.get(String(message.guildId));
 
     // The second argument changes
     if (method === 'channel') {
@@ -136,7 +136,7 @@ class ColorManagerCommand extends BaseCommand {
       case 'list':
     }
 
-    await this.socket.app.database.tables.colorManager.edit(String(message.guild.id), guild.roles, guild.snowflakes);
+    await this.socket.app.database.tables.colorManager.edit(String(message.guildId), guild.roles, guild.snowflakes);
 
     // Determine the number of channels and get ready to loop through them
     let channels = Object.keys(guild.roles);
@@ -144,7 +144,7 @@ class ColorManagerCommand extends BaseCommand {
     // Create base embed
     let msg = this.socket.getEmbed('colormanager', [message.member, commandPrefix]);
     if (channels.length < 1) {
-      message.channel.send('**No channel specified yet**', msg);
+      message.channel.send({ content: '**No channel specified yet**', embeds: [msg] });
       return;
     }
     // Variables for counting to limt
@@ -170,7 +170,7 @@ class ColorManagerCommand extends BaseCommand {
           fields += 1;
         } else {
           fields = 0;
-          message.channel.send(msg);
+          message.channel.send({ embeds: [msg] });
           msg = this.socket.getEmbed('colormanager', [message.member, commandPrefix]);
         }
       }
@@ -182,7 +182,7 @@ class ColorManagerCommand extends BaseCommand {
     outRoles = [];
 
     msg.addField('Remove Color', 'remove', true);
-    message.channel.send(msg);
+    message.channel.send({ embeds: [msg] });
   }
 }
 
@@ -209,8 +209,8 @@ function modifyRoles(existingRoles, changedRoles, add = true) {
 function modifySnowflakes(existingSnowflakes, changedSnwoflakes, add = true) {
   let newSnowflakes = [];
   // Add all existing Roles to newRole array
-  existingSnowflakes.forEach(roleID => {
-    newSnowflakes.push(roleID);
+  existingSnowflakes.forEach(roleId => {
+    newSnowflakes.push(roleId);
   });
   changedSnwoflakes.forEach(id => {
     // Mode add

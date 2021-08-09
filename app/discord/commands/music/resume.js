@@ -20,15 +20,14 @@ class ResumeCommand extends BaseCommand {
       return;
     }
 
-    const musicData = this.socket.cache.musicData.get(String(message.guild.id));
-    if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
+    const musicData = this.socket.cache.musicData.get(String(message.guildId));
+    if (!musicData?.subscription?.isPlaying) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;
     }
 
+    musicData.subscription.audioPlayer.unpause();
     message.channel.send('Song resumed :play_pause:');
-
-    musicData.songDispatcher.resume();
   }
 }
 

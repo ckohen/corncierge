@@ -19,14 +19,14 @@ class UpdateCommand extends BaseCommand {
     stdout = clean(stdout);
     stderr = clean(stderr);
     let embed = this.socket.getEmbed('update', ['Git Pulled', stdout, stderr]);
-    await message.channel.send(embed);
+    await message.channel.send({ embeds: [embed] });
 
     ({ stdout, stderr } = await promiseExec('npm i').catch(err => message.channel.send(`\`\`\`bash\n${err}\`\`\``)));
     if (!stdout && !stderr) return;
     stdout = clean(stdout);
     stderr = clean(stderr);
     embed = this.socket.getEmbed('update', ['Packages Updated', stdout, stderr]);
-    await message.channel.send(embed);
+    await message.channel.send({ embeds: [embed] });
   }
 }
 

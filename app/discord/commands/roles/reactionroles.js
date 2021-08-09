@@ -1,6 +1,6 @@
 'use strict';
 
-const { confirmAction } = require('../../../util/UtilManager').discord;
+const { confirmAction, delayDelete } = require('../../../util/UtilManager').discord;
 const BaseCommand = require('../BaseCommand');
 
 class ReactionRolesCommand extends BaseCommand {
@@ -17,7 +17,7 @@ class ReactionRolesCommand extends BaseCommand {
 
   async run(message, args) {
     const socket = this.socket;
-    const commandPrefix = socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = socket.cache.prefixes.get(String(message.guildId)).prefix;
     const routines = ['add', 'remove', 'create', 'update', 'list'];
 
     const [methodRaw, roleRaw, ...extraArgs] = args;
@@ -31,7 +31,7 @@ class ReactionRolesCommand extends BaseCommand {
     let roles = [];
 
     //  A list of key value pairs with channels and available roles
-    let guild = socket.cache.reactionRoles.get(String(message.guild.id));
+    let guild = socket.cache.reactionRoles.get(String(message.guildId));
 
     // Check for actual role
     if (roleRaw && roleRaw.startsWith('<@&') && roleRaw.endsWith('>')) {
@@ -111,17 +111,17 @@ class ReactionRolesCommand extends BaseCommand {
           delete guild.roles[String(emote)];
           if (Object.keys(guild.roles).length < 1) {
             let reactionsMsg = await socket.driver.channels.cache
-              .get(guild.channelID)
-              .messages.fetch(guild.messageID)
+              .get(guild.channelId)
+              .messages.fetch(guild.messageId)
               .catch(() => undefined);
             if (reactionsMsg && reactionsMsg.author.id === bot.id) {
               reactionsMsg.delete();
-              guild.channelID = '';
-              guild.messageID = '';
+              guild.channelId = '';
+              guild.messageId = '';
               deleted = true;
             }
           }
-          await socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
+          await socket.app.database.tables.reactionRoles.edit(String(message.guildId), guild.channelId, guild.messageId, guild.roles);
           message.reply(
             `Deleted ${printableEmote} and associated roles from reaction roles.` +
               `${deleted ? 'There are no more reactions roles left, the reaction message has been deleted.' : ''}`,
@@ -136,17 +136,17 @@ class ReactionRolesCommand extends BaseCommand {
               `${message.member}, Unable to generate reaction roles here. ` +
                 `Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``,
             )
-            .then(msg => msg.delayDelete(5000));
+            .then(msg => delayDelete(msg, 5000));
           message.delete();
           return;
         }
         if (emojis.length < 1) {
-          message.channel.send(`${message.member}, There are no reaction roles yet!`).then(msg => msg.delayDelete(5000));
+          message.channel.send(`${message.member}, There are no reaction roles yet!`).then(msg => delayDelete(msg, 5000));
           message.delete();
           return;
         }
 
-        if (guild.messageID) {
+        if (guild.messageId) {
           const confirm = await confirmAction(
             message,
             'The reaction role message already exists in this server, performing this action will erase it. Are you sure? ✅ (yes) or ❌(cancel)',
@@ -159,8 +159,8 @@ class ReactionRolesCommand extends BaseCommand {
             return;
           } else {
             oldMsg = await socket.driver.channels.cache
-              .get(guild.channelID)
-              .messages.fetch(guild.messageID)
+              .get(guild.channelId)
+              .messages.fetch(guild.messageId)
               .catch(() => undefined);
             if (oldMsg?.deletable) oldMsg.delete();
           }
@@ -169,35 +169,35 @@ class ReactionRolesCommand extends BaseCommand {
         break;
       case 'update':
         // Check that there is an existing message
-        if (!guild.messageID) {
-          message.channel.send(`${message.member}, There is no reaction role message yet, unable to update it!`).then(msg => msg.delayDelete(5000));
+        if (!guild.messageId) {
+          message.channel.send(`${message.member}, There is no reaction role message yet, unable to update it!`).then(msg => delayDelete(msg, 5000));
           message.delete();
           return;
         }
 
         // Check to make sure the message still exists
         oldMsg = await socket.driver.channels.cache
-          .get(guild.channelID)
-          .messages.fetch(guild.messageID)
+          .get(guild.channelId)
+          .messages.fetch(guild.messageId)
           .catch(() => undefined);
         if (!oldMsg) {
-          message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => msg.delayDelete(5000));
-          guild.messageID = '';
-          guild.channelID = '';
-          socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
+          message.channel.send(`${message.member}, The reaction role message has been deleted, unable to update it!`).then(msg => delayDelete(msg, 5000));
+          guild.messageId = '';
+          guild.channelId = '';
+          socket.app.database.tables.reactionRoles.edit(String(message.guildId), guild.channelId, guild.messageId, guild.roles);
           message.delete();
           return;
         }
 
         // Check for appropriate permissions
-        chan = await socket.driver.channels.cache.get(guild.channelID);
+        chan = await socket.driver.channels.cache.get(guild.channelId);
         if (!chan.permissionsFor(bot).has(['ADD_REACTIONS', 'SEND_MESSAGES', 'VIEW_CHANNEL', 'USE_EXTERNAL_EMOJIS', 'READ_MESSAGE_HISTORY'])) {
           message.channel
             .send(
               `${message.member}, Unable to update reaction roles message, ` +
                 `Please make sure that I have permission to \`Add Reactions\` and \`Use External Emoji\``,
             )
-            .then(msg => msg.delayDelete(5000));
+            .then(msg => delayDelete(msg, 5000));
           message.delete();
           return;
         }
@@ -223,7 +223,7 @@ class ReactionRolesCommand extends BaseCommand {
       case 'list':
     }
 
-    await socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
+    await socket.app.database.tables.reactionRoles.edit(String(message.guildId), guild.channelId, guild.messageId, guild.roles);
 
     emojis = Object.keys(guild.roles);
     // Create base embed
@@ -233,7 +233,7 @@ class ReactionRolesCommand extends BaseCommand {
       msg.setFooter('');
     }
     if (emojis.length < 1) {
-      message.channel.send('**No reactions specified yet**', msg);
+      message.channel.send({ content: '**No reactions specified yet**', embeds: [msg] });
       return;
     }
     // Variables for counting to limt
@@ -242,12 +242,12 @@ class ReactionRolesCommand extends BaseCommand {
     let roleObj;
     let outRoles = [];
     // Loop through each emoji found
-    for (const emoteID of emojis) {
+    for (const emoteId of emojis) {
       /* eslint-disable-next-line no-await-in-loop */
-      printableEmote = Number(emoteID) ? await socket.driver.emojis.cache.get(emoteID) : emoteID;
+      printableEmote = Number(emoteId) ? await socket.driver.emojis.cache.get(emoteId) : emoteId;
 
       // Get role objects so discord can embed properly
-      guild.roles[emoteID].forEach(id => {
+      guild.roles[emoteId].forEach(id => {
         roleObj = message.guild.roles.cache.get(id);
         outRoles.push(roleObj);
       });
@@ -260,7 +260,7 @@ class ReactionRolesCommand extends BaseCommand {
             fields += 1;
           } else {
             fields = 0;
-            message.channel.send(msg);
+            message.channel.send({ embeds: [msg] });
             msg = socket.getEmbed('reationRoles', [message.member, commandPrefix]);
             if (create) {
               msg.setDescription('');
@@ -279,10 +279,10 @@ class ReactionRolesCommand extends BaseCommand {
     let reactionMsg;
     if (!update) {
       // Send the message
-      reactionMsg = await message.channel.send(msg);
+      reactionMsg = await message.channel.send({ embeds: [msg] });
     } else if (update.author === bot) {
       // If the message was sent by the bot, update the embed, otherwise just use the authors message.
-      reactionMsg = await update.edit(msg);
+      reactionMsg = await update.edit({ embeds: [msg] });
     } else {
       reactionMsg = update;
     }
@@ -304,12 +304,12 @@ class ReactionRolesCommand extends BaseCommand {
     }
     if (create) {
       // Add reactions to the message
-      for (const emoteID of emojis) {
-        reactionMsg.react(emoteID);
+      for (const emoteId of emojis) {
+        reactionMsg.react(emoteId);
       }
-      guild.messageID = String(reactionMsg.id);
-      guild.channelID = String(reactionMsg.channel.id);
-      socket.app.database.tables.reactionRoles.edit(String(message.guild.id), guild.channelID, guild.messageID, guild.roles);
+      guild.messageId = String(reactionMsg.id);
+      guild.channelId = String(reactionMsg.channel.id);
+      socket.app.database.tables.reactionRoles.edit(String(message.guildId), guild.channelId, guild.messageId, guild.roles);
       message.delete();
     }
   }
@@ -329,7 +329,7 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
           fieldNum += 1;
         } else {
           fieldNum = 0;
-          initiator.channel.send(embed);
+          initiator.channel.send({ embeds: [embed] });
           embed = sock.getEmbed('reactionRoles', [initiator.member]);
           embed.setDescription('');
           embed.setTitle('');
@@ -338,25 +338,25 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
     } else {
       embed.addField('Roles', roleList.join('\n'), true);
     }
-    emoteMsg = await initiator.channel.send(embed);
+    emoteMsg = await initiator.channel.send({ embeds: [embed] });
   } else {
     embed.setDescription('React to this message with the emote you would like to remove from reactions.');
     let printableEmojis = [];
-    for (const emoteID of emojis) {
+    for (const emoteId of emojis) {
       /* eslint-disable-next-line no-await-in-loop */
-      const printableEmote = Number(emoteID) ? await sock.driver.emojis.cache.get(emoteID) : emoteID;
+      const printableEmote = Number(emoteId) ? await sock.driver.emojis.cache.get(emoteId) : emoteId;
       printableEmojis.push(printableEmote);
     }
     embed.addField('Current Reactions', printableEmojis.join(' '));
-    emoteMsg = await initiator.channel.send(embed);
-    for (const emoteID of emojis) {
-      emoteMsg.react(emoteID);
+    emoteMsg = await initiator.channel.send({ embeds: [embed] });
+    for (const emoteId of emojis) {
+      emoteMsg.react(emoteId);
     }
   }
   let collect = true;
   // Wait for reaction from the original message sender
   let collected = await emoteMsg
-    .awaitReactions((reaction, user) => user.id === initiator.author.id, { max: 1, time: 60000, errors: ['time'] })
+    .awaitReactions({ filter: (reaction, user) => user.id === initiator.author.id, max: 1, time: 60000, errors: ['time'] })
     .catch(() => {
       initiator.channel.send(`${initiator.member}, Error getting emote`);
       collect = false;
@@ -384,7 +384,7 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
   } else {
     emoteMsg.delete();
     let errorMsg = await initiator.channel.send('I do not have access to that emote at this time, please try again!');
-    errorMsg.delayDelete(5000);
+    delayDelete(errorMsg, 5000);
     return getEmote(sock, initiator, roleList, emojis, add);
   }
 }

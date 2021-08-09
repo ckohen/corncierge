@@ -5,5 +5,5 @@ module.exports = (comp, user, type, color) =>
     .setThumbnail(user.displayAvatarURL())
     .setColor(color)
     .setTitle('Ban list updated!')
-    .addField(type, user.lastMessage ? `${user.lastMessage.member}` : user.tag)
+    .addField(type, `<@${user.id}> - ${user.tag}`)
     .setTimestamp(Date.now());

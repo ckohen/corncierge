@@ -1,19 +1,15 @@
 'use strict';
 
-const { Client, Collection, MessageEmbed, Structures } = require('discord.js');
+const { Client, Collection, MessageEmbed } = require('discord.js');
 const lodash = require('lodash');
 
 const EventManager = require('./EventManager');
-const CommandInteraction = require('../discord/CommandInteraction');
-const ComponentInteraction = require('../discord/MessageComponentInteraction');
 const CommandManager = require('../discord/commands/CommandManager');
 const embeds = require('../discord/embeds');
 const events = require('../discord/events');
 const InteractionManager = require('../discord/interactions/InteractionManager');
 
-const { collect, constants, discord: util } = require('../util/UtilManager');
-
-Structures.extend('Message', util.extendMessage);
+const { collect, constants } = require('../util/UtilManager');
 
 /**
  * Discord manager for the application.
@@ -74,33 +70,6 @@ class DiscordManager extends EventManager {
   async init() {
     this.app.log.debug(module, 'Registering events');
     this.attach();
-    // Temporary Addition to handle interactions before discord.js does
-    this.driver.ws.on('INTERACTION_CREATE', data => {
-      const client = this.driver;
-      const { InteractionTypes } = constants;
-      let interaction;
-      switch (data.type) {
-        case InteractionTypes.APPLICATION_COMMAND: {
-          interaction = new CommandInteraction(client, data);
-          break;
-        }
-        case InteractionTypes.MESSAGE_COMPONENT: {
-          interaction = new ComponentInteraction(client, data);
-          break;
-        }
-        default:
-          this.app.log.debug(module, `[INTERACTION] Received interaction with unknown type: ${data.type}`);
-          return;
-      }
-
-      /**
-       * Emitted when an interaction is created.
-       * @event Client#interaction
-       * @param {Interaction} interaction The interaction which was created
-       */
-      client.emit('interactionCreate', interaction);
-    });
-    // End addition
 
     this.app.log.debug(module, 'Registering commands');
     this.commandManager.registerBuiltIn();
@@ -128,20 +97,20 @@ class DiscordManager extends EventManager {
   /**
    * Sends global registration data to discord for all application commands that do not have guilds specified
    * OR
-   * when guildID is provided, register all global commands (that are not yet registered globally) and commands for the guild specified
+   * when guildId is provided, register all global commands (that are not yet registered globally) and commands for the guild specified
    * WARNING: this overwrites all existing global / guild commands, if you do not want this to happen, use `registerCommand`
    * @param {Snowflake} [guildId] the id of the guild whose application command to register
    * @returns {Promise<Object[]>}
    */
   async registerCommands(guildId) {
-    let path = this.driver.api.applications(this.driver.user.id);
     let data = [];
     let global;
     if (guildId) {
-      const res = await this.driver.api.applications(this.driver.user.id).commands.get();
+      const commands = await this.driver.application.commands.fetch();
       global = new Collection();
-      res.forEach(command => global.set(command.name, command));
-      path = path.guilds(guildId);
+      for (const command of commands.values()) {
+        global.set(command.name, command);
+      }
     }
     function isEqual(obj1, obj2) {
       if (obj1 === obj2) return true;
@@ -161,7 +130,7 @@ class DiscordManager extends EventManager {
       if (interaction.guilds) return;
       data.push(interaction.definition);
     });
-    return path.commands.put({ data });
+    return this.driver.application.commands.set(data, guildId);
   }
 
   /**
@@ -170,24 +139,21 @@ class DiscordManager extends EventManager {
    * @returns {*}
    */
   async registerCommand(name) {
-    let path = this.driver.api;
     let promises = [];
     let results;
     const interaction = this.interactions.applicationCommands.get(name);
     if (!interaction) return 'No such interaction';
     if (!interaction.definition) return 'This command has no definition';
-    path = path.applications(this.driver.user.id);
     if (Array.isArray(interaction.guilds)) {
-      interaction.guilds.forEach(guild => {
-        promises.push(path.guilds(guild).commands.post({ data: interaction.definition }));
+      interaction.guilds.forEach(guildId => {
+        promises.push(this.driver.application.commands.create(interaction.definition, guildId));
       });
       results = await Promise.all(promises).catch(err => this.app.log.warn(module, `Error encountered while registering commmand`, err));
       return results.map(result => ({ guild: result.guild_id, id: result.id, name: result.name }));
     }
-    if (interaction.guilds) {
-      path = path.guilds(interaction.guilds);
-    }
-    return path.commands.post({ data: interaction.definition }).catch(err => this.app.log.warn(module, `Error encountered while registering commmand`, err));
+    return this.driver.application.commands
+      .create(interaction.definition, interaction.guilds)
+      .catch(err => this.app.log.warn(module, `Error encountered while registering commmand`, err));
   }
 
   /**
@@ -203,7 +169,7 @@ class DiscordManager extends EventManager {
           if (!this.cache[name]) {
             this.cache[name] = new Collection();
           }
-          return this.cacheTable(table, this.cache[name], 'guildID');
+          return this.cacheTable(table, this.cache[name], 'guildId');
         }),
       ),
       this.cacheMusic(),
@@ -226,10 +192,10 @@ class DiscordManager extends EventManager {
     }
     this.cache.musicData.clear();
     volumes.forEach(volume => {
-      if (this.cache.musicData.get(volume.guildID)) {
-        this.cache.musicData.get(volume.guildID).volume = Number(volume.volume);
+      if (this.cache.musicData.get(volume.guildId)) {
+        this.cache.musicData.get(volume.guildId).volume = Number(volume.volume);
       } else {
-        this.cache.musicData.set(volume.guildID, { queue: [], isPlaying: false, nowPlaying: null, songDispatcher: null, volume: Number(volume.volume) });
+        this.cache.musicData.set(volume.guildId, { subscription: null, volume: Number(volume.volume) });
       }
     });
   }
@@ -247,16 +213,16 @@ class DiscordManager extends EventManager {
       this.cache.rooms = new Collection();
     }
     this.cache.rooms.clear();
-    let roomGuild, roomID;
+    let roomGuild, roomId;
     let guild;
     rooms.forEach(room => {
-      [roomGuild, roomID] = room.guildRoomID.split('-');
+      [roomGuild, roomId] = room.guildRoomId.split('-');
       guild = this.cache.rooms.get(roomGuild);
       if (!guild) {
         this.cache.rooms.set(roomGuild, new Collection());
         guild = this.cache.rooms.get(roomGuild);
       }
-      guild.set(roomID, room.data);
+      guild.set(roomId, room.data);
     });
   }
 
@@ -338,8 +304,8 @@ class DiscordManager extends EventManager {
   /**
    * Send a message with the given content and embed.
    * @param {string} slug the channel name in settings to get and send to
-   * @param {StringResolvable|APIMessage} [content] the content to send
-   * @param {MessageOptions|MessageAdditions} [options] The options to provide
+   * @param {StringResolvable|MessagePayload} [content] the content to send
+   * @param {MessageOptions} [options] The options to provide
    */
   sendMessage(slug, content, options) {
     const channel = this.getChannel(slug);
@@ -349,7 +315,7 @@ class DiscordManager extends EventManager {
       return;
     }
 
-    channel.send(content, options).catch(err => {
+    channel.send({ content, ...options }).catch(err => {
       this.app.log.warn(module, `Send message`, err);
     });
   }
@@ -357,8 +323,8 @@ class DiscordManager extends EventManager {
   /**
    * Send a webhook with the given content and embed.
    * @param {string} slug the webhook name in settings to get and send to
-   * @param {StringResolvable|APIMessage} [content] the content to send
-   * @param {MessageOptions|MessageAdditions} [options] The options to provide
+   * @param {StringResolvable|MessagePayload} [content] the content to send
+   * @param {MessageOptions} [options] The options to provide
    */
   sendWebhook(slug, content, options) {
     this.getWebhook(slug).then(webhook => {
@@ -367,7 +333,7 @@ class DiscordManager extends EventManager {
         return;
       }
 
-      webhook.send(content, options).catch(err => {
+      webhook.send({ content, ...options }).catch(err => {
         this.app.log.warn(module, `Send webhook`, err);
       });
     });

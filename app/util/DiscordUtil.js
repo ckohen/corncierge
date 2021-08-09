@@ -20,7 +20,8 @@ class DiscordUtil {
     await confirmMsg.react('❌');
     let reacted = true;
     let collected = await confirmMsg
-      .awaitReactions((reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id, {
+      .awaitReactions({
+        filter: (reaction, user) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id,
         max: 1,
         time: time,
         errors: ['time'],
@@ -29,7 +30,7 @@ class DiscordUtil {
     if (!reacted) {
       const errorMsg = await message.channel.send(`${message.member}, No reaction received, cancelling!`);
       confirmMsg.delete().then(() => (reacted = false));
-      errorMsg.delayDelete(6000);
+      this.delayDelete(errorMsg, 6000);
       return Promise.reject(new Error('No Response'));
     }
 
@@ -37,7 +38,7 @@ class DiscordUtil {
     const reaction = collected.first();
     if (reaction.emoji.name === '❌') {
       const cancelledMsg = await message.channel.send(`${message.member}, Cancelled!`);
-      cancelledMsg.delayDelete(5000);
+      this.delayDelete(cancelledMsg, 5000);
       confirmMsg.delete();
       return false;
     } else {
@@ -46,31 +47,19 @@ class DiscordUtil {
     }
   }
 
-  static extendMessage(base) {
-    class CustomMessage extends base {
-      _patch(data) {
-        super._patch(data);
-        this.components = data.components ?? [];
-      }
-
-      patch(data) {
-        const clone = super.patch(data);
-        if ('components' in data) this.components = data.components;
-        else this.components = this.components.slice();
-        return clone;
-      }
-      /**
-       * Deletes this message (if possible) after a specified time
-       * @name Message#delayDelete
-       * @param {number} time how long to delay
-       */
-      delayDelete(time) {
-        setTimeout(() => {
-          if (this.deletable) this.delete();
-        }, time);
-      }
-    }
-    return CustomMessage;
+  /**
+   * Deletes this message (if possible) after a specified time
+   * @param {Message} message the message to delete after the delay
+   * @param {number} time how long to delay
+   * @returns {Promise}
+   */
+  static delayDelete(message, time) {
+    return new Promise(res => {
+      setTimeout(async () => {
+        if (message.deletable) await message.delete();
+        res();
+      }, time);
+    });
   }
 
   /**
@@ -83,7 +72,7 @@ class DiscordUtil {
   }
 
   /**
-   * Test a guild ID against the setting for the given key
+   * Test a guild id against the setting for the given key
    * @param {string} id the id of the guild to test
    * @param {string|Snowflake|Snowflake[]} slugOrId the guild name or id(s)
    * @param {Collection} settings the app settings for checking slugs
@@ -99,7 +88,7 @@ class DiscordUtil {
   }
 
   /**
-   * Test a channel ID against the setting for the given key
+   * Test a channel id against the setting for the given key
    * @param {string} id the id of the channel to test
    * @param {string|Snowflake|Snowflake[]} slugOrId the channel name or id(s)
    * @param {Collection} settings the app settings for checking slugs
@@ -115,7 +104,7 @@ class DiscordUtil {
   }
 
   /**
-   * Test a user ID against the setting for the given key
+   * Test a user id against the setting for the given key
    * @param {string} id the id of the user to test
    * @param {string|Snowflake|Snowflake[]} slugOrId the user name or id(s)
    * @param {Collection} settings the app settings for checking slugs

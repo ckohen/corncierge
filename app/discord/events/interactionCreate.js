@@ -9,11 +9,11 @@ module.exports = async (socket, interaction) => {
     handler = socket.interactions.applicationCommands.get(interaction.commandName);
   }
   if (interaction.isMessageComponent()) {
-    if (!verifyCustomId(interaction.customID, interaction.message.components)) {
-      interaction.reply('You think you are sneaky huh, well, no such luck here!', { ephemeral: true });
+    if (!verifyCustomId(interaction.customId, interaction.message.components)) {
+      interaction.reply({ content: 'You think you are sneaky huh, well, no such luck here!', ephemeral: true });
       return;
     }
-    const name = constants.ComponentFunctions[Number(interaction.customID.split(':')[0])];
+    const name = constants.ComponentFunctions[Number(interaction.customId.split(':')[0])];
     switch (interaction.componentType) {
       case 'BUTTON':
         handler = socket.interactions.buttonComponents.get(name);
@@ -22,31 +22,38 @@ module.exports = async (socket, interaction) => {
   }
 
   if (!handler) {
-    interaction.reply('This interaction has no associated action! Please contact the developer if it is supposed to be doing something!', { ephemeral: true });
+    interaction.reply({
+      content: 'This interaction has no associated action! Please contact the developer if it is supposed to be doing something!',
+      ephemeral: true,
+    });
     return;
   }
 
   if (handler.requiresBot && !interaction.guild) {
-    interaction.reply('This command does not work without a bot in the server or in DMs.', { ephemeral: true });
+    interaction.reply({ content: 'This command does not work without a bot in the server or in DMs.', ephemeral: true });
     return;
   }
 
   // Check for channel constraints
-  if (handler.channel && !discord.isChannel(interaction.channel?.id, handler.channel, socket.app.settings)) {
-    interaction.reply('This command is restricted to a specific channel, please go rerun the command there!', { ephemeral: true });
+  if (
+    handler.channel &&
+    !discord.isChannel(interaction.channelId, handler.channel, socket.app.settings) &&
+    !discord.isChannel(interaction.channel?.parentId, handler.channel, socket.app.settings)
+  ) {
+    interaction.reply({ content: 'This command is restricted to a specific channel, please go rerun the command there!', ephemeral: true });
     return;
   }
 
   // Check for role constraints
   if (handler.role && !interaction.member?.roles.cache.some(role => role.name === handler.role)) {
     if (!interaction.member?.permissions.has(`MANAGE_ROLES`)) {
-      interaction.reply(`You do not have the appropriate roles to perform that action!`, { ephemeral: true });
+      interaction.reply({ content: `You do not have the appropriate roles to perform that action!`, ephemeral: true });
       return;
     }
   }
   // Check permissions
   if (handler.permissions && !interaction.member?.permissions.has(handler.permissions)) {
-    interaction.reply(`You do not have adequate permissions to perform that action!`, { ephemeral: true });
+    interaction.reply({ content: `You do not have adequate permissions to perform that action!`, ephemeral: true });
     return;
   }
 
@@ -60,7 +67,9 @@ module.exports = async (socket, interaction) => {
 
 function verifyCustomId(id, components) {
   if (!components) return true;
-  const found = components.find(component => component.type === 1 && component.components.find(c => c.custom_id === id));
+  const found = components.find(
+    component => (component.type === 1 || component.type === 'ACTION_ROW') && component.components.find(c => (c.customId ?? c.custom_id) === id),
+  );
   if (found) return true;
   return false;
 }

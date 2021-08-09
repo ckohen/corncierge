@@ -1,5 +1,6 @@
 'use strict';
 
+const { MessageButton, MessageActionRow } = require('discord.js');
 const { ComponentFunctions } = require('../../../../util/Constants');
 const BaseComponent = require('../BaseComponent');
 
@@ -14,29 +15,29 @@ class RoleAssignComponent extends BaseComponent {
   }
 
   async run(interaction) {
-    const [, expectedNum, rawRoles] = interaction.customID.split(':');
+    const [, expectedNum, rawRoles] = interaction.customId.split(':');
     const roles = rawRoles?.split('-');
     if (Number(expectedNum) !== roles?.length) {
-      interaction.reply('An error occured, please try again!', { ephemeral: true });
+      interaction.reply({ content: 'An error occured, please try again!', ephemeral: true });
       return;
     }
-    interaction.defer({ ephemeral: true });
+    await interaction.defer({ ephemeral: true });
     let method = 'add';
-    if (roles.every(roleID => interaction.member.roles.cache.has(roleID))) {
+    if (roles.every(roleId => interaction.member.roles.cache.has(roleId))) {
       method = 'remove';
     }
     const changed = await interaction.member.roles[method](roles).catch(err => this.socket.app.log.warn(module, '[Button Roles]', err));
     if (!changed) {
-      interaction.reply(`There was an error ${method}ing ${expectedNum > 1 ? 'those roles' : 'that role'}.`);
+      interaction.editReply(`There was an error ${method}ing ${expectedNum > 1 ? 'those roles' : 'that role'}.`);
       return;
     }
-    interaction.reply(`You ${method === 'add' ? 'now' : 'no longer'} have ${roles.map(role => `<@&${role}>`).join(', ')}`);
+    interaction.editReply(`You ${method === 'add' ? 'now' : 'no longer'} have ${roles.map(role => `<@&${role}>`).join(', ')}`);
   }
 
   /**
    * A definition of a button that assings roles
    * @typedef {Object} RoleButtonData
-   * @prop {number} color the color / style of the button
+   * @prop {number|string} color the color / style of the button
    * @prop {Snowflake[]} roles the roles the button assigns, up to 3
    * @prop {string} [name] the label for the button, one of name or emoji is required
    * @prop {RawEmoji} [emoji] the emoji for the button, one of name or emoji is required
@@ -52,7 +53,7 @@ class RoleAssignComponent extends BaseComponent {
     const formatted = buttons.map(button => this.generateButton(button));
     const output = [];
     for (let i = 1; i <= 5 && i <= Math.ceil(buttons.length / 5); i++) {
-      output.push({ type: 1, components: [] });
+      output.push(new MessageActionRow());
     }
     formatted.forEach((button, index) => {
       if (button) {
@@ -75,15 +76,14 @@ class RoleAssignComponent extends BaseComponent {
    */
   generateButton(button) {
     if (button === undefined) return undefined;
-    const custom_id = `${ComponentFunctions[this.name]}:${button.roles.length}:${button.roles.join('-')}`;
-    const formatted = {
-      type: 2,
+    const customId = `${ComponentFunctions[this.name]}:${button.roles.length}:${button.roles.join('-')}`;
+    const formatted = new MessageButton({
       style: button.color,
       label: button.name,
-      custom_id,
+      customId,
       emoji: button.emoji,
       disabled: button.disabled,
-    };
+    });
     return formatted;
   }
 }

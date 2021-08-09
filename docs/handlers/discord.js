@@ -64,7 +64,7 @@ class TestApplicationCommand extends BaseAppCommand {
 
   // The function that is called when the interaction is recieved
   run(interaction, args) {
-    interaction.reply(`That's an interaction test....${args ? `with some args: ${args}` : ''}`, { ephemeral: true });
+    interaction.reply({ content: `That's an interaction test....${args ? `with some args: ${args}` : ''}`, ephemeral: true });
   }
 }
 

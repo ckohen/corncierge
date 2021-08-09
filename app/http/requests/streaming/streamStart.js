@@ -49,11 +49,11 @@ class StreamStartRequest extends BaseRequest {
       return;
     }
 
-    const twitchID = await socket.app.twitch.getID(user).catch(err => socket.app.log.warn(module, err));
-    if (!twitchID) return;
-    const twitchChannel = await socket.app.twitch.fetchChannel(twitchID).catch(err => socket.app.log.warn(module, err));
-    const twitchUser = await socket.app.twitch.fetchUser({ userId: twitchID }).catch(err => socket.app.log.warn(module, err));
-    const followers = await socket.app.twitch.fetchFollowers(twitchID).catch(err => socket.app.log.warn(module, err));
+    const twitchId = await socket.app.twitch.getId(user).catch(err => socket.app.log.warn(module, err));
+    if (!twitchId) return;
+    const twitchChannel = await socket.app.twitch.fetchChannel(twitchId).catch(err => socket.app.log.warn(module, err));
+    const twitchUser = await socket.app.twitch.fetchUser({ userId: twitchId }).catch(err => socket.app.log.warn(module, err));
+    const followers = await socket.app.twitch.fetchFollowers(twitchId).catch(err => socket.app.log.warn(module, err));
     if (!twitchChannel) {
       return;
     }
@@ -69,11 +69,11 @@ class StreamStartRequest extends BaseRequest {
     if (cache.get(`video.stream.up.${user}`) != null) {
       msg = await socket.getMessage(user);
       if (msg && msg instanceof Message) {
-        msg.edit(content, { embed, allowedMentions: testing ? { parse: [] } : undefined });
+        msg.edit({ content, embeds: [embed], allowedMentions: testing ? { parse: [] } : undefined });
       }
     } else {
-      msg = await channel.send(content, { embed, allowedMentions: testing ? { parse: [] } : undefined });
-      if (msg.channel.type === 'news') {
+      msg = await channel.send({ content, embeds: [embed], allowedMentions: testing ? { parse: [] } : undefined });
+      if (msg.crosspostable) {
         msg.crosspost().catch(err => socket.app.log.warn(module, err));
       }
       socket.setMessage(user, msg.id);

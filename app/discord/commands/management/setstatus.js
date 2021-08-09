@@ -75,7 +75,7 @@ class SetStatusCommand extends BaseCommand {
     }
 
     try {
-      await this.socket.driver.user.setActivity(data[0] || null, { type: data[1] || null });
+      this.socket.driver.user.setActivity({ name: data[0] ?? '', type: data[1] || 'PLAYING' });
       await this.socket.app.database.tables.settings[method]('discord_activity', data[0]);
       await this.socket.app.database.tables.settings[method]('discord_activity_type', data[1]);
     } catch (err) {

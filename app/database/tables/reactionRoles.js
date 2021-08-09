@@ -12,7 +12,9 @@ class reactionRolesTable extends BaseTable {
    * @returns {Promise<Object[]>}
    */
   get() {
-    return this.socket.query('SELECT guildID, channelID, messageID, roles FROM `reactionroles`').then(this.parseJSON.bind(null, ['roles']));
+    return this.socket
+      .query('SELECT guildID as guildId, channelID as channelId, messageID as messageId, roles FROM `reactionroles`')
+      .then(this.parseJSON.bind(null, ['roles']));
   }
 
   /**
@@ -36,15 +38,15 @@ class reactionRolesTable extends BaseTable {
   /**
    * Edit the reaction role manager for a guild
    * @param {string} id the guild id to edit in the database
-   * @param {string} channelID the stored snowflake of the channel where the reaction message is
-   * @param {string} messageID the store snowflake of the message that is reacted to
+   * @param {string} channelId the stored snowflake of the channel where the reaction message is
+   * @param {string} messageId the store snowflake of the message that is reacted to
    * @param {Object} roles an object containing key value pairs of emote snowflakes and an array of role snowflakes
    * @returns {Promise<void>}
    */
-  edit(id, channelID, messageID, roles) {
+  edit(id, channelId, messageId, roles) {
     return this.socket.query('UPDATE `reactionroles` SET `channelID` = ?, `messageID` = ?, `roles` = ? WHERE `guildID` = ?', [
-      channelID,
-      messageID,
+      channelId,
+      messageId,
       JSON.stringify(roles),
       id,
     ]);

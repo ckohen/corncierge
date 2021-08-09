@@ -11,8 +11,8 @@ module.exports = (socket, before, after) => {
   let voiceRole = after.guild.roles.cache.find(item => item.name.toLowerCase() === 'voice');
 
   if (voiceRoles && Object.keys(voiceRoles.data).length > 0) {
-    let voiceRoleIDs = Object.keys(voiceRoles.data);
-    ignoredRoles = ignoredRoles.concat(voiceRoleIDs);
+    let voiceRoleIds = Object.keys(voiceRoles.data);
+    ignoredRoles = ignoredRoles.concat(voiceRoleIds);
   } else if (voiceRole) {
     ignoredRoles.push(voiceRole.id);
   }
@@ -25,7 +25,7 @@ module.exports = (socket, before, after) => {
     let roleChanged = '';
     let rolesChanged;
     let type;
-    if (before.roles.cache.array().length > after.roles.cache.array().length) {
+    if (before.roles.cache.size > after.roles.cache.size) {
       // Role Removed
       rolesChanged = before.roles.cache.filter(role => testRole(role, after.roles.cache));
       rolesChanged = rolesChanged.filter(role => ignoreRoles(role));

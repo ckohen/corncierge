@@ -17,29 +17,25 @@ class SkipToCommand extends BaseCommand {
 
   run(message, args) {
     const songNumber = Number(args.join(' '));
-    const musicData = this.socket.cache.musicData.get(String(message.guild.id));
-    if (songNumber < 1 || songNumber > musicData.queue.length + 1) {
-      message.channel.send(`${message.member}, Please enter a valid song number`);
-      return;
-    }
+    const musicData = this.socket.cache.musicData.get(String(message.guildId));
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
       message.channel.send(`${message.member}, Join a channel and try again`);
       return;
     }
 
-    if (typeof musicData.songDispatcher === 'undefined' || musicData.songDispatcher === null) {
+    if (!musicData?.subscription?.isPlaying) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;
     }
 
-    if (musicData.queue < 1) {
-      message.channel.send(`${message.member}, There are no songs in queue`);
+    if (songNumber < 1 || songNumber > musicData.subscription.queue.length + 1) {
+      message.channel.send(`${message.member}, Please enter a valid song number`);
       return;
     }
 
-    musicData.queue.splice(0, songNumber - 1);
-    musicData.songDispatcher.end();
+    musicData.subscription.queue.splice(0, songNumber - 1);
+    musicData.subscription.audioPlayer.stop();
   }
 }
 

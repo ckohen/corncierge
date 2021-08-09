@@ -12,7 +12,7 @@ class voiceRolesTable extends BaseTable {
    * @returns {Promise<Object[]>}
    */
   get() {
-    return this.socket.query('SELECT guildID, data FROM `voiceroles`').then(this.parseJSON.bind(null, ['data']));
+    return this.socket.query('SELECT guildID as guildId, data FROM `voiceroles`').then(this.parseJSON.bind(null, ['data']));
   }
 
   /**

@@ -142,7 +142,7 @@ class VariablesCommand extends BaseCommand {
             embed.addField('Current variables', stringFormatted);
           }
         }
-        message.channel.send(embed);
+        message.channel.send({ embeds: [embed] });
         return;
       default:
         return;

@@ -17,17 +17,21 @@ class LoopCommand extends BaseCommand {
 
   run(message, args) {
     const numOfTimesToLoop = Number(args.join(' '));
-    const musicData = this.socket.cache.musicData.get(String(message.guild.id));
-    if (!musicData.isPlaying) {
+    if (isNaN(numOfTimesToLoop)) {
+      message.channel.send(`Specifiy a valid number of times to loop`);
+      return;
+    }
+    const musicData = this.socket.cache.musicData.get(String(message.guildId));
+    if (!musicData?.subscription?.isPlaying) {
       message.channel.send(`${message.member}, There is no song playing right now!`);
       return;
     }
 
     for (let i = 0; i < numOfTimesToLoop; i++) {
-      musicData.queue.unshift(musicData.nowPlaying);
+      musicData.subscription.queue.unshift(musicData.subscription.nowPlaying);
     }
 
-    message.channel.send(`${musicData.nowPlaying.title} looped ${numOfTimesToLoop} ${numOfTimesToLoop === 1 ? 'time' : 'times'}`);
+    message.channel.send(`${musicData.subscription.nowPlaying.title} looped ${numOfTimesToLoop} ${numOfTimesToLoop === 1 ? 'time' : 'times'}`);
   }
 }
 

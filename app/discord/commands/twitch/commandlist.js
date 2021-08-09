@@ -1,6 +1,6 @@
 'use strict';
 
-const { Collection } = require('discord.js');
+const { Collection, Util } = require('discord.js');
 const { usage } = require('../../../util/UtilManager');
 const BaseCommand = require('../BaseCommand');
 
@@ -15,7 +15,7 @@ class CommandListCommand extends BaseCommand {
     super(socket, info);
   }
 
-  run(message, [arg]) {
+  async run(message, [arg]) {
     if (this.socket.app.options.disableIRC) {
       message.channels.send('Twitch is not enabled for this bot (this command should be disabled)').catch(err => {
         this.socket.app.log.warn(module, err);
@@ -61,9 +61,12 @@ class CommandListCommand extends BaseCommand {
 
     paginated.join('\n\n');
 
-    message.channel.send(`\`\`\`${paginated.join('\n\n')}\`\`\``, { split: true }).catch(err => {
-      this.socket.app.log.warn(module, err);
-    });
+    const split = Util.splitMessage(`\`\`\`${paginated.join('\n\n')}\`\`\``);
+    for await (const content of split) {
+      await message.channel.send(content).catch(err => {
+        this.socket.app.log.warn(module, err);
+      });
+    }
   }
 }
 

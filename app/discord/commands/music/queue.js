@@ -14,20 +14,20 @@ class QueueCommand extends BaseCommand {
   }
 
   run(message) {
-    const musicData = this.socket.cache.musicData.get(String(message.guild.id));
-    if (musicData.queue.length === 0) {
+    const musicData = this.socket.cache.musicData.get(String(message.guildId));
+    if (!musicData?.subscription?.queue || musicData.subscription.queue.length === 0) {
       return message.channel.send(`${message.member}, There are no songs in queue!`);
     }
     const titleArray = [];
     // Display only first 10 items in queue
-    musicData.queue.slice(0, 10).forEach(obj => {
+    musicData.subscription.queue.slice(0, 10).forEach(obj => {
       titleArray.push(obj.title);
     });
-    var queueEmbed = this.socket.getEmbed('queue', [musicData.queue]);
+    var queueEmbed = this.socket.getEmbed('queue', [musicData.subscription.queue]);
     for (let i = 0; i < titleArray.length; i++) {
       queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
     }
-    return message.channel.send(queueEmbed);
+    return message.channel.send({ embeds: [queueEmbed] });
   }
 }
 

@@ -12,7 +12,7 @@ class newMemberRoleTable extends BaseTable {
    * @returns {Promise<Object[]>}
    */
   get() {
-    return this.socket.query('SELECT guildID, roleID, delayTime FROM `newmemberrole`');
+    return this.socket.query('SELECT guildID as guildId, roleID as roleId, delayTime FROM `newmemberrole`');
   }
 
   /**
@@ -36,12 +36,12 @@ class newMemberRoleTable extends BaseTable {
   /**
    * Updates a new member role setting
    * @param {string} id the guild id to edit in the database
-   * @param {string} roleID the id of the role that is assigned
+   * @param {string} roleId the id of the role that is assigned
    * @param {string} delayTime the delay time in milliseconds before the role is added
    * @returns {Promise<void>}
    */
-  edit(id, roleID, delayTime) {
-    return this.socket.query('UPDATE `newmemberrole` SET `roleID` = ?, `delayTime` = ? WHERE `guildID` = ?', [roleID, delayTime, id]);
+  edit(id, roleId, delayTime) {
+    return this.socket.query('UPDATE `newmemberrole` SET `roleID` = ?, `delayTime` = ? WHERE `guildID` = ?', [roleId, delayTime, id]);
   }
 }
 

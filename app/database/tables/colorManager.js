@@ -12,7 +12,7 @@ class colorManagerTable extends BaseTable {
    * @returns {Promise<Object[]>}
    */
   get() {
-    return this.socket.query('SELECT guildID, roles, snowflakes FROM `colormanager`').then(this.parseJSON.bind(null, ['roles', 'snowflakes']));
+    return this.socket.query('SELECT guildID as guildId, roles, snowflakes FROM `colormanager`').then(this.parseJSON.bind(null, ['roles', 'snowflakes']));
   }
 
   /**

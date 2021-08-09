@@ -54,7 +54,7 @@ class AuthManager extends APIManager {
     this.app.log.verbose(module, `Generating token with code ${code}`);
     const res = await this.api.token.post({
       params: {
-        client_id: this.options.clientID,
+        client_id: this.options.clientId,
         client_secret: this.options.clientSecret,
         code,
         grant_type: 'authorization_code',
@@ -86,7 +86,7 @@ class AuthManager extends APIManager {
     this.app.log.verbose(module, `Generating app access token`);
     const res = await this.api.token.post({
       params: {
-        client_id: this.options.clientID,
+        client_id: this.options.clientId,
         client_secret: this.options.clientSecret,
         grant_type: 'client_credentials',
         scope: 'channel:edit:commercial channel:read:hype_train channel:manage:broadcast clips:edit',
@@ -139,7 +139,7 @@ class AuthManager extends APIManager {
     const res = await this.api.token
       .post({
         params: {
-          client_id: this.options.clientID,
+          client_id: this.options.clientId,
           client_secret: this.options.clientSecret,
           refresh_token: refresh,
           grant_type: 'refresh_token',

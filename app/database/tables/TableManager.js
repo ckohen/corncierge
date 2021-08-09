@@ -22,7 +22,7 @@ class TableManager {
      */
 
     /**
-     * An array of database tables, all of which deal with discord, are mapped by guildID, and are cached normally
+     * An array of database tables, all of which deal with discord, are mapped by guildId, and are cached normally
      * @type {BaseTable[]}
      */
     this.discord = [];

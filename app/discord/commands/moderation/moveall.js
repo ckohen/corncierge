@@ -31,19 +31,13 @@ class MoveAllCommand extends BaseCommand {
       toChannel = args.join(' ');
 
       // Check for new channel
-      newChannel = await message.member.guild.channels.cache.find(
-        channel => channel.name.toLowerCase() === toChannel.toLowerCase() && channel.type === 'voice',
-      );
+      newChannel = message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === toChannel.toLowerCase() && channel.isVoice());
     } else {
       // Move users in specified channel
       fromChannel = args.slice(0, args.indexOf('->')).join(' ');
       toChannel = args.slice(args.indexOf('->') + 1).join(' ');
-      voiceChannel = await message.member.guild.channels.cache.find(
-        channel => channel.name.toLowerCase() === fromChannel.toLowerCase() && channel.type === 'voice',
-      );
-      newChannel = await message.member.guild.channels.cache.find(
-        channel => channel.name.toLowerCase() === toChannel.toLowerCase() && channel.type === 'voice',
-      );
+      voiceChannel = message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === fromChannel.toLowerCase() && channel.isVoice());
+      newChannel = message.member.guild.channels.cache.find(channel => channel.name.toLowerCase() === toChannel.toLowerCase() && channel.isVoice());
     }
 
     let confMsg;

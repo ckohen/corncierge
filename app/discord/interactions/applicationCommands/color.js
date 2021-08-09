@@ -1,5 +1,6 @@
 'use strict';
 
+const { ApplicationCommandOptionTypes } = require('discord.js').Constants;
 const BaseAppCommand = require('./BaseAppCommand');
 
 class ColorAppCommand extends BaseAppCommand {
@@ -10,7 +11,7 @@ class ColorAppCommand extends BaseAppCommand {
         description: 'changes your color in this server',
         options: [
           {
-            type: 8,
+            type: ApplicationCommandOptionTypes.ROLE,
             name: 'color',
             description: 'the role with the color you want',
           },
@@ -22,9 +23,9 @@ class ColorAppCommand extends BaseAppCommand {
 
   async run(interaction, args) {
     // Get the current guild from the colorManager
-    let guild = this.socket.cache.colorManager.get(String(interaction.guildID));
+    let guild = this.socket.cache.colorManager.get(String(interaction.guildId));
     if (!guild) {
-      interaction.reply('This command does not work without a bot in the server or in DMs.', { ephemeral: true });
+      interaction.reply({ content: 'This command does not work without a bot in the server or in DMs.', ephemeral: true });
       return;
     }
 
@@ -35,28 +36,28 @@ class ColorAppCommand extends BaseAppCommand {
     let member = interaction.member;
 
     // Set role if it exists
-    let roleID = args?.find(arg => arg.name === `color`)?.value;
+    let role = args.getRole(`color`);
 
-    if (colorSnowflakes.includes(roleID) || typeof args === `undefined`) {
+    if (colorSnowflakes.includes(role.id) || !role) {
       // Remove all predefined colors *Does not remove specialty colors*
       await member.roles.remove(colorSnowflakes);
       if (typeof args === `undefined`) {
-        interaction.reply(`Your color has been removed.`, { ephemeral: true });
+        interaction.reply({ content: `Your color has been removed.`, ephemeral: true });
       } else {
         // Add the role requested
-        const assigned = await member.roles.add(roleID).catch(() => false);
+        const assigned = await member.roles.add(role.id).catch(() => false);
         if (!assigned) {
-          interaction.reply(`I was unable to assign <@&${roleID}>, please contact a mod to ensure all permissions are adequate.`, {
+          interaction.reply(`I was unable to assign <@&${role.id}>, please contact a mod to ensure all permissions are adequate.`, {
             ephemeral: true,
           });
         } else {
           // Notify user of role addition
-          interaction.reply(`Your color has been changed t0o <@&${roleID}>.`, { ephemeral: true });
+          interaction.reply({ content: `Your color has been changed to <@&${role.id}>.`, ephemeral: true });
         }
       }
     } else {
       // If the role is invalid, notify user
-      interaction.reply(`<@&${roleID}> isn't a valid color role.`, { ephemeral: true });
+      interaction.reply({ content: `<@&${role.id}> isn't a valid color role.`, ephemeral: true });
     }
   }
 }

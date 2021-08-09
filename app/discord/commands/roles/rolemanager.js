@@ -19,7 +19,7 @@ class RoleManagerCommand extends BaseCommand {
   }
 
   async run(message, args) {
-    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guildId)).prefix;
     const routines = ['add', 'remove', 'list'];
 
     const [methodRaw, channelRaw, roleRaw, ...extraArgs] = args;
@@ -66,7 +66,7 @@ class RoleManagerCommand extends BaseCommand {
     roles.forEach(role => roleNames.push(role.name.toLowerCase()));
 
     //  A list of key value pairs with channels and available roles
-    let guild = this.socket.cache.roleManager.get(String(message.guild.id));
+    let guild = this.socket.cache.roleManager.get(String(message.guildId));
 
     switch (method) {
       case 'add':
@@ -127,7 +127,7 @@ class RoleManagerCommand extends BaseCommand {
           if (guild.removeRoles[String(channel.id)]) {
             delete guild.removeRoles[String(channel.id)];
           }
-          await this.socket.app.database.tables.roleManager.edit(String(message.guild.id), guild.addRoles, guild.removeRoles);
+          await this.socket.app.database.tables.roleManager.edit(String(message.guildId), guild.addRoles, guild.removeRoles);
           message.channel.send(`Deleted ${channel} from role manager`);
           return;
         }
@@ -153,7 +153,7 @@ class RoleManagerCommand extends BaseCommand {
       case 'list':
     }
 
-    await this.socket.app.database.tables.roleManager.edit(String(message.guild.id), guild.addRoles, guild.removeRoles);
+    await this.socket.app.database.tables.roleManager.edit(String(message.guildId), guild.addRoles, guild.removeRoles);
 
     // Determine the number of channels and get ready to loop through them
     let channels = Object.keys(guild.addRoles);
@@ -172,7 +172,7 @@ class RoleManagerCommand extends BaseCommand {
     // Create base embed
     let msg = this.socket.getEmbed('rolemanager', [message.member, commandPrefix]);
     if (channels.length < 1) {
-      message.channel.send('**No roles specified yet**', msg);
+      message.channel.send({ content: '**No roles specified yet**', embeds: [msg] });
       return;
     }
     // Variables for counting to limt
@@ -185,24 +185,24 @@ class RoleManagerCommand extends BaseCommand {
     let removeRoles = [];
     let compiledRoles = [];
     // Loop through each channel found
-    channels.forEach(channelID => {
-      channelObj = message.guild.channels.cache.get(channelID);
+    channels.forEach(channelId => {
+      channelObj = message.guild.channels.cache.get(channelId);
       // Get role objects so discord can embed properly
-      if (guild.addRoles[channelID]) {
-        guild.addRoles[channelID].forEach(role => {
+      if (guild.addRoles[channelId]) {
+        guild.addRoles[channelId].forEach(role => {
           roleObj = message.guild.roles.cache.find(data => data.name.toLowerCase() === role.toLowerCase());
           // Add roles in both list to the both array
-          if (guild.removeRoles[channelID] && guild.removeRoles[channelID].indexOf(role) > -1) {
+          if (guild.removeRoles[channelId] && guild.removeRoles[channelId].indexOf(role) > -1) {
             bothRoles.push(roleObj);
           } else {
             addRoles.push(roleObj);
           }
         });
       }
-      if (guild.removeRoles[channelID]) {
-        guild.removeRoles[channelID].forEach(role => {
+      if (guild.removeRoles[channelId]) {
+        guild.removeRoles[channelId].forEach(role => {
           roleObj = message.guild.roles.cache.find(data => data.name.toLowerCase() === role.toLowerCase());
-          if (!guild.addRoles[channelID] || guild.addRoles[channelID].indexOf(role) < 0) {
+          if (!guild.addRoles[channelId] || guild.addRoles[channelId].indexOf(role) < 0) {
             removeRoles.push(roleObj);
           }
         });
@@ -226,7 +226,7 @@ class RoleManagerCommand extends BaseCommand {
             fields += 1;
           } else {
             fields = 0;
-            message.channel.send(msg);
+            message.channel.send({ embeds: [msg] });
             msg = this.socket.getEmbed('rolemanager', [message.member, commandPrefix]);
           }
         }
@@ -241,7 +241,7 @@ class RoleManagerCommand extends BaseCommand {
       removeRoles = [];
     });
 
-    message.channel.send(msg);
+    message.channel.send({ embeds: [msg] });
   }
 }
 

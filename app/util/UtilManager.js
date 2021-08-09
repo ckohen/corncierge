@@ -73,7 +73,7 @@ class UtilManager {
 
     items.forEach(element => {
       if (typeof element[key] === 'undefined' || element[key] === null) return;
-      map.set(element[key], val && element[val] ? element[val] : element);
+      map.set(element[key], val ? element[val] ?? element : element);
     });
   }
 

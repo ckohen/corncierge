@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (socket, before, after) => {
-  if (after.channelID === before.channelID) return;
+  if (after.channelId === before.channelId) return;
 
   let afterRole = after.guild.roles.cache.find(item => item.name.toLowerCase() === 'voice');
   let beforeRole = afterRole;
@@ -9,30 +9,28 @@ module.exports = (socket, before, after) => {
 
   if (Object.keys(roleData.data).length > 0) {
     afterRole = null;
-    let afterID = null;
-    let beforeID = null;
+    let afterId = null;
+    let beforeId = null;
     let roles = Object.keys(roleData.data);
-    roles.forEach(roleID => {
-      if (roleData.data[roleID].indexOf(after.channelID) > -1) {
-        afterID = roleID;
+    roles.forEach(roleId => {
+      if (roleData.data[roleId].indexOf(after.channelId) > -1) {
+        afterId = roleId;
       }
-      if (roleData.data[roleID].indexOf(before.channelID) > -1) {
-        beforeID = roleID;
+      if (roleData.data[roleId].indexOf(before.channelId) > -1) {
+        beforeId = roleId;
       }
     });
-    if (afterID !== beforeID) {
-      if (afterID) {
-        afterRole = after.guild.roles.cache.get(afterID);
+    if (afterId !== beforeId) {
+      if (afterId) {
+        afterRole = after.guild.roles.cache.get(afterId);
       }
-      if (beforeID) {
-        beforeRole = after.guild.roles.cache.get(beforeID);
+      if (beforeId) {
+        beforeRole = after.guild.roles.cache.get(beforeId);
       }
     }
   }
 
-  let musicData = socket.cache.musicData.get(String(after.guild.id));
-
-  if (after.channelID !== null) {
+  if (after.channelId !== null) {
     if (after.member.user.id === socket.driver.user.id && !after.selfDeaf) {
       after.setSelfDeaf(true);
       return;
@@ -51,12 +49,6 @@ module.exports = (socket, before, after) => {
         socket.app.log.warn(module, err);
       });
     }
-    return;
-  }
-
-  if (after.member.user.bot && musicData.songDispatcher && after.member.user.id === socket.driver.user.id) {
-    musicData.queue.length = 0;
-    musicData.songDispatcher.end();
     return;
   }
 

@@ -47,12 +47,14 @@ class LogManager extends BaseManager {
 
     wn.addColors(Constants.LogColors);
 
+    const splitWebhookToken = this.options.webhookToken.split('/');
+
     /**
      * The webhook client that handles sending error logs to discord
      * @type {WebhookClient}
      * @private
      */
-    this.webhookClient = new WebhookClient(...this.options.webhookToken.split('/'));
+    this.webhookClient = new WebhookClient({ id: splitWebhookToken[0], token: splitWebhookToken[1] });
   }
 
   /**
@@ -136,12 +138,14 @@ class LogManager extends BaseManager {
       .setTitle(`${level} \u00B7 ${path}`)
       .setColor(Constants.Colors[levels[level] || 'CYAN']);
 
-    const attachments = [embed];
+    const attachments = [];
 
     if (error?.stack && formattedError.length > 100) {
       attachments.push(new MessageAttachment(Buffer.from(formattedError), 'stacktrace.ada'));
     }
-    return this.webhookClient.send(attachments).catch(err => this.driver.log('error', `[${this.path(module)}] Failed to send webhook: ${err}`));
+    return this.webhookClient
+      .send({ embeds: [embed], files: attachments })
+      .catch(err => this.driver.log('error', `[${this.path(module)}] Failed to send webhook: ${err}`));
   }
 
   /**

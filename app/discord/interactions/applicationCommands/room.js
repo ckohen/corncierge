@@ -1,6 +1,7 @@
 'use strict';
 
-const { Collection } = require('discord.js');
+const { Collection, Constants } = require('discord.js');
+const { ApplicationCommandOptionTypes } = Constants;
 const BaseAppCommand = require('./BaseAppCommand');
 const { clamp } = require('../../../util/UtilManager');
 
@@ -14,18 +15,17 @@ class RoomAppCommand extends BaseAppCommand {
 
   async run(interaction, args) {
     const socket = this.socket;
-    const method = args[0].name;
-    args = args[0].options;
+    const method = args.getSubcommand(false) ?? args.getSubcommandGroup();
 
     // A list of key value pairs with room ids and their associated room
-    let rooms = socket.cache.rooms.get(String(interaction.guildID));
+    let rooms = socket.cache.rooms.get(String(interaction.guildId));
     if (!rooms) {
-      return interaction.reply('This command does not work without a bot in the server or in DMs.', { ephemeral: true });
+      return interaction.reply({ content: 'This command does not work without a bot in the server or in DMs.', ephemeral: true });
     }
 
     if (typeof rooms === 'undefined' || rooms === null) {
-      socket.cache.rooms.set(String(interaction.guild.id), new Collection());
-      rooms = socket.cache.rooms.get(String(interaction.guild.id));
+      socket.cache.rooms.set(String(interaction.guildId), new Collection());
+      rooms = socket.cache.rooms.get(String(interaction.guildId));
     }
 
     // Get the master room or create it
@@ -39,13 +39,13 @@ class RoomAppCommand extends BaseAppCommand {
         code: null,
         players: [],
         waiting: [],
-        lastChannelID: null,
-        lastMessageID: null,
+        lastChannelId: null,
+        lastMessageId: null,
       });
       masterRoom = rooms.get('master');
     }
     let room = false;
-    const roomID = args?.find(arg => arg.name === `roomid`)?.value;
+    const roomId = args.getInteger(`roomid`);
     let member;
     let inRoom;
     let existing;
@@ -59,13 +59,14 @@ class RoomAppCommand extends BaseAppCommand {
       case 'create':
         // Only allow each server to have 25 rooms
         if (rooms.size > 25) {
-          return interaction.reply(`There are already 25 rooms in this server, please wait for another room to close!`, { ephemeral: true });
+          return interaction.reply({ content: `There are already 25 rooms in this server, please wait for another room to close!`, ephemeral: true });
         }
 
         // Don't let a user own more than one room
         existing = rooms.find(data => data.owner === String(interaction.member.id));
         if (existing) {
-          interaction.reply(`You already own a room: **ID**: ${existing.id}, **Name**: ${existing.name}. Please delete it to create a new room!`, {
+          interaction.reply({
+            content: `You already own a room: **ID**: ${existing.id}, **Name**: ${existing.name}. Please delete it to create a new room!`,
             ephemeral: true,
           });
           room = existing;
@@ -78,16 +79,16 @@ class RoomAppCommand extends BaseAppCommand {
             // Create the new room
             rooms.set(String(i), {
               id: String(i),
-              name: args.find(arg => arg.name === `name`).value.substring(0, 30),
+              name: args.getString(`name`, true).substring(0, 30),
               owner: String(interaction.member.id),
               playerCount: 10,
               code: null,
               players: [String(interaction.member.id)],
               waiting: [],
-              lastChannelID: null,
-              lastMessageID: null,
+              lastChannelId: null,
+              lastMessageId: null,
             });
-            socket.app.database.tables.rooms.add(`${interaction.guild.id}-${String(i)}`);
+            socket.app.database.tables.rooms.add(`${interaction.guildId}-${String(i)}`);
             room = rooms.get(String(i));
             interaction.reply(`Room ${i} created!`);
             break;
@@ -101,22 +102,20 @@ class RoomAppCommand extends BaseAppCommand {
         });
         break;
       case 'set':
-        submethod = args[0].name;
-        args = args[0].options;
+        submethod = args.getSubcommand();
         // Check if the requested room exists
-        if (args?.find(arg => arg.name === `roomid`)?.value) {
-          let requested = args.find(arg => arg.name === `roomid`).value;
-          room = rooms.get(String(requested));
+        if (roomId) {
+          room = rooms.get(String(roomId));
           if (typeof room === 'undefined' || rooms === null) {
             room = false;
-            interaction.reply(`There is no room with room id ${requested}!`, { ephemeral: true });
+            interaction.reply({ content: `There is no room with room id ${roomId}!`, ephemeral: true });
             break;
           }
         } else {
           room = rooms.find(data => data.players.includes(String(interaction.member.id)));
           if (typeof room === 'undefined' || rooms === null) {
             room = false;
-            interaction.reply(`You must be in a room to use that command!`, { ephemeral: true });
+            interaction.reply({ content: `You must be in a room to use that command!`, ephemeral: true });
             break;
           }
         }
@@ -125,12 +124,12 @@ class RoomAppCommand extends BaseAppCommand {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can manage it!`, { ephemeral: true });
+          return interaction.reply({ content: `Only the owner of a room and admins/mods can manage it!`, ephemeral: true });
         }
         // Set each option accordingly
         switch (submethod) {
           case 'code':
-            newCode = args.find(arg => arg.name === `code`).value;
+            newCode = args.getString(`code`);
             if (typeof newCode === 'undefined' || newCode === `~`) {
               room.code = null;
             } else {
@@ -138,30 +137,30 @@ class RoomAppCommand extends BaseAppCommand {
             }
             break;
           case 'players':
-            newMax = args.find(arg => arg.name === `max`).value;
+            newMax = args.getInteger(`max`, true);
             // Allow up to 35 players in a room
             if (newMax === clamp(newMax, 0, 35)) {
               room.playerCount = newMax;
             } else {
-              return interaction.reply(`The player count must be a number between 1 and 35!`, { ephemeral: true });
+              return interaction.reply({ content: `The player count must be a number between 1 and 35!`, ephemeral: true });
             }
             break;
         }
-        interaction.reply(`Updated settings for room ${room.id}`, { ephemeral: true });
+        interaction.reply({ content: `Updated settings for room ${room.id}`, ephemeral: true });
         break;
       case 'remove':
         // Check if the room exists
 
-        room = rooms.get(String(roomID));
+        room = rooms.get(String(roomId));
         if (typeof room === 'undefined' || rooms === null) {
-          let msg = `There is no room with room id ${roomID}!`;
-          room = roomID ? false : rooms.find(data => data.players.includes(String(interaction.member.id)));
-          if (!roomID && (typeof room === 'undefined' || rooms === null)) {
+          let msg = `There is no room with room id ${roomId}!`;
+          room = roomId ? false : rooms.find(data => data.players.includes(String(interaction.member.id)));
+          if (!roomId && (typeof room === 'undefined' || rooms === null)) {
             room = false;
             msg = `You must be in a room or specify a room id to use that command!`;
           }
           if (!room) {
-            interaction.reply(msg, { ephemeral: true });
+            interaction.reply({ content: msg, ephemeral: true });
             break;
           }
         }
@@ -170,20 +169,20 @@ class RoomAppCommand extends BaseAppCommand {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can remove it!`, { ephemeral: true });
+          return interaction.reply({ content: `Only the owner of a room and admins/mods can remove it!`, ephemeral: true });
         }
         // Delete the room
         interaction.reply(`Room ${room.id}: **${room.name}** has been successfully removed, the new list of rooms can be found below.`);
-        socket.app.database.tables.rooms.delete(`${interaction.guild.id}-${room.id}`);
+        socket.app.database.tables.rooms.delete(`${interaction.guildId}-${room.id}`);
         rooms.delete(room.id);
         room = false;
         break;
       case 'join':
         // Check if the room exists
-        room = rooms.get(String(roomID));
+        room = rooms.get(String(roomId));
         if (typeof room === 'undefined' || rooms === null) {
           room = false;
-          interaction.reply(`There is no room with room id ${roomID}!`, { ephemeral: true });
+          interaction.reply({ content: `There is no room with room id ${roomId}!`, ephemeral: true });
           break;
         }
         // Check if the user is already in a room
@@ -192,9 +191,10 @@ class RoomAppCommand extends BaseAppCommand {
           if (!room.waiting.includes(interaction.member.id)) {
             room.waiting.push(String(interaction.member.id));
           }
-          interaction.reply(`Succesfully joined room ${room.id}.`, { ephemeral: true });
+          interaction.reply({ content: `Succesfully joined room ${room.id}.`, ephemeral: true });
         } else {
-          return interaction.reply(`You cannot join a room while playing in another room! Use \`/room leave\` to leave your current room.`, {
+          return interaction.reply({
+            content: `You cannot join a room while playing in another room! Use \`/room leave\` to leave your current room.`,
             ephemeral: true,
           });
         }
@@ -202,9 +202,9 @@ class RoomAppCommand extends BaseAppCommand {
       case 'leave':
         // Mentioned user or user
         member = interaction.member.id;
-        forcedUser = args?.find(arg => arg.name === `user`)?.value;
+        forcedUser = args.getUser(`user`);
         if (forcedUser) {
-          member = forcedUser;
+          member = forcedUser.id;
         }
 
         // Find the room and determine whether they are a player or waiting
@@ -215,7 +215,7 @@ class RoomAppCommand extends BaseAppCommand {
           room = rooms.find(data => data.waiting.includes(member));
           if (typeof room === 'undefined' || room === null) {
             room = false;
-            return interaction.reply(`That member is not currently in a room!`, { ephemeral: true });
+            return interaction.reply({ content: `That member is not currently in a room!`, ephemeral: true });
           }
         }
         // Check Permissions for forced leave
@@ -224,7 +224,7 @@ class RoomAppCommand extends BaseAppCommand {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can force users to leave!`, { ephemeral: true });
+          return interaction.reply({ content: `Only the owner of a room and admins/mods can force users to leave!`, ephemeral: true });
         }
         // Transfer ownership to next player in list
         if (member === room.owner) {
@@ -235,28 +235,28 @@ class RoomAppCommand extends BaseAppCommand {
             room.players.shift();
           } else {
             // Delete the room if there is no new possible owner
-            socket.app.database.tables.rooms.delete(`${interaction.guild.id}-${room.id}`);
+            socket.app.database.tables.rooms.delete(`${interaction.guildId}-${room.id}`);
             rooms.delete(room.id);
             return interaction.reply(`You were the last player in ${room.name}, it has been deleted.`);
           }
         } else if (alreadyPlaying) {
           room.players.splice(room.players.indexOf(member), 1);
-          interaction.reply(`Successfully left room ${room.id}`, { ephemeral: true });
+          interaction.reply({ content: `Successfully left room ${room.id}`, ephemeral: true });
         } else {
           rooms.each(index => {
             if (index.waiting.includes(member)) {
               index.waiting.splice(index.waiting.indexOf(member), 1);
             }
           });
-          interaction.reply(`Successfully left all waiting rooms.`, { ephemeral: true });
+          interaction.reply({ content: `Successfully left all waiting rooms.`, ephemeral: true });
         }
         break;
       case 'clear':
         // Check if the room exists
-        room = rooms.get(String(roomID));
+        room = rooms.get(String(roomId));
         if (typeof room === 'undefined' || room === null) {
           room = false;
-          interaction.reply(`There is no room with room id ${roomID}!`, { ephemeral: true });
+          interaction.reply({ content: `There is no room with room id ${roomId}!`, ephemeral: true });
           break;
         }
         // Check Permissions
@@ -272,16 +272,16 @@ class RoomAppCommand extends BaseAppCommand {
         break;
       case 'fill':
         // Check if the room exists
-        room = rooms.get(String(roomID));
+        room = rooms.get(String(roomId));
         if (typeof room === 'undefined' || room === null) {
-          let msg = `There is no room with room id ${roomID}!`;
-          room = roomID ? false : rooms.find(data => data.players.indexOf(String(interaction.member.id)) > -1);
-          if (!roomID && (typeof room === 'undefined' || room === null)) {
+          let msg = `There is no room with room id ${roomId}!`;
+          room = roomId ? false : rooms.find(data => data.players.indexOf(String(interaction.member.id)) > -1);
+          if (!roomId && (typeof room === 'undefined' || room === null)) {
             room = false;
             msg = `You must be in a room to use that command!`;
           }
           if (!room) {
-            interaction.reply(msg, { ephemeral: true });
+            interaction.reply({ content: msg, ephemeral: true });
             break;
           }
         }
@@ -290,7 +290,7 @@ class RoomAppCommand extends BaseAppCommand {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can manage it!`, { hephemeral: true });
+          return interaction.reply({ content: `Only the owner of a room and admins/mods can manage it!`, ephemeral: true });
         }
 
         interaction.reply(`Filling room ${room.id} right up to the brim!`);
@@ -310,19 +310,19 @@ class RoomAppCommand extends BaseAppCommand {
         break;
       case 'transfer':
         // Check if the member exists
-        member = args?.find(arg => arg.name === `newowner`).value;
+        member = args.getUser(`newowner`, true).id;
 
         // Check if the room exists
-        room = rooms.get(String(roomID));
+        room = rooms.get(String(roomId));
         if (typeof room === 'undefined' || room === null) {
-          let msg = `There is no room with room id ${roomID}!`;
-          room = roomID ? false : rooms.find(data => data.players.indexOf(String(interaction.member.id))) > -1;
-          if (!roomID && (typeof room === 'undefined' || room === null)) {
+          let msg = `There is no room with room id ${roomId}!`;
+          room = roomId ? false : rooms.find(data => data.players.indexOf(String(interaction.member.id))) > -1;
+          if (!roomId && (typeof room === 'undefined' || room === null)) {
             room = false;
             msg = `You must be in a room to use that command!`;
           }
           if (!room) {
-            interaction.reply(msg, { ephemeral: true });
+            interaction.reply({ content: msg, ephemeral: true });
             break;
           }
         }
@@ -331,11 +331,11 @@ class RoomAppCommand extends BaseAppCommand {
           String(interaction.member.id) !== room.owner &&
           !interaction.member.permissions.any(['MANAGE_CHANNELS', 'MANAGE_MESSAGES', 'MOVE_MEMBERS', 'MANAGE_ROLES'])
         ) {
-          return interaction.reply(`Only the owner of a room and admins/mods can transfer ownership!`, { ephemeral: true });
+          return interaction.reply({ content: `Only the owner of a room and admins/mods can transfer ownership!`, ephemeral: true });
         }
         // Check if the new user is in the room
         if (!room.players.includes(member)) {
-          return interaction.reply(`The new owner must be a player in the room!`, { ephemeral: true });
+          return interaction.reply({ content: `The new owner must be a player in the room!`, ephemeral: true });
         }
         room.players.splice(room.players.indexOf(member), 1);
         room.owner = member;
@@ -349,38 +349,38 @@ class RoomAppCommand extends BaseAppCommand {
           room = inRoom;
         }
         // Check if user specified a specific room
-        if (roomID) {
-          if (roomID === 0) {
+        if (roomId) {
+          if (roomId === 0) {
             room = false;
           } else {
-            room = rooms.get(roomID);
+            room = rooms.get(roomId);
           }
         }
         if (!room) {
           room = false;
         }
-        interaction.reply(`Listing Rooms!`, { ephemeral: true });
+        interaction.reply({ content: `Listing Rooms!`, ephemeral: true });
     }
 
     // Create base embed
     let msg = socket.getEmbed('rooms', [interaction.member, '/']);
     if (rooms.size < 2) {
       // Delete old master room information if it exists
-      if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
-        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelID);
+      if (masterRoom && masterRoom.lastChannelId && masterRoom.lastMessageId) {
+        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelId);
         if (lastMasterMessageChannel) {
           lastMasterMessageChannel.messages
-            .fetch(masterRoom.lastMessageID)
+            .fetch(masterRoom.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
             .catch(() => undefined);
         }
       }
-      return interaction.channel.send('**No rooms have been created yet**', msg).then(sentMsg => {
+      return interaction.followUp({ content: '**No rooms have been created yet**', embeds: [msg] }).then(sentMsg => {
         if (masterRoom) {
-          masterRoom.lastChannelID = sentMsg.channel.id;
-          masterRoom.lastMessageID = sentMsg.id;
+          masterRoom.lastChannelId = sentMsg.channel.id;
+          masterRoom.lastMessageId = sentMsg.id;
         }
       });
     }
@@ -390,11 +390,11 @@ class RoomAppCommand extends BaseAppCommand {
     let owner;
     if (room) {
       // Delete old room information if it exists
-      if (room.lastChannelID && room.lastMessageID) {
-        let lastMessageChannel = await socket.driver.channels.cache.get(room.lastChannelID);
+      if (room.lastChannelId && room.lastMessageId) {
+        let lastMessageChannel = await socket.driver.channels.cache.get(room.lastChannelId);
         if (lastMessageChannel) {
           lastMessageChannel.messages
-            .fetch(room.lastMessageID)
+            .fetch(room.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
@@ -433,11 +433,11 @@ class RoomAppCommand extends BaseAppCommand {
       msg.setFooter(`Room Owner: ${owner?.user.username}`, owner.user.displayAvatarURL());
     } else {
       // Delete old master room information if it exists
-      if (masterRoom && masterRoom.lastChannelID && masterRoom.lastMessageID) {
-        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelID);
+      if (masterRoom && masterRoom.lastChannelId && masterRoom.lastMessageId) {
+        let lastMasterMessageChannel = await socket.driver.channels.cache.get(masterRoom.lastChannelId);
         if (lastMasterMessageChannel) {
           lastMasterMessageChannel.messages
-            .fetch(masterRoom.lastMessageID)
+            .fetch(masterRoom.lastMessageId)
             .then(oldMsg => {
               oldMsg.delete();
             })
@@ -496,17 +496,17 @@ class RoomAppCommand extends BaseAppCommand {
         default:
       }
     }
-    let lastMessage = await interaction.channel.send(msg);
+    let lastMessage = await interaction.followUp({ embeds: [msg] });
     if (room) {
       // Store last message information
-      room.lastChannelID = lastMessage.channel.id;
-      room.lastMessageID = lastMessage.id;
+      room.lastChannelId = lastMessage.channelId;
+      room.lastMessageId = lastMessage.id;
       // Update database
-      socket.app.database.tables.rooms.edit(`${interaction.guild.id}-${room.id}`, room);
+      socket.app.database.tables.rooms.edit(`${interaction.guildId}-${room.id}`, room);
     } else if (masterRoom) {
       // Store last message information
-      masterRoom.lastChannelID = lastMessage.channel.id;
-      masterRoom.lastMessageID = lastMessage.id;
+      masterRoom.lastChannelId = lastMessage.channelId;
+      masterRoom.lastMessageId = lastMessage.id;
     }
     return true;
   }
@@ -521,49 +521,49 @@ function getDefinition() {
     description: 'handles room management',
     options: [
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'list',
         description: 'lists the existing rooms',
         options: [
           {
-            type: 4,
-            name: 'roomID',
+            type: ApplicationCommandOptionTypes.INTEGER,
+            name: 'roomId',
             description: 'list a specific room',
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'join',
         description: 'joins the room specified',
         options: [
           {
-            type: 4,
-            name: 'roomID',
+            type: ApplicationCommandOptionTypes.INTEGER,
+            name: 'roomId',
             description: 'the room to join',
             required: true,
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'leave',
         description: 'leaves all rooms',
         options: [
           {
-            type: 6,
+            type: ApplicationCommandOptionTypes.USER,
             name: 'user',
             description: 'the user to force leave',
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'create',
         description: 'creates a new room',
         options: [
           {
-            type: 3,
+            type: ApplicationCommandOptionTypes.STRING,
             name: 'name',
             description: 'the name of the new room',
             required: true,
@@ -571,42 +571,42 @@ function getDefinition() {
         ],
       },
       {
-        type: 2,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
         name: 'set',
         description: 'changes settings for a room',
         options: [
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'code',
             description: 'edits the code',
             options: [
               {
-                type: 3,
+                type: ApplicationCommandOptionTypes.STRING,
                 name: 'code',
                 description: 'the new room code',
                 required: true,
               },
               {
-                type: 4,
-                name: 'roomID',
+                type: ApplicationCommandOptionTypes.INTEGER,
+                name: 'roomId',
                 description: 'the room to edit',
               },
             ],
           },
           {
-            type: 1,
+            type: ApplicationCommandOptionTypes.SUB_COMMAND,
             name: 'players',
             description: 'edits the max player number',
             options: [
               {
-                type: 4,
+                type: ApplicationCommandOptionTypes.INTEGER,
                 name: 'max',
                 description: 'the new max players',
                 required: true,
               },
               {
-                type: 4,
-                name: 'roomID',
+                type: ApplicationCommandOptionTypes.INTEGER,
+                name: 'roomId',
                 description: 'the room to edit',
               },
             ],
@@ -614,56 +614,56 @@ function getDefinition() {
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'remove',
         description: 'removes a room',
         options: [
           {
-            type: 4,
-            name: 'roomID',
+            type: ApplicationCommandOptionTypes.INTEGER,
+            name: 'roomId',
             description: 'the room to remove',
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'clear',
         description: 'removes all players from the room except the owner',
         options: [
           {
-            type: 4,
-            name: 'roomID',
+            type: ApplicationCommandOptionTypes.INTEGER,
+            name: 'roomId',
             description: 'the room to clear',
             required: true,
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'fill',
         description: 'fills players from the waiting list',
         options: [
           {
-            type: 4,
-            name: 'roomID',
+            type: ApplicationCommandOptionTypes.INTEGER,
+            name: 'roomId',
             description: 'the room to edit',
           },
         ],
       },
       {
-        type: 1,
+        type: ApplicationCommandOptionTypes.SUB_COMMAND,
         name: 'transfer',
         description: 'transfers ownership of a room',
         options: [
           {
-            type: 6,
+            type: ApplicationCommandOptionTypes.USER,
             name: 'newOwner',
             description: 'the user to transfer to',
             required: true,
           },
           {
-            type: 4,
-            name: 'roomID',
+            type: ApplicationCommandOptionTypes.INTEGER,
+            name: 'roomId',
             description: 'the room to transfer',
           },
         ],

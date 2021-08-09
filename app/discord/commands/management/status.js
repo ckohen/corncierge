@@ -28,7 +28,7 @@ class StatusCommand extends BaseCommand {
       `Servers: **${discord.cache.prefixes.size}**`,
     ];
 
-    message.channel.send(status).catch(err => {
+    message.channel.send(status.join('\n')).catch(err => {
       this.socket.app.log.warn(module, err);
     });
   }

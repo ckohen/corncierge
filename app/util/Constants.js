@@ -1,5 +1,7 @@
 'use strict';
 
+const { Intents } = require('discord.js');
+
 /**
  * Options for the application
  * @typedef {Object} ApplicationOptions
@@ -96,6 +98,16 @@ exports.DefaultOptions = {
   discord: {
     clientOptions: {
       partials: ['MESSAGE', 'REACTION'],
+      allowedMentions: { repliedUser: false },
+      intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_BANS,
+        Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+      ],
     },
     disabledCommands: [],
   },
@@ -134,7 +146,7 @@ exports.DefaultOptions = {
    * @property {string} [authapi=https://id.twitch.tv/oauth2] Base url for the authentication api
    * @property {number} [channel.id] the channel id for the 'default' listening twitch channel
    * @property {string} [channel.name] the channel name for the 'default' listening twitch channel
-   * @property {string} clientID the id of the api application uses (TWITCH_CLIENT_ID in env if not provided)
+   * @property {string} clientId the id of the api application uses (TWITCH_CLIENT_Id in env if not provided)
    * @property {string} clientSecret the client secret for the api application (TWITCH_CLIENT_SECRET in env if not provided)
    * @property {IRCOptions} [irc] options for the irc client
    * @property {ThrottleOptions} [ircThrottle] options for throttling irc commands
@@ -162,7 +174,7 @@ exports.DefaultOptions = {
     /**
      * IRC connection options (these are tmi.js options)
      * @typedef {Object} IRCOptions
-     * @property {number} [botID] the id of the bot that posts in chat
+     * @property {number} [botId] the id of the bot that posts in chat
      * @property {IRCConnectionOptions} [connection] the options for the IRC Connection
      * @property {boolean} [options.debug] whether the irc client is in debug mode
      * @property {string} [identity.username] the username of the bot that posts in chat
@@ -259,42 +271,7 @@ exports.discordMessages = {
   },
 };
 
-exports.ApplicationCommandOptionTypes = createEnum([
-  null,
-  'SUB_COMMAND',
-  'SUB_COMMAND_GROUP',
-  'STRING',
-  'INTEGER',
-  'BOOLEAN',
-  'USER',
-  'CHANNEL',
-  'ROLE',
-  'MENTIONABLE',
-]);
-
 exports.ComponentFunctions = createEnum(['ROLE_ASSIGN']);
-
-exports.InteractionResponseTypes = {
-  PONG: 1,
-  CHANNEL_MESSAGE_WITH_SOURCE: 4,
-  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
-  DEFERRED_MESSAGE_UPDATE: 6,
-  UPDATE_MESSAGE: 7,
-  1: 'PONG',
-  4: 'CHANNEL_MESSAGE_WITH_SOURCE',
-  5: 'DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE',
-  6: 'DEFERRED_MESSAGE_UPDATE',
-  7: 'UPDATE_MESSAGE',
-};
-
-exports.InteractionTypes = {
-  PING: 1,
-  APPLICATION_COMMAND: 2,
-  MESSAGE_COMPONENT: 3,
-  1: 'PING',
-  2: 'APPLICATION_COMMAND',
-  3: 'MESSAGE_COMPONENT',
-};
 
 exports.IRCFilterTypes = {
   BAN: 1,

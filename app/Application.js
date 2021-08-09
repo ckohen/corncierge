@@ -269,9 +269,9 @@ class Application {
       if (merged.twitch.headers && typeof merged.twitch.headers !== 'object') throw new TypeError('Extra headers must be an object');
       if (merged.twitch.channel?.id && typeof merged.twitch.channel.id !== 'number') throw new TypeError('The default channel id must be a number');
       if (merged.twitch.channel?.name && typeof merged.twitch.channel.name !== 'string') throw new TypeError('The default channel name must be a string');
-      if (typeof merged.twitch.clientID !== 'string') {
+      if (typeof merged.twitch.clientId !== 'string') {
         if ('TWITCH_CLIENT_ID' in process.env) {
-          merged.twitch.clientID = process.env.TWITCH_CLIENT_ID;
+          merged.twitch.clientId = process.env.TWITCH_CLIENT_ID;
         } else {
           throw new TypeError('The twitch client id must be a string');
         }
@@ -332,7 +332,7 @@ class Application {
         apiConfig: {
           baseURL: options.twitch.api,
           headers: {
-            'Client-ID': options.twitch.clientID,
+            'Client-ID': options.twitch.clientId,
             ...options.twitch.headers,
           },
         },
@@ -341,7 +341,7 @@ class Application {
           apiConfig: {
             baseURL: options.twitch.authapi,
           },
-          clientID: options.twitch.clientID,
+          clientId: options.twitch.clientId,
           clientSecret: options.twitch.clientSecret,
         },
       };

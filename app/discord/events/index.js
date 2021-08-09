@@ -4,7 +4,7 @@ const events = {};
 
 events.error = require('./error');
 events.ready = require('./ready');
-events.message = require('./message');
+events.messageCreate = require('./messageCreate');
 events.guildMemberAdd = require('./guildMemberAdd');
 events.voiceStateUpdate = require('./voiceStateUpdate');
 events.guildMemberRemove = require('./guildMemberRemove');

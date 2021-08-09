@@ -18,11 +18,11 @@ class streamingTable extends BaseTable {
   /**
    * Update streaming last mesage
    * @param {string} key the stream user to edit
-   * @param {string} messageID the snowflake of the last go live message
+   * @param {string} messageId the snowflake of the last go live message
    * @returns {Promise<void>}
    */
-  edit(key, messageID) {
-    return this.socket.query('UPDATE `streaming` SET `lastMessage` = ? WHERE `name` = ?', [messageID, key]);
+  edit(key, messageId) {
+    return this.socket.query('UPDATE `streaming` SET `lastMessage` = ? WHERE `name` = ?', [messageId, key]);
   }
 }
 

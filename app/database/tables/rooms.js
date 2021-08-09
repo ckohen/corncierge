@@ -12,12 +12,12 @@ class roomsTable extends BaseTable {
    * @returns {Promise<Object[]>}
    */
   get() {
-    return this.socket.query('SELECT guildRoomID, data FROM `rooms`').then(this.parseJSON.bind(null, ['data']));
+    return this.socket.query('SELECT guildRoomID as guildRoomId, data FROM `rooms`').then(this.parseJSON.bind(null, ['data']));
   }
 
   /**
    * Add a room to the room manager
-   * @param {string} id the room id (guildID-room) to add to the database
+   * @param {string} id the room id (guildId-room) to add to the database
    * @returns {Promise<void>}
    */
   add(id) {
@@ -26,7 +26,7 @@ class roomsTable extends BaseTable {
 
   /**
    * Remove a room from the room manager
-   * @param {string} id the room id (guildID-room) to remove from the database
+   * @param {string} id the room id (guildId-room) to remove from the database
    * @returns {Promise<void>}
    */
   delete(id) {
@@ -43,13 +43,13 @@ class roomsTable extends BaseTable {
    * @param {string} code the current code for the room
    * @param {string[]} players an array of snowflakes for current players
    * @param {string[]} waiting an array of snowflakes for people in the waiting room
-   * @param {string} lastChannelID the snowflake for the channel the last message of this room was sent in
-   * @param {string} lastMessageID the snowflake for the last message this room was sent as
+   * @param {string} lastChannelId the snowflake for the channel the last message of this room was sent in
+   * @param {string} lastMessageId the snowflake for the last message this room was sent as
    */
 
   /**
    * Edit a room
-   * @param {string} id the room id (guildID-room) to edit in the database
+   * @param {string} id the room id (guildId-room) to edit in the database
    * @param {RoomData} data the updated data for the room
    * @returns {Promise<void>}
    */

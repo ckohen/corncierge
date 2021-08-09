@@ -16,7 +16,7 @@ class VoiceRolesCommand extends BaseCommand {
   }
 
   async run(message, args) {
-    const commandPrefix = this.socket.cache.prefixes.get(String(message.guild.id)).prefix;
+    const commandPrefix = this.socket.cache.prefixes.get(String(message.guildId)).prefix;
     const routines = ['add', 'remove', 'list'];
 
     const [methodRaw, chRoleRaw, ...extraArgs] = args;
@@ -32,7 +32,7 @@ class VoiceRolesCommand extends BaseCommand {
     let channels = [];
 
     //  A list of key value pairs with channels and available roles
-    let guild = this.socket.cache.voiceRoles.get(String(message.guild.id));
+    let guild = this.socket.cache.voiceRoles.get(String(message.guildId));
 
     // Check if channel or role and if it's valid
     if (chRoleRaw && chRoleRaw.startsWith('<#') && chRoleRaw.endsWith('>')) {
@@ -49,7 +49,7 @@ class VoiceRolesCommand extends BaseCommand {
         if (elem.startsWith('<#') && elem.endsWith('>')) {
           // Check if the current channel is a voice channel
           channelObj = message.guild.channels.cache.get(elem.slice(2, -1));
-          if (channelObj && channelObj.type === 'voice') {
+          if (channelObj && channelObj.isVoice()) {
             channels.push(elem.slice(2, -1));
           }
         }
@@ -70,7 +70,7 @@ class VoiceRolesCommand extends BaseCommand {
         namedChannel = `${chRoleRaw} ${namedChannel}`;
       }
       namedChannel = await message.guild.channels.cache.find(
-        channel => channel.name.toLowerCase().trim() === namedChannel.toLowerCase().trim() && channel.type === 'voice',
+        channel => channel.name.toLowerCase().trim() === namedChannel.toLowerCase().trim() && channel.isVoice(),
       );
       if (namedChannel) {
         channels[0] = namedChannel.id;
@@ -100,16 +100,16 @@ class VoiceRolesCommand extends BaseCommand {
         // Check if the channel already exists in one of the role associations
         duplicate = false;
         move = false;
-        for (const channelID of channels) {
+        for (const channelId of channels) {
           // Loop through the role list to check for duplicates
-          roles.forEach(roleID => {
-            if (guild.data[roleID].indexOf(channelID) > -1) {
+          roles.forEach(roleId => {
+            if (guild.data[roleId].indexOf(channelId) > -1) {
               duplicate = true;
             }
           });
           // If it's a duplicate, confirm with the user what they want to do
           if (duplicate) {
-            channel = message.guild.channels.cache.get(channelID);
+            channel = message.guild.channels.cache.get(channelId);
             /* eslint-disable no-await-in-loop */
             const confirm = await confirmAction(
               message,
@@ -119,16 +119,16 @@ class VoiceRolesCommand extends BaseCommand {
             if (confirm) move = true;
 
             if (move) {
-              roles.forEach(roleID => {
-                if (guild.data[roleID].indexOf(channelID) > -1) {
-                  guild.data[roleID].splice(guild.data[roleID].indexOf(channelID), 1);
-                  if (guild.data[roleID].length < 1) {
-                    delete guild.data[roleID];
+              roles.forEach(roleId => {
+                if (guild.data[roleId].indexOf(channelId) > -1) {
+                  guild.data[roleId].splice(guild.data[roleId].indexOf(channelId), 1);
+                  if (guild.data[roleId].length < 1) {
+                    delete guild.data[roleId];
                   }
                 }
               });
             } else {
-              channels.splice(channels.indexOf(channelID), 1);
+              channels.splice(channels.indexOf(channelId), 1);
             }
           }
           move = false;
@@ -156,11 +156,11 @@ class VoiceRolesCommand extends BaseCommand {
           // Search for the role that the channel is associated with
           let removed = false;
           let roleRemoved = false;
-          roles.forEach(roleID => {
-            if (guild.data[roleID].indexOf(channels[0]) > -1) {
-              guild.data[roleID].splice(guild.data[roleID].indexOf(channels[0]), 1);
-              if (guild.data[roleID].length < 1) {
-                delete guild.data[roleID];
+          roles.forEach(roleId => {
+            if (guild.data[roleId].indexOf(channels[0]) > -1) {
+              guild.data[roleId].splice(guild.data[roleId].indexOf(channels[0]), 1);
+              if (guild.data[roleId].length < 1) {
+                delete guild.data[roleId];
                 roleRemoved = true;
               }
               removed = true;
@@ -182,38 +182,41 @@ class VoiceRolesCommand extends BaseCommand {
       case 'list':
     }
 
-    await this.socket.app.database.tables.voiceRoles.edit(String(message.guild.id), guild.data);
+    await this.socket.app.database.tables.voiceRoles.edit(String(message.guildId), guild.data);
 
     // Create base embed
     let msg = this.socket.getEmbed('voiceRoles', [message.member, commandPrefix]);
     if (roles.length < 1) {
-      message.channel.send('**No voice roles specified yet**, a role named `voice` will apply to all voice channels until at least one is specified.', msg);
+      message.channel.send({
+        content: '**No voice roles specified yet**, a role named `voice` will apply to all voice channels until at least one is specified.',
+        embeds: [msg],
+      });
       return;
     }
     // Variables to store looped information
     roles = Object.keys(guild.data);
     let outChannels = [];
     // Loop through each emoji found
-    for (const roleID of roles) {
-      roleObj = message.guild.roles.cache.get(roleID);
+    for (const roleId of roles) {
+      roleObj = message.guild.roles.cache.get(roleId);
 
       // Put channels in discord mention form so discord will resolve names
-      guild.data[roleID].forEach(channelID => {
-        outChannels.push(`<#${channelID}>`);
+      guild.data[roleId].forEach(channelId => {
+        outChannels.push(`<#${channelId}>`);
       });
 
       // Create actual data in embed
       if (outChannels.length > 30) {
         for (let i = 1; i <= Math.ceil(outChannels.length / 30); i++) {
-          msg.addField(roleObj ? roleObj.name : `Deleted role, id: ${roleID}`, outChannels.slice((i - 1) * 30, i * 30).join('\n'), true);
+          msg.addField(roleObj ? roleObj.name : `Deleted role, id: ${roleId}`, outChannels.slice((i - 1) * 30, i * 30).join('\n'), true);
         }
       } else if (outChannels.length > 0) {
-        msg.addField(roleObj ? roleObj.name : `Deleted role, id: ${roleID}`, outChannels.join('\n'), true);
+        msg.addField(roleObj ? roleObj.name : `Deleted role, id: ${roleId}`, outChannels.join('\n'), true);
       }
       // Clear arrays
       outChannels = [];
     }
-    message.channel.send(msg);
+    message.channel.send({ embeds: [msg] });
   }
 }
 
