@@ -14,7 +14,7 @@ class BaseAppCommand extends BaseInteraction {
    * Restrictions on guild or user level should be done with discords built in method.
    * If role names are not the appropriate way to handle your restriction needs, again use discords built in method.
    * <info> `data.name` is pulled from the definition on application commands </info>
-   * @typedef {InteractionData} AppplicationCommandData
+   * @typedef {InteractionData} AppCommandData
    * @param {string|Snowflake|Snowflake[]} [channel] restrict the command to a specific channel (or set of channels if specified in database)
    * @param {Snowflake|Snowflake[]} [guilds] register the interaction to specific guild(s)
    */
@@ -22,7 +22,7 @@ class BaseAppCommand extends BaseInteraction {
   /**
    * Create a new interaction
    * @param {DiscordManager} socket the handler that will call the interaction
-   * @param {AppplicationCommandData} data the data that defines the interaction
+   * @param {AppCommandData} data the data that defines the interaction
    */
   constructor(socket, data) {
     super(socket, { ...data, name: data.definition.name });
@@ -43,6 +43,12 @@ class BaseAppCommand extends BaseInteraction {
        */
       Object.defineProperty(this, 'guilds', { value: data.guilds });
     }
+
+    /**
+     * The definition of the interaction as discord expects it
+     * @name BaseAppCommand#definition
+     * @type {ApplicationCommandData|Function}
+     */
   }
 }
 

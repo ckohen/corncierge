@@ -47,7 +47,7 @@ class RoleAssignComponent extends BaseComponent {
   /**
    * Generates a definition for the message componenets field
    * @param {Collection<Snowflake, RoleButtonData>} buttons the buttons to send
-   * @returns {Object[]}
+   * @returns {MessageComponentOptions[]}
    */
   generateDefinition(buttons) {
     const formatted = buttons.map(button => this.generateButton(button));

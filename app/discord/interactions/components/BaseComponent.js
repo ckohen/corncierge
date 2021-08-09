@@ -15,6 +15,12 @@ class BaseComponent extends BaseInteraction {
    * Create a new interaction
    * @param {DiscordManager} socket the handler that will call the interaction
    * @param {ComponentData} data the data that defines the interaction
+   * @constructor
+   */
+  /**
+   * The definition of the interaction as discord expects it
+   * @name BaseComponent#definition
+   * @type {MessageComponentOptions|Function}
    */
 }
 

@@ -15,10 +15,10 @@ class BaseInteraction {
    * Restrictions on guild, channel, or user level should be done with discords built in methods.
    * If role names are not the appropriate way to handle your restriction needs, again use discords built in method.
    * @typedef {Object} InteractionData
-   * @param {Object} [definition] the definition of the interaction (the data sent to discord)
+   * @param {ApplicationCommandData|MessageComponentOptions|Function} [definition] the definition of the interaction (the data sent to discord)
    * @param {string} name the name of the interaction
    * @param {boolean} [requiresBot=false] whether the interaction needs a bot in the guild to function
-   * @param {string} [role] restrict the command to a specific role (those with `Manage Roles` bypass this)
+   * @param {string} [role] restrict the interaction to a specific role (those with `Manage Roles` bypass this)
    * @param {PermissionResolvable} [permissions] restrict the interaction to users with certain permissions
    */
 
@@ -53,7 +53,8 @@ class BaseInteraction {
 
     /**
      * The definition of the interaction as discord expects it
-     * @type {Object}
+     * @name BaseInteraction#definition
+     * @type {ApplicationCommandData|MessageComponentOptions|Function}
      */
     Object.defineProperty(this, 'definition', { value: data.definition, writable: true });
 
@@ -69,7 +70,7 @@ class BaseInteraction {
     if ('role' in data) {
       /**
        * The role this application command is restricted to, if any
-       * @name BaseAppCommand#role
+       * @name BaseInteraction#role
        * @type {?string}
        */
       Object.defineProperty(this, 'role', { value: data.role });
@@ -79,7 +80,7 @@ class BaseInteraction {
   /**
    * Runs the command
    * @param {Interaction} interaction the interaction that was executed
-   * @param {?Object} [options] the options provided with this interaction
+   * @param {?CommandInteractionOptionResolver} [options] the options provided with this interaction
    * @abstract
    */
   run() {

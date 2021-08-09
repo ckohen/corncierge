@@ -100,7 +100,7 @@ class DiscordManager extends EventManager {
    * when guildId is provided, register all global commands (that are not yet registered globally) and commands for the guild specified
    * WARNING: this overwrites all existing global / guild commands, if you do not want this to happen, use `registerCommand`
    * @param {Snowflake} [guildId] the id of the guild whose application command to register
-   * @returns {Promise<Object[]>}
+   * @returns {Promise<Collection<Snowflake, ApplicationCommand>>}
    */
   async registerCommands(guildId) {
     let data = [];
@@ -136,7 +136,7 @@ class DiscordManager extends EventManager {
   /**
    * Register an interaction
    * @param {string} name the name of the application command to register
-   * @returns {*}
+   * @returns {Promise<ApplicationCommand>}
    */
   async registerCommand(name) {
     let promises = [];
@@ -304,7 +304,7 @@ class DiscordManager extends EventManager {
   /**
    * Send a message with the given content and embed.
    * @param {string} slug the channel name in settings to get and send to
-   * @param {StringResolvable|MessagePayload} [content] the content to send
+   * @param {string|MessagePayload} [content] the content to send
    * @param {MessageOptions} [options] The options to provide
    */
   sendMessage(slug, content, options) {
@@ -323,7 +323,7 @@ class DiscordManager extends EventManager {
   /**
    * Send a webhook with the given content and embed.
    * @param {string} slug the webhook name in settings to get and send to
-   * @param {StringResolvable|MessagePayload} [content] the content to send
+   * @param {string|MessagePayload} [content] the content to send
    * @param {MessageOptions} [options] The options to provide
    */
   sendWebhook(slug, content, options) {
