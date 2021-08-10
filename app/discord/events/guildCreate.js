@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = async (socket, guild) => {
-  socket.app.log(module, `Joined new server: ${guild.name}`);
+  socket.app.log.status(module, `Joined new server: ${guild.name}`);
 
   // Add new guild to database tables
   await Promise.all(socket.app.database.tables.discord.map(table => table.add(String(guild.id))));
