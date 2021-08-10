@@ -5,5 +5,5 @@ module.exports = socket => {
     name: socket.app.settings.get('discord_activity') ?? '',
     type: socket.app.settings.get('discord_activity_type') || 'PLAYING',
   });
-  socket.app.log(module, 'Connected to Discord');
+  socket.app.log.status(module, 'Connected to Discord');
 };

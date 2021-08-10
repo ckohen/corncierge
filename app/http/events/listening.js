@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = socket => {
-  socket.app.log(module, `HTTP Server started`);
+  socket.app.log.status(module, `HTTP Server started`);
 };
