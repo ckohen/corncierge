@@ -1,7 +1,10 @@
 - name: General
   files:
     - name: Welcome
-      path: welcome.md
+      id: welcome
+      path: ../../readme.md
+    - name: Database Setup
+      path: database.md
 - name: Built In Handlers
   path: handlers
   files:
