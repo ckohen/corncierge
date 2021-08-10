@@ -56,6 +56,9 @@ class TableManager {
     const name = table.name.replace(/Table$/, '');
     const handler = new table(this.socket);
     if (!(handler instanceof BaseTable)) throw new TypeError(`Database tables must extend BaseTable: ${table.name}`);
+    if (name === 'register' || name === 'socket') {
+      throw new RangeError(`You cannot use reserved names for tables ${name}`);
+    }
     this[name] = handler;
     switch (type) {
       case 'discord':
