@@ -1,5 +1,5 @@
 <div align="center">
-<h1 style="font-size:50px;color:#5865F2;font-weight:700">Corncierge</h1>
+<h1 style="font-size: 100px; margin-bottom: 0px; color: #5865F2; font-weight: 700">Corncierge</h1>
 <p>
     <a href="https://discord.gg/vNEXNYt"><img src="https://img.shields.io/discord/756319910191300778?color=5865F2&logo=discord&logoColor=white" alt="Discord server" /></a>
     <a href="https://github.com/ckohen/corncierge/actions"><img src="https://github.com/ckohen/corncierge/workflows/Testing/badge.svg" alt="Build status" /></a>
