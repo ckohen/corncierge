@@ -50,7 +50,7 @@ class RoleAssignComponent extends BaseComponent {
    * @returns {MessageComponentOptions[]}
    */
   generateDefinition(buttons) {
-    const formatted = buttons.map(button => this.generateButton(button));
+    const formatted = buttons.map((button, index) => this.generateButton(button, index));
     const output = [];
     for (let i = 1; i <= 5 && i <= Math.ceil(buttons.length / 5); i++) {
       output.push(new MessageActionRow());
@@ -71,12 +71,13 @@ class RoleAssignComponent extends BaseComponent {
   /**
    * Generates a discord ready button with a custom id
    * @param {RoleButtonData} button the button to generate
+   * @param {number} index customIds must be unique so....
    * @returns {Object}
    * @private
    */
-  generateButton(button) {
+  generateButton(button, index) {
     if (button === undefined) return undefined;
-    const customId = `${ComponentFunctions[this.name]}:${button.roles.length}:${button.roles.join('-')}`;
+    const customId = `${ComponentFunctions[this.name]}:${button.roles.length}:${button.roles.join('-')}:${index}`;
     const formatted = new MessageButton({
       style: button.color,
       label: button.name,
