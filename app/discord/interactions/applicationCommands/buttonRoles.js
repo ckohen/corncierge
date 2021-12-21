@@ -27,7 +27,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
       data = this.socket.cache.buttonRoles.get(cacheId);
     }
 
-    await interaction.defer({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
 
     let finalizedDisplay = false;
 

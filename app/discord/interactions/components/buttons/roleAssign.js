@@ -21,7 +21,7 @@ class RoleAssignComponent extends BaseComponent {
       interaction.reply({ content: 'An error occured, please try again!', ephemeral: true });
       return;
     }
-    await interaction.defer({ ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
     let method = 'add';
     if (roles.every(roleId => interaction.member.roles.cache.has(roleId))) {
       method = 'remove';
