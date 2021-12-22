@@ -38,7 +38,7 @@ class ColorAppCommand extends BaseAppCommand {
     // Set role if it exists
     let role = args.getRole(`color`);
 
-    if (colorSnowflakes.includes(role.id) || !role) {
+    if (!role || colorSnowflakes.includes(role.id)) {
       // Remove all predefined colors *Does not remove specialty colors*
       await member.roles.remove(colorSnowflakes);
       if (typeof args === `undefined`) {

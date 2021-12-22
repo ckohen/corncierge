@@ -15,7 +15,7 @@ class RoomAppCommand extends BaseAppCommand {
 
   async run(interaction, args) {
     const socket = this.socket;
-    const method = args.getSubcommand(false) ?? args.getSubcommandGroup();
+    const method = args.getSubcommandGroup(false) ?? args.getSubcommand();
 
     // A list of key value pairs with room ids and their associated room
     let rooms = socket.cache.rooms.get(String(interaction.guildId));
@@ -458,17 +458,23 @@ class RoomAppCommand extends BaseAppCommand {
           if (lines < 11) {
             set1.push(
               `**ID**: ${data.id}, **Name**: ${data.name}\n` +
-                `Owned by ${owner.user.username}, Playing: ${data.players.length}/${data.playerCount}, Waiting: ${data.waiting.length}`,
+                `Owned by ${owner?.user.username ?? 'nonexistant member'}, Playing: ${data.players.length}/${data.playerCount}, Waiting: ${
+                  data.waiting.length
+                }`,
             );
           } else if (lines < 21) {
             set2.push(
               `**ID**: ${data.id}, **Name**: ${data.name}\n` +
-                `Owned by ${owner.user.username}, Playing: ${data.players.length}/${data.playerCount}, Waiting: ${data.waiting.length}`,
+                `Owned by ${owner?.user.username ?? 'nonexistant member'}, Playing: ${data.players.length}/${data.playerCount}, Waiting: ${
+                  data.waiting.length
+                }`,
             );
           } else {
             set3.push(
               `**ID**: ${data.id}, **Name**: ${data.name}\n` +
-                `Owned by ${owner.user.username}, Playing: ${data.players.length}/${data.playerCount}, Waiting: ${data.waiting.length}`,
+                `Owned by ${owner?.user.username ?? 'nonexistant member'}, Playing: ${data.players.length}/${data.playerCount}, Waiting: ${
+                  data.waiting.length
+                }`,
             );
           }
         });
@@ -527,7 +533,7 @@ function getDefinition() {
         options: [
           {
             type: ApplicationCommandOptionTypes.INTEGER,
-            name: 'roomId',
+            name: 'roomid',
             description: 'list a specific room',
           },
         ],
@@ -539,7 +545,7 @@ function getDefinition() {
         options: [
           {
             type: ApplicationCommandOptionTypes.INTEGER,
-            name: 'roomId',
+            name: 'roomud',
             description: 'the room to join',
             required: true,
           },
@@ -588,7 +594,7 @@ function getDefinition() {
               },
               {
                 type: ApplicationCommandOptionTypes.INTEGER,
-                name: 'roomId',
+                name: 'roomid',
                 description: 'the room to edit',
               },
             ],
@@ -606,7 +612,7 @@ function getDefinition() {
               },
               {
                 type: ApplicationCommandOptionTypes.INTEGER,
-                name: 'roomId',
+                name: 'roomid',
                 description: 'the room to edit',
               },
             ],
@@ -620,7 +626,7 @@ function getDefinition() {
         options: [
           {
             type: ApplicationCommandOptionTypes.INTEGER,
-            name: 'roomId',
+            name: 'roomid',
             description: 'the room to remove',
           },
         ],
@@ -632,7 +638,7 @@ function getDefinition() {
         options: [
           {
             type: ApplicationCommandOptionTypes.INTEGER,
-            name: 'roomId',
+            name: 'roomid',
             description: 'the room to clear',
             required: true,
           },
@@ -645,7 +651,7 @@ function getDefinition() {
         options: [
           {
             type: ApplicationCommandOptionTypes.INTEGER,
-            name: 'roomId',
+            name: 'roomid',
             description: 'the room to edit',
           },
         ],
@@ -663,7 +669,7 @@ function getDefinition() {
           },
           {
             type: ApplicationCommandOptionTypes.INTEGER,
-            name: 'roomId',
+            name: 'roomid',
             description: 'the room to transfer',
           },
         ],

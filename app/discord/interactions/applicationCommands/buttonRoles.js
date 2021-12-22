@@ -18,7 +18,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
   }
 
   async run(interaction, args) {
-    const method = args.getSubcommand(false) ?? args.getSubcommandGroup();
+    const method = args.getSubcommandGroup(false) ?? args.getSubcommand();
 
     const cacheId = `${interaction.guildId}-${interaction.member.id}`;
     let data = this.socket.cache.buttonRoles.get(cacheId);
