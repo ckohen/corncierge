@@ -41,7 +41,7 @@ class ColorAppCommand extends BaseAppCommand {
     if (!role || colorSnowflakes.includes(role.id)) {
       // Remove all predefined colors *Does not remove specialty colors*
       await member.roles.remove(colorSnowflakes);
-      if (typeof args === `undefined`) {
+      if (role === null) {
         interaction.reply({ content: `Your color has been removed.`, ephemeral: true });
       } else {
         // Add the role requested

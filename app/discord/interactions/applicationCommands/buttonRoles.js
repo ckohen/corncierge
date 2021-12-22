@@ -135,7 +135,7 @@ class ButtonRoleAppCommand extends BaseAppCommand {
                 disabled: false,
               };
             }
-            const role1 = args.getRole('role', true);
+            const role1 = args.getRole('role');
             const role2 = args.getRole('role2');
             const role3 = args.getRole('role3');
             if (role1) button.roles[0] = role1.id;
