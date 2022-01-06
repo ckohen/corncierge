@@ -3,7 +3,7 @@
 const { Util } = require('discord.js');
 
 /**
- * Represents a data model that is identifiable by a Snowflake (i.e. Discord API data models).
+ * Represents a data model that is identifiable by an id from twitch.
  * @abstract
  */
 class Base {
