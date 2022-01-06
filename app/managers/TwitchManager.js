@@ -63,7 +63,7 @@ class TwitchManager extends APIManager {
 
   /**
    * Fetch the channel for the application's channel id.
-   * @param {number} [userId=ApplicationOptions.twitch.channel?.id] fetch channel data from a specific user id
+   * @param {string} [userId=ApplicationOptions.twitch.channel?.id] fetch channel data from a specific user id
    * @returns {Promise<Object>}
    */
   fetchChannel(userId = this.options.channel?.id) {
@@ -107,8 +107,8 @@ class TwitchManager extends APIManager {
 
   /**
    * Fetch a follow object for the given user id.
-   * @param {number} userId the user id to check the follow for
-   * @param {number} [streamerId=ApplicationOptions.twitch.channel?.id] the channel id to check if following
+   * @param {string} userId the user id to check the follow for
+   * @param {string} [streamerId=ApplicationOptions.twitch.channel?.id] the channel id to check if following
    * @returns {Promise<Object>}
    */
   follow(userId, streamerId = this.options.channel?.id) {
@@ -118,7 +118,7 @@ class TwitchManager extends APIManager {
 
   /**
    * Fetch the followers for a streamer
-   * @param {number} [streamerId=ApplicationOptions.twitch.channel?.id] The id of the broadcaster to fetch follower count for
+   * @param {string} [streamerId=ApplicationOptions.twitch.channel?.id] The id of the broadcaster to fetch follower count for
    * @param {boolean} [fullResponse=false] Whether to return the full data structure response
    * @returns {Promise<number|Object>}
    */
@@ -129,7 +129,7 @@ class TwitchManager extends APIManager {
 
   /**
    * Fetch the stream for the application's channel id.
-   * @param {number} [options.userId=ApplicationOptions.twitch.channel?.id] fetch stream data from a specific user id
+   * @param {string} [options.userId=ApplicationOptions.twitch.channel?.id] fetch stream data from a specific user id
    * @param {string} [options.userName] fetch stream data from a specific user name
    * @returns {void}
    */
@@ -142,7 +142,7 @@ class TwitchManager extends APIManager {
   /**
    * Fetch a user
    * @param {string} [options.userName] the login name to check
-   * @param {number} [options.userId] the id of the nameto check
+   * @param {string} [options.userId] the id of the name to check
    * @returns {Promise<Object>}
    */
   fetchUser({ userName, userId } = {}) {
@@ -153,7 +153,7 @@ class TwitchManager extends APIManager {
 
   /**
    * Fetch the uptime for the specified stream.
-   * @param {number} [options.userId=ApplicationOptions.twitch.channel?.id] the user id to fetch uptime for
+   * @param {string} [options.userId=ApplicationOptions.twitch.channel?.id] the user id to fetch uptime for
    * @param {string} [options.userName] the user to fetch uptime for
    * @returns {Promise<number>}
    */
@@ -169,7 +169,7 @@ class TwitchManager extends APIManager {
   /**
    * The function called before each axios request automatically
    * @param {Object} config The axios configuration generated for this request
-   * @param {number} [config.authId] The id of the user whose auth token to use
+   * @param {string} [config.authId] The id of the user whose auth token to use
    * @param {boolean} [config.allowApp] Whether to allow use of the app access token if the user token is not found
    * @returns {Object} config
    * @private
@@ -177,7 +177,7 @@ class TwitchManager extends APIManager {
   async _preRequest(config) {
     let token = await this.auth.getAccessToken(config.authId, true).catch(() => undefined);
     if (!token && config.allowApp) {
-      token = await this.auth.getAccessToken(0, true);
+      token = await this.auth.getAccessToken('0', true);
     }
     if (typeof token === 'string') {
       config.headers.Authorization = `Bearer ${token}`;

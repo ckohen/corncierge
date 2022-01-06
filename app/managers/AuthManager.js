@@ -96,9 +96,9 @@ class AuthManager extends APIManager {
     const cached = this.cache.has(0);
     let method = 'edit';
     if (!cached) method = 'add';
-    await this.app.database.tables.twitchAuth[method](0, res.data.access_token, res.data.refresh_token ?? null, res.data.scope ?? null);
-    this.cache.set(0, {
-      id: 0,
+    await this.app.database.tables.twitchAuth[method]('0', res.data.access_token, res.data.refresh_token ?? null, res.data.scope ?? null);
+    this.cache.set('0', {
+      id: '0',
       accessToken: res.data.access_token,
       refreshToken: res.data.refresh_token,
       scopes: res.data.scope,
@@ -109,26 +109,26 @@ class AuthManager extends APIManager {
 
   /**
    * Gets the twitch api access token for the given user id
-   * @param {number} [id=0] the id of the user to get the token for, or 0 for the app access token
+   * @param {string} [id='0'] the id of the user to get the token for, or `0` for the app access token
    * @param {boolean} [skipValidation=false] whether to skip the validation request and just return the cached token
    * @returns {Promise<string>} token
    */
-  async getAccessToken(id = 0, skipValidation = false) {
+  async getAccessToken(id = '0', skipValidation = false) {
     this.app.log.verbose(module, `Getting access token for ${id}`);
     const token = this.cache.get(id)?.accessToken;
     if (token) {
       if (skipValidation) return token;
       if (await this.validateToken(token)) return token;
-      if (id === 0) return this.generateAppToken();
+      if (id === '0') return this.generateAppToken();
       return this.refreshToken(id);
     }
-    if (id === 0) return this.generateAppToken();
+    if (id === '0') return this.generateAppToken();
     throw new Error(`Token not found for user id ${id}`);
   }
 
   /**
    * Refreshes the tokens for the given id
-   * @param {number} id the user id to refresh the tokens for
+   * @param {string} id the user id to refresh the tokens for
    * @returns {Promise<string>} token
    * @private
    */

@@ -267,7 +267,7 @@ class Application {
       if (typeof merged.twitch.api !== 'string') throw new TypeError('The base api url must be a string');
       if (typeof merged.twitch.authapi !== 'string') throw new TypeError('The base auth api url must be a string');
       if (merged.twitch.headers && typeof merged.twitch.headers !== 'object') throw new TypeError('Extra headers must be an object');
-      if (merged.twitch.channel?.id && typeof merged.twitch.channel.id !== 'number') throw new TypeError('The default channel id must be a number');
+      if (merged.twitch.channel?.id && typeof merged.twitch.channel.id !== 'string') throw new TypeError('The default channel id must be a number');
       if (merged.twitch.channel?.name && typeof merged.twitch.channel.name !== 'string') throw new TypeError('The default channel name must be a string');
       if (typeof merged.twitch.clientId !== 'string') {
         if ('TWITCH_CLIENT_ID' in process.env) {

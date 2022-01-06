@@ -17,7 +17,7 @@ class twitchAuthTable extends BaseTable {
 
   /**
    * Add an authenticated user
-   * @param {number} id The id of the user this token belongs to
+   * @param {string} id The id of the user this token belongs to
    * @param {string} access The access token for this user
    * @param {string} refresh The refresh token for this user
    * @param {Object|Array} scopes The scopes that are authorized for this user
@@ -34,7 +34,7 @@ class twitchAuthTable extends BaseTable {
 
   /**
    * Removes a user that is no longer authenticated
-   * @param {number} id The id of the user to remove
+   * @param {string} id The id of the user to remove
    * @returns {Promise<void>}
    */
   delete(id) {
@@ -43,7 +43,7 @@ class twitchAuthTable extends BaseTable {
 
   /**
    * Edit an authenticated users detials
-   * @param {number} id The id of the user to update
+   * @param {string} id The id of the user to update
    * @param {string} access The access token for this user
    * @param {string} refresh The refresh token for this user
    * @param {Object|Array} scopes The scopes that are authorized for this user

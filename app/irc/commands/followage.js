@@ -20,7 +20,7 @@ class FollowageTwitchCommand extends TwitchCommand {
       const twitchUser = await this.socket.twitch.fetchUser({ userName: handler.target }).catch(err => this.socket.app.log.warn(module, err));
       if (!twitchUser) return false;
 
-      id = Number(twitchUser.id);
+      id = twitchUser.id;
       name = twitchUser.display_name;
     }
 

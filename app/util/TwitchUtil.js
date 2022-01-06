@@ -10,7 +10,7 @@ class TwitchUtil {
 
   /**
    * Gets the user display name or username for a twitch user object
-   * @param {Object} user the user to get from
+   * @param {Object} user the irc user to get from
    * @returns {string}
    */
   static handle(user) {
@@ -19,7 +19,7 @@ class TwitchUtil {
 
   /**
    * Determines whether the defined user is the broadcaster of the specified channel
-   * @param {Object} user a twitch user object
+   * @param {Object} user a twitch irc user object
    * @param {Object} channel a twitch channel object
    * @returns {boolean}
    */
@@ -29,7 +29,7 @@ class TwitchUtil {
 
   /**
    * Determines whether the defined user is a mod in the specified channel
-   * @param {Object} user a twitch user object
+   * @param {Object} user a twitch irc user object
    * @param {Object} channel a twitch channel object
    * @returns {boolean}
    */
@@ -42,7 +42,7 @@ class TwitchUtil {
 
   /**
    * Determines whether the defined user is a vip using their badges
-   * @param {Object} user a twitch user object
+   * @param {Object} user a twitch irc user object
    * @returns {boolean}
    */
   static isVip(user) {
