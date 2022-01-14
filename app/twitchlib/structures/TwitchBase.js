@@ -6,7 +6,7 @@ const { Util } = require('discord.js');
  * Represents a data model that is identifiable by an id from twitch.
  * @abstract
  */
-class Base {
+class TwitchBase {
   constructor(socket) {
     /**
      * The app that instantiated this
@@ -48,4 +48,4 @@ class Base {
   }
 }
 
-module.exports = Base;
+module.exports = TwitchBase;
