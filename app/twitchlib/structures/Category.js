@@ -2,6 +2,10 @@
 
 const Base = require('./Base');
 
+/**
+ * Represents a category on Twitch.
+ * @extends {TwitchBase}
+ */
 class TwitchCategory extends Base {
   constructor(client, data) {
     super(client);

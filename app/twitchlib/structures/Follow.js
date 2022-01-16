@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Represents a follow on Twitch.
+ */
 class Follow {
   constructor(client, data) {
     /**

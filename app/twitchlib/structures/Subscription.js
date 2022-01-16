@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Represents a subscription to a channel on Twitch.
+ */
 class TwitchSubscription {
   constructor(client, data) {
     /**

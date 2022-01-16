@@ -38,14 +38,6 @@ class TwitchChannelManager extends CachedManager {
    */
 
   /**
-   * Data returned from the API for mass follow data
-   * @typedef {Object} UserFollowData
-   * @property {number} total the total number of follows for this user or streamer
-   * @property {TwitchFollow[]} follows the array of actual follows
-   * @property {?string} cursor the pagination cursor to get more follow data
-   */
-
-  /**
    * Fetch the list of users that have editor permissions for the specified channel
    * @param {TwitchChannelResolvable} channel the channel to get editors for
    * @returns {Promise<Collection<string,TwitchChannelEditor>>}
@@ -181,7 +173,7 @@ class TwitchChannelManager extends CachedManager {
   /**
    * Data used to edit a twitch channel
    * @typedef {Object} TwitchChannelEditData
-   * @property {TwitchCategoryResolvable|'0'|''} [category] the new category to set
+   * @property {TwitchCategoryResolvable|'0'} [category] the new category to set
    * @property {TwitchLanguageCode} [language] the new language to set
    * @property {string} [title] the new title to set
    * @property {number} [delay] the new stream delay in seconds (partners)

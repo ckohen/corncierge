@@ -2,6 +2,10 @@
 
 const Base = require('./Base');
 
+/**
+ * Represents a user on Twitch.
+ * @extends {TwitchBase}
+ */
 class TwitchUser extends Base {
   constructor(client, data) {
     super(client);

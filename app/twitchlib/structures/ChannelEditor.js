@@ -2,6 +2,10 @@
 
 const Base = require('./Base');
 
+/**
+ * Represents a channel's editor on Twitch.
+ * @extends {TwitchBase}
+ */
 class TwitchChannelEditor extends Base {
   constructor(client, data) {
     super(client);

@@ -3,6 +3,10 @@
 const { Collection } = require('@discordjs/collection');
 const Base = require('./Base');
 
+/**
+ * Represents a team on Twitch.
+ * @extends {TwitchBase}
+ */
 class TwitchTeam extends Base {
   constructor(client, data) {
     super(client);

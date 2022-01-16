@@ -2,6 +2,10 @@
 
 const Base = require('./Base');
 
+/**
+ * Represents a channel on Twitch.
+ * @extends {TwitchBase}
+ */
 class TwitchChannel extends Base {
   constructor(client, data) {
     super(client);
@@ -136,7 +140,7 @@ class TwitchChannel extends Base {
 
   /**
    * Changes the category of this channel
-   * @param {TwitchCategoryResolvable|'0'|''} category the new category
+   * @param {TwitchCategoryResolvable|'0'} category the new category
    * @returns {Promise<TwitchChannel>}
    */
   setCategory(category) {

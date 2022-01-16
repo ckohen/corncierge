@@ -3,6 +3,10 @@
 const Base = require('./Base');
 const StreamTagManager = require('../managers/StreamTagManager');
 
+/**
+ * Represents a channel's stream on Twitch.
+ * @extends {TwitchBase}
+ */
 class TwitchStream extends Base {
   constructor(client, data) {
     super(client);

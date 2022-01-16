@@ -2,6 +2,10 @@
 
 const Base = require('./Base');
 
+/**
+ * Represents a stream tag on Twitch.
+ * @extends {TwitchBase}
+ */
 class TwitchTag extends Base {
   constructor(client, data) {
     super(client);
