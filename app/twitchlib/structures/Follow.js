@@ -1,13 +1,13 @@
 'use strict';
 
-class TwitchFollow {
-  constructor(socket, data) {
+class Follow {
+  constructor(client, data) {
     /**
-     * The twitch manager that instantiated this
-     * @type {TwitchManager}
+     * The twitch client that instantiated this
+     * @type {TwitchClient}
      * @readonly
      */
-    Object.defineProperty(this, 'socket', { value: socket });
+    Object.defineProperty(this, 'client', { value: client });
 
     /**
      * The id of the user this follow is from
@@ -29,7 +29,7 @@ class TwitchFollow {
      */
     this.createdTimestamp = Date.parse(data.followed_at);
 
-    this.socket.users._add({
+    this.client.users._add({
       id: data.from_id ?? data.user_id,
       login: data.from_login ?? data.user_login,
       display_name: data.from_name ?? data.user_name,
@@ -43,7 +43,7 @@ class TwitchFollow {
     if ('broadcaster_user_login' in data) {
       addedBroadcaster.login = data.broadcaster_user_login;
     }
-    this.socket.users._add(addedBroadcaster);
+    this.client.users._add(addedBroadcaster);
   }
 
   /**
@@ -52,7 +52,7 @@ class TwitchFollow {
    * @readonly
    */
   get from() {
-    return this.socket.users.resolve(this._fromId);
+    return this.client.users.resolve(this._fromId);
   }
 
   /**
@@ -61,7 +61,7 @@ class TwitchFollow {
    * @readonly
    */
   get to() {
-    return this.socket.users.resolve(this._toId);
+    return this.client.users.resolve(this._toId);
   }
 
   /**
@@ -74,4 +74,4 @@ class TwitchFollow {
   }
 }
 
-module.exports = TwitchFollow;
+module.exports = Follow;

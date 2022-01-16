@@ -1,13 +1,13 @@
 'use strict';
 
 class TwitchSubscription {
-  constructor(socket, data) {
+  constructor(client, data) {
     /**
-     * The twitch manager that instantiated this
-     * @type {TwitchManager}
+     * The twitch client that instantiated this
+     * @type {TwitchClient}
      * @readonly
      */
-    Object.defineProperty(this, 'socket', { value: socket });
+    Object.defineProperty(this, 'client', { value: client });
 
     /**
      * Whether this subscription was gifted
@@ -50,14 +50,14 @@ class TwitchSubscription {
      */
     this.planName = data.plan_name ?? null;
 
-    this.socket.users._add({
+    this.client.users._add({
       id: data.broadcaster_id ?? data.broadcaster_user_id,
       login: data.broadcaster_login ?? data.broadcaster_user_login,
       display_name: data.broacaster_name ?? data.broadcaster_user_name,
     });
 
     if ('user_name' in data && 'user_login' in data) {
-      this.socket.users._add({
+      this.client.users._add({
         id: data.user_id,
         login: data.user_login,
         display_name: data.user_name,
@@ -65,7 +65,7 @@ class TwitchSubscription {
     }
 
     if ('gifter_id' in data && 'gifter_login' in data && 'gifter_name' in data) {
-      this.socket.users._add({
+      this.client.users._add({
         id: data.gifter_id,
         login: data.gifter_login,
         display_name: data.gifter_name,
@@ -79,7 +79,7 @@ class TwitchSubscription {
    * @readonly
    */
   get from() {
-    return this.socket.users.resolve(this._fromId);
+    return this.client.users.resolve(this._fromId);
   }
 
   /**
@@ -88,7 +88,7 @@ class TwitchSubscription {
    * @readonly
    */
   get to() {
-    return this.socket.users.resolve(this._toId);
+    return this.client.users.resolve(this._toId);
   }
 
   /**
@@ -98,7 +98,7 @@ class TwitchSubscription {
    * @readonly
    */
   get gifter() {
-    return this._gifterId ? this.socket.users.resolve(this._gifterId) : null;
+    return this._gifterId ? this.client.users.resolve(this._gifterId) : null;
   }
 
   /**

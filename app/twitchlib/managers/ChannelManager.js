@@ -1,21 +1,21 @@
 'use strict';
 
-const { Collection } = require('discord.js');
-const TwitchCachedManager = require('./TwitchCachedManager');
-const TwitchChannel = require('../structures/TwitchChannel');
-const TwitchChannelEditor = require('../structures/TwitchChannelEditor');
-const TwitchStream = require('../structures/TwitchStream');
-const TwitchSubscription = require('../structures/TwitchSubscription');
-const TwitchUser = require('../structures/TwitchUser');
+const { Collection } = require('@discordjs/collection');
+const CachedManager = require('./CachedManager');
+const Channel = require('../structures/Channel');
+const ChannelEditor = require('../structures/ChannelEditor');
+const Stream = require('../structures/Stream');
+const Subscription = require('../structures/Subscription');
+const User = require('../structures/User');
 const { _getResReturn } = require('../util/Util');
 
 /**
  * Manages API methods for channels and stores their cache
  * @extends {TwitchCachedManager}
  */
-class TwitchChannelManager extends TwitchCachedManager {
-  constructor(socket, iterable) {
-    super(socket, TwitchChannel, iterable);
+class TwitchChannelManager extends CachedManager {
+  constructor(client, iterable) {
+    super(client, Channel, iterable);
   }
 
   _add(data, cache) {
@@ -57,12 +57,12 @@ class TwitchChannelManager extends TwitchCachedManager {
     const params = new URLSearchParams();
     params.append('broadcaster_id', id);
 
-    const res = await this.socket.rest.get('/channels/editors', { query: params, authId: id, allowApp: false });
+    const res = await this.client.rest.get('/channels/editors', { query: params, authId: id, allowApp: false });
 
     const editors = new Collection();
 
     for (const rawEditor of res.data) {
-      const editor = new TwitchChannelEditor(this.socket, rawEditor);
+      const editor = new ChannelEditor(this.client, rawEditor);
       editors.set(editor.id, editor);
     }
 
@@ -94,25 +94,25 @@ class TwitchChannelManager extends TwitchCachedManager {
   async fetchSubscriptions(streamer, { users = [], resultCount, after } = {}) {
     const params = new URLSearchParams();
     const id = this.resolveId(streamer);
-    if (!id) throw new Error(`Invalid channel id resolvable was provided: ${streamer}`);
+    if (!id) throw new TypeError(`Invalid channel id resolvable was provided: ${streamer}`);
     params.append('broadcaster_id', id);
 
     for (const user of users) {
-      const userId = this.socket.users.resolveId(user);
-      if (!userId) throw new Error(`Invalid user id resolvable was provided: ${user}`);
+      const userId = this.client.users.resolveId(user);
+      if (!userId) throw new TypeError(`Invalid user id resolvable was provided: ${user}`);
       params.append('user_id', userId);
     }
     if (resultCount !== undefined) params.append('first', resultCount);
     if (after !== undefined) params.append('after', after);
 
-    const res = await this.socket.rest.get('/subscriptions', { query: params, authId: id });
+    const res = await this.client.rest.get('/subscriptions', { query: params, authId: id });
 
     if (res.total === 0) return null;
-    if (res.total === 1) return new TwitchSubscription(this.socket, res.data[0]);
+    if (res.total === 1) return new Subscription(this.client, res.data[0]);
 
     const subscriptions = [];
     for (const rawSubscription of res.data) {
-      const subscription = new TwitchSubscription(this.socket, rawSubscription);
+      const subscription = new Subscription(this.client, rawSubscription);
       subscriptions.push(subscription);
     }
     return { total: res.total, points: res.points, subscriptions, cursor: res.pagination?.cursor ?? null };
@@ -138,7 +138,7 @@ class TwitchChannelManager extends TwitchCachedManager {
     const params = new URLSearchParams();
     params.append('broadcaster_id', id);
 
-    const res = await this.socket.rest.get('/channels', { query: params, authId: id });
+    const res = await this.client.rest.get('/channels', { query: params, authId: id });
 
     return this._add(res.data[0], cache);
   }
@@ -166,7 +166,7 @@ class TwitchChannelManager extends TwitchCachedManager {
     if (after !== undefined) params.append('after', after);
     if (resultCount !== undefined) params.append('first', resultCount);
 
-    const res = await this.socket.rest.get('/search/channels', { query: params });
+    const res = await this.client.rest.get('/search/channels', { query: params });
     return _getResReturn(res, cache, this, 'channels');
   }
 
@@ -196,13 +196,13 @@ class TwitchChannelManager extends TwitchCachedManager {
   async edit(channel, data) {
     const _data = { ...data };
     const id = this.resolveId(channel);
-    if (!id) throw new Error(`Invalid channel id resolvable was provided: ${channel}`);
+    if (!id) throw new TypeError(`Invalid channel id resolvable was provided: ${channel}`);
 
     const params = new URLSearchParams();
     params.append('broadcaster_id', id);
 
     if ('category' in data) {
-      const categoryId = this.socket.categories.resolveId(data.category);
+      const categoryId = this.client.categories.resolveId(data.category);
       _data.game_id = categoryId;
       delete _data.category;
     }
@@ -212,7 +212,7 @@ class TwitchChannelManager extends TwitchCachedManager {
       delete _data.language;
     }
 
-    await this.socket.rest.patch('/users', { query: params, body: data, authId: id, allowApp: false });
+    await this.client.rest.patch('/users', { query: params, body: data, authId: id, allowApp: false });
 
     return this._add({ broadcaster_id: id, ..._data });
   }
@@ -223,7 +223,7 @@ class TwitchChannelManager extends TwitchCachedManager {
    * @returns {?TwitchChannel}
    */
   resolve(channel) {
-    if (channel instanceof TwitchUser || channel instanceof TwitchStream) return channel.channel;
+    if (channel instanceof User || channel instanceof Stream) return super.resolve(channel.id);
     return super.resolve(channel);
   }
 
@@ -233,7 +233,7 @@ class TwitchChannelManager extends TwitchCachedManager {
    * @returns {?string}
    */
   resolveId(channel) {
-    if (channel instanceof TwitchUser || channel instanceof TwitchStream) return channel.id;
+    if (channel instanceof User || channel instanceof Stream) return channel.id;
     return super.resolveId(channel);
   }
 }

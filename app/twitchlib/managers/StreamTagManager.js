@@ -1,11 +1,15 @@
 'use strict';
 
-const TwitchDataManager = require('./TwitchDataManager');
-const TwitchTag = require('../structures/TwitchTag');
+const DataManager = require('./DataManager');
+const Tag = require('../structures/Tag');
 
-class TwitchStreamTagManager extends TwitchDataManager {
+/**
+ * Manages API methods for the tags of a stream and stores their cache
+ * @extends {TwitchDataManager}
+ */
+class TwitchStreamTagManager extends DataManager {
   constructor(stream) {
-    super(stream.socket, TwitchTag);
+    super(stream.client, Tag);
 
     /**
      * The stream this manager belongs to
@@ -20,7 +24,7 @@ class TwitchStreamTagManager extends TwitchDataManager {
    * @readonly
    */
   get cache() {
-    return this.socket.tags.cache.filter(tag => this.stream._tags.includes(tag.id));
+    return this.client.tags.cache.filter(tag => this.stream._tags.includes(tag.id));
   }
 
   /**
@@ -34,19 +38,20 @@ class TwitchStreamTagManager extends TwitchDataManager {
 
   /**
    * Fetch the complete list of tags currently on this stream
+   * @param {boolean} [cache=true] whether to cache the fetched data if it wasn't already
    * @returns {Promise<Collection<string,TwitchTag>>}
    */
-  fetch() {
-    return this.socket.streams.fetchTags(this.stream.id);
+  fetch(cache = true) {
+    return this.client.streams.fetchTags(this.stream.id, cache);
   }
 
   /**
    * Edits the tags on this stream, up to 5 non-automatic tags
-   * @param {TwitchTagResolvable[]} newTags the list of new tags
+   * @param {TwitchTagResolvable[]} newTags the list of new tags (an empty array is valid)
    * @returns {Promise<TwitchStream>}
    */
   edit(newTags) {
-    return this.socket.streams.editTags(this.id, newTags);
+    return this.client.streams.editTags(this.id, newTags);
   }
 }
 

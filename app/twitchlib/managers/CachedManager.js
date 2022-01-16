@@ -1,16 +1,16 @@
 'use strict';
 
 const { Collection } = require('discord.js');
-const TwitchDataManager = require('./TwitchDataManager');
+const DataManager = require('./DataManager');
 
 /**
  * Manages the API methods of a data model with a mutable cache of instances.
  * @extends {TwitchDataManager}
  * @abstract
  */
-class TwitchCachedManager extends TwitchDataManager {
-  constructor(socket, holds, iterable) {
-    super(socket, holds);
+class TwitchCachedManager extends DataManager {
+  constructor(client, holds, iterable) {
+    super(client, holds);
 
     /**
      * The cache of itmes for this manager.
@@ -37,7 +37,7 @@ class TwitchCachedManager extends TwitchDataManager {
       return clone;
     }
 
-    const entry = this.holds ? new this.holds(this.socket, data, ...extras) : data;
+    const entry = this.holds ? new this.holds(this.client, data, ...extras) : data;
     if (cache) this.cache.set(id ?? entry.id, entry);
     return entry;
   }

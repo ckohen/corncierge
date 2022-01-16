@@ -1,28 +1,20 @@
 'use strict';
 
-const { Util } = require('discord.js');
+const Util = require('../util/Util');
 
 /**
  * Represents a data model that is identifiable by an id from twitch.
  * @abstract
  */
 class TwitchBase {
-  constructor(socket) {
+  constructor(client) {
     /**
-     * The app that instantiated this
-     * @name TwitchBase#app
-     * @type {Application}
+     * The twitch client that instantiated this
+     * @name TwitchBase#client
+     * @type {TwitchClient}
      * @readonly
      */
-    Object.defineProperty(this, 'app', { value: socket.app });
-
-    /**
-     * The twitch manager that instantiated this
-     * @name TwitchBase#socket
-     * @type {TwitchManager}
-     * @readonly
-     */
-    Object.defineProperty(this, 'socket', { value: socket });
+    Object.defineProperty(this, 'client', { value: client });
   }
 
   _clone() {

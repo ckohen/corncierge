@@ -1,17 +1,17 @@
 'use strict';
 
-const { Collection } = require('discord.js');
-const TwitchCachedManager = require('./TwitchCachedManager');
-const TwitchCategory = require('../structures/TwitchCategory');
+const { Collection } = require('@discordjs/collection');
+const CachedManager = require('./CachedManager');
+const Category = require('../structures/Category');
 const { _getResReturn } = require('../util/Util');
 
 /**
  * Manages API methods for categories / games and stores their cache
  * @extends {TwitchCachedManager}
  */
-class TwitchCategoryManager extends TwitchCachedManager {
-  constructor(socket, iterable) {
-    super(socket, TwitchCategory, iterable);
+class TwitchCategoryManager extends CachedManager {
+  constructor(client, iterable) {
+    super(client, Category, iterable);
   }
 
   /**
@@ -74,7 +74,7 @@ class TwitchCategoryManager extends TwitchCachedManager {
     for (const name of names) {
       params.append('name', name);
     }
-    const res = await this.socket.rest.get('/games', { query: params });
+    const res = await this.client.rest.get('/games', { query: params });
 
     return _getResReturn(res, cache, this);
   }
@@ -100,7 +100,7 @@ class TwitchCategoryManager extends TwitchCachedManager {
     if (before !== undefined) params.append('before', before);
     if (resultCount !== undefined) params.append('first', resultCount);
 
-    const res = await this.socket.rest.get('/games/top', { query: params });
+    const res = await this.client.rest.get('/games/top', { query: params });
 
     return _getResReturn(res, cache, this, 'categories');
   }
@@ -119,7 +119,7 @@ class TwitchCategoryManager extends TwitchCachedManager {
     if (after !== undefined) params.append('after', after);
     if (resultCount !== undefined) params.append('first', resultCount);
 
-    const res = await this.socket.rest.get('/search/categories', { query: params });
+    const res = await this.client.rest.get('/search/categories', { query: params });
     return _getResReturn(res, cache, this, 'categories');
   }
 }

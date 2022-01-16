@@ -1,10 +1,10 @@
 'use strict';
 
-const TwitchBase = require('./TwitchBase');
+const Base = require('./Base');
 
-class TwitchChannel extends TwitchBase {
-  constructor(socket, data) {
-    super(socket);
+class TwitchChannel extends Base {
+  constructor(client, data) {
+    super(client);
 
     /**
      * The channel's id
@@ -62,7 +62,7 @@ class TwitchChannel extends TwitchBase {
       ('broadcaster_login' in data || 'broadcaster_user_login' in data) &&
       ('broadcaster_name' in data || 'broadcaster_user_name' in data || 'display_name' in data)
     ) {
-      this.socket.users._add({
+      this.client.users._add({
         id: this.id,
         login: data.broadcaster_login ?? data.broadcaster_user_login,
         display_name: data.broadcaster_name ?? data.broadcaster_user_name ?? data.display_name,
@@ -70,7 +70,7 @@ class TwitchChannel extends TwitchBase {
     }
 
     if (('game_id' in data || 'category_id' in data) && ('game_name' in data || 'category_name' in data)) {
-      this.socket.categories._add({
+      this.client.categories._add({
         id: data.game_id ?? data.category_id,
         name: data.game_name ?? data.category_name,
       });
@@ -88,7 +88,7 @@ class TwitchChannel extends TwitchBase {
     }
 
     if ('is_live' in data && data.is_live === true) {
-      this.socket.streams._add({
+      this.client.streams._add({
         user_id: data.id,
         type: 'live',
         started_at: data.started_at,
@@ -104,7 +104,7 @@ class TwitchChannel extends TwitchBase {
    * @readonly
    */
   get user() {
-    return this.socket.users.resolve(this.id);
+    return this.client.users.resolve(this.id);
   }
 
   /**
@@ -113,7 +113,7 @@ class TwitchChannel extends TwitchBase {
    * @readonly
    */
   get category() {
-    return this.socket.categories.resolve(this._categoryId);
+    return this.client.categories.resolve(this._categoryId);
   }
 
   /**
@@ -122,7 +122,7 @@ class TwitchChannel extends TwitchBase {
    * @readonly
    */
   get stream() {
-    return this.socket.streams.resolve(this.id);
+    return this.client.streams.resolve(this.id);
   }
 
   /**
@@ -131,7 +131,7 @@ class TwitchChannel extends TwitchBase {
    * @returns {Promise<TwitchChannel>}
    */
   edit(data) {
-    return this.socket.channels.edit(this.id, data);
+    return this.client.channels.edit(this.id, data);
   }
 
   /**
@@ -177,7 +177,7 @@ class TwitchChannel extends TwitchBase {
    * @returns {Promise<TwitchChannel>}
    */
   fetch(force = true) {
-    return this.socket.channels.fetch(this.id, { force });
+    return this.client.channels.fetch(this.id, { force });
   }
 
   /**
@@ -186,7 +186,7 @@ class TwitchChannel extends TwitchBase {
    * @returns {Promise<ChannelSubscriptionData>}
    */
   fetchSubscriptions({ users, resultCount, after }) {
-    return this.socket.channels.fetchSubscriptions(this.id, { users, resultCount, after });
+    return this.client.channels.fetchSubscriptions(this.id, { users, resultCount, after });
   }
 
   /**
@@ -194,7 +194,16 @@ class TwitchChannel extends TwitchBase {
    * @returns {Promise<TwitchChannelEditor[]>}
    */
   fetchEditors() {
-    return this.socket.channels.fetchEditors(this.id);
+    return this.client.channels.fetchEditors(this.id);
+  }
+
+  /**
+   * Fetches the teams this channel is a part of
+   * @param {boolean} [cache=true] Whether to skip the cache check and request the API
+   * @returns {Promise<Collection<string,TwitchTeam>>}
+   */
+  fetchTeams(cache = true) {
+    return this.client.teams.fetchChannelTeams(this.id, cache);
   }
 }
 

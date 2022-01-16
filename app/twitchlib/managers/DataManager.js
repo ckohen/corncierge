@@ -1,15 +1,15 @@
 'use strict';
 
-const TwitchBaseManager = require('./TwitchBaseManager');
+const BaseManager = require('./BaseManager');
 
 /**
  * Manages the API methods of a data model along with a collection of instances.
  * @extends {TwitchBaseManager}
  * @abstract
  */
-class TwitchDataManager extends TwitchBaseManager {
-  constructor(socket, holds) {
-    super(socket);
+class TwitchDataManager extends BaseManager {
+  constructor(client, holds) {
+    super(client);
 
     /**
      * The data structure belonging to this manager.

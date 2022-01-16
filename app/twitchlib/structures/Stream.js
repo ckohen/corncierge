@@ -1,11 +1,11 @@
 'use strict';
 
-const TwitchBase = require('./TwitchBase');
-const TwitchStreamTagManager = require('../managers/TwitchStreamTagManager');
+const Base = require('./Base');
+const StreamTagManager = require('../managers/StreamTagManager');
 
-class TwitchStream extends TwitchBase {
-  constructor(socket, data) {
-    super(socket);
+class TwitchStream extends Base {
+  constructor(client, data) {
+    super(client);
 
     /**
      * The id of the user / channel this stream is on
@@ -14,22 +14,30 @@ class TwitchStream extends TwitchBase {
      */
     this.id = data.user_id ?? data.broadcaster_user_id;
 
-    /**
-     * The streams's id (separate from channel / user id)
-     * @type {?string}
-     */
-    this.streamId = data.id ?? null;
-
-    /**
-     * The timestamp the stream was started at
-     * @type {number}
-     */
-    this.startedTimestamp = Date.parse(data.started_at);
-
     this._patch(data);
   }
 
   _patch(data) {
+    if ('started_at' in data) {
+      /**
+       * The timestamp the stream was started at
+       * @type {?number}
+       */
+      this.startedTimestamp = data.started_at === '' ? null : Date.parse(data.started_at);
+    } else {
+      this.startedTimestamp ??= null;
+    }
+
+    if ('id' in data) {
+      /**
+       * The streams's id (separate from channel / user id)
+       * @type {?string}
+       */
+      this.streamId = data.id;
+    } else {
+      this.streamId ??= null;
+    }
+
     if ('type' in data) {
       /**
        * The stream type, one of:
@@ -102,7 +110,7 @@ class TwitchStream extends TwitchBase {
     }
 
     if (addedChannel.brodcaster_login !== undefined && addedChannel.broadcaster_name !== undefined) {
-      this.socket.channels._add(addedChannel);
+      this.client.channels._add(addedChannel);
     }
   }
 
@@ -112,7 +120,7 @@ class TwitchStream extends TwitchBase {
    * @readonly
    */
   get channel() {
-    return this.socket.channels.resolve(this.id);
+    return this.client.channels.resolve(this.id);
   }
 
   /**
@@ -121,16 +129,16 @@ class TwitchStream extends TwitchBase {
    * @readonly
    */
   get user() {
-    return this.socket.users.resolve(this.id);
+    return this.client.users.resolve(this.id);
   }
 
   /**
    * The time the stream was started at
-   * @type {Date}
+   * @type {?Date}
    * @readonly
    */
   get startedAt() {
-    return new Date(this.startedTimestamp);
+    return this.startedTimestamp ? new Date(this.startedTimestamp) : null;
   }
 
   /**
@@ -139,7 +147,7 @@ class TwitchStream extends TwitchBase {
    * @readonly
    */
   get tags() {
-    return new TwitchStreamTagManager(this);
+    return new StreamTagManager(this);
   }
 
   /**
@@ -148,7 +156,7 @@ class TwitchStream extends TwitchBase {
    * @returns {Promise<CommercialReturnData>}
    */
   startCommercial(length) {
-    return this.socket.streams.startCommercial(this.id, length);
+    return this.client.streams.startCommercial(this.id, length);
   }
 
   /**
@@ -157,7 +165,7 @@ class TwitchStream extends TwitchBase {
    * @returns {Promise<TwitchStream>}
    */
   fetch(force = true) {
-    return this.socket.streams.fetch({ userIds: [this.id], force });
+    return this.client.streams.fetch({ userIds: [this.id], force });
   }
 
   /**

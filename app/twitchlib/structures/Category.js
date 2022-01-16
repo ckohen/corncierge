@@ -1,10 +1,10 @@
 'use strict';
 
-const TwitchBase = require('./TwitchBase');
+const Base = require('./Base');
 
-class TwitchCategory extends TwitchBase {
-  constructor(socket, data) {
-    super(socket);
+class TwitchCategory extends Base {
+  constructor(client, data) {
+    super(client);
 
     /**
      * The category's id
@@ -43,7 +43,7 @@ class TwitchCategory extends TwitchBase {
    * @returns {Promise<TwitchChannel>}
    */
   fetch(force = true) {
-    return this.socket.categories.fetch({ ids: [this.id], force });
+    return this.client.categories.fetch({ ids: [this.id], force });
   }
 }
 

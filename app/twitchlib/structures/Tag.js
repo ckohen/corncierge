@@ -1,10 +1,10 @@
 'use strict';
 
-const TwitchBase = require('./TwitchBase');
+const Base = require('./Base');
 
-class TwitchTag extends TwitchBase {
-  constructor(socket, data) {
-    super(socket);
+class TwitchTag extends Base {
+  constructor(client, data) {
+    super(client);
 
     /**
      * The tag's id
@@ -29,7 +29,7 @@ class TwitchTag extends TwitchBase {
     if ('localization_descriptions' in data) {
       /**
        * The map of localized descriptions for this tag
-       * @type {Map<string, string}
+       * @type {Map<string, string>}
        */
       this.descriptions = new Map(Object.entries(data.localization_descriptions));
     } else {
@@ -71,7 +71,7 @@ class TwitchTag extends TwitchBase {
    * @returns {Promise<TwitchTag>}
    */
   fetch(force = true) {
-    return this.socket.tags.fetch({ tags: [this.id], force });
+    return this.client.tags.fetch({ tags: [this.id], force });
   }
 }
 

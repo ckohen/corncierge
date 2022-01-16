@@ -1,21 +1,21 @@
 'use strict';
 
-const { Collection } = require('discord.js');
-const TwitchCachedManager = require('./TwitchCachedManager');
-const TwitchChannel = require('../structures/TwitchChannel');
-const TwitchFollow = require('../structures/TwitchFollow');
-const TwitchStream = require('../structures/TwitchStream');
-const TwitchSubscription = require('../structures/TwitchSubscription');
-const TwitchUser = require('../structures/TwitchUser');
+const { Collection } = require('@discordjs/collection');
+const CachedManager = require('./CachedManager');
+const Channel = require('../structures/Channel');
+const Follow = require('../structures/Follow');
+const Stream = require('../structures/Stream');
+const Subscription = require('../structures/Subscription');
+const User = require('../structures/User');
 const { _getResReturn } = require('../util/Util');
 
 /**
  * Manages API methods for users and stores their cache
  * @extends {TwitchCachedManager}
  */
-class TwitchUserManager extends TwitchCachedManager {
-  constructor(socket, iterable) {
-    super(socket, TwitchUser, iterable);
+class TwitchUserManager extends CachedManager {
+  constructor(client, iterable) {
+    super(client, User, iterable);
   }
 
   _add(data, cache) {
@@ -64,14 +64,14 @@ class TwitchUserManager extends TwitchCachedManager {
     if (fromId) params.append('from_id', fromId);
     if (toId) params.append('to_id', toId);
 
-    const res = await this.socket.rest.get('/users/follows', { query: params });
+    const res = await this.client.rest.get('/users/follows', { query: params });
 
     if (res.total === 0) return null;
-    if (res.total === 1) return new TwitchFollow(this.socket, res.data[0]);
+    if (res.total === 1) return new Follow(this.client, res.data[0]);
 
     const follows = [];
     for (const rawFollow of res.data) {
-      const follow = new TwitchFollow(this.socket, rawFollow);
+      const follow = new Follow(this.client, rawFollow);
       follows.push(follow);
     }
     return { total: res.total, follows, cursor: res.pagination?.cursor ?? null };
@@ -92,9 +92,9 @@ class TwitchUserManager extends TwitchCachedManager {
     params.append('user_id', userId);
     params.append('broadcaster_id', streamerId);
 
-    const res = await this.socket.rest.get('/subscriptions/user', { query: params, authId: userId });
+    const res = await this.client.rest.get('/subscriptions/user', { query: params, authId: userId });
 
-    return new TwitchSubscription(this.socket, { ...res.data[0], user_id: userId });
+    return new Subscription(this.client, { ...res.data[0], user_id: userId });
   }
 
   /**
@@ -146,8 +146,8 @@ class TwitchUserManager extends TwitchCachedManager {
     }
 
     let authId;
-    if (ids.length === 1 && logins.length === 0) authId = ids[0];
-    const res = await this.socket.rest.get('/users', { query: params, authId });
+    if (ids.length === 1 && logins.length === 0) authId = this.resolveId(ids[0]);
+    const res = await this.client.rest.get('/users', { query: params, authId });
 
     return _getResReturn(res, cache, this);
   }
@@ -165,7 +165,7 @@ class TwitchUserManager extends TwitchCachedManager {
     const params = new URLSearchParams();
     if (description) params.append('description', description);
 
-    const res = await this.socket.rest.put('/users', { query: params, authId: userId, allowApp: false });
+    const res = await this.client.rest.put('/users', { query: params, authId: userId, allowApp: false });
 
     return this._add(res.data[0]);
   }
@@ -176,7 +176,7 @@ class TwitchUserManager extends TwitchCachedManager {
    * @returns {?TwitchUser}
    */
   resolve(user) {
-    if (user instanceof TwitchChannel || user instanceof TwitchStream) return user.user;
+    if (user instanceof Channel || user instanceof Stream) return super.resolve(user.id);
     return super.resolve(user);
   }
 
@@ -186,7 +186,7 @@ class TwitchUserManager extends TwitchCachedManager {
    * @returns {?string}
    */
   resolveId(user) {
-    if (user instanceof TwitchChannel || user instanceof TwitchStream) return user.id;
+    if (user instanceof Channel || user instanceof Stream) return user.id;
     return super.resolveId(user);
   }
 }

@@ -1,10 +1,10 @@
 'use strict';
 
-const TwitchBase = require('./TwitchBase');
+const Base = require('./Base');
 
-class TwitchChannelEditor extends TwitchBase {
-  constructor(socket, data) {
-    super(socket);
+class TwitchChannelEditor extends Base {
+  constructor(client, data) {
+    super(client);
 
     /**
      * The editor's id
@@ -18,7 +18,7 @@ class TwitchChannelEditor extends TwitchBase {
      */
     this.createdTimestamp = new Date(data.created_at).getTime();
 
-    this.socket.users._add({
+    this.client.users._add({
       id: data.user_id,
       user_name: data.user_name,
     });
@@ -30,7 +30,7 @@ class TwitchChannelEditor extends TwitchBase {
    * @readonly
    */
   get user() {
-    return this.socket.users.resolve(this.id);
+    return this.client.users.resolve(this.id);
   }
 
   /**

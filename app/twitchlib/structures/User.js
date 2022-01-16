@@ -1,10 +1,10 @@
 'use strict';
 
-const TwitchBase = require('./TwitchBase');
+const Base = require('./Base');
 
-class TwitchUser extends TwitchBase {
-  constructor(socket, data) {
-    super(socket);
+class TwitchUser extends Base {
+  constructor(client, data) {
+    super(client);
 
     /**
      * The user's id
@@ -137,7 +137,7 @@ class TwitchUser extends TwitchBase {
    * @readonly
    */
   get channel() {
-    return this.socket.channels.resolve(this.id);
+    return this.client.channels.resolve(this.id);
   }
 
   /**
@@ -146,7 +146,7 @@ class TwitchUser extends TwitchBase {
    * @returns {Promise<?TwitchFollow>}
    */
   fetchFollower(user) {
-    return this.socket.users.fetchFollows({ streamer: this.id, user });
+    return this.client.users.fetchFollows({ streamer: this.id, user });
   }
 
   /**
@@ -156,7 +156,7 @@ class TwitchUser extends TwitchBase {
    * @returns {Promise<UserFollowData>}
    */
   fetchFollowers({ resultCount, after }) {
-    return this.socket.users.fetchFollows({ streamer: this.id, resultCount, after });
+    return this.client.users.fetchFollows({ streamer: this.id, resultCount, after });
   }
 
   /**
@@ -166,7 +166,7 @@ class TwitchUser extends TwitchBase {
    * @returns {Promise<UserFollowData>}
    */
   fetchFollowing({ resultCount, after }) {
-    return this.socket.users.fetchFollows({ user: this.id, resultCount, after });
+    return this.client.users.fetchFollows({ user: this.id, resultCount, after });
   }
 
   /**
@@ -175,7 +175,7 @@ class TwitchUser extends TwitchBase {
    * @returns {Promise<TwitchSubscription>}
    */
   fetchSubscription(streamer) {
-    return this.socket.users.fetchSubscription(this.id, streamer);
+    return this.client.users.fetchSubscription(this.id, streamer);
   }
 
   /**
@@ -193,7 +193,7 @@ class TwitchUser extends TwitchBase {
    * @returns {Promise<TwitchUser>}
    */
   edit(description) {
-    return this.socket.users.edit(this.id, description);
+    return this.client.users.edit(this.id, description);
   }
 
   /**
@@ -202,7 +202,7 @@ class TwitchUser extends TwitchBase {
    * @returns {Promise<TwitchUser>}
    */
   fetch(force = true) {
-    return this.socket.users.fetch({ ids: [this.id], force });
+    return this.client.users.fetch({ ids: [this.id], force });
   }
 }
 

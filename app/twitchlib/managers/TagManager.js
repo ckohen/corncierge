@@ -1,17 +1,17 @@
 'use strict';
 
-const { Collection } = require('discord.js');
-const TwitchCachedManager = require('./TwitchCachedManager');
-const TwitchTag = require('../structures/TwitchTag');
+const { Collection } = require('@discordjs/collection');
+const CachedManager = require('./CachedManager');
+const Tag = require('../structures/Tag');
 const { _getResReturn } = require('../util/Util');
 
 /**
  * Manages API methods for tags and stores their cache
  * @extends {TwitchCachedManager}
  */
-class TwitchTagManager extends TwitchCachedManager {
-  constructor(socket, iterable) {
-    super(socket, TwitchTag, iterable);
+class TwitchTagManager extends CachedManager {
+  constructor(client, iterable) {
+    super(client, Tag, iterable);
   }
 
   _add(data, cache) {
@@ -76,7 +76,7 @@ class TwitchTagManager extends TwitchCachedManager {
     if (after !== undefined) params.append('after', after);
     if (resultCount !== undefined) params.append('first', resultCount);
 
-    const res = await this.socket.rest.get('/tags/streams', { query: params });
+    const res = await this.client.rest.get('/tags/streams', { query: params });
 
     return _getResReturn(res, cache, this, 'tags');
   }

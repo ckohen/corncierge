@@ -84,7 +84,7 @@ class CommandHandler {
 
     /**
      * Whether this command has already been handled
-     * @type {boolean};
+     * @type {boolean}
      */
     this.handled = false;
   }
