@@ -1,6 +1,6 @@
 'use strict';
 
-const { Collection } = require('discord.js');
+const { Collection } = require('@discordjs/collection');
 const DataManager = require('./DataManager');
 
 /**
