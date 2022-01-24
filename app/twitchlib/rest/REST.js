@@ -1,6 +1,7 @@
 'use strict';
 
 const { EventEmitter } = require('node:events');
+const { setInterval } = require('node:timers');
 const { Collection } = require('@discordjs/collection');
 const RequestQueue = require('./RequestQueue');
 const { DefaultRestOptions, DefaultUserAgent } = require('../util/Constants');
@@ -27,7 +28,7 @@ const requestMethods = ['delete', 'get', 'patch', 'post', 'put'];
  * @property {string} method request method
  */
 
-class TwitchREST extends EventEmitter {
+class REST extends EventEmitter {
   constructor(options) {
     super();
 
@@ -41,11 +42,32 @@ class TwitchREST extends EventEmitter {
     }
 
     this.getToken = null;
+
+    if (this.options.handlerSweepInterval !== 0 && this.options.handlerSweepInterval !== Infinity) {
+      if (this.options.handlerSweepInterval > 14_400_000) {
+        throw new RangeError('Cannot set an interval greater than 4 hours');
+      }
+      this.handlerSweepTimer = setInterval(() => {
+        const swept = new Collection();
+
+        this.handlers.sweep((v, k) => {
+          const { inactive } = v;
+
+          if (inactive) {
+            swept.set(k, v);
+          }
+
+          return inactive;
+        });
+
+        this.emit('handlerSweep', swept);
+      }, this.options.handlerSweepInterval).unref();
+    }
   }
 
   /**
    * Set a function to get tokens rest can use
-   * @param {Function} fn a function (awaited) that takes a string id and a boolean returns an access token ('0' for app access)
+   * @param {Function} fn a function (awaited) that takes a string id ('0' for app access) and a boolean, returns an access token
    * it should not prevalidate requests when passed true as its second parameter, only validating and refreshing when passed false
    * @returns {TwitchREST}
    */
@@ -58,6 +80,7 @@ class TwitchREST extends EventEmitter {
    * Queues a request to be sent
    * @param {InternalRequest} request request data
    * @returns {Promise<unknown>}
+   * @private
    */
   async request(request) {
     let handlerId = 'global';
@@ -141,4 +164,4 @@ class TwitchREST extends EventEmitter {
   }
 }
 
-module.exports = TwitchREST;
+module.exports = REST;

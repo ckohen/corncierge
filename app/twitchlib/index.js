@@ -1,6 +1,14 @@
 'use strict';
 
+// "Root" classes
+exports.TwitchAuthClient = require('./client/AuthClient');
+exports.TwitchBaseClient = require('./client/BaseClient');
+exports.TwitchClient = require('./client/Client');
+
 // Utilities
+exports.TwitchAPIError = require('./rest/TwitchAPIError');
+exports.TwitchConstants = require('./util/Constants');
+exports.TwitchHTTPError = require('./rest/HTTPError');
 exports.TwitchUtil = require('./util/Util');
 
 // Managers

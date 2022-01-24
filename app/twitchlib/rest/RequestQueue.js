@@ -1,6 +1,7 @@
 'use strict';
 
-const { setTimeout: sleep } = require('timers/promises');
+const { setTimeout, clearTimeout } = require('node:timers');
+const { setTimeout: sleep } = require('node:timers/promises');
 const { AsyncQueue } = require('@sapphire/async-queue');
 const { fetch } = require('undici');
 const HTTPError = require('./HTTPError');
@@ -126,7 +127,7 @@ class RequestQueue {
     } catch (err) {
       // Retry the specified number of times for possible timed out requests
       if (err instanceof Error && err.name === 'AbortError' && retries !== this.manager.options.retries) {
-        return this.runRequest(url, options, extraData, ++retries);
+        return this.runRequest(url, options, extraData, ++retries, authRetry);
       }
 
       throw err;
@@ -163,12 +164,12 @@ class RequestQueue {
         ].join('\n'),
       );
       // Since this is not a server side issue, the next request should pass, so we don't bump the retries counter
-      return this.runRequest(url, options, extraData, retries);
+      return this.runRequest(url, options, extraData, retries, authRetry);
     } else if (res.status >= 500 && res.status < 600) {
       consumeBody(res);
       // Retry the specified number of times for possible server side isues
       if (retries !== this.manager.options.retries) {
-        return this.runRequest(url, options, extraData, ++retries);
+        return this.runRequest(url, options, extraData, ++retries, authRetry);
       }
       // We are out of retries, throw an error
       throw new HTTPError(res.statusText, res.costructor.name, res.status, method, url, extraData);
@@ -178,9 +179,9 @@ class RequestQueue {
       if (res.status === 401 && !authRetry && this.id !== 'global') {
         consumeBody(res);
         const token = await this.manager
-          .getToken(this.id === 'application' ? '0' : this.id)
+          .getToken(this.id === 'application' ? '0' : this.id, false)
           .catch(err => this.debug(`Failed attempt to refresh token for ${this.id}: ${err}`));
-        if (!token) this.token = null;
+        this.token = token ?? null;
         return this.runRequest(url, options, extraData, retries, true);
       }
       // The request w ill not succeed for some reason, parse the error (if any) returned from the api
