@@ -146,6 +146,15 @@ class TwitchStream extends Base {
   }
 
   /**
+   * The amount of time the stream has been ongoing
+   * @type {?number}
+   * @readonly
+   */
+  get uptime() {
+    return this.startedTimestamp ? Date.now() - this.startedTimestamp : null;
+  }
+
+  /**
    * A manager for the tags belonging to this stream
    * @type {TwitchStreamTagManager}
    * @readonly

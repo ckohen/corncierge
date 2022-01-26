@@ -96,11 +96,12 @@ class TwitchAuthClient extends BaseClient {
   /**
    * Sets the database accessor to automatically handle database management
    * @param {TwitchAuthDatabaseAccessor} database the database accessor to set
+   * @returns {Promise}
    */
   setDatabaseAccessor(database) {
     if (typeof database !== 'object' || database === null) throw new TypeError('Database Accessor must be a Object (or class)');
     this.database = database;
-    this.setCache();
+    return this.setCache();
   }
 
   /**

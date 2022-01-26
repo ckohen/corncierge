@@ -61,6 +61,7 @@ class TwitchCategoryManager extends CachedManager {
         }
       }
       if (!shouldFetch) {
+        if (cachedCategories.size === 1) return cachedCategories.first();
         return cachedCategories;
       }
     }

@@ -103,6 +103,15 @@ class TwitchChannel extends Base {
   }
 
   /**
+   * The login name of the user assciated with this channel
+   * @type {?string}
+   * @readonly
+   */
+  get name() {
+    return this.user?.login ?? null;
+  }
+
+  /**
    * The user associated with this channel
    * @type {?TwitchUser}
    * @readonly

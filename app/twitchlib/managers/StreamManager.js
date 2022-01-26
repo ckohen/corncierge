@@ -135,7 +135,7 @@ class TwitchStreamManager extends CachedManager {
    */
 
   /**
-   * Obtains one or multiple users from Twitch, or the cache if they're already available
+   * Obtains one or multiple streams from Twitch, or the cache if they're already available
    * @param {TwitchUserResolvable[]} [options.userIds] users to fetch
    * @param {string[]} [options.userLogins] login names for user to fetch
    * @param {TwitchCategoryResolvable} [options.category] oinly fetch streams in this category
@@ -178,7 +178,8 @@ class TwitchStreamManager extends CachedManager {
         }
       }
       if (!shouldFetch) {
-        return cachedStreams;
+        if (cachedStreams.size === 1) return cachedStreams.first();
+        return { streams: cachedStreams, cursor: null };
       }
     }
 

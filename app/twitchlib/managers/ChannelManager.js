@@ -143,7 +143,7 @@ class TwitchChannelManager extends CachedManager {
    */
 
   /**
-   * Obtains the list of categories matching the search query partially or entirely from Twitch
+   * Obtains the list of channels matching the search query partially or entirely from Twitch
    * @param {string} query the search query
    * @param {boolean} [options.live] whether to only search live channels
    * @param {string} [options.after] the value of the cursor used for pagination to get the next page

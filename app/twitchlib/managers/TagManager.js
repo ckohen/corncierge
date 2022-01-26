@@ -63,7 +63,8 @@ class TwitchTagManager extends CachedManager {
         }
       }
       if (!shouldFetch) {
-        return cachedTags;
+        if (cachedTags.size === 1) return cachedTags.first();
+        return { tags: cachedTags, cursor: null };
       }
     }
 

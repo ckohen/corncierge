@@ -103,6 +103,9 @@ class TwitchClient extends BaseClient {
     if (typeof options.customAuth !== 'boolean') {
       throw new TypeError('The customAuth option must be a boolean');
     }
+    if (!options.customAuth && (typeof options.auth !== 'object' || options.auth === null)) {
+      throw new TypeError('The auth option must be an object');
+    }
   }
 }
 
