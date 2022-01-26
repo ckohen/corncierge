@@ -7,7 +7,28 @@ module.exports = async (socket, channel, user, messageRaw, self) => {
   // Ignore self
   if (self) return;
 
-  const channelData = { name: channel.slice(1), handle: channel, id: await socket.twitch.getId(channel.slice(1)) };
+  const name = channel.slice(1);
+  const cachedId = socket.channelIds.get(name);
+  let channelData;
+  if (cachedId) {
+    channelData = socket.twitch.driver.channels.cache.get(cachedId);
+    if (!channelData) {
+      channelData = await socket.twitch.drivers.channels.fetch(cachedId, { force: true });
+    }
+  } else {
+    channelData = socket.twitch.driver.channels.cache.find(chan => chan.name === name);
+    if (!channelData) {
+      channelData = await socket.twitch.driver.channels.search(name, { resultCount: 1 });
+    }
+    if (channelData) {
+      socket.channelIds.set(name, channelData.id);
+    }
+  }
+
+  if (!channelData) {
+    socket.app.log.warn(module, `Unable to find channel ${name} after recieving message`);
+    return;
+  }
   const message = messageRaw.trim();
   const isPrivileged = twitch.isPrivileged(user, channelData);
 

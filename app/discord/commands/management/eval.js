@@ -55,7 +55,7 @@ class EvalCommand extends BaseCommand {
   clean(text) {
     if (typeof text === 'string') {
       let tokens = findTokens(this.socket.app.options);
-      tokens = tokens.concat(findTokens(collectionObject(this.socket.app.twitch.auth.cache)));
+      tokens = tokens.concat(findTokens(collectionObject(this.socket.app.twitch.driver.auth.cache)));
       tokens.forEach(token => (text = text.replace(new RegExp(token, 'gi'), 'Redacted')));
       return text.replace(/` /g, `\`${String.fromCharCode(8203)}`);
     }

@@ -17,7 +17,7 @@ class TwitchAuthRequest extends BaseRequest {
     const url = new URL(uri, 'https://localhost');
     const code = url.searchParams.get('code');
     if (!code) return { statusCode: 400, data: 'Missing URL Parameter: code' };
-    await this.socket.app.twitch.auth.generateToken(code);
+    await this.socket.app.twitch.driver.auth.generateToken(code);
     return { statusCode: 302, headers: { location: '/success?type=twitchtoken' } };
   }
 }

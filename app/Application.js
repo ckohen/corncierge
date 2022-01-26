@@ -121,15 +121,12 @@ class Application {
       if (this.options.disableServer) return resolve('HTTP Disabled');
       return resolve(this.http.init());
     });
-    const ircInit = new Promise(resolve => {
-      if (this.options.disableIRC) return resolve('IRC Disabled');
-      return resolve(this.twitch.irc.init());
-    });
-    await new Promise(resolve => {
+    const twitchInit = new Promise(resolve => {
       if (this.options.disableTwitch) return resolve('Twitch Disabled');
-      return resolve(this.twitch.auth.setCache());
+      return resolve(this.twitch.init());
     });
-    await Promise.all([discordInit, httpInit, ircInit]);
+
+    await Promise.all([discordInit, httpInit, twitchInit]);
 
     this.log(module, 'Boot complete');
     // Send "Ready" to parent if it exists
@@ -162,7 +159,7 @@ class Application {
     // Panic out if something broke
     const panic = setTimeout(() => process.exit(code), 5000);
     if (!this.options.disableTwitch && !this.options.disableIRC) {
-      await this.twitch.irc.driver.disconnect().catch(err => this.log.debug(module, err));
+      await this.twitch.destroy();
     }
     if (!this.options.disableDiscord) {
       await this.discord.driver.destroy();
@@ -329,8 +326,8 @@ class Application {
     }
     if (!options.disableTwitch) {
       formatted.twitch = {
-        apiConfig: {
-          baseURL: options.twitch.api,
+        rest: {
+          api: options.twitch.api,
           headers: {
             'Client-ID': options.twitch.clientId,
             ...options.twitch.headers,
@@ -338,8 +335,8 @@ class Application {
         },
         auth: {
           redirectUri: options.twitch.redirectUri,
-          apiConfig: {
-            baseURL: options.twitch.authapi,
+          rest: {
+            api: options.twitch.authapi,
           },
           clientId: options.twitch.clientId,
           clientSecret: options.twitch.clientSecret,

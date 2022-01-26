@@ -6,8 +6,6 @@ module.exports = {
   default: options => new Application(options),
   // Main Managers
   Application,
-  APIManager: require('./managers/APIManager'),
-  AuthManager: require('./managers/AuthManager'),
   BaseManager: require('./managers/BaseManager'),
   DatabaseManager: require('./managers/DatabaseManager'),
   DiscordManager: require('./managers/DiscordManager'),
@@ -42,14 +40,5 @@ module.exports = {
   TwitchCommandManager: require('./irc/commands/TwitchCommandManager'),
 
   // Twitch
-  TwitchBase: require('./twitchlib/structures/TwitchBase'),
-  TwitchCategory: require('./twitchlib/structures/TwitchCategory'),
-  TwitchChannel: require('./twitchlib/structures/TwitchChannel'),
-  TwitchFollow: require('./twitchlib/structures/TwitchFollow'),
-  TwitchHypeTrain: require('./twitchlib/structures/TwitchHypeTrain'),
-  TwitchRedemption: require('./twitchlib/structures/TwitchHypeTrain'),
-  TwitchReward: require('./twitchlib/structures/TwitchReward'),
-  TwitchStream: require('./twitchlib/structures/TwitchStream'),
-  TwitchTag: require('./twitchlib/structures/TwitchTag'),
-  TwitchUser: require('./twitchlib/structures/TwitchUser'),
+  ...require('./twitchlib'),
 };

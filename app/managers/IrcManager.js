@@ -19,7 +19,7 @@ const thirtySecs = 30000;
 class IrcManager extends EventManager {
   constructor(app, twitch) {
     if (!twitch.options.irc.identity?.password && twitch.options.irc.identity) {
-      twitch.options.irc.identity.password = twitch.auth.getAccessToken.bind(twitch.auth, twitch.options.irc.botId);
+      twitch.options.irc.identity.password = twitch.driver.auth.getAccessToken.bind(twitch.driver.auth, twitch.options.irc.botId);
     }
     super(app, new Client(twitch.options.irc), twitch.options.irc, events);
 
@@ -47,6 +47,12 @@ class IrcManager extends EventManager {
      * @type {Object<TableName, *>}
      */
     this.cache = {};
+
+    /**
+     * Map of channel names to ids to increase performance of getting channel data
+     * @type {Map<string,string>}
+     */
+    this.channelIds = new Map();
 
     /**
      * The command manager that stores specially handled commands

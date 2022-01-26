@@ -131,6 +131,7 @@ class TwitchUserManager extends CachedManager {
         }
       }
       if (!shouldFetch) {
+        if (cachedUsers.size === 1) return cachedUsers.first();
         return cachedUsers;
       }
     }
