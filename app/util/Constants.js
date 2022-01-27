@@ -154,7 +154,7 @@ exports.DefaultOptions = {
    * @property {string} redirectUri a registered redirect URI for your application
    */
   twitch: {
-    api: 'https://api.twitch.tv/helix/',
+    api: 'https://api.twitch.tv/helix',
     authapi: 'https://id.twitch.tv/oauth2',
 
     /**
