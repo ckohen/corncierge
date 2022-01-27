@@ -33,6 +33,10 @@ class TwitchManager extends EventManager {
    * @returns {Promise}
    */
   async init() {
+    this.app.log.debug(module, 'Registering events');
+    this.attach();
+
+    this.app.log.debug(module, 'Initialize twitch deps');
     await Promise.all([this.irc?.init(), this.driver.auth.setDatabaseAccessor(this.app.database.tables.twitchAuth)]);
   }
 
