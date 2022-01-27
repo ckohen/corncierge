@@ -20,8 +20,8 @@ class twitchAuthTable extends BaseTable {
    * @param {string} id the id of the user to get tokens for
    * @returns {Promise<Object>}
    */
-  getSingle(id) {
-    const data = this.socket.query('SELECT id, accessToken, refreshToken, scopes FROM `twitchauth` WHERE `id` = ?', [id]);
+  async getSingle(id) {
+    const data = await this.socket.query('SELECT id, accessToken, refreshToken, scopes FROM `twitchauth` WHERE `id` = ?', [id]);
     return this.parseJSON(['scopes'], data)[0];
   }
 
