@@ -47,6 +47,7 @@
     "mysql2": "^2.3.3",
     "pluralize": "^8.0.0",
     "simple-youtube-api": "^5.2.1",
+    "sodium": "^3.0.2",
     "tmi.js": "^1.8.5",
     "tokenthrottle": "^1.3.0",
     "undici": "^4.12.2",
