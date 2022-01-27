@@ -138,13 +138,13 @@ class TwitchAuthClient extends BaseClient {
         redirect_uri: this.options.redirectUri,
       }),
     });
-    const validated = await this.validateToken(res.data.access_token, true);
+    const validated = await this.validateToken(res.access_token, true);
     if (!validated) throw new Error('Token generated successfully but post validation failed');
     this.emit('debug', `Succesful Generation`);
     const resolvedData = {
       id: validated.user_id,
-      accessToken: res.data.access_token,
-      refreshToken: res.data.refresh_token ?? null,
+      accessToken: res.access_token,
+      refreshToken: res.refresh_token ?? null,
       scopes: validated.scopes,
     };
     await this._add(resolvedData);
@@ -168,9 +168,9 @@ class TwitchAuthClient extends BaseClient {
     this.emit('debug', 'Succesful app generation');
     const resolvedData = {
       id: '0',
-      accessToken: res.data.access_token,
-      refreshToken: res.data.refresh_token ?? null,
-      scopes: res.data.scope,
+      accessToken: res.access_token,
+      refreshToken: res.refresh_token ?? null,
+      scopes: res.scope,
     };
     await this._add(resolvedData);
     return resolvedData.accessToken;
@@ -228,13 +228,13 @@ class TwitchAuthClient extends BaseClient {
         }
         throw err;
       });
-    const validated = await this.validateToken(res.data.access_token, true);
+    const validated = await this.validateToken(res.access_token, true);
     if (!validated) throw new Error('Token refreshed successfully but post validation failed');
     this.emit('debug', `Succesful Refresh`);
     const resolvedData = {
       id,
-      accessToken: res.data.access_token,
-      refreshToken: res.data.refresh_token ?? null,
+      accessToken: res.access_token,
+      refreshToken: res.refresh_token ?? null,
       scopes: validated.scopes,
     };
     await this._add(resolvedData);
@@ -251,9 +251,9 @@ class TwitchAuthClient extends BaseClient {
   async validateToken(token, fullResponse = false) {
     try {
       this.emit('debug', 'Validating token');
-      const res = await this.api.get('/validate', { headers: { Authorization: `OAuth ${token}` } });
+      const res = await this.rest.get('/validate', { headers: { Authorization: `OAuth ${token}` } });
       this.emit('debug', 'Token valid');
-      return fullResponse ? res.data : true;
+      return fullResponse ? res : true;
     } catch (error) {
       this.emit('debug', 'Token Invalid');
       /**

@@ -15,14 +15,24 @@ class TwitchCachedManager extends DataManager {
     /**
      * The cache of itmes for this manager.
      * @type {Collection}
+     * @private
      */
-    this.cache = new Collection();
+    this._cache = new Collection();
 
     if (iterable) {
       for (const item of iterable) {
         this._add(item);
       }
     }
+  }
+
+  /**
+   * The cache of itmes for this manager.
+   * @type {Collection}
+   * @readonly
+   */
+  get cache() {
+    return this._cache;
   }
 
   _add(data, cache = true, { id, extras = [] } = {}) {

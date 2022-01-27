@@ -12,7 +12,7 @@ const { DefaultOptions } = require('../util/Constants');
 
 /**
  * The main hub for interacting with the Twitch API
- * @extends {BaseClient}
+ * @extends {TwitchBaseClient}
  */
 class TwitchClient extends BaseClient {
   /**
@@ -73,6 +73,20 @@ class TwitchClient extends BaseClient {
 
     if (!this.options.customAuth) {
       this.setTokenFunction(this.auth.getAccessToken.bind(this.auth));
+
+      /**
+       * Emitted for rest debugging information when using built in auth client.
+       * @event TwitchClient#restDebug
+       * @param {string} info The debug information
+       */
+      this.auth.on('debug', (...args) => this.emit('restDebug', ...args));
+
+      /**
+       * Emitted when a token is determined to be invalid when using built in auth client.
+       * @event TwitchClient#invalidAuthToken
+       * @param {Error} error the error that was received indicating the token is invalid
+       */
+      this.auth.on('invalidToken', (...args) => this.emit('invalidAuthToken', ...args));
     }
   }
 
