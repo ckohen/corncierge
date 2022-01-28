@@ -99,7 +99,7 @@ class LogManager extends BaseManager {
    * @param {string} path the path to the module that this occured in
    * @param {string} message the message to send
    * @param {Error} [error] the full error object to use for a stacktrace
-   * @returns {Promise<axiosRequest, axiosResponse>}
+   * @returns {Promise<APIMessage>}
    * @private
    */
   webhook(level, path, message, error) {

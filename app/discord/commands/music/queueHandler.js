@@ -5,6 +5,9 @@ const { AudioPlayerStatus, createAudioPlayer, entersState, VoiceConnectionDiscon
 
 const wait = promisify(setTimeout);
 
+/**
+ * Represents a queue of music to be played on a voice connection to discord
+ */
 class MusicSubscription {
   constructor(voiceConnection) {
     this.voiceConnection = voiceConnection;
@@ -104,6 +107,7 @@ class MusicSubscription {
   }
 
   /**
+   * @type {boolean}
    * @readonly
    */
   get isPlaying() {
@@ -111,6 +115,7 @@ class MusicSubscription {
   }
 
   /**
+   * @type {?unknown}
    * @readonly
    */
   get nowPlaying() {

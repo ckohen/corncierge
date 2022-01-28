@@ -20,7 +20,7 @@ class CommandHandler {
       /**
        * The name and id of the channel that the command was executed in
        * @name CommandHandler#channel
-       * @type {Object}
+       * @type {TwitchChannel}
        */
       channel: { value: channel },
 
@@ -84,7 +84,7 @@ class CommandHandler {
 
     /**
      * Whether this command has already been handled
-     * @type {boolean};
+     * @type {boolean}
      */
     this.handled = false;
   }
@@ -169,7 +169,7 @@ class CommandHandler {
       caster: this.channel.name,
     };
     this.socket.cache.variables.get(this.channel.name)?.forEach(variable => (replaceables[`var-${variable.name.toLowerCase()}`] = variable.value));
-    this.socket.say(this.channel.handle, util.mentionable(this.isPrivileged && mention, this.target, util.format(message, replaceables)));
+    this.socket.say(`#${this.channel.name}`, util.mentionable(this.isPrivileged && mention, this.target, util.format(message, replaceables)));
   }
 }
 

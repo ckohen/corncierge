@@ -6,8 +6,6 @@ module.exports = {
   default: options => new Application(options),
   // Main Managers
   Application,
-  APIManager: require('./managers/APIManager'),
-  AuthManager: require('./managers/AuthManager'),
   BaseManager: require('./managers/BaseManager'),
   DatabaseManager: require('./managers/DatabaseManager'),
   DiscordManager: require('./managers/DiscordManager'),
@@ -40,4 +38,7 @@ module.exports = {
   RequestManager: require('./http/requests/RequestManager'),
   TableManager: require('./database/tables/TableManager'),
   TwitchCommandManager: require('./irc/commands/TwitchCommandManager'),
+
+  // Twitch
+  ...require('./twitchlib'),
 };
