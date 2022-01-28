@@ -63,13 +63,6 @@ class CommandHandler {
      * @type {boolean}
      */
     this.isVip = util.twitch.isVip(this.user);
-
-    /**
-     * Whether arguments were provided with this exectuion
-     * @type {boolean}
-     */
-    this.hasArgs = this.args.length > 0;
-
     /**
      * The targetted user, simply the first arg when provided, otherwise the user executing
      * @type {string}
@@ -87,6 +80,15 @@ class CommandHandler {
      * @type {boolean}
      */
     this.handled = false;
+  }
+
+  /**
+   * Whether arguments were provided with this exectuion
+   * @type {boolean}
+   * @readonly
+   */
+  get hasArgs() {
+    return this.args.length > 0;
   }
 
   /**
@@ -167,8 +169,23 @@ class CommandHandler {
       touser: this.target,
       count: this.command.count,
       caster: this.channel.name,
+      query: this.args.join(' '),
     };
+    const replaceablesWithDefaults = ['touser', 'query'];
     this.socket.cache.variables.get(this.channel.name)?.forEach(variable => (replaceables[`var-${variable.name.toLowerCase()}`] = variable.value));
+    const potentialReplaceables = message.matchAll(/{([^{}]*)}/g);
+    for (const [, key] of potentialReplaceables) {
+      if (!key.includes('-')) continue;
+      const split = key.split('-');
+      const initialParam = split[0];
+      if (!replaceablesWithDefaults.includes(initialParam)) continue;
+      switch (initialParam) {
+        case replaceablesWithDefaults[0]:
+        case replaceablesWithDefaults[1]:
+          replaceables[key] = this.hasArgs ? replaceables[initialParam] : split.slice(1).join('-');
+          break;
+      }
+    }
     this.socket.say(`#${this.channel.name}`, util.mentionable(this.isPrivileged && mention, this.target, util.format(message, replaceables)));
   }
 }
