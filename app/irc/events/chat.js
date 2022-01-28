@@ -11,10 +11,7 @@ module.exports = async (socket, channel, user, messageRaw, self) => {
   const cachedId = socket.channelIds.get(name);
   let channelData;
   if (cachedId) {
-    channelData = socket.twitch.driver.channels.cache.get(cachedId);
-    if (!channelData) {
-      channelData = await socket.twitch.drivers.channels.fetch(cachedId, { force: true });
-    }
+    channelData = await socket.twitch.driver.channels.fetch(cachedId);
   } else {
     channelData = socket.twitch.driver.channels.cache.find(chan => chan.name === name);
     if (!channelData) {

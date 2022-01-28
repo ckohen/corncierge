@@ -14,7 +14,7 @@ class TwitchChannel extends Base {
      * The channel's id
      * @type {string}
      */
-    this.id = data.broadcaster_id ?? data.broadcaster_user_id;
+    this.id = data.id ?? data.broadcaster_id ?? data.broadcaster_user_id;
 
     this._patch(data);
   }
