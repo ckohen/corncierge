@@ -12,7 +12,7 @@ class UptimeTwitchCommand extends TwitchCommand {
   }
 
   async run(handler) {
-    const stream = await this.socket.twitch.driver.streams.fetch(handler.channel.id).catch(err => this.socket.app.log.verbose(module, err));
+    const stream = await this.socket.twitch.driver.streams.fetch(handler.channel.id, { force: true }).catch(err => this.socket.app.log.verbose(module, err));
     if (!stream?.startedTimestamp) return false;
     handler.respond(util.constants.IRCResponders.uptime(util.relativeTime(stream.startedTimestamp, 3)));
     return true;
