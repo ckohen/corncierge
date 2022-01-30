@@ -80,15 +80,15 @@ class UtilManager {
   /**
    * Replaces parameters wrapped in {} with values
    * @param {string} template the message to format with additional information
-   * @param {Object} values an object containing key value pairs of what to replace and what it is replaced with
+   * @param {Map} values an object containing key value pairs of what to replace and what it is replaced with
    * @returns {string}
    */
   static format(template, values = {}) {
     if (!template) return false;
-    if (!values || Object.keys(values).length === 0) return template;
+    if (!values || values.size === 0) return template;
     return template.replace(/{([^{}]*)}/g, (match, key) => {
-      if (!Object.prototype.hasOwnProperty.call(values, key)) return match;
-      return values[key];
+      if (!values.has(key)) return match;
+      return values.get(key);
     });
   }
 

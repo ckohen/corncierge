@@ -1,5 +1,6 @@
 'use strict';
 
+const { Collection } = require('@discordjs/collection');
 const util = require('../../util/UtilManager');
 
 const TwitchCommand = require('../commands/TwitchCommand');
@@ -164,29 +165,39 @@ class CommandHandler {
   respond(message, mention = false) {
     if (this.handled) return;
     if (!message) return;
-    const replaceables = {
-      user: util.twitch.handle(this.user),
-      touser: this.target,
-      count: this.command.count,
-      caster: this.channel.name,
-      query: this.args.join(' '),
-    };
-    const replaceablesWithDefaults = ['touser', 'query'];
+    const replaceables = new Collection([
+      ['user', util.twitch.handle(this.user)],
+      ['touser', this.target],
+      ['count', this.command.count],
+      ['caster', this.channel.name],
+      ['query', this.args.join(' ')],
+    ]);
     this.socket.cache.variables.get(this.channel.name)?.forEach(variable => (replaceables[`var-${variable.name.toLowerCase()}`] = variable.value));
-    const potentialReplaceables = message.matchAll(/{([^{}]*)}/g);
-    for (const [, key] of potentialReplaceables) {
-      if (!key.includes('-')) continue;
-      const split = key.split('-');
-      const initialParam = split[0];
-      if (!replaceablesWithDefaults.includes(initialParam)) continue;
-      switch (initialParam) {
-        case replaceablesWithDefaults[0]:
-        case replaceablesWithDefaults[1]:
-          replaceables[key] = this.hasArgs ? replaceables[initialParam] : split.slice(1).join('-');
-          break;
-      }
+
+    const potentialReplaceables = [...message.matchAll(/{([^{}]*)}/g)];
+    const defaultables = this.getDefaultableReplacements(potentialReplaceables, replaceables);
+    const finalReplaceables = replaceables.concat(defaultables);
+
+    this.socket.say(`#${this.channel.name}`, util.mentionable(this.isPrivileged && mention, this.target, util.format(message, finalReplaceables)));
+  }
+
+  /**
+   * Generates the collection of replaceable keys in the message that may have default values
+   * @param {RegExpMatchArray[]} potentials a list of all potential replaceable items in the message
+   * @param {Collection<string,string>} existing a list of the existing replaceables to utilize when not defaulted
+   * @returns {Collection<string,string>}
+   * @private
+   */
+  getDefaultableReplacements(potentials, existing) {
+    const replaceablesWithDefaults = ['touser', 'query'];
+    const validatedPotentials = potentials.filter(([, key]) => replaceablesWithDefaults.some(defaultable => key.startsWith(`${defaultable}-`)));
+    const replacements = new Collection();
+    for (const [, key] of validatedPotentials) {
+      if (replacements.has(key)) continue;
+      const [type, ...additional] = key.split('-');
+      replacements.set(key, this.hasArgs ? existing.get(type) : additional.join('-'));
     }
-    this.socket.say(`#${this.channel.name}`, util.mentionable(this.isPrivileged && mention, this.target, util.format(message, replaceables)));
+    return replacements;
   }
 }
 

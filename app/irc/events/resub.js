@@ -9,5 +9,13 @@ module.exports = (socket, channel, user, _, message, tags) => {
   const alert = socket.app.settings.get('irc_message_resub');
   const months = tags['msg-param-cumulative-months'];
   const duration = plural('month', Number(months), true);
-  socket.say(channel, format(alert, { duration, user }));
+  socket.say(
+    channel,
+    new Map(
+      format(alert, [
+        ['duration', duration],
+        ['user', user],
+      ]),
+    ),
+  );
 };
