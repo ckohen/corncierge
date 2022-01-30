@@ -98,7 +98,7 @@ exports.DefaultOptions = {
   discord: {
     clientOptions: {
       partials: ['MESSAGE', 'REACTION'],
-      allowedMentions: { repliedUser: false },
+      allowedMentions: { parse: ['everyone', 'roles', 'users'], repliedUser: false },
       intents: [
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MEMBERS,
