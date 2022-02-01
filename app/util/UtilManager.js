@@ -170,13 +170,14 @@ class UtilManager {
   /**
    * Gets the relative amount of time since a specified time
    * @param {Moment|string|number|Date} then the time to get the difference from now as
-   * @param {number} specificity the maximum units to display
-   * @param {boolean} preferHours whether to use hours instead of days
+   * @param {number} [specificity] the maximum units to display
+   * @param {boolean} [preferHours] whether to use hours instead of days
+   * @param {boolean} [isDuration] whether the then is already a duration
    * @returns {string}
    */
-  static relativeTime(then, specificity = 2, preferHours = false) {
+  static relativeTime(then, specificity = 2, preferHours = false, isDuration = false) {
     const twoDays = 172800000;
-    const diff = moment().diff(then);
+    const diff = isDuration ? then : moment().diff(then);
     const units = ['y', 'mo', 'd', 'h', 'm', 's'];
     if (preferHours && diff < twoDays) units.splice(2, 1);
     return humanize(diff, {

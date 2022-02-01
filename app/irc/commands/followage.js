@@ -24,7 +24,9 @@ class FollowageTwitchCommand extends TwitchCommand {
 
     const followData = await handler.channel.user?.fetchFollower(id).catch(err => this.socket.app.log.warn(module, err));
     if (!followData || followData.createdTimestamp == null) return false; // eslint-disable-line eqeqeq
-    handler.respond(util.constants.IRCResponders.followage(name, util.humanDate(followData.createdTimestamp), util.relativeTime(followData.createdTimestamp)));
+    handler.respond(
+      util.constants.IRCResponders.followage(name, util.humanDate(followData.createdTimestamp), util.relativeTime(followData.createdTimestamp, 4)),
+    );
     return true;
   }
 }
