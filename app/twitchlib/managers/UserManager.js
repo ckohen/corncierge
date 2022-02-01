@@ -122,7 +122,7 @@ class TwitchUserManager extends CachedManager {
       }
       if (!shouldFetch) {
         for (const login of logins) {
-          const user = this.cache.find(u => u.login === login);
+          const user = this.cache.find(u => u.login === login.toLowerCase());
           if (!user) {
             shouldFetch = true;
             break;
