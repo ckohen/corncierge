@@ -256,9 +256,6 @@ class CommandHandler {
    * @private
    */
   async getTwitchReplacements(potentials) {
-    // User scope: twitch.user.followerCount twitch.user.createdAt twitch.user.displayName
-    // Channel scpope twitch.channel.title twitch.channel.category twitch.channel.subscriberCount twitch.channel.subscriptionPoints
-    // Stream scope: twitch.stream.startedAt twitch.stream.uptime twitch.stream.tags
     const replacements = new Collection();
     const addReplacement = (key, value, time = false) => {
       let formattedValue = value;

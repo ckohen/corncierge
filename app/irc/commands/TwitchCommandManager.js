@@ -24,7 +24,6 @@ class TwitchCommandManager {
 
     this.register(require('./followage'));
     this.register(require('./joke'));
-    this.register(require('./uptime'));
     this.register(require('./variable'));
   }
 
