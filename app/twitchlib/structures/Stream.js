@@ -89,7 +89,7 @@ class TwitchStream extends Base {
 
     const addedChannel = {
       broadcaster_id: data.user_id ?? data.broadcaster_user_id,
-      brodcaster_login: data.user_login ?? data.broadcaster_user_login,
+      broadcaster_login: data.user_login ?? data.broadcaster_user_login,
       broadcaster_name: data.user_name ?? data.broadcaster_user_name,
     };
 
@@ -113,7 +113,7 @@ class TwitchStream extends Base {
       addedChannel.is_mature = data.is_mature;
     }
 
-    if (addedChannel.brodcaster_login !== undefined && addedChannel.broadcaster_name !== undefined) {
+    if (addedChannel.broadcaster_login !== undefined && addedChannel.broadcaster_name !== undefined) {
       this.client.channels._add(addedChannel);
     }
   }

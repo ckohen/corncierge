@@ -16,16 +16,20 @@ class TwitchUser extends Base {
      */
     this.id = data.id ?? data.user_id;
 
-    /**
-     * The timestamp the user was created at
-     * @type {number}
-     */
-    this.createdTimestamp = Date.parse(data.created_at);
-
     this._patch(data);
   }
 
   _patch(data) {
+    if ('created_at' in data) {
+      /**
+       * The timestamp the user was created at
+       * @type {?number}
+       */
+      this.createdTimestamp = Date.parse(data.created_at);
+    } else {
+      this.createdTimestamp ??= null;
+    }
+
     if ('login' in data || 'user_login' in data) {
       /**
        * The user's login name
@@ -128,11 +132,11 @@ class TwitchUser extends Base {
 
   /**
    * The time the user was created at
-   * @type {Date}
+   * @type {?Date}
    * @readonly
    */
   get createdAt() {
-    return new Date(this.createdTimestamp);
+    return this.createdTimestamp ? new Date(this.createdTimestamp) : null;
   }
 
   /**

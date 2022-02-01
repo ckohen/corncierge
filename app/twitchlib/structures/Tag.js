@@ -57,7 +57,7 @@ class TwitchTag extends Base {
    * @readonly
    */
   get name() {
-    return this.names?.['en-us'] ?? null;
+    return this.names?.get('en-us') ?? null;
   }
 
   /**
@@ -66,7 +66,7 @@ class TwitchTag extends Base {
    * @readonly
    */
   get description() {
-    return this.descriptions?.['en-us'] ?? null;
+    return this.descriptions?.get('en-us') ?? null;
   }
 
   /**
