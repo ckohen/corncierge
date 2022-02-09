@@ -211,7 +211,9 @@ class CommandHandler {
   async respond(message, mention = false) {
     if (this.handled) return;
     if (!message) return;
-    this.socket.cache.variables.get(this.channel.name)?.forEach(variable => (replaceables[`var-${variable.name.toLowerCase()}`] = variable.value));
+    const variableReplacements = new Collection(
+      this.socket.cache.variables.get(this.channel.name)?.map(variable => [`var-${variable.name.toLowerCase()}`, variable.value]),
+    );
 
     const potentialReplaceables = [...message.matchAll(/{([^{}]*)}/g)];
     const defaultables = this.getDefaultableReplacements(potentialReplaceables);
@@ -220,7 +222,7 @@ class CommandHandler {
       this.socket.app.log.verbose(module, 'Early exit on respond due to error with twitch', err);
     });
     if (!twitchReplacements) return;
-    const replaceables = this._replaceables.concat(defaultables, twitchReplacements);
+    const replaceables = this._replaceables.concat(variableReplacements, defaultables, twitchReplacements);
 
     this.socket.say(`#${this.channel.name}`, util.mentionable(this.isPrivileged && mention, this.target, util.format(message, replaceables)));
   }
