@@ -58,5 +58,9 @@ module.exports = async (socket, channel, user, messageRaw, self) => {
     }
   }
 
-  new handlers.command(socket, channelData, user, command, args, isPrivileged).execute();
+  try {
+    await new handlers.command(socket, channelData, user, command, args, isPrivileged).execute();
+  } catch (err) {
+    socket.app.log.warn(module, `Error occured during command call ${command.input}`, err);
+  }
 };
