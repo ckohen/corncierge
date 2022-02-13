@@ -1,6 +1,6 @@
 {
   "name": "corncierge",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A moderation and command bot for Twitch and a fully integrated Discord bot.",
   "main": "./app/index.js",
   "exports": {
