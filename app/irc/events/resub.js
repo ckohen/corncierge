@@ -11,8 +11,9 @@ module.exports = (socket, channel, user, _, message, tags) => {
   const duration = plural('month', Number(months), true);
   socket.say(
     channel,
-    new Map(
-      format(alert, [
+    format(
+      alert,
+      new Map([
         ['duration', duration],
         ['user', user],
       ]),

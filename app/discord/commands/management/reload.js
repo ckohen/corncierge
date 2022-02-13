@@ -28,7 +28,7 @@ class ReloadCommand extends BaseCommand {
       this.socket.app.setSettings(),
       this.socket.app.setStreaming(),
       ircDisabled ? Promise.resolve('Twitch Disabled') : twitch.irc.setCache(),
-      twitchDisabled ? Promise.resolve('Twitch Disabled') : twitch.drvier.auth.setCache(),
+      twitchDisabled ? Promise.resolve('Twitch Disabled') : twitch.driver.auth.setCache(),
       discord.setCache(),
     ]).then(() => {
       const md = (name, metric) => `**${metric}** ${plural(name, metric)}`;
