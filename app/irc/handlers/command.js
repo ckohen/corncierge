@@ -327,7 +327,10 @@ class CommandHandler {
                 finalData = `${data.first().name} and ${data.last().name}`;
                 break;
               default:
-                finalData = [...data.values()].reduce((prev, curr, ind) => `${prev}${ind === 0 ? '' : ', '}${ind === data.size - 1 ? 'and ' : ''}${curr}`, '');
+                finalData = [...data.values()].reduce(
+                  (prev, curr, ind) => `${prev}${ind === 0 ? '' : ', '}${ind === data.size - 1 ? 'and ' : ''}${curr.name}`,
+                  '',
+                );
             }
           }
 
