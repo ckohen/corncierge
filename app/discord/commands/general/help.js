@@ -24,17 +24,6 @@ class HelpCommand extends BaseCommand {
     }
     request = request.toLowerCase();
 
-    let music = false;
-    for (let channel of this.socket.app.settings.get(`discord_channel_music`).split(',')) {
-      try {
-        if (this.socket.driver.channels.cache.get(channel).guild.id === message.guildId) {
-          music = true;
-        }
-      } catch {
-        music = false;
-      }
-    }
-
     switch (request) {
       case 'prefix':
         embed.addField('About', 'This command allows you to change the prefix for the bot server wide.');
@@ -235,18 +224,10 @@ class HelpCommand extends BaseCommand {
             'The `randmove` command will not consider bots unless the number specified is 0 or greater than the number of users in the *from* channel.',
         );
         break;
-      case 'music':
-        if (music) {
-          embed.addField('About', 'The music commands allow you to play YouTube Videos or Playlists in any voice channel the bot is able to join.');
-        } else {
-          embed.addField('About', 'While the commands exist for using this bot as a music bot, due to network restraints, they are currently disabled.');
-        }
-        break;
       case 'donate':
         embed.addField(
           'Thank You!',
-          'Thank you for considering donating. Donations of any size are greatly appreciated. If you have any feature requests, you will have priority. ' +
-            'You will also get first access when the music commands are being rolled out.',
+          'Thank you for considering donating. Donations of any size are greatly appreciated. If you have any feature requests, you will have priority.',
         );
         embed.addField('\u200b', '\u200b');
         embed.addField('Donation Link', `<${appOpts.donate}>`);
@@ -343,15 +324,6 @@ class HelpCommand extends BaseCommand {
           'Rooms',
           `Rooms give you the flexibility to organize members temporarily, without roles. Use \`${commandPrefix}help room\` to see how to use them.`,
         );
-        if (music) {
-          embed.addField(
-            'Music',
-            `The music commands are the same as most other discord music bots, to get started, use \`${commandPrefix}play\`, ` +
-              `and use \`${commandPrefix}help music\` to see all commands.`,
-          );
-        } else {
-          embed.addField('Music', 'Unfortunately, music commands have not been enabled on this server, they are still a WIP.', true);
-        }
         embed.addField('\u200b', '\u200b');
         embed.addField(
           'Donate',

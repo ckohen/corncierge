@@ -16,10 +16,10 @@ After installing the database, you will need to configure it with the required t
 
 The `settings` table contains critical information for runtime, it uses a key value pair:
 
-| Column Name | Datatype      | Default |
-| ----------- | ------------- | ------- |
-| name*       | VARCHAR(255)* |         |
-| value       | VARCHAR(255)  | ''      |
+| Column Name | Datatype       | Default |
+| ----------- | -------------- | ------- |
+| name\*      | VARCHAR(255)\* |         |
+| value       | VARCHAR(255)   | ''      |
 
 This table will need to have a few keys populated. Some of these keys will not need to be populated if that part of the app is not used. Here are the names of the keys and what they need to store:
 
@@ -27,7 +27,6 @@ This table will need to have a few keys populated. Some of these keys will not n
 - `discord_activity_type` - the type of activity to display, can be set during runtime via command
 - `discord_channel_commandManagement` - until multiple twitch channels are supported better, a comma separated list of channel ids where twitch commands can be managed
 - `discord_channel_console` - a comma separated list of channel ids where most management commands can be run
-- `discord_channel_music` - a comma separated list of channel ids where music commands can be used
 - `discord_guild_management` - a comma separated list of guild ids where the rest of the management commands can be used
 - `discord_user_owner` - a comma separated list of user ids that can run owner only commands
 - `irc_message_cheer` - until multiple twitch channels are supported better, the message sent when someone cheers in a twitch chat
@@ -40,12 +39,12 @@ This table will need to have a few keys populated. Some of these keys will not n
 
 The `streaming` table contains information for handling different streamers notifications, here is its structure:
 
-| Column Name | Datatype      | Default |
-| ----------- | ------------- | ------- |
-| name*       | VARCHAR(255)* |         |
-| channel     | VARCHAR(50)   | NULL    |
-| role        | VARCHAR(50)   | NULL    |
-| lastMessage | VARCHAR(50)   | NULL    |
+| Column Name | Datatype       | Default |
+| ----------- | -------------- | ------- |
+| name\*      | VARCHAR(255)\* |         |
+| channel     | VARCHAR(50)    | NULL    |
+| role        | VARCHAR(50)    | NULL    |
+| lastMessage | VARCHAR(50)    | NULL    |
 
 ## Additional Tables
 
@@ -57,7 +56,7 @@ The `colormanager` table houses data for the `!colormanager`, `!color`, and `/co
 
 | Column Name | Datatype      | Default |
 | ----------- | ------------- | ------- |
-| guildId*    | VARCHAR(50)*  |         |
+| guildId\*   | VARCHAR(50)\* |         |
 | roles       | LONGTEXT      | NULL    |
 | snowflakes  | LONGTEXT      | NULL    |
 
@@ -67,7 +66,7 @@ The `newmemberrole` table houses data for the `!autorole` command and the automa
 
 | Column Name | Datatype      | Default |
 | ----------- | ------------- | ------- |
-| guildId*    | VARCHAR(50)*  |         |
+| guildId\*   | VARCHAR(50)\* |         |
 | roleId      | VARCHAR(50)   | NULL    |
 | delayTime   | VARCHAR(8)    | '0'     |
 
@@ -77,8 +76,8 @@ The `prefixes` table houses data for the `!prefix` command and the prefix used f
 
 | Column Name | Datatype      | Default |
 | ----------- | ------------- | ------- |
-| guildId*    | VARCHAR(50)*  |         |
-| prefix      | VARCHAR(50)*  | '!'     |
+| guildId\*   | VARCHAR(50)\* |         |
+| prefix      | VARCHAR(50)\* | '!'     |
 
 #### Random Channels
 
@@ -86,9 +85,9 @@ The `randomchannels` table houses data for the `!randommove` command:
 
 | Column Name | Datatype      | Default |
 | ----------- | ------------- | ------- |
-| guildId*    | VARCHAR(50)*  |         |
-| toChannel   | VARCHAR(50)*  | ''      |
-| fromChannel | VARCHAR(50)*  | ''      |
+| guildId\*   | VARCHAR(50)\* |         |
+| toChannel   | VARCHAR(50)\* | ''      |
+| fromChannel | VARCHAR(50)\* | ''      |
 
 #### Reaction Roles
 
@@ -96,7 +95,7 @@ The `reactionroles` table houses data for the `!reacionroles` command and the op
 
 | Column Name | Datatype      | Default |
 | ----------- | ------------- | ------- |
-| guildId*    | VARCHAR(50)*  |         |
+| guildId\*   | VARCHAR(50)\* |         |
 | channelId   | VARCHAR(50)   | NULL    |
 | messageId   | VARCHAR(50)   | NULL    |
 | roles       | LONGTEXT      | NULL    |
@@ -107,7 +106,7 @@ The `rolemanager` table houses data for the `!rolemanager`, `!makeme`, and `!mak
 
 | Column Name | Datatype      | Default |
 | ----------- | ------------- | ------- |
-| guildId*    | VARCHAR(50)*  |         |
+| guildId\*   | VARCHAR(50)\* |         |
 | addRoles    | LONGTEXT      | NULL    |
 | removeRoles | LONGTEXT      | NULL    |
 
@@ -117,7 +116,7 @@ The `rooms` table houses data for the `!room` and `/room` commands:
 
 | Column Name | Datatype      | Default |
 | ----------- | ------------- | ------- |
-| guildId*    | VARCHAR(50)*  |         |
+| guildId\*   | VARCHAR(50)\* |         |
 | data        | LONGTEXT      | NULL    |
 
 #### Voice Roles
@@ -126,17 +125,8 @@ The `voiceroles` table houses data for the `!voiceroles` command and provides op
 
 | Column Name | Datatype      | Default |
 | ----------- | ------------- | ------- |
-| guildId*    | VARCHAR(50)*  |         |
+| guildId\*   | VARCHAR(50)\* |         |
 | data        | LONGTEXT      | NULL    |
-
-#### Volumes
-
-The `volumes` table houses data for the volume of music on each guild:
-
-| Column Name | Datatype      | Default |
-| ----------- | ------------- | ------- |
-| guildId*    | VARCHAR(50)*  |         |
-| volume      | VARCHAR(50)   | '1'     |
 
 ### Tables for Twitch Commands / Operations
 
@@ -146,19 +136,19 @@ The `volumes` table houses data for the volume of music on each guild:
 
 The `commands` table houses data for the runtime commands for IRC and their associated management commands in discord:
 
-| Column Name | Datatype           | Default    |
-| ----------- | ------------------ | ---------- |
-| id*         | INT(10)* (UN) (AI) |            |
-| input       | VARCHAR(255)*      |            |
-| mention     | TINYINT(3)* (UN)   | 0          |
-| method      | VARCHAR(255)       | NULL       |
-| output      | VARCHAR(300)       | NULL       |
-| locked      | TINYINT(3)* (UN)   | 0          |
-| count       | BIGINT(20)* (UN)   | 0          |
-| restriction | VARCHAR(45)        | 'everyone' |
-| created_at  | TIMESTAMP          | NULL       |
-| updated_at  | TIMESTAMP          | NULL       |
-| deleted_at  | TIMESTAMP          | NULL       |
+| Column Name | Datatype            | Default    |
+| ----------- | ------------------- | ---------- |
+| id\*        | INT(10)\* (UN) (AI) |            |
+| input       | VARCHAR(255)\*      |            |
+| mention     | TINYINT(3)\* (UN)   | 0          |
+| method      | VARCHAR(255)        | NULL       |
+| output      | VARCHAR(300)        | NULL       |
+| locked      | TINYINT(3)\* (UN)   | 0          |
+| count       | BIGINT(20)\* (UN)   | 0          |
+| restriction | VARCHAR(45)         | 'everyone' |
+| created_at  | TIMESTAMP           | NULL       |
+| updated_at  | TIMESTAMP           | NULL       |
+| deleted_at  | TIMESTAMP           | NULL       |
 
 #### Filters
 
@@ -166,16 +156,16 @@ The `commands` table houses data for the runtime commands for IRC and their asso
 
 The `filters` table houses data for the runtime moderation for IRC:
 
-| Column Name | Datatype           | Default |
-| ----------- | ------------------ | ------- |
-| id*         | INT(10)* (UN) (AI) |         |
-| type        | TINYINT(3)* (UN)   |         |
-| input       | VARCHAR(255)*      | ''      |
-| duration    | INT(10) (UN)       | NULL    |
-| output      | VARCHAR(500)       | NULL    |
-| created_at  | TIMESTAMP          | NULL    |
-| updated_at  | TIMESTAMP          | NULL    |
-| deleted_at  | TIMESTAMP          | NULL    |
+| Column Name | Datatype            | Default |
+| ----------- | ------------------- | ------- |
+| id\*        | INT(10)\* (UN) (AI) |         |
+| type        | TINYINT(3)\* (UN)   |         |
+| input       | VARCHAR(255)\*      | ''      |
+| duration    | INT(10) (UN)        | NULL    |
+| output      | VARCHAR(500)        | NULL    |
+| created_at  | TIMESTAMP           | NULL    |
+| updated_at  | TIMESTAMP           | NULL    |
+| deleted_at  | TIMESTAMP           | NULL    |
 
 #### IRC Variables
 
@@ -183,12 +173,12 @@ The `filters` table houses data for the runtime moderation for IRC:
 
 The `ircvariables` table houses data for the runtime replacement of variables in command responses for IRC and their associated methods in discord:
 
-| Column Name | Datatype           | Default |
-| ----------- | ------------------ | ------- |
-| id*         | INT(10)* (UN) (AI) |         |
-| name        | VARCHAR(32)*       |         |
-| value       | VARCHAR(255)       | NULL    |
-| channel     | VARCH(50)*         |         |
+| Column Name | Datatype            | Default |
+| ----------- | ------------------- | ------- |
+| id\*        | INT(10)\* (UN) (AI) |         |
+| name        | VARCHAR(32)\*       |         |
+| value       | VARCHAR(255)        | NULL    |
+| channel     | VARCH(50)\*         |         |
 
 #### Jokes
 
@@ -196,13 +186,13 @@ The `ircvariables` table houses data for the runtime replacement of variables in
 
 The `jokes` table houses data for the joke responses for IRC:
 
-| Column Name | Datatype           | Default |
-| ----------- | ------------------ | ------- |
-| id*         | INT(10)* (UN) (AI) |         |
-| output      | VARCHAR(500)*      | NULL    |
-| created_at  | TIMESTAMP          | NULL    |
-| updated_at  | TIMESTAMP          | NULL    |
-| deleted_at  | TIMESTAMP          | NULL    |
+| Column Name | Datatype            | Default |
+| ----------- | ------------------- | ------- |
+| id\*        | INT(10)\* (UN) (AI) |         |
+| output      | VARCHAR(500)\*      | NULL    |
+| created_at  | TIMESTAMP           | NULL    |
+| updated_at  | TIMESTAMP           | NULL    |
+| deleted_at  | TIMESTAMP           | NULL    |
 
 #### Bot Log
 
@@ -210,16 +200,16 @@ The `jokes` table houses data for the joke responses for IRC:
 
 The `log_bot` table houses the log for bot moderated messages on IRC:
 
-| Column Name | Datatype           | Default |
-| ----------- | ------------------ | ------- |
-| id*         | INT(10)* (UN) (AI) |         |
-| filter_id   | INT(10)* (UN)      |         |
-| action      | VARCHAR(255)*      |         |
-| user        | VARCHAR(255)*      |         |
-| user_id     | INT(10)* (UN)      |         |
-| duration    | INT(10) (UN)       | NULL    |
-| message     | TEXT*              |         |
-| created_at  | TIMESTAMP          | NULL    |
+| Column Name | Datatype            | Default |
+| ----------- | ------------------- | ------- |
+| id\*        | INT(10)\* (UN) (AI) |         |
+| filter_id   | INT(10)\* (UN)      |         |
+| action      | VARCHAR(255)\*      |         |
+| user        | VARCHAR(255)\*      |         |
+| user_id     | INT(10)\* (UN)      |         |
+| duration    | INT(10) (UN)        | NULL    |
+| message     | TEXT\*              |         |
+| created_at  | TIMESTAMP           | NULL    |
 
 <info>The `filter_id` column of this table can have a foreign key added to the `filters` table</info>
 
@@ -229,30 +219,30 @@ The `log_bot` table houses the log for bot moderated messages on IRC:
 
 The `log_human` table houses the log for human moderated messages on IRC:
 
-| Column Name  | Datatype           | Default |
-| ------------ | ------------------ | ------- |
-| id*          | INT(10)* (UN) (AI) |         |
-| action       | VARCHAR(255)*      |         |
-| user         | VARCHAR(255)*      |         |
-| user_id      | INT(10)* (UN)      |         |
-| moderator    | VARCHAR(255)*      |         |
-| moderator_id | INT(10)* (UN)      |         |
-| duration     | INT(10) (UN)       | NULL    |
-| reason       | VARCHAR(500)       | NULL    |
-| message      | TEXT               | NULL    |
-| created_at   | TIMESTAMP          | NULL    |
-| updated_at   | TIMESTAMP          | NULL    |
+| Column Name  | Datatype            | Default |
+| ------------ | ------------------- | ------- |
+| id\*         | INT(10)\* (UN) (AI) |         |
+| action       | VARCHAR(255)\*      |         |
+| user         | VARCHAR(255)\*      |         |
+| user_id      | INT(10)\* (UN)      |         |
+| moderator    | VARCHAR(255)\*      |         |
+| moderator_id | INT(10)\* (UN)      |         |
+| duration     | INT(10) (UN)        | NULL    |
+| reason       | VARCHAR(500)        | NULL    |
+| message      | TEXT                | NULL    |
+| created_at   | TIMESTAMP           | NULL    |
+| updated_at   | TIMESTAMP           | NULL    |
 
 #### Authorization
 
 The `twitchauth` table houses the tokens used to interact with the twitch API on behalf of users:
 
-| Column Name  | Datatype      | Default |
-| ------------ | ------------- | ------- |
-| id*          | INT(10)* (UN) |         |
-| accessToken  | VARCHAR(35)   | NULL    |
-| refreshToken | VARCHAR(55)   | NULL    |
-| scopes       | LONGTEXT      | NULL    |
+| Column Name  | Datatype       | Default |
+| ------------ | -------------- | ------- |
+| id\*         | INT(10)\* (UN) |         |
+| accessToken  | VARCHAR(35)    | NULL    |
+| refreshToken | VARCHAR(55)    | NULL    |
+| scopes       | LONGTEXT       | NULL    |
 
 ## Adding Tables
 

@@ -11,9 +11,6 @@ module.exports = [
   ['discord_channel_alerts', '541318953088188456'],
   ['discord_channel_console', '745931477853798521'],
   ['discord_channel_whispers', '745931477853798521'],
-  ['discord_channel_music', '745932185743261737'],
-
-  ['discord_music_volume', '1'],
 
   // Twitch
   ['discord_webhook_ban', ''],

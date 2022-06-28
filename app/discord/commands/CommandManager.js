@@ -35,7 +35,6 @@ class CommandManager {
       this.registerGroup(require('./general'), 'general', true);
       this.registerGroup(require('./management'), 'management', true);
       this.registerGroup(require('./moderation'), 'moderation', true);
-      this.registerGroup(require('./music'), 'music', true);
       this.registerGroup(require('./roles'), 'roles', true);
       this.registerGroup(require('./twitch'), 'twitch', true);
     }

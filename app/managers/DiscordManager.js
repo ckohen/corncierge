@@ -157,7 +157,7 @@ class DiscordManager extends EventManager {
   }
 
   /**
-   * Cache all managers and music.
+   * Cache all managers.
    * @returns {Promise<void>}
    */
   setCache() {
@@ -172,31 +172,9 @@ class DiscordManager extends EventManager {
           return this.cacheTable(table, this.cache[name], 'guildId');
         }),
       ),
-      this.cacheMusic(),
       this.cacheRooms(),
     ]).catch(err => {
       this.app.log.fatal(module, `Cache`, err);
-    });
-  }
-
-  /**
-   * Cache the music data.
-   * @returns {Promise<void>}
-   * @private
-   */
-  async cacheMusic() {
-    this.app.log.debug(module, 'Caching music');
-    const volumes = await this.app.database.tables.volumes.get().catch(err => this.app.log.warn(module, `Error encounted while caching music volumes`, err));
-    if (!this.cache.musicData) {
-      this.cache.musicData = new Collection();
-    }
-    this.cache.musicData.clear();
-    volumes.forEach(volume => {
-      if (this.cache.musicData.get(volume.guildId)) {
-        this.cache.musicData.get(volume.guildId).volume = Number(volume.volume);
-      } else {
-        this.cache.musicData.set(volume.guildId, { subscription: null, volume: Number(volume.volume) });
-      }
     });
   }
 

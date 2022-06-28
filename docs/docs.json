@@ -1,5 +1,5 @@
 {
-  "meta": { "generator": "0.11.0", "format": 20, "date": 1642336443431 },
+  "meta": { "generator": "0.11.1", "format": 20, "date": 1656398979447 },
   "custom": {
     "general": {
       "name": "General",
@@ -7,13 +7,13 @@
         "welcome": {
           "name": "Welcome",
           "type": "md",
-          "content": "<div align=\"center\">\n<h1 style=\"font-size: 100px; margin-bottom: 0px; color: #5865F2; font-weight: 700\">Corncierge</h1>\n<p>\n    <a href=\"https://discord.gg/vNEXNYt\"><img src=\"https://img.shields.io/discord/756319910191300778?color=5865F2&logo=discord&logoColor=white\" alt=\"Discord server\" /></a>\n    <a href=\"https://github.com/ckohen/corncierge/actions\"><img src=\"https://github.com/ckohen/corncierge/workflows/Testing/badge.svg\" alt=\"Build status\" /></a>\n  </p>\n</div>\n\n## About\n\nCorncierge is a [Node.js](https://nodejs.org) module that combines several powerful components.\n\nInteracting with Discord is [discord.js](https://discord.js.org). This module provides an abstraction layer for handling commands (both conventional message and interactions) and moderation type events on top of the already existing coverage discord.js provides.\n\nInteracting with Twitch is a custom implementation of the API via [Axios](https://axios-http.com/) (including authorization) and IRC for chat via [tmi.js](https://tmijs.com/). Similarly to discord, the module provides an abstraction layer for handling commands sent in chat and handling moderation.\n\nThere are two additional components that are completely for arbitrary purposes, HTTP and Logging. HTTP is used internally for sending streaming status updates and as the redirect url for twitch authorization. It uses a custom abstraction layer on top of [Nodes built in HTTP(s)](https://nodejs.org/api/http.html) API. Logging, done via [Winston](https://github.com/winstonjs/winston), is a typical console log for the internal workings of the module, and logs to a discord webhook for critical events. There are application options to configure both of these.\n\nThe final piece of the module is the database connection. The application relies on a mysql / mariadb database and connects to it via [mysql2](https://github.com/sidorares/node-mysql2#readme). This allows you to build in additional database queries should you need, but provides an abstraction layer for interacting with the base required databases.\n\n**Node.js 16.6.0 or newer is required.**\n\n\n## Links\n\n- [Website](http://bot.corncierge.com/) ([source](https://github.com/discordjs/website), based on top of discordjs)\n- [Documentation](https://bot.corncierge.com/#/docs/corncierge/main/general/welcome)\n- [Corncierge Discord server](https://discord.gg/vNEXNYt)\n- [GitHub](https://github.com/ckohen/corncierge)\n\n## Contributing\n\nBefore creating an issue, please ensure that it hasn't already been reported/suggested, and double-check the\n[documentation](https://bot.corncierge.com/#/docs/corncierge/main/general/welcome). Feel free to submit a PR at any time!\n\n\n## Help\n\nIf you don't understand something in the documentation, you are experiencing problems, or you just need a gentle\nnudge in the right direction, please don't hesitate to join our official [Corncierge Help Desk](https://discord.gg/vNEXNYt).",
+          "content": "<div align=\"center\">\n<h1 style=\"font-size: 100px; margin-bottom: 0px; color: #5865F2; font-weight: 700\">Corncierge</h1>\n<p>\n    <a href=\"https://discord.gg/vNEXNYt\"><img src=\"https://img.shields.io/discord/756319910191300778?color=5865F2&logo=discord&logoColor=white\" alt=\"Discord server\" /></a>\n    <a href=\"https://github.com/ckohen/corncierge/actions\"><img src=\"https://github.com/ckohen/corncierge/workflows/Testing/badge.svg\" alt=\"Build status\" /></a>\n  </p>\n</div>\n\n## About\n\nCorncierge is a [Node.js](https://nodejs.org) module that combines several powerful components.\n\nInteracting with Discord is [discord.js](https://discord.js.org). This module provides an abstraction layer for handling commands (both conventional message and interactions) and moderation type events on top of the already existing coverage discord.js provides.\n\nInteracting with Twitch is a custom implementation of the API via [Undici](https://undici.nodejs.org/#/) (including authorization) and IRC for chat via [tmi.js](https://tmijs.com/). Similarly to discord, the module provides an abstraction layer for handling commands sent in chat and handling moderation.\n\nThere are two additional components that are completely for arbitrary purposes, HTTP and Logging. HTTP is used internally for sending streaming status updates and as the redirect url for twitch authorization. It uses a custom abstraction layer on top of [Nodes built in HTTP(s)](https://nodejs.org/api/http.html) API. Logging, done via [Winston](https://github.com/winstonjs/winston), is a typical console log for the internal workings of the module, and logs to a discord webhook for critical events. There are application options to configure both of these.\n\nThe final piece of the module is the database connection. The application relies on a mysql / mariadb database and connects to it via [mysql2](https://github.com/sidorares/node-mysql2#readme). This allows you to build in additional database queries should you need, but provides an abstraction layer for interacting with the base required databases.\n\n**Node.js 16.6.0 or newer is required.**\n\n## Links\n\n- [Website](http://bot.corncierge.com/) ([source](https://github.com/discordjs/website), based on top of discordjs)\n- [Documentation](https://bot.corncierge.com/#/docs/corncierge/main/general/welcome)\n- [Corncierge Discord server](https://discord.gg/vNEXNYt)\n- [GitHub](https://github.com/ckohen/corncierge)\n\n## Contributing\n\nBefore creating an issue, please ensure that it hasn't already been reported/suggested, and double-check the\n[documentation](https://bot.corncierge.com/#/docs/corncierge/main/general/welcome). Feel free to submit a PR at any time!\n\n## Help\n\nIf you don't understand something in the documentation, you are experiencing problems, or you just need a gentle\nnudge in the right direction, please don't hesitate to join our official [Corncierge Help Desk](https://discord.gg/vNEXNYt).\n",
           "path": "readme.md"
         },
         "database": {
           "name": "Database Setup",
           "type": "md",
-          "content": "## About\n\nThe database is a critical piece of infrastructure needed for bots that run on this module. This module uses an SQL database, namely MySQL or MariaDB, which can be used interchangeably. The database will store some user data, so make sure access to it is well protected and follow any local guidelines for user generated content.\n\n## Getting Ready\n\nFirst, you will need to install [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/) on whatever server you will be using. This can also be offloaded to another server as caching is being used to ensure quick access.\n\nAfter installing the database, you will need to configure it with the required tables as well as any additional tables for the built in commands you will be using. These are listed below. All tables use the utf8 charset with a utf8_bin collation.\n\n<info>A `*` in the colum name column indicates the primary key for the table. A `*` in the datatype column indicates Not Null.</info>\n\n## Required Tables\n\n#### Settings\n\nThe `settings` table contains critical information for runtime, it uses a key value pair:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| name*       | VARCHAR(255)* |         |\n| value       | VARCHAR(255)  | ''      |\n\nThis table will need to have a few keys populated. Some of these keys will not need to be populated if that part of the app is not used. Here are the names of the keys and what they need to store:\n\n- `discord_activity` - the activity to display, can be set during runtime via command\n- `discord_activity_type` - the type of activity to display, can be set during runtime via command\n- `discord_channel_commandManagement` - until multiple twitch channels are supported better, a comma separated list of channel ids where twitch commands can be managed\n- `discord_channel_console` - a comma separated list of channel ids where most management commands can be run\n- `discord_channel_music` - a comma separated list of channel ids where music commands can be used\n- `discord_guild_management` - a comma separated list of guild ids where the rest of the management commands can be used\n- `discord_user_owner` - a comma separated list of user ids that can run owner only commands\n- `irc_message_cheer` - until multiple twitch channels are supported better, the message sent when someone cheers in a twitch chat\n- `irc_message_resub` - until multiple twitch channels are supported better, the message sent when someone resubscribes in a twitch chat\n- `irc_message_stream_down` - until multiple twitch channels are supported better, the message sent when the streamer stops streaming\n- `irc_message_stream_up` - until multiple twitch channels are supported better, the message sent when the stream starts streaming\n- `irc_message_sub` - until multiple twitch channels are supported better, the message sent when someone subscribes in a twitch chat\n\n#### Streaming\n\nThe `streaming` table contains information for handling different streamers notifications, here is its structure:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| name*       | VARCHAR(255)* |         |\n| channel     | VARCHAR(50)   | NULL    |\n| role        | VARCHAR(50)   | NULL    |\n| lastMessage | VARCHAR(50)   | NULL    |\n\n## Additional Tables\n\n### Tables for Discord Commands / Operations\n\n#### Color Manager\n\nThe `colormanager` table houses data for the `!colormanager`, `!color`, and `/color` commands:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId*    | VARCHAR(50)*  |         |\n| roles       | LONGTEXT      | NULL    |\n| snowflakes  | LONGTEXT      | NULL    |\n\n#### New Member Roles\n\nThe `newmemberrole` table houses data for the `!autorole` command and the automatic assignment or roles on member join:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId*    | VARCHAR(50)*  |         |\n| roleId      | VARCHAR(50)   | NULL    |\n| delayTime   | VARCHAR(8)    | '0'     |\n\n#### Prefixes\n\nThe `prefixes` table houses data for the `!prefix` command and the prefix used for all commands on a guild:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId*    | VARCHAR(50)*  |         |\n| prefix      | VARCHAR(50)*  | '!'     |\n\n#### Random Channels\n\nThe `randomchannels` table houses data for the `!randommove` command:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId*    | VARCHAR(50)*  |         |\n| toChannel   | VARCHAR(50)*  | ''      |\n| fromChannel | VARCHAR(50)*  | ''      |\n\n#### Reaction Roles\n\nThe `reactionroles` table houses data for the `!reacionroles` command and the operation of reaction roles:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId*    | VARCHAR(50)*  |         |\n| channelId   | VARCHAR(50)   | NULL    |\n| messageId   | VARCHAR(50)   | NULL    |\n| roles       | LONGTEXT      | NULL    |\n\n#### Role Manager\n\nThe `rolemanager` table houses data for the `!rolemanager`, `!makeme`, and `!makemenot` commands:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId*    | VARCHAR(50)*  |         |\n| addRoles    | LONGTEXT      | NULL    |\n| removeRoles | LONGTEXT      | NULL    |\n\n#### Rooms\n\nThe `rooms` table houses data for the `!room` and `/room` commands:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId*    | VARCHAR(50)*  |         |\n| data        | LONGTEXT      | NULL    |\n\n#### Voice Roles\n\nThe `voiceroles` table houses data for the `!voiceroles` command and provides operational data to assign the roles when receiving voice state updates:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId*    | VARCHAR(50)*  |         |\n| data        | LONGTEXT      | NULL    |\n\n#### Volumes\n\nThe `volumes` table houses data for the volume of music on each guild:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId*    | VARCHAR(50)*  |         |\n| volume      | VARCHAR(50)   | '1'     |\n\n### Tables for Twitch Commands / Operations\n\n#### Commands\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `commands` table houses data for the runtime commands for IRC and their associated management commands in discord:\n\n| Column Name | Datatype           | Default    |\n| ----------- | ------------------ | ---------- |\n| id*         | INT(10)* (UN) (AI) |            |\n| input       | VARCHAR(255)*      |            |\n| mention     | TINYINT(3)* (UN)   | 0          |\n| method      | VARCHAR(255)       | NULL       |\n| output      | VARCHAR(300)       | NULL       |\n| locked      | TINYINT(3)* (UN)   | 0          |\n| count       | BIGINT(20)* (UN)   | 0          |\n| restriction | VARCHAR(45)        | 'everyone' |\n| created_at  | TIMESTAMP          | NULL       |\n| updated_at  | TIMESTAMP          | NULL       |\n| deleted_at  | TIMESTAMP          | NULL       |\n\n#### Filters\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `filters` table houses data for the runtime moderation for IRC:\n\n| Column Name | Datatype           | Default |\n| ----------- | ------------------ | ------- |\n| id*         | INT(10)* (UN) (AI) |         |\n| type        | TINYINT(3)* (UN)   |         |\n| input       | VARCHAR(255)*      | ''      |\n| duration    | INT(10) (UN)       | NULL    |\n| output      | VARCHAR(500)       | NULL    |\n| created_at  | TIMESTAMP          | NULL    |\n| updated_at  | TIMESTAMP          | NULL    |\n| deleted_at  | TIMESTAMP          | NULL    |\n\n#### IRC Variables\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `ircvariables` table houses data for the runtime replacement of variables in command responses for IRC and their associated methods in discord:\n\n| Column Name | Datatype           | Default |\n| ----------- | ------------------ | ------- |\n| id*         | INT(10)* (UN) (AI) |         |\n| name        | VARCHAR(32)*       |         |\n| value       | VARCHAR(255)       | NULL    |\n| channel     | VARCH(50)*         |         |\n\n#### Jokes\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `jokes` table houses data for the joke responses for IRC:\n\n| Column Name | Datatype           | Default |\n| ----------- | ------------------ | ------- |\n| id*         | INT(10)* (UN) (AI) |         |\n| output      | VARCHAR(500)*      | NULL    |\n| created_at  | TIMESTAMP          | NULL    |\n| updated_at  | TIMESTAMP          | NULL    |\n| deleted_at  | TIMESTAMP          | NULL    |\n\n#### Bot Log\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `log_bot` table houses the log for bot moderated messages on IRC:\n\n| Column Name | Datatype           | Default |\n| ----------- | ------------------ | ------- |\n| id*         | INT(10)* (UN) (AI) |         |\n| filter_id   | INT(10)* (UN)      |         |\n| action      | VARCHAR(255)*      |         |\n| user        | VARCHAR(255)*      |         |\n| user_id     | INT(10)* (UN)      |         |\n| duration    | INT(10) (UN)       | NULL    |\n| message     | TEXT*              |         |\n| created_at  | TIMESTAMP          | NULL    |\n\n<info>The `filter_id` column of this table can have a foreign key added to the `filters` table</info>\n\n#### Human Log\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `log_human` table houses the log for human moderated messages on IRC:\n\n| Column Name  | Datatype           | Default |\n| ------------ | ------------------ | ------- |\n| id*          | INT(10)* (UN) (AI) |         |\n| action       | VARCHAR(255)*      |         |\n| user         | VARCHAR(255)*      |         |\n| user_id      | INT(10)* (UN)      |         |\n| moderator    | VARCHAR(255)*      |         |\n| moderator_id | INT(10)* (UN)      |         |\n| duration     | INT(10) (UN)       | NULL    |\n| reason       | VARCHAR(500)       | NULL    |\n| message      | TEXT               | NULL    |\n| created_at   | TIMESTAMP          | NULL    |\n| updated_at   | TIMESTAMP          | NULL    |\n\n#### Authorization\n\nThe `twitchauth` table houses the tokens used to interact with the twitch API on behalf of users:\n\n| Column Name  | Datatype      | Default |\n| ------------ | ------------- | ------- |\n| id*          | INT(10)* (UN) |         |\n| accessToken  | VARCHAR(35)   | NULL    |\n| refreshToken | VARCHAR(55)   | NULL    |\n| scopes       | LONGTEXT      | NULL    |\n\n## Adding Tables\n\nYou can add as many tables to the database as you woud like. There are a few ways to access these tables via the module.\n\n- Direct queries to the database\n- Your own abstraction of the direct query\n- The abstraction of queries provided by the module\n\n### Direct queries to the database\n\nYou can make direct queries to the database using `<app>.database.query()`. This makes a direct query to the database via `mysql2`. Using `?` in the query string lets you replace via javascript from the second parameter, which is an array.\nAnother way to use javascript in your queries is via template literals `` `INSERT INTO `table` (guildId) VALUES (${guild.id})` ``\nBoth are equally useful and it is up to you which to use.\n\n### The abstraction of queries provided by the module\n\nThe module provides an interface so you only have to write the queries once and can utilize it throughout the app.\n\nThere are three steps to do this:\n\n1. Create a table class that extends `BaseTable`. Name it what you would like to identify it by, as this name will be used everywhere. <warn>You cannot use the reserved names `socket` or `register`.</warn>\n2. Write whatever methods you would like to use in this class. The queries can be made via `this.socket.query()` and a utility `this.parseJSON()` is available to parse stringified JSON that was stored. The method names on the internal tables are `get`, `add`, `delete`, and `edit`, representing what they do to the database.\n3. Register the table via `<app>.database.tables.register(table)`.\n\nThe table is now accessible via `app.database.tables.[tableName]`\n",
+          "content": "## About\n\nThe database is a critical piece of infrastructure needed for bots that run on this module. This module uses an SQL database, namely MySQL or MariaDB, which can be used interchangeably. The database will store some user data, so make sure access to it is well protected and follow any local guidelines for user generated content.\n\n## Getting Ready\n\nFirst, you will need to install [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/) on whatever server you will be using. This can also be offloaded to another server as caching is being used to ensure quick access.\n\nAfter installing the database, you will need to configure it with the required tables as well as any additional tables for the built in commands you will be using. These are listed below. All tables use the utf8 charset with a utf8_bin collation.\n\n<info>A `*` in the colum name column indicates the primary key for the table. A `*` in the datatype column indicates Not Null.</info>\n\n## Required Tables\n\n#### Settings\n\nThe `settings` table contains critical information for runtime, it uses a key value pair:\n\n| Column Name | Datatype       | Default |\n| ----------- | -------------- | ------- |\n| name\\*      | VARCHAR(255)\\* |         |\n| value       | VARCHAR(255)   | ''      |\n\nThis table will need to have a few keys populated. Some of these keys will not need to be populated if that part of the app is not used. Here are the names of the keys and what they need to store:\n\n- `discord_activity` - the activity to display, can be set during runtime via command\n- `discord_activity_type` - the type of activity to display, can be set during runtime via command\n- `discord_channel_commandManagement` - until multiple twitch channels are supported better, a comma separated list of channel ids where twitch commands can be managed\n- `discord_channel_console` - a comma separated list of channel ids where most management commands can be run\n- `discord_guild_management` - a comma separated list of guild ids where the rest of the management commands can be used\n- `discord_user_owner` - a comma separated list of user ids that can run owner only commands\n- `irc_message_cheer` - until multiple twitch channels are supported better, the message sent when someone cheers in a twitch chat\n- `irc_message_resub` - until multiple twitch channels are supported better, the message sent when someone resubscribes in a twitch chat\n- `irc_message_stream_down` - until multiple twitch channels are supported better, the message sent when the streamer stops streaming\n- `irc_message_stream_up` - until multiple twitch channels are supported better, the message sent when the stream starts streaming\n- `irc_message_sub` - until multiple twitch channels are supported better, the message sent when someone subscribes in a twitch chat\n\n#### Streaming\n\nThe `streaming` table contains information for handling different streamers notifications, here is its structure:\n\n| Column Name | Datatype       | Default |\n| ----------- | -------------- | ------- |\n| name\\*      | VARCHAR(255)\\* |         |\n| channel     | VARCHAR(50)    | NULL    |\n| role        | VARCHAR(50)    | NULL    |\n| lastMessage | VARCHAR(50)    | NULL    |\n\n## Additional Tables\n\n### Tables for Discord Commands / Operations\n\n#### Color Manager\n\nThe `colormanager` table houses data for the `!colormanager`, `!color`, and `/color` commands:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId\\*   | VARCHAR(50)\\* |         |\n| roles       | LONGTEXT      | NULL    |\n| snowflakes  | LONGTEXT      | NULL    |\n\n#### New Member Roles\n\nThe `newmemberrole` table houses data for the `!autorole` command and the automatic assignment or roles on member join:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId\\*   | VARCHAR(50)\\* |         |\n| roleId      | VARCHAR(50)   | NULL    |\n| delayTime   | VARCHAR(8)    | '0'     |\n\n#### Prefixes\n\nThe `prefixes` table houses data for the `!prefix` command and the prefix used for all commands on a guild:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId\\*   | VARCHAR(50)\\* |         |\n| prefix      | VARCHAR(50)\\* | '!'     |\n\n#### Random Channels\n\nThe `randomchannels` table houses data for the `!randommove` command:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId\\*   | VARCHAR(50)\\* |         |\n| toChannel   | VARCHAR(50)\\* | ''      |\n| fromChannel | VARCHAR(50)\\* | ''      |\n\n#### Reaction Roles\n\nThe `reactionroles` table houses data for the `!reacionroles` command and the operation of reaction roles:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId\\*   | VARCHAR(50)\\* |         |\n| channelId   | VARCHAR(50)   | NULL    |\n| messageId   | VARCHAR(50)   | NULL    |\n| roles       | LONGTEXT      | NULL    |\n\n#### Role Manager\n\nThe `rolemanager` table houses data for the `!rolemanager`, `!makeme`, and `!makemenot` commands:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId\\*   | VARCHAR(50)\\* |         |\n| addRoles    | LONGTEXT      | NULL    |\n| removeRoles | LONGTEXT      | NULL    |\n\n#### Rooms\n\nThe `rooms` table houses data for the `!room` and `/room` commands:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId\\*   | VARCHAR(50)\\* |         |\n| data        | LONGTEXT      | NULL    |\n\n#### Voice Roles\n\nThe `voiceroles` table houses data for the `!voiceroles` command and provides operational data to assign the roles when receiving voice state updates:\n\n| Column Name | Datatype      | Default |\n| ----------- | ------------- | ------- |\n| guildId\\*   | VARCHAR(50)\\* |         |\n| data        | LONGTEXT      | NULL    |\n\n### Tables for Twitch Commands / Operations\n\n#### Commands\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `commands` table houses data for the runtime commands for IRC and their associated management commands in discord:\n\n| Column Name | Datatype            | Default    |\n| ----------- | ------------------- | ---------- |\n| id\\*        | INT(10)\\* (UN) (AI) |            |\n| input       | VARCHAR(255)\\*      |            |\n| mention     | TINYINT(3)\\* (UN)   | 0          |\n| method      | VARCHAR(255)        | NULL       |\n| output      | VARCHAR(300)        | NULL       |\n| locked      | TINYINT(3)\\* (UN)   | 0          |\n| count       | BIGINT(20)\\* (UN)   | 0          |\n| restriction | VARCHAR(45)         | 'everyone' |\n| created_at  | TIMESTAMP           | NULL       |\n| updated_at  | TIMESTAMP           | NULL       |\n| deleted_at  | TIMESTAMP           | NULL       |\n\n#### Filters\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `filters` table houses data for the runtime moderation for IRC:\n\n| Column Name | Datatype            | Default |\n| ----------- | ------------------- | ------- |\n| id\\*        | INT(10)\\* (UN) (AI) |         |\n| type        | TINYINT(3)\\* (UN)   |         |\n| input       | VARCHAR(255)\\*      | ''      |\n| duration    | INT(10) (UN)        | NULL    |\n| output      | VARCHAR(500)        | NULL    |\n| created_at  | TIMESTAMP           | NULL    |\n| updated_at  | TIMESTAMP           | NULL    |\n| deleted_at  | TIMESTAMP           | NULL    |\n\n#### IRC Variables\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `ircvariables` table houses data for the runtime replacement of variables in command responses for IRC and their associated methods in discord:\n\n| Column Name | Datatype            | Default |\n| ----------- | ------------------- | ------- |\n| id\\*        | INT(10)\\* (UN) (AI) |         |\n| name        | VARCHAR(32)\\*       |         |\n| value       | VARCHAR(255)        | NULL    |\n| channel     | VARCH(50)\\*         |         |\n\n#### Jokes\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `jokes` table houses data for the joke responses for IRC:\n\n| Column Name | Datatype            | Default |\n| ----------- | ------------------- | ------- |\n| id\\*        | INT(10)\\* (UN) (AI) |         |\n| output      | VARCHAR(500)\\*      | NULL    |\n| created_at  | TIMESTAMP           | NULL    |\n| updated_at  | TIMESTAMP           | NULL    |\n| deleted_at  | TIMESTAMP           | NULL    |\n\n#### Bot Log\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `log_bot` table houses the log for bot moderated messages on IRC:\n\n| Column Name | Datatype            | Default |\n| ----------- | ------------------- | ------- |\n| id\\*        | INT(10)\\* (UN) (AI) |         |\n| filter_id   | INT(10)\\* (UN)      |         |\n| action      | VARCHAR(255)\\*      |         |\n| user        | VARCHAR(255)\\*      |         |\n| user_id     | INT(10)\\* (UN)      |         |\n| duration    | INT(10) (UN)        | NULL    |\n| message     | TEXT\\*              |         |\n| created_at  | TIMESTAMP           | NULL    |\n\n<info>The `filter_id` column of this table can have a foreign key added to the `filters` table</info>\n\n#### Human Log\n\n<warn>This table is changing soon to be able to better accommodate multiple twitch channels.</warn>\n\nThe `log_human` table houses the log for human moderated messages on IRC:\n\n| Column Name  | Datatype            | Default |\n| ------------ | ------------------- | ------- |\n| id\\*         | INT(10)\\* (UN) (AI) |         |\n| action       | VARCHAR(255)\\*      |         |\n| user         | VARCHAR(255)\\*      |         |\n| user_id      | INT(10)\\* (UN)      |         |\n| moderator    | VARCHAR(255)\\*      |         |\n| moderator_id | INT(10)\\* (UN)      |         |\n| duration     | INT(10) (UN)        | NULL    |\n| reason       | VARCHAR(500)        | NULL    |\n| message      | TEXT                | NULL    |\n| created_at   | TIMESTAMP           | NULL    |\n| updated_at   | TIMESTAMP           | NULL    |\n\n#### Authorization\n\nThe `twitchauth` table houses the tokens used to interact with the twitch API on behalf of users:\n\n| Column Name  | Datatype       | Default |\n| ------------ | -------------- | ------- |\n| id\\*         | INT(10)\\* (UN) |         |\n| accessToken  | VARCHAR(35)    | NULL    |\n| refreshToken | VARCHAR(55)    | NULL    |\n| scopes       | LONGTEXT       | NULL    |\n\n## Adding Tables\n\nYou can add as many tables to the database as you woud like. There are a few ways to access these tables via the module.\n\n- Direct queries to the database\n- Your own abstraction of the direct query\n- The abstraction of queries provided by the module\n\n### Direct queries to the database\n\nYou can make direct queries to the database using `<app>.database.query()`. This makes a direct query to the database via `mysql2`. Using `?` in the query string lets you replace via javascript from the second parameter, which is an array.\nAnother way to use javascript in your queries is via template literals `` `INSERT INTO `table` (guildId) VALUES (${guild.id})` ``\nBoth are equally useful and it is up to you which to use.\n\n### The abstraction of queries provided by the module\n\nThe module provides an interface so you only have to write the queries once and can utilize it throughout the app.\n\nThere are three steps to do this:\n\n1. Create a table class that extends `BaseTable`. Name it what you would like to identify it by, as this name will be used everywhere. <warn>You cannot use the reserved names `socket` or `register`.</warn>\n2. Write whatever methods you would like to use in this class. The queries can be made via `this.socket.query()` and a utility `this.parseJSON()` is available to parse stringified JSON that was stored. The method names on the internal tables are `get`, `add`, `delete`, and `edit`, representing what they do to the database.\n3. Register the table via `<app>.database.tables.register(table)`.\n\nThe table is now accessible via `app.database.tables.[tableName]`\n",
           "path": "docs/general/database.md"
         }
       }
@@ -24,13 +24,13 @@
         "discord": {
           "name": "Discord Commands",
           "type": "md",
-          "content": "# Built-in discord commands\n\nCorncierge comes with a lot of built-in commands that should be useful to most bots.\nAny and all of these commands can be disabled via [ApplicationOptions.discord](/#/docs/corncierge/master/typedef/DiscordOptions):\n\n```js\n// Disable the music commands and the random number command\nnew Application({ discord: { disabledCommands: ['music', 'random'] }});\n```\n\n## Traditional Commands\n\nThese commands are message based commands that will be supported until slash commands are fully fleshed out and support proper gating of usage. All of these commands are prefixed by the prefix for the guild, the default is `!`, and can be changed using the `prefix` command.\n\n### Gaming\n\n* `random`: generates a random number between 0 and the specified number\n* `room`: an orginizational system for members with waiting rooms and player lists\n  * this command is quite complex and is better described in the client by the slash command equivalent\n\n### General\n\n* `help`: A help command that handles help information for most built-in commands\n  * you may want to override this with your own help command to add your own commands\n  * `help legacy` will list your custom commands as well however\n\n### Management\n\nThese are commands that essentially act as the console for the bot, most are locked to the `console` channel.\n\n* `eval`: runs the code specified using eval, the nodejs util and the discord.js client are imported for use, locked to the `owner` user\n* `reboot`: cleanly reboots the bot\n* `reload`: reloads the cache, i.e. everything in the database\n* `setstatus`: sets the bots discord status, at this time it cannot be fully custom\n* `status`: sends a message with the current status of the bot\n* `update`: executes `git pull` and then `npm install` on the command line to update the bot, automatically restarts to apply changes, locked to the `owner` user\n\n### Moderation\n\nAll of the commands in this category require the same permission as if you were to perform the actions manually\n\n* `clear`: clears the last n lines as specified, cannot delete messages that are older than 2 weeks\n* `moveall`: moves all users in a voice channel to another voice channel, can specify both starting and ending channel\n  * `moveall general` moves everyone in your current voice channel or `moveall general -> general2`\n* `muteall`: mutes everyone in the current voice channel aside for the caller and bots, automatically unmutes after the specified time (15 seconds by default)\n* `prefix`: changes the prefix in the current guild to whatever is specified\n* `randommove`: randomly moves the number of people specified using the same syntax as `moveall`\n* `unmuteall`: unmutes everyone in the current voice channel, useful after `muteall 0`\n\n### Music\n\nMost of these commands should be familiar from other music bots. The commands marked with `DJ` require a role named `DJ` to use unless you have `MANAGE_ROLES`.\n\n* `leave`: makes the bot leave the current channel `DJ`\n* `loop`: loops the currently playing song the number of times specified `DJ`\n* `nowplaying`: displays the currently playing song\n* `pause`: pauses the currently playing song\n* `play`: starts or adds to the queue of songs, can only play youtube!\n* `queue`: displays the current queue\n* `remove`: removes the song number specified from the queue `DJ`\n* `resume`: resumes the currently playing song after using `pause`\n* `shuffle`: shuffles the current queue `DJ`\n* `skip`: skips the current playing song `DJ`\n* `skipall`: clears the current queue, does NOT skip the current playing song `DJ`\n* `skipto`: skips the queue to the spot in the queue specified `DJ`\n* `volume`: sets the volume to the value specified `DJ`\n\n### Roles\n\nThere are lots of different ways to manage roles, the default commands allow you a couple different methods. To use any of the managers, you need to have `MANAGE_ROLES`.\n\n* `autorole`: set up a role to automatically be assigned to new members, can be after a specified wait period `manager`\n* `color`: assings the caller a color (role) if it has been set up in the colormanager, functionality is better using slash commands\n* `colormanager`: sets up roles and channel for the `color` command `manager`\n* `makeme`: assigns the caller any role based on the name if it has been set up in rolemanager\n* `makemenot`: removes any role from the caller based on the name if it has been set up in rolemanager\n* `reactionroles`: sets up role assignment via reactions `manager`\n* `rolemanager`: sets up a database of roles and channels that each role can be self assigned in `manager`\n* `voiceroles`: sets up up to 5 sets of channels that each have a unique voice role associated `manager`\n\n### Twitch\n\nThese commands are for interfacing with the built in twitch IRC bot. Locked to a command management channel.\n\n* `commandlist`: lists all the currently registerd twitch commands\n* `commands`: allows creating, editing, and removing twitch commands\n* `variables`: allows creating, editing, and removing custom twitch replaceable variables\n\n## Slash Commands\n\nThese commands are mostly self explanatory as they display the information in the client. However, you do need to take some extra steps to tell discord about these commands. These commands are not disabled by the `disabledCommands` parameter since they have to be manually registered.\n\n* `/color`: assigns a color that was set up in color manager\n* `/room`: an orginizational system for members with waiting rooms and player lists\n\n### Registering Slash Commands\n\nBecause of the unique nature of slash commands, they can be registered per guild or globally. Corncierge provides some helper methods to register commands for you. This is best done using the `eval` command.\n\n```js\n// Adding all registered slash commands (yes including custom ones), globally\n// Commands with guilds specified will not be registered globally\n!eval socket.registerCommands();\n\n// Adding all registered slash commands, to a specific guild\n// Checks to see if the commands are registered globally first\n// Commands with guilds specified that are not this guild will not get registered to it\n!eval socket.registerCommands(':guildid');\n\n// Adding a single registered slash command, by name\n// The command will be registered globally if guilds is not specified in the command data\n// If guilds is specified in the registration info, it will register to every guild listed\n!eval socket.registerCommand('commandname');\n```\n\n`socket` in the above code refers to the [DiscordManager](/#/docs/corncierge/master/class/DiscordManager). You can find more information about these methods there. It can be accessed as `Application#discord`.",
+          "content": "# Built-in discord commands\n\nCorncierge comes with a lot of built-in commands that should be useful to most bots.\nAny and all of these commands can be disabled via [ApplicationOptions.discord](/#/docs/corncierge/master/typedef/DiscordOptions):\n\n```js\n// Disable the roles commands and the random number command\nnew Application({ discord: { disabledCommands: ['roles', 'random'] } });\n```\n\n## Traditional Commands\n\nThese commands are message based commands that will be supported until slash commands are fully fleshed out and support proper gating of usage. All of these commands are prefixed by the prefix for the guild, the default is `!`, and can be changed using the `prefix` command.\n\n### Gaming\n\n- `random`: generates a random number between 0 and the specified number\n- `room`: an orginizational system for members with waiting rooms and player lists\n  - this command is quite complex and is better described in the client by the slash command equivalent\n\n### General\n\n- `help`: A help command that handles help information for most built-in commands\n  - you may want to override this with your own help command to add your own commands\n  - `help legacy` will list your custom commands as well however\n\n### Management\n\nThese are commands that essentially act as the console for the bot, most are locked to the `console` channel.\n\n- `eval`: runs the code specified using eval, the nodejs util and the discord.js client are imported for use, locked to the `owner` user\n- `reboot`: cleanly reboots the bot\n- `reload`: reloads the cache, i.e. everything in the database\n- `setstatus`: sets the bots discord status, at this time it cannot be fully custom\n- `status`: sends a message with the current status of the bot\n- `update`: executes `git pull` and then `npm install` on the command line to update the bot, automatically restarts to apply changes, locked to the `owner` user\n\n### Moderation\n\nAll of the commands in this category require the same permission as if you were to perform the actions manually\n\n- `clear`: clears the last n lines as specified, cannot delete messages that are older than 2 weeks\n- `moveall`: moves all users in a voice channel to another voice channel, can specify both starting and ending channel\n  - `moveall general` moves everyone in your current voice channel or `moveall general -> general2`\n- `muteall`: mutes everyone in the current voice channel aside for the caller and bots, automatically unmutes after the specified time (15 seconds by default)\n- `prefix`: changes the prefix in the current guild to whatever is specified\n- `randommove`: randomly moves the number of people specified using the same syntax as `moveall`\n- `unmuteall`: unmutes everyone in the current voice channel, useful after `muteall 0`\n\n### Roles\n\nThere are lots of different ways to manage roles, the default commands allow you a couple different methods. To use any of the managers, you need to have `MANAGE_ROLES`.\n\n- `autorole`: set up a role to automatically be assigned to new members, can be after a specified wait period `manager`\n- `color`: assings the caller a color (role) if it has been set up in the colormanager, functionality is better using slash commands\n- `colormanager`: sets up roles and channel for the `color` command `manager`\n- `makeme`: assigns the caller any role based on the name if it has been set up in rolemanager\n- `makemenot`: removes any role from the caller based on the name if it has been set up in rolemanager\n- `reactionroles`: sets up role assignment via reactions `manager`\n- `rolemanager`: sets up a database of roles and channels that each role can be self assigned in `manager`\n- `voiceroles`: sets up up to 5 sets of channels that each have a unique voice role associated `manager`\n\n### Twitch\n\nThese commands are for interfacing with the built in twitch IRC bot. Locked to a command management channel.\n\n- `commandlist`: lists all the currently registerd twitch commands\n- `commands`: allows creating, editing, and removing twitch commands\n- `variables`: allows creating, editing, and removing custom twitch replaceable variables\n\n## Slash Commands\n\nThese commands are mostly self explanatory as they display the information in the client. However, you do need to take some extra steps to tell discord about these commands. These commands are not disabled by the `disabledCommands` parameter since they have to be manually registered.\n\n- `/color`: assigns a color that was set up in color manager\n- `/room`: an orginizational system for members with waiting rooms and player lists\n\n### Registering Slash Commands\n\nBecause of the unique nature of slash commands, they can be registered per guild or globally. Corncierge provides some helper methods to register commands for you. This is best done using the `eval` command.\n\n```js\n// Adding all registered slash commands (yes including custom ones), globally\n// Commands with guilds specified will not be registered globally\n!eval socket.registerCommands();\n\n// Adding all registered slash commands, to a specific guild\n// Checks to see if the commands are registered globally first\n// Commands with guilds specified that are not this guild will not get registered to it\n!eval socket.registerCommands(':guildid');\n\n// Adding a single registered slash command, by name\n// The command will be registered globally if guilds is not specified in the command data\n// If guilds is specified in the registration info, it will register to every guild listed\n!eval socket.registerCommand('commandname');\n```\n\n`socket` in the above code refers to the [DiscordManager](/#/docs/corncierge/master/class/DiscordManager). You can find more information about these methods there. It can be accessed as `Application#discord`.\n",
           "path": "docs/handlers/discord.md"
         },
         "twitch": {
           "name": "Twitch IRC Commands",
           "type": "md",
-          "content": "# Built-in twitch command handlers\n\nCorncierge comes with a few built-in command responders that should be useful to most bots.\nIt is your choice whether to use these responders depending on the method column in the database.\n\nFor twitch commands, if the responder fails in any way or takes to long, it will respond with the output in the database.\n\n## Utility Commands\n\n* `followage`: returns how long the caller or specified user has been following the channel, if they are not following this falls back to the database response\n* `uptime`: returns how long the stream has been up for\n* `variable`: allows creating, editing, and deleteing custom variables\n\n## Other Commands\n\n* `joke`: says a random joke from the database\n\n## Setting up built-in commands\n\nThere are two ways to use these (and custom created) functions in your twitch command.\n\n1. Modify the database directly and set the `method` column for the command to one of the above names.\n2. Use `!commands link commandname uptime` to link the command to the function in discord.\n\n## Automatic replacement variables\n\nThere are 4 variables in command responses that are automatically replaced. These variables are identified by wrapping them in `{}`.\nE.g. `{caster}` will be replaced with the broadcasters name.\n\nBuilt-in replacements:\n* `{user}` - the user that executed the command\n* `{touser}` - the first parameter passed to the command, or the user that executed the command if there is no first parameter\n* `{count}` - the number of times the command has been called\n* `{caster}` - the broadcaster in the channel the command was executed in\n\nCustom variables (up to 25 per channel):\n* `{var-<somevarname>}` - replaced with a custom value set via discord or irc",
+          "content": "# Built-in twitch command handlers\n\nCorncierge comes with a few built-in command responders that should be useful to most bots.\nIt is your choice whether to use these responders depending on the method column in the database.\n\nFor twitch commands, if the responder fails in any way or takes to long, it will respond with the output in the database.\n\n## Utility Commands\n\n- `followage`: returns how long the caller or specified user has been following the channel, if they are not following this falls back to the database response\n- `variable`: allows creating, editing, and deleteing custom variables\n\n## Other Commands\n\n- `joke`: says a random joke from the database\n\n## Setting up built-in commands\n\nThere are two ways to use these (and custom created) functions in your twitch command.\n\n1. Modify the database directly and set the `method` column for the command to one of the above names.\n2. Use `!commands link commandname uptime` to link the command to the function in discord.\n\n## Automatic replacement variables\n\nThere are 5 basic variables and several variables that request data from twitch available in command responses and are automatically replaced. All variables are identified by wrapping them in `{}`.\nE.g. `{caster}` will be replaced with the broadcasters name.\n\n#### Built-in replacements:\n\n- `{user}` - the user that executed the command\n- `{touser}` - the first parameter passed to the command, or the user that executed the command if there is no first parameter\n  - `{touser-defaultuser}` is a special form of touser that is the same as above but if there is no first parameter it uses the specified defaultuser instead\n- `{count}` - the number of times the command has been called\n- `{caster}` - the broadcaster in the channel the command was executed in\n- `{query}` - the full query string that the user entered\n  - `{query-default query}` is a special form of query that is the same as above but replaces an empty query with the default query\n\n#### Twitch replacements:\n\nThese replacements all use the same format and contain some extra configuration parameters for specifying which user / channel / stream to fetch data for.\nThe format is as follows: `{twitch.<type>.<property> [user] [defaultUser]}`\n\nIn this format the type will be one of `user`, `channel`, or `stream` depending on the property you want to replace, see the more detailed list below. Having this deliniation helps inform people modifying commmands how privileged some of the fetched information is and why it may not sometimes be available.\n\nBoth `[user]` and `[defaultUser]` are completely optional and support a special bit of syntax sugar:\n\n- `[user]` can be amy twitch name, `(touser)`, `(user)`, or `(caster)`, the latter of which are replaced with their normal replacements, exception being touser, which does not default if there was no query\n- `[defaultUser]` can be any twitch name, `(user)`, or `(caster)`, the latter of which are replaced with their normal replacements.\n\nIf no user and defaultUser are specified, the data fetched will be for the broadcaster. If the value of user evaluates to be empty, the data fetched will be for the broadcaster (by default) or whatever is specified in defaultUser, this currently only applies to `(touser)`\n\nAn example:\n\n- `{twitch.channel.title}` is replaced with the broadcaster's title\n- `{twitch.channel.title corncierge}` is replaced with corncierge's title\n- `{twitch.channel.title (touser)}` run with e.g. `!title corncierge` is replaced with corncierge's title\n- `{twitch.channel.title (touser)}` run with e.g. `!title` is replaced with the broadcaster's title\n- `{twitch.channel.title (touser) (user)}` run with e.g. `!title` is replaced with the user who ran the command's title\n\n##### Full list of twitch replacements\n\n- `{twitch.user.followerCount}` - replaced with the queried users follower count\n- `{twitch.user.createdAt}` - replaced with a formatted string of the date (and how long ago) the queried user was created at\n- `{twitch.user.displayName}` - replaced with the queried users display name\n- `{twitch.channel.title}` - replaced with the queried channels title\n- `{twitch.channel.category}` - replaced with the queried channels category\n- `{twitch.channel.subscriberCount}` - replaced with the queried channels unique subscriber count, **requires authorization to work**, recommended only to use for the broadcaster\n- `{twitch.channel.subscriptionPoints}` - replaced with the queried channels total subscription points, **requires authorization to work**, recommended only to use for the broadcaster\n- `{twitch.stream.startedAt}` - replaced with a formatted string of the date (and how long ago) the queried stream was started, **only works when the queried stream is live**\n- `{twitch.stream.uptime}` - replaced with a formatted string of how long the queried stream has been running, **only works when the queried stream is live**\n- `{twitch.stream.tags}` - replaced with a list of tags that are set on the queried stream\n\n#### Custom variables (up to 25 per channel):\n\n- `{var-<somevarname>}` - replaced with a custom value set via discord or irc\n",
           "path": "docs/handlers/twitch.md"
         },
         "http": {
@@ -172,7 +172,7 @@
           "description": "Validate and set the configuration options for the application.",
           "access": "private",
           "params": [{ "name": "options", "description": "the options to validate", "type": [[["Object"]]] }],
-          "meta": { "line": 186, "file": "Application.js", "path": "app" }
+          "meta": { "line": 183, "file": "Application.js", "path": "app" }
         },
         {
           "name": "formatOptions",
@@ -180,21 +180,21 @@
           "access": "private",
           "params": [{ "name": "options", "description": "the pre validated options", "type": [[["Object"]]] }],
           "returns": { "types": [[["Object"]]], "description": "formatted options" },
-          "meta": { "line": 303, "file": "Application.js", "path": "app" }
+          "meta": { "line": 293, "file": "Application.js", "path": "app" }
         },
         {
           "name": "setSettings",
           "description": "Cache all database settings for the application.",
           "access": "private",
           "returns": [[["Promise"]]],
-          "meta": { "line": 370, "file": "Application.js", "path": "app" }
+          "meta": { "line": 357, "file": "Application.js", "path": "app" }
         },
         {
           "name": "setStreaming",
           "description": "Cache all database streaming settings for the application.",
           "access": "private",
           "returns": [[["Promise"]]],
-          "meta": { "line": 385, "file": "Application.js", "path": "app" }
+          "meta": { "line": 372, "file": "Application.js", "path": "app" }
         }
       ],
       "meta": { "line": 19, "file": "Application.js", "path": "app" }
@@ -1432,7 +1432,7 @@
             { "name": "table", "description": "the table to register", "type": [[["BaseTable"]]] },
             { "name": "type", "description": "the type of this table, used to place in relevant arrays", "optional": true, "type": [[["string"]]] }
           ],
-          "meta": { "line": 55, "file": "TableManager.js", "path": "app/database/tables" }
+          "meta": { "line": 54, "file": "TableManager.js", "path": "app/database/tables" }
         }
       ],
       "meta": { "line": 8, "file": "TableManager.js", "path": "app/database/tables" }
@@ -1463,6 +1463,19 @@
           "meta": { "line": 14, "file": "twitchAuth.js", "path": "app/database/tables" }
         },
         {
+          "name": "getSingle",
+          "description": "Get a single authenticated users",
+          "params": [{ "name": "id", "description": "the id of the user to get tokens for", "type": [[["string"]]] }],
+          "async": true,
+          "returns": [
+            [
+              ["Promise", "<"],
+              ["Object", ">"]
+            ]
+          ],
+          "meta": { "line": 23, "file": "twitchAuth.js", "path": "app/database/tables" }
+        },
+        {
           "name": "add",
           "description": "Add an authenticated user",
           "params": [
@@ -1477,7 +1490,47 @@
               ["void", ">"]
             ]
           ],
-          "meta": { "line": 26, "file": "twitchAuth.js", "path": "app/database/tables" }
+          "meta": { "line": 36, "file": "twitchAuth.js", "path": "app/database/tables" }
+        },
+        {
+          "name": "upsert",
+          "description": "Add or update an authenticated user",
+          "params": [
+            { "name": "id", "description": "The id of the user this token belongs to", "type": [[["string"]]] },
+            { "name": "access", "description": "The access token for this user", "type": [[["string"]]] },
+            { "name": "refresh", "description": "The refresh token for this user", "type": [[["string"]]] },
+            { "name": "scopes", "description": "The scopes that are authorized for this user", "type": [[["Object"]], [["Array"]]] }
+          ],
+          "returns": [
+            [
+              ["Promise", "<"],
+              ["void", ">"]
+            ]
+          ],
+          "meta": { "line": 53, "file": "twitchAuth.js", "path": "app/database/tables" }
+        },
+        {
+          "name": "upsertMultiple",
+          "description": "Add or update an authenticated user",
+          "params": [
+            {
+              "name": "data",
+              "description": "the data for all the users to upsert",
+              "type": [
+                [
+                  ["Array", "<"],
+                  ["Object", ">"]
+                ]
+              ]
+            }
+          ],
+          "returns": [
+            [
+              ["Promise", "<"],
+              ["void", ">"]
+            ]
+          ],
+          "meta": { "line": 66, "file": "twitchAuth.js", "path": "app/database/tables" }
         },
         {
           "name": "delete",
@@ -1489,7 +1542,7 @@
               ["void", ">"]
             ]
           ],
-          "meta": { "line": 40, "file": "twitchAuth.js", "path": "app/database/tables" }
+          "meta": { "line": 79, "file": "twitchAuth.js", "path": "app/database/tables" }
         },
         {
           "name": "edit",
@@ -1506,7 +1559,7 @@
               ["void", ">"]
             ]
           ],
-          "meta": { "line": 52, "file": "twitchAuth.js", "path": "app/database/tables" }
+          "meta": { "line": 91, "file": "twitchAuth.js", "path": "app/database/tables" }
         },
         {
           "name": "parseJSON",
@@ -1623,94 +1676,6 @@
         }
       ],
       "meta": { "line": 9, "file": "voiceRoles.js", "path": "app/database/tables" }
-    },
-    {
-      "name": "volumesTable",
-      "description": "Contains API methods for the volumes database table",
-      "extends": [[["BaseTable"]]],
-      "props": [
-        {
-          "name": "socket",
-          "description": "The database manager that this table resides in",
-          "type": [[["DatabaseManager"]]],
-          "meta": { "line": 9, "file": "BaseTable.js", "path": "app/database/tables" }
-        }
-      ],
-      "methods": [
-        {
-          "name": "get",
-          "description": "Get volume data.",
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["Array", "<"],
-              ["Object", ">>"]
-            ]
-          ],
-          "meta": { "line": 14, "file": "volumes.js", "path": "app/database/tables" }
-        },
-        {
-          "name": "add",
-          "description": "Add a guild to volumes",
-          "params": [{ "name": "id", "description": "the guild id to add to the database", "type": [[["string"]]] }],
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["void", ">"]
-            ]
-          ],
-          "meta": { "line": 23, "file": "volumes.js", "path": "app/database/tables" }
-        },
-        {
-          "name": "delete",
-          "description": "Remove a guild from volumes",
-          "params": [{ "name": "id", "description": "the guild id to remove from the database", "type": [[["string"]]] }],
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["void", ">"]
-            ]
-          ],
-          "meta": { "line": 32, "file": "volumes.js", "path": "app/database/tables" }
-        },
-        {
-          "name": "edit",
-          "description": "Edit the volume for a guild",
-          "params": [
-            { "name": "id", "description": "the guild id to edit in the database", "type": [[["string"]]] },
-            { "name": "volume", "description": "the new volume to save", "type": [[["string"]]] }
-          ],
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["void", ">"]
-            ]
-          ],
-          "meta": { "line": 42, "file": "volumes.js", "path": "app/database/tables" }
-        },
-        {
-          "name": "parseJSON",
-          "description": "Parses stringified JSON from the database fetch",
-          "inherits": "BaseTable#parseJSON",
-          "inherited": true,
-          "params": [
-            {
-              "name": "columns",
-              "description": "the columns that contain json data",
-              "type": [
-                [
-                  ["Array", "<"],
-                  ["string", ">"]
-                ]
-              ]
-            },
-            { "name": "data", "description": "the data returned from the database", "type": [[["Object"]]] }
-          ],
-          "returns": [[["Object"]]],
-          "meta": { "line": 23, "file": "BaseTable.js", "path": "app/database/tables" }
-        }
-      ],
-      "meta": { "line": 9, "file": "volumes.js", "path": "app/database/tables" }
     },
     {
       "name": "BaseCommand",
@@ -1911,7 +1876,7 @@
               "type": [[["boolean"]]]
             }
           ],
-          "meta": { "line": 50, "file": "CommandManager.js", "path": "app/discord/commands" }
+          "meta": { "line": 49, "file": "CommandManager.js", "path": "app/discord/commands" }
         },
         {
           "name": "register",
@@ -1926,49 +1891,10 @@
               "type": [[["boolean"]]]
             }
           ],
-          "meta": { "line": 62, "file": "CommandManager.js", "path": "app/discord/commands" }
+          "meta": { "line": 61, "file": "CommandManager.js", "path": "app/discord/commands" }
         }
       ],
       "meta": { "line": 10, "file": "CommandManager.js", "path": "app/discord/commands" }
-    },
-    {
-      "name": "MusicSubscription",
-      "description": "Represents a queue of music to be played on a voice connection to discord",
-      "props": [
-        {
-          "name": "isPlaying",
-          "readonly": true,
-          "type": [[["boolean"]]],
-          "meta": { "line": 113, "file": "queueHandler.js", "path": "app/discord/commands/music" }
-        },
-        {
-          "name": "nowPlaying",
-          "readonly": true,
-          "nullable": true,
-          "type": [[["unknown"]]],
-          "meta": { "line": 121, "file": "queueHandler.js", "path": "app/discord/commands/music" }
-        }
-      ],
-      "methods": [
-        {
-          "name": "enqueue",
-          "description": "Adds a new Track to the queue.",
-          "params": [{ "name": "track", "description": "The track to add to the queue", "type": [[["Track"]]] }],
-          "meta": { "line": 94, "file": "queueHandler.js", "path": "app/discord/commands/music" }
-        },
-        {
-          "name": "stop",
-          "description": "Stops audio playback and empties the queue",
-          "meta": { "line": 103, "file": "queueHandler.js", "path": "app/discord/commands/music" }
-        },
-        {
-          "name": "processQueue",
-          "description": "Attempts to play a Track from the queue",
-          "async": true,
-          "meta": { "line": 137, "file": "queueHandler.js", "path": "app/discord/commands/music" }
-        }
-      ],
-      "meta": { "line": 11, "file": "queueHandler.js", "path": "app/discord/commands/music" }
     },
     {
       "name": "BaseAppCommand",
@@ -2480,7 +2406,7 @@
           "name": "register",
           "description": "Registers a command in the manager for use throughout the application",
           "params": [{ "name": "command", "description": "the command to register", "type": [[["TwitchCommand"]]] }],
-          "meta": { "line": 35, "file": "TwitchCommandManager.js", "path": "app/irc/commands" }
+          "meta": { "line": 34, "file": "TwitchCommandManager.js", "path": "app/irc/commands" }
         }
       ],
       "meta": { "line": 9, "file": "TwitchCommandManager.js", "path": "app/irc/commands" }
@@ -2493,25 +2419,25 @@
           "name": "socket",
           "description": "The twitch manager that is executing this command",
           "type": [[["IrcManager"]]],
-          "meta": { "line": 13, "file": "command.js", "path": "app/irc/handlers" }
+          "meta": { "line": 23, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
           "name": "channel",
           "description": "The name and id of the channel that the command was executed in",
-          "type": [[["Object"]]],
-          "meta": { "line": 20, "file": "command.js", "path": "app/irc/handlers" }
+          "type": [[["TwitchChannel"]]],
+          "meta": { "line": 30, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
           "name": "user",
           "description": "The user that executed the command",
           "type": [[["Object"]]],
-          "meta": { "line": 27, "file": "command.js", "path": "app/irc/handlers" }
+          "meta": { "line": 37, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
           "name": "command",
           "description": "The database row that the command identified to",
           "type": [[["Object"]]],
-          "meta": { "line": 34, "file": "command.js", "path": "app/irc/handlers" }
+          "meta": { "line": 44, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
           "name": "args",
@@ -2522,50 +2448,80 @@
               ["string", ">"]
             ]
           ],
-          "meta": { "line": 41, "file": "command.js", "path": "app/irc/handlers" }
-        },
-        {
-          "name": "isBroadcaster",
-          "description": "Whether the user that executed this command is the broadcaster",
-          "type": [[["boolean"]]],
-          "meta": { "line": 53, "file": "command.js", "path": "app/irc/handlers" }
+          "meta": { "line": 51, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
           "name": "isPrivileged",
           "description": "Whether the user that executed this command has moderation privileges",
           "type": [[["boolean"]]],
-          "meta": { "line": 59, "file": "command.js", "path": "app/irc/handlers" }
-        },
-        {
-          "name": "isVip",
-          "description": "Whether the user that executed this command is vip",
-          "type": [[["boolean"]]],
-          "meta": { "line": 65, "file": "command.js", "path": "app/irc/handlers" }
-        },
-        {
-          "name": "hasArgs",
-          "description": "Whether arguments were provided with this exectuion",
-          "type": [[["boolean"]]],
-          "meta": { "line": 71, "file": "command.js", "path": "app/irc/handlers" }
-        },
-        {
-          "name": "target",
-          "description": "The targetted user, simply the first arg when provided, otherwise the user executing",
-          "type": [[["string"]]],
-          "meta": { "line": 77, "file": "command.js", "path": "app/irc/handlers" }
+          "meta": { "line": 63, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
           "name": "executor",
           "description": "The command executor if the command is handled by a responder",
           "nullable": true,
           "type": [[["TwitchCommand"]]],
-          "meta": { "line": 83, "file": "command.js", "path": "app/irc/handlers" }
+          "meta": { "line": 69, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
           "name": "handled",
           "description": "Whether this command has already been handled",
           "type": [[["boolean"]]],
-          "meta": { "line": 89, "file": "command.js", "path": "app/irc/handlers" }
+          "meta": { "line": 75, "file": "command.js", "path": "app/irc/handlers" }
+        },
+        {
+          "name": "_replaceables",
+          "description": "Base replaceables",
+          "access": "private",
+          "type": [
+            [
+              ["Collection", "<"],
+              ["string", ", "],
+              ["string", ">"]
+            ]
+          ],
+          "meta": { "line": 82, "file": "command.js", "path": "app/irc/handlers" }
+        },
+        {
+          "name": "_prefetch",
+          "description": "Prefetched data cached for this command handler only",
+          "access": "private",
+          "type": [
+            [
+              ["Record", "<"],
+              ["string", ", "],
+              ["Map", ">"]
+            ]
+          ],
+          "meta": { "line": 95, "file": "command.js", "path": "app/irc/handlers" }
+        },
+        {
+          "name": "hasArgs",
+          "description": "Whether arguments were provided with this exectuion",
+          "readonly": true,
+          "type": [[["boolean"]]],
+          "meta": { "line": 110, "file": "command.js", "path": "app/irc/handlers" }
+        },
+        {
+          "name": "isBroadcaster",
+          "description": "Whether the user that executed this command is the broadcaster",
+          "readonly": true,
+          "type": [[["boolean"]]],
+          "meta": { "line": 119, "file": "command.js", "path": "app/irc/handlers" }
+        },
+        {
+          "name": "isVip",
+          "description": "Whether the user that executed this command is vip",
+          "readonly": true,
+          "type": [[["boolean"]]],
+          "meta": { "line": 128, "file": "command.js", "path": "app/irc/handlers" }
+        },
+        {
+          "name": "target",
+          "description": "The targetted user, simply the first arg when provided, otherwise the user executing",
+          "readonly": true,
+          "type": [[["string"]]],
+          "meta": { "line": 137, "file": "command.js", "path": "app/irc/handlers" }
         }
       ],
       "methods": [
@@ -2573,14 +2529,14 @@
           "name": "execute",
           "description": "Executes the command handled by this handler",
           "access": "private",
-          "meta": { "line": 96, "file": "command.js", "path": "app/irc/handlers" }
+          "meta": { "line": 145, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
           "name": "handle",
           "description": "Handle actual command execution",
           "access": "private",
           "async": true,
-          "meta": { "line": 139, "file": "command.js", "path": "app/irc/handlers" }
+          "meta": { "line": 188, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
           "name": "respond",
@@ -2589,267 +2545,108 @@
             { "name": "message", "description": "the message to say", "type": [[["string"]]] },
             { "name": "mention", "description": "whether to mention the targetted user", "optional": true, "default": false, "type": [[["boolean"]]] }
           ],
-          "meta": { "line": 162, "file": "command.js", "path": "app/irc/handlers" }
-        }
-      ],
-      "meta": { "line": 10, "file": "command.js", "path": "app/irc/handlers" }
-    },
-    {
-      "name": "APIManager",
-      "description": "Parent implementation for API request-based service classes.",
-      "extends": [[["BaseManager"]]],
-      "abstract": true,
-      "props": [
-        {
-          "name": "api",
-          "description": "API request shortcut.",
-          "access": "private",
-          "readonly": true,
-          "type": [[["Requester"]]],
-          "meta": { "line": 24, "file": "APIManager.js", "path": "app/managers" }
+          "async": true,
+          "meta": { "line": 211, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
-          "name": "app",
-          "description": "The application that instantiated this Manager",
-          "readonly": true,
-          "type": [[["Application"]]],
-          "meta": { "line": 9, "file": "BaseManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "options",
-          "description": "The options for this API manager",
-          "type": [[["Object"]]],
-          "meta": { "line": 21, "file": "BaseManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "driver",
-          "description": "The driver that handles this managers API",
-          "readonly": true,
-          "type": [[["Object"]]],
-          "meta": { "line": 23, "file": "BaseManager.js", "path": "app/managers" }
-        }
-      ],
-      "methods": [
-        {
-          "name": "_request",
-          "description": "API Request handler",
+          "name": "getDefaultableReplacements",
+          "description": "Generates the collection of replaceable keys in the message that may have default values",
           "access": "private",
           "params": [
-            { "name": "method", "description": "The HTTP  method used to make this request", "type": [[["HTTPMethod"]]] },
-            { "name": "uri", "description": "The uri of the desired endpoint", "type": [[["string"]]] },
-            { "name": "data", "description": "The data to pass to the request", "type": [[["Object"]]] }
+            {
+              "name": "potentials",
+              "description": "a list of all potential replaceable items in the message",
+              "type": [
+                [
+                  ["Array", "<"],
+                  ["RegExpMatchArray", ">"]
+                ]
+              ]
+            }
           ],
           "returns": [
-            [
-              ["Promise", "<"],
-              ["Object", ">"]
-            ]
-          ],
-          "meta": { "line": 36, "file": "APIManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "makeLoggable",
-          "description": "Makes a request error more readable in logs.",
-          "params": [{ "name": "error", "description": "the original error", "type": [[["Object"]]] }],
-          "returns": [[["HTTPError"]]],
-          "meta": { "line": 49, "file": "APIManager.js", "path": "app/managers" }
-        }
-      ],
-      "meta": { "line": 13, "file": "APIManager.js", "path": "app/managers" }
-    },
-    {
-      "name": "AuthManager",
-      "description": "Auth manager for the application.",
-      "extends": [[["APIManager"]]],
-      "props": [
-        {
-          "name": "driver",
-          "description": "The Authentication handler.",
-          "access": "private",
-          "type": [[["Axios"]]],
-          "meta": { "line": 15, "file": "AuthManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "twitch",
-          "description": "The Twitch manager that instantiated this.",
-          "readonly": true,
-          "type": [[["TwitchManager"]]],
-          "meta": { "line": 22, "file": "AuthManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "cache",
-          "description": "The cache of auth data",
-          "type": [
             [
               ["Collection", "<"],
-              ["number", ", "],
-              ["TwitchAuthData", ">"]
+              ["string", ", "],
+              ["string", ">"]
             ]
           ],
-          "meta": { "line": 42, "file": "AuthManager.js", "path": "app/managers" }
+          "meta": { "line": 236, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
-          "name": "api",
-          "description": "API request shortcut.",
+          "name": "getTwitchReplacements",
+          "description": "Generates the collection of replaceable keys in the message that are from twitch\nkeys start with on of the following\nUser scope:\n* `twitch.user.followerCount`, `twitch.user.createdAt`, `twitch.user.displayName`\nChannel scpope:\n* `twitch.channel.title`, `twitch.channel.category`, `twitch.channel.subscriberCount`, `twitch.channel.subscriptionPoints`\nStream scope:\n* `twitch.stream.startedAt`, `twitch.stream.uptime`, `twitch.stream.tags`",
           "access": "private",
-          "readonly": true,
-          "type": [[["Requester"]]],
-          "meta": { "line": 24, "file": "APIManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "app",
-          "description": "The application that instantiated this Manager",
-          "readonly": true,
-          "type": [[["Application"]]],
-          "meta": { "line": 9, "file": "BaseManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "options",
-          "description": "The options for this API manager",
-          "type": [[["Object"]]],
-          "meta": { "line": 21, "file": "BaseManager.js", "path": "app/managers" }
-        }
-      ],
-      "methods": [
-        {
-          "name": "generateToken",
-          "description": "Generates the twitch api tokens using the code provided",
-          "access": "private",
-          "params": [{ "name": "code", "description": "the oauth code to generate tokens from", "type": [[["string"]]] }],
-          "async": true,
-          "returns": {
-            "types": [
-              [
-                ["Promise", "<"],
-                ["string", ">"]
-              ]
-            ],
-            "description": "token"
-          },
-          "meta": { "line": 53, "file": "AuthManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "generateAppToken",
-          "description": "Generates the twitch api app access token for this app",
-          "async": true,
-          "returns": {
-            "types": [
-              [
-                ["Promise", "<"],
-                ["string", ">"]
-              ]
-            ],
-            "description": "token"
-          },
-          "meta": { "line": 85, "file": "AuthManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "getAccessToken",
-          "description": "Gets the twitch api access token for the given user id",
           "params": [
             {
-              "name": "id",
-              "description": "the id of the user to get the token for, or `0` for the app access token",
+              "name": "potentials",
+              "description": "a list of all potential replaceable items in the message",
+              "type": [
+                [
+                  ["Array", "<"],
+                  ["RegExpMatchArray", ">"]
+                ]
+              ]
+            }
+          ],
+          "async": true,
+          "returns": [
+            [
+              ["Collection", "<"],
+              ["string", ", "],
+              ["string", ">"]
+            ]
+          ],
+          "meta": { "line": 260, "file": "command.js", "path": "app/irc/handlers" }
+        },
+        {
+          "name": "_getId",
+          "description": "Gets cached or fetch twitch user id for a username",
+          "params": [{ "name": "name", "description": "the name of the user to get id for", "type": [[["string"]]] }],
+          "async": true,
+          "returns": [[["string"]]],
+          "meta": { "line": 354, "file": "command.js", "path": "app/irc/handlers" }
+        },
+        {
+          "name": "_fetchFromTwitch",
+          "description": "Get some data for replacement from twitch",
+          "params": [
+            { "name": "username", "description": "the name of the user to fetch for", "type": [[["string"]]] },
+            { "name": "userId", "description": "the id of the user to fetch for", "type": [[["string"]]] },
+            { "name": "structure", "description": "structure type to be fetched", "type": [[["string"]]] },
+            {
+              "name": "property",
+              "description": "property to get from the structure, only optional for tag structure",
               "optional": true,
-              "default": "'0'",
               "type": [[["string"]]]
-            },
-            {
-              "name": "skipValidation",
-              "description": "whether to skip the validation request and just return the cached token",
-              "optional": true,
-              "default": false,
-              "type": [[["boolean"]]]
             }
           ],
           "async": true,
-          "returns": {
-            "types": [
-              [
-                ["Promise", "<"],
-                ["string", ">"]
-              ]
-            ],
-            "description": "token"
-          },
-          "meta": { "line": 116, "file": "AuthManager.js", "path": "app/managers" }
+          "returns": [[["unknown"]]],
+          "meta": { "line": 373, "file": "command.js", "path": "app/irc/handlers" }
         },
         {
-          "name": "refreshToken",
-          "description": "Refreshes the tokens for the given id",
-          "access": "private",
-          "params": [{ "name": "id", "description": "the user id to refresh the tokens for", "type": [[["string"]]] }],
-          "async": true,
-          "returns": {
-            "types": [
-              [
-                ["Promise", "<"],
-                ["string", ">"]
-              ]
-            ],
-            "description": "token"
-          },
-          "meta": { "line": 135, "file": "AuthManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "validateToken",
-          "description": "Validates the token provided",
+          "name": "_convertStandardReplaceables",
+          "description": "Convert a singleton replacement type string with the non standard edges ()",
           "access": "private",
           "params": [
-            { "name": "token", "description": "a twitch api token", "type": [[["string"]]] },
+            { "name": "toReplace", "description": "the string to get replacements for", "type": [[["string"]]] },
             {
-              "name": "fullResponse",
-              "description": "whether to return the full response when successful",
-              "optional": true,
-              "default": false,
-              "type": [[["boolean"]]]
+              "name": "allowedReplacements",
+              "description": "the generic replacements to allow",
+              "type": [
+                [
+                  ["Array", "<"],
+                  ["string", ">"]
+                ]
+              ]
             }
           ],
-          "async": true,
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["boolean", ">"]
-            ]
-          ],
-          "meta": { "line": 177, "file": "AuthManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "setCache",
-          "description": "Set the cache of twitch authenticated users.",
-          "returns": [[["Promise"]]],
-          "meta": { "line": 193, "file": "AuthManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "_request",
-          "description": "API Request handler",
-          "access": "private",
-          "inherits": "APIManager#_request",
-          "inherited": true,
-          "params": [
-            { "name": "method", "description": "The HTTP  method used to make this request", "type": [[["HTTPMethod"]]] },
-            { "name": "uri", "description": "The uri of the desired endpoint", "type": [[["string"]]] },
-            { "name": "data", "description": "The data to pass to the request", "type": [[["Object"]]] }
-          ],
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["Object", ">"]
-            ]
-          ],
-          "meta": { "line": 36, "file": "APIManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "makeLoggable",
-          "description": "Makes a request error more readable in logs.",
-          "inherits": "APIManager#makeLoggable",
-          "inherited": true,
-          "params": [{ "name": "error", "description": "the original error", "type": [[["Object"]]] }],
-          "returns": [[["HTTPError"]]],
-          "meta": { "line": 49, "file": "APIManager.js", "path": "app/managers" }
+          "returns": [[["string"]], [["null"]]],
+          "meta": { "line": 446, "file": "command.js", "path": "app/irc/handlers" }
         }
       ],
-      "meta": { "line": 11, "file": "AuthManager.js", "path": "app/managers" }
+      "meta": { "line": 20, "file": "command.js", "path": "app/irc/handlers" }
     },
     {
       "name": "BaseManager",
@@ -3070,7 +2867,7 @@
         },
         {
           "name": "setCache",
-          "description": "Cache all managers and music.",
+          "description": "Cache all managers.",
           "returns": [
             [
               ["Promise", "<"],
@@ -3078,19 +2875,6 @@
             ]
           ],
           "meta": { "line": 163, "file": "DiscordManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "cacheMusic",
-          "description": "Cache the music data.",
-          "access": "private",
-          "async": true,
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["void", ">"]
-            ]
-          ],
-          "meta": { "line": 187, "file": "DiscordManager.js", "path": "app/managers" }
         },
         {
           "name": "cacheRooms",
@@ -3103,7 +2887,7 @@
               ["void", ">"]
             ]
           ],
-          "meta": { "line": 208, "file": "DiscordManager.js", "path": "app/managers" }
+          "meta": { "line": 186, "file": "DiscordManager.js", "path": "app/managers" }
         },
         {
           "name": "cacheTable",
@@ -3115,14 +2899,14 @@
             { "name": "key", "description": "a key to use for the new map", "type": [[["string"]]] }
           ],
           "returns": [[["Promise"]]],
-          "meta": { "line": 237, "file": "DiscordManager.js", "path": "app/managers" }
+          "meta": { "line": 215, "file": "DiscordManager.js", "path": "app/managers" }
         },
         {
           "name": "getChannel",
           "description": "Get the channel for the given slug.",
           "params": [{ "name": "slug", "description": "the channel name in settings to get", "type": [[["string"]]] }],
           "returns": { "types": [[["Channel"]]], "nullable": true },
-          "meta": { "line": 249, "file": "DiscordManager.js", "path": "app/managers" }
+          "meta": { "line": 227, "file": "DiscordManager.js", "path": "app/managers" }
         },
         {
           "name": "getWebhook",
@@ -3137,7 +2921,7 @@
             ],
             "nullable": true
           },
-          "meta": { "line": 259, "file": "DiscordManager.js", "path": "app/managers" }
+          "meta": { "line": 237, "file": "DiscordManager.js", "path": "app/managers" }
         },
         {
           "name": "getContent",
@@ -3147,7 +2931,7 @@
             { "name": "args", "description": "arguments to pass to the transformer", "type": [[["Array"]]] }
           ],
           "returns": { "types": [[["string"]]], "nullable": true },
-          "meta": { "line": 276, "file": "DiscordManager.js", "path": "app/managers" }
+          "meta": { "line": 254, "file": "DiscordManager.js", "path": "app/managers" }
         },
         {
           "name": "getEmbed",
@@ -3157,7 +2941,7 @@
             { "name": "args", "description": "arguments to pass to the constructor", "type": [[["Array"]]] }
           ],
           "returns": { "types": [[["string"]]], "nullable": true },
-          "meta": { "line": 293, "file": "DiscordManager.js", "path": "app/managers" }
+          "meta": { "line": 271, "file": "DiscordManager.js", "path": "app/managers" }
         },
         {
           "name": "sendMessage",
@@ -3167,7 +2951,7 @@
             { "name": "content", "description": "the content to send", "optional": true, "type": [[["string"]], [["MessagePayload"]]] },
             { "name": "options", "description": "The options to provide", "optional": true, "type": [[["MessageOptions"]]] }
           ],
-          "meta": { "line": 310, "file": "DiscordManager.js", "path": "app/managers" }
+          "meta": { "line": 288, "file": "DiscordManager.js", "path": "app/managers" }
         },
         {
           "name": "sendWebhook",
@@ -3177,7 +2961,7 @@
             { "name": "content", "description": "the content to send", "optional": true, "type": [[["string"]], [["MessagePayload"]]] },
             { "name": "options", "description": "The options to provide", "optional": true, "type": [[["MessageOptions"]]] }
           ],
-          "meta": { "line": 329, "file": "DiscordManager.js", "path": "app/managers" }
+          "meta": { "line": 307, "file": "DiscordManager.js", "path": "app/managers" }
         },
         {
           "name": "attach",
@@ -3535,22 +3319,34 @@
           "meta": { "line": 49, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
+          "name": "channelIds",
+          "description": "Map of channel names to ids to increase performance of getting channel data",
+          "type": [
+            [
+              ["Map", "<"],
+              ["string", ", "],
+              ["string", ">"]
+            ]
+          ],
+          "meta": { "line": 55, "file": "IrcManager.js", "path": "app/managers" }
+        },
+        {
           "name": "commandResponders",
           "description": "The command manager that stores specially handled commands",
           "type": [[["TwitchCommandManager"]]],
-          "meta": { "line": 55, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 61, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "limiter",
           "description": "The rate limiter.\nTwitch IRC only allows 100 requests every 30 seconds.",
           "type": [[["RateLimiter"]]],
-          "meta": { "line": 62, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 68, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "throttle",
           "description": "The command throttle.",
           "type": [[["Throttle"]]],
-          "meta": { "line": 68, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 74, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "events",
@@ -3578,7 +3374,7 @@
           "description": "Initialize the manager.",
           "async": true,
           "returns": [[["Promise"]]],
-          "meta": { "line": 75, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 81, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "say",
@@ -3588,7 +3384,7 @@
             { "name": "message", "description": "the message to post", "type": [[["string"]]] }
           ],
           "async": true,
-          "meta": { "line": 91, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 97, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "delete",
@@ -3599,7 +3395,7 @@
             { "name": "callback", "description": "called after succesfull deletion", "optional": true, "default": null, "type": [[["function"]]] }
           ],
           "async": true,
-          "meta": { "line": 103, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 109, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "timeout",
@@ -3611,7 +3407,7 @@
             { "name": "callback", "description": "called after succesfull timeout", "optional": true, "default": null, "type": [[["function"]]] }
           ],
           "async": true,
-          "meta": { "line": 123, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 129, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "ban",
@@ -3622,19 +3418,19 @@
             { "name": "callback", "description": "called after succesfull ban", "optional": true, "default": null, "type": [[["function"]]] }
           ],
           "async": true,
-          "meta": { "line": 142, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 148, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "logModeration",
           "description": "Log a moderation action to the database.",
           "params": [{ "name": "values", "description": "the extra arguments to log", "variable": true, "type": [["*"]] }],
-          "meta": { "line": 159, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 165, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "setCache",
           "description": "Cache all moderation filters, commands, and jokes.",
           "returns": [[["Promise"]]],
-          "meta": { "line": 167, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 173, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "cacheJokes",
@@ -3646,7 +3442,7 @@
               ["void", ">"]
             ]
           ],
-          "meta": { "line": 177, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 183, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "cacheFilters",
@@ -3657,7 +3453,7 @@
               ["void", ">"]
             ]
           ],
-          "meta": { "line": 191, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 197, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "cacheCommands",
@@ -3668,7 +3464,7 @@
               ["void", ">"]
             ]
           ],
-          "meta": { "line": 203, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 209, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "cacheVariables",
@@ -3680,7 +3476,7 @@
               ["void", ">"]
             ]
           ],
-          "meta": { "line": 215, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 221, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "cacheTable",
@@ -3696,7 +3492,7 @@
               ["void", ">"]
             ]
           ],
-          "meta": { "line": 242, "file": "IrcManager.js", "path": "app/managers" }
+          "meta": { "line": 248, "file": "IrcManager.js", "path": "app/managers" }
         },
         {
           "name": "attach",
@@ -3792,8 +3588,7 @@
           "returns": [
             [
               ["Promise", "<"],
-              ["axiosRequest", ", "],
-              ["axiosResponse", ">"]
+              ["APIMessage", ">"]
             ]
           ],
           "meta": { "line": 105, "file": "LogManager.js", "path": "app/managers" }
@@ -3812,46 +3607,25 @@
     {
       "name": "TwitchManager",
       "description": "Twitch manager for the application.",
-      "extends": [[["APIManager"]]],
+      "extends": [[["EventManager"]]],
       "props": [
         {
           "name": "driver",
-          "description": "The Twitch API handler.",
-          "type": [[["Axios"]]],
-          "meta": { "line": 18, "file": "TwitchManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "auth",
-          "description": "The Authentication manager for the application.",
-          "type": [[["AuthManager"]]],
-          "meta": { "line": 28, "file": "TwitchManager.js", "path": "app/managers" }
+          "description": "The Twitch API Client.",
+          "type": [[["TwitchClient"]]],
+          "meta": { "line": 16, "file": "TwitchManager.js", "path": "app/managers" }
         },
         {
           "name": "irc",
           "description": "The IRC manager for the application.",
           "type": [[["IrcManager"]]],
-          "meta": { "line": 35, "file": "TwitchManager.js", "path": "app/managers" }
+          "meta": { "line": 27, "file": "TwitchManager.js", "path": "app/managers" }
         },
         {
-          "name": "_requests",
-          "description": "The queued requests and their ratelimits",
-          "access": "private",
-          "type": [
-            [
-              ["Collection", "<"],
-              ["string", ", "],
-              ["RatelimitedRequestData", ">"]
-            ]
-          ],
-          "meta": { "line": 58, "file": "TwitchManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "api",
-          "description": "API request shortcut.",
-          "access": "private",
-          "readonly": true,
-          "type": [[["Requester"]]],
-          "meta": { "line": 24, "file": "APIManager.js", "path": "app/managers" }
+          "name": "events",
+          "description": "The events this driver handles",
+          "type": [[["Object"]]],
+          "meta": { "line": 18, "file": "EventManager.js", "path": "app/managers" }
         },
         {
           "name": "app",
@@ -3869,199 +3643,389 @@
       ],
       "methods": [
         {
-          "name": "fetchChannel",
-          "description": "Fetch the channel for the application's channel id.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "fetch channel data from a specific user id",
-              "optional": true,
-              "default": "ApplicationOptions.twitch.channel?.id",
-              "type": [[["string"]]]
-            }
-          ],
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["Object", ">"]
-            ]
-          ],
-          "meta": { "line": 69, "file": "TwitchManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "userChannel",
-          "description": "Fetch the channel for the specified user's channel name.",
-          "params": [{ "name": "user", "description": "the username to fetch channel data of", "type": [[["string"]]] }],
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["Object", ">"]
-            ]
-          ],
-          "meta": { "line": 82, "file": "TwitchManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "getId",
-          "description": "Get the cached channel id or fetch it from the api for the user name",
-          "params": [{ "name": "user", "description": "the username to fetch the id of", "type": [[["string"]]] }],
+          "name": "init",
+          "description": "Initialize the manager.",
           "async": true,
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["string", ">"]
-            ]
-          ],
-          "meta": { "line": 91, "file": "TwitchManager.js", "path": "app/managers" }
+          "returns": [[["Promise"]]],
+          "meta": { "line": 35, "file": "TwitchManager.js", "path": "app/managers" }
         },
         {
-          "name": "follow",
-          "description": "Fetch a follow object for the given user id.",
-          "params": [
-            { "name": "userId", "description": "the user id to check the follow for", "type": [[["string"]]] },
-            {
-              "name": "streamerId",
-              "description": "the channel id to check if following",
-              "optional": true,
-              "default": "ApplicationOptions.twitch.channel?.id",
-              "type": [[["string"]]]
-            }
-          ],
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["Object", ">"]
-            ]
-          ],
-          "meta": { "line": 114, "file": "TwitchManager.js", "path": "app/managers" }
+          "name": "destroy",
+          "description": "Destroys assets used by the manager",
+          "async": true,
+          "returns": [[["Promise"]]],
+          "meta": { "line": 47, "file": "TwitchManager.js", "path": "app/managers" }
         },
         {
-          "name": "fetchFollowers",
-          "description": "Fetch the followers for a streamer",
+          "name": "attach",
+          "description": "Attach the event listeners to the socket.",
+          "access": "private",
+          "inherits": "EventManager#attach",
+          "inherited": true,
+          "meta": { "line": 25, "file": "EventManager.js", "path": "app/managers" }
+        },
+        {
+          "name": "listen",
+          "description": "Listen for a socket event.",
+          "access": "private",
+          "inherits": "EventManager#listen",
+          "inherited": true,
+          "params": [
+            { "name": "event", "description": "the name of the event to listen for", "type": [[["string"]]] },
+            { "name": "listener", "description": "the function to call on event", "type": [[["function"]]] }
+          ],
+          "meta": { "line": 39, "file": "EventManager.js", "path": "app/managers" }
+        }
+      ],
+      "meta": { "line": 12, "file": "TwitchManager.js", "path": "app/managers" }
+    },
+    {
+      "name": "TwitchAuthClient",
+      "description": "The main hub for interacting with Twitch's Oauth2 Authorizatio",
+      "extends": [[["BaseClient"]]],
+      "construct": {
+        "name": "TwitchAuthClient",
+        "params": [
+          { "name": "options", "description": "Options for the client", "type": [[["Object"]]] },
+          { "name": "iterable", "description": "auth details to add to cache immediately", "optional": true, "type": [[["Iterable"]]] }
+        ]
+      },
+      "props": [
+        {
+          "name": "cache",
+          "description": "The cache of auth data",
+          "type": [
+            [
+              ["Collection", "<"],
+              ["string", ", "],
+              ["TwitchAuthData", ">"]
+            ]
+          ],
+          "meta": { "line": 33, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "database",
+          "description": "An access point to utilize a database to store keys",
+          "access": "private",
+          "type": [[["TwitchAuthDatabaseAccessor"]]],
+          "meta": { "line": 87, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+        }
+      ],
+      "methods": [
+        {
+          "name": "setDatabaseAccessor",
+          "description": "Sets the database accessor to automatically handle database management",
+          "params": [{ "name": "database", "description": "the database accessor to set", "type": [[["TwitchAuthDatabaseAccessor"]]] }],
+          "returns": [[["Promise"]]],
+          "meta": { "line": 101, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "_add",
+          "description": "Adds auth data to cache and database if provided",
+          "access": "private",
+          "params": [{ "name": "data", "description": "data to add to cache and database if provided", "type": [[["TwitchAuthData"]]] }],
+          "async": true,
+          "returns": [[["TwitchAuthData"]]],
+          "meta": { "line": 113, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "generateToken",
+          "description": "Generates a twitch api token using the code provided",
+          "params": [{ "name": "code", "description": "the oauth code to generate tokens from", "type": [[["string"]]] }],
+          "async": true,
+          "returns": {
+            "types": [
+              [
+                ["Promise", "<"],
+                ["string", ">"]
+              ]
+            ],
+            "description": "token"
+          },
+          "meta": { "line": 130, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "generateAppToken",
+          "description": "Generates the twitch api app access token for this app",
+          "async": true,
+          "returns": {
+            "types": [
+              [
+                ["Promise", "<"],
+                ["string", ">"]
+              ]
+            ],
+            "description": "token"
+          },
+          "meta": { "line": 158, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "getAccessToken",
+          "description": "Gets the twitch api access token for the given user id",
           "params": [
             {
-              "name": "streamerId",
-              "description": "The id of the broadcaster to fetch follower count for",
+              "name": "id",
+              "description": "the id of the user to get the token for, or `0` for the app access token",
               "optional": true,
-              "default": "ApplicationOptions.twitch.channel?.id",
+              "default": "'0'",
               "type": [[["string"]]]
             },
             {
-              "name": "fullResponse",
-              "description": "Whether to return the full data structure response",
+              "name": "skipValidation",
+              "description": "whether to skip the validation request and just return the cached token",
               "optional": true,
               "default": false,
               "type": [[["boolean"]]]
             }
           ],
-          "returns": [
-            [
-              ["Promise", "<("],
-              ["number", "|"],
-              ["Object", ")>"]
-            ]
-          ],
-          "meta": { "line": 125, "file": "TwitchManager.js", "path": "app/managers" }
+          "async": true,
+          "returns": {
+            "types": [
+              [
+                ["Promise", "<"],
+                ["string", ">"]
+              ]
+            ],
+            "description": "token"
+          },
+          "meta": { "line": 185, "file": "AuthClient.js", "path": "app/twitchlib/client" }
         },
         {
-          "name": "fetchStream",
-          "description": "Fetch the stream for the application's channel id.",
-          "params": [
-            {
-              "name": "options.userId",
-              "description": "fetch stream data from a specific user id",
-              "optional": true,
-              "default": "ApplicationOptions.twitch.channel?.id",
-              "type": [[["string"]]]
-            },
-            { "name": "options.userName", "description": "fetch stream data from a specific user name", "optional": true, "type": [[["string"]]] }
-          ],
-          "returns": [[["void"]]],
-          "meta": { "line": 136, "file": "TwitchManager.js", "path": "app/managers" }
+          "name": "refreshToken",
+          "description": "Refreshes the tokens for the given id",
+          "access": "private",
+          "params": [{ "name": "id", "description": "the user id to refresh the tokens for", "type": [[["string"]]] }],
+          "async": true,
+          "returns": {
+            "types": [
+              [
+                ["Promise", "<"],
+                ["string", ">"]
+              ]
+            ],
+            "description": "token"
+          },
+          "meta": { "line": 204, "file": "AuthClient.js", "path": "app/twitchlib/client" }
         },
         {
-          "name": "fetchUser",
-          "description": "Fetch a user",
-          "params": [
-            { "name": "options.userName", "description": "the login name to check", "optional": true, "type": [[["string"]]] },
-            { "name": "options.userId", "description": "the id of the name to check", "optional": true, "type": [[["string"]]] }
-          ],
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["Object", ">"]
-            ]
-          ],
-          "meta": { "line": 148, "file": "TwitchManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "fetchUptime",
-          "description": "Fetch the uptime for the specified stream.",
-          "params": [
-            {
-              "name": "options.userId",
-              "description": "the user id to fetch uptime for",
-              "optional": true,
-              "default": "ApplicationOptions.twitch.channel?.id",
-              "type": [[["string"]]]
-            },
-            { "name": "options.userName", "description": "the user to fetch uptime for", "optional": true, "type": [[["string"]]] }
-          ],
-          "returns": [
-            [
-              ["Promise", "<"],
-              ["number", ">"]
-            ]
-          ],
-          "meta": { "line": 160, "file": "TwitchManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "_preRequest",
-          "description": "The function called before each axios request automatically",
+          "name": "validateToken",
+          "description": "Validates the token provided",
           "access": "private",
           "params": [
-            { "name": "config", "description": "The axios configuration generated for this request", "type": [[["Object"]]] },
-            { "name": "config.authId", "description": "The id of the user whose auth token to use", "optional": true, "type": [[["string"]]] },
+            { "name": "token", "description": "a twitch api token", "type": [[["string"]]] },
             {
-              "name": "config.allowApp",
-              "description": "Whether to allow use of the app access token if the user token is not found",
+              "name": "fullResponse",
+              "description": "whether to return the full response when successful",
               "optional": true,
+              "default": false,
               "type": [[["boolean"]]]
             }
           ],
           "async": true,
-          "returns": { "types": [[["Object"]]], "description": "config" },
-          "meta": { "line": 177, "file": "TwitchManager.js", "path": "app/managers" }
-        },
-        {
-          "name": "_request",
-          "description": "API Request handler",
-          "access": "private",
-          "inherits": "APIManager#_request",
-          "inherited": true,
-          "params": [
-            { "name": "method", "description": "The HTTP  method used to make this request", "type": [[["HTTPMethod"]]] },
-            { "name": "uri", "description": "The uri of the desired endpoint", "type": [[["string"]]] },
-            { "name": "data", "description": "The data to pass to the request", "type": [[["Object"]]] }
-          ],
           "returns": [
             [
               ["Promise", "<"],
-              ["Object", ">"]
+              ["boolean", ">"]
             ]
           ],
-          "meta": { "line": 36, "file": "APIManager.js", "path": "app/managers" }
+          "meta": { "line": 251, "file": "AuthClient.js", "path": "app/twitchlib/client" }
         },
         {
-          "name": "makeLoggable",
-          "description": "Makes a request error more readable in logs.",
-          "inherits": "APIManager#makeLoggable",
-          "inherited": true,
-          "params": [{ "name": "error", "description": "the original error", "type": [[["Object"]]] }],
-          "returns": [[["HTTPError"]]],
-          "meta": { "line": 49, "file": "APIManager.js", "path": "app/managers" }
+          "name": "setCache",
+          "description": "Set the cache of twitch authenticated users and synchronises to the database",
+          "async": true,
+          "returns": [[["Promise"]]],
+          "meta": { "line": 273, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "_validateOptions",
+          "description": "Validates the client options.",
+          "access": "private",
+          "params": [{ "name": "options", "description": "Options to validate", "optional": true, "default": "this.options", "type": [[["Object"]]] }],
+          "meta": { "line": 292, "file": "AuthClient.js", "path": "app/twitchlib/client" }
         }
       ],
-      "meta": { "line": 14, "file": "TwitchManager.js", "path": "app/managers" }
+      "events": [
+        {
+          "name": "tokenUpsert",
+          "description": "Emitted when a token is added or updated, useful if you want to manage your own database",
+          "params": [{ "name": "data", "description": "the new or updated token information", "type": [[["TwitchAuthData"]]] }],
+          "meta": { "line": 114, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "tokenDelete",
+          "description": "Emitted when a token is deleted for any reason, useful if you want to manage your own database",
+          "params": [
+            { "name": "data.id", "description": "the id of the user who's token is being deleted", "type": [[["string"]]] },
+            { "name": "data.reason", "description": "the reason for the deletion", "type": [[["string"]]] }
+          ],
+          "meta": { "line": 219, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "invalidToken",
+          "description": "Emitted when a token is determined to be invalid",
+          "params": [{ "name": "error", "description": "the error that was received indicating the token is invalid", "type": [[["Error"]]] }],
+          "meta": { "line": 259, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+        }
+      ],
+      "meta": { "line": 11, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+    },
+    {
+      "name": "TwitchBaseClient",
+      "description": "The base class for all clients.",
+      "extends": [[["EventEmitter"]]],
+      "props": [
+        {
+          "name": "options",
+          "description": "The options the client was instantiaed with",
+          "type": [[["Object"]]],
+          "meta": { "line": 25, "file": "BaseClient.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "rest",
+          "description": "The REST manager of the client",
+          "type": [[["TwitchREST"]], [["AuthREST"]]],
+          "meta": { "line": 31, "file": "BaseClient.js", "path": "app/twitchlib/client" }
+        }
+      ],
+      "methods": [
+        {
+          "name": "destroy",
+          "description": "Destroys all assets used by the client.",
+          "returns": [[["void"]]],
+          "meta": { "line": 38, "file": "BaseClient.js", "path": "app/twitchlib/client" }
+        }
+      ],
+      "events": [
+        {
+          "name": "debug",
+          "description": "Emitted for general debugging information.",
+          "params": [{ "name": "info", "description": "The debug information", "type": [[["string"]]] }],
+          "meta": { "line": 49, "file": "BaseClient.js", "path": "app/twitchlib/client" }
+        }
+      ],
+      "meta": { "line": 13, "file": "BaseClient.js", "path": "app/twitchlib/client" }
+    },
+    {
+      "name": "TwitchClient",
+      "description": "The main hub for interacting with the Twitch API",
+      "extends": [[["TwitchBaseClient"]]],
+      "construct": { "name": "TwitchClient", "params": [{ "name": "options", "description": "Options for the client", "type": [[["Object"]]] }] },
+      "props": [
+        {
+          "name": "auth",
+          "description": "The auth client used when not using custom auth, provides all necessary implementation for this clients REST",
+          "nullable": true,
+          "type": [[["TwitchAuthClient"]]],
+          "meta": { "line": 30, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "categories",
+          "description": "All of the {@link TwitchCategory} objects that have been cached at any point, mapped by their ids",
+          "type": [[["TwitchCategoryManager"]]],
+          "meta": { "line": 36, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "channels",
+          "description": "All of the {@link TwitchChannel} objects that have been cached at any point, mapped by their ids",
+          "type": [[["TwitchChannelManager"]]],
+          "meta": { "line": 42, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "streams",
+          "description": "All of the {@link TwitchStream} objects that have been cached at any point, mapped by their ids",
+          "type": [[["TwitchStreamManager"]]],
+          "meta": { "line": 48, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "tags",
+          "description": "All of the {@link TwitchTag} objects that have been cached at any point, mapped by their ids",
+          "type": [[["TwitchTagManager"]]],
+          "meta": { "line": 54, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "teams",
+          "description": "All of the {@link TwitchTeam} objects that have been cached at any point, mapped by their ids",
+          "type": [[["TwitchTeamManager"]]],
+          "meta": { "line": 60, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "users",
+          "description": "All of the {@link TwitchUser} objects that have been cached at any point, mapped by their ids",
+          "type": [[["TwitchUserManager"]]],
+          "meta": { "line": 66, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "getToken",
+          "access": "private",
+          "nullable": true,
+          "type": [[["function"]]],
+          "meta": { "line": 72, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "options",
+          "description": "The options the client was instantiaed with",
+          "type": [[["Object"]]],
+          "meta": { "line": 25, "file": "BaseClient.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "rest",
+          "description": "The REST manager of the client",
+          "type": [[["TwitchREST"]], [["AuthREST"]]],
+          "meta": { "line": 31, "file": "BaseClient.js", "path": "app/twitchlib/client" }
+        }
+      ],
+      "methods": [
+        {
+          "name": "setTokenFunction",
+          "description": "Set a function to get tokens that can bed used to make requests",
+          "params": [
+            {
+              "name": "fn",
+              "description": "a function (awaited) that takes a string id ('0' for app access) and a boolean, returns an access token\nit should not prevalidate requests when passed true as its second parameter, only validating and refreshing when passed false",
+              "type": [[["function"]]]
+            }
+          ],
+          "returns": [[["TwitchClient"]]],
+          "meta": { "line": 99, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "_validateOptions",
+          "description": "Validates the client options.",
+          "access": "private",
+          "params": [{ "name": "options", "description": "Options to validate", "optional": true, "default": "this.options", "type": [[["Object"]]] }],
+          "meta": { "line": 113, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "destroy",
+          "description": "Destroys all assets used by the client.",
+          "inherits": "TwitchBaseClient#destroy",
+          "inherited": true,
+          "returns": [[["void"]]],
+          "meta": { "line": 38, "file": "BaseClient.js", "path": "app/twitchlib/client" }
+        }
+      ],
+      "events": [
+        {
+          "name": "restDebug",
+          "description": "Emitted for rest debugging information when using built in auth client.",
+          "params": [{ "name": "info", "description": "The debug information", "type": [[["string"]]] }],
+          "meta": { "line": 77, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "invalidAuthToken",
+          "description": "Emitted when a token is determined to be invalid when using built in auth client.",
+          "params": [{ "name": "error", "description": "the error that was received indicating the token is invalid", "type": [[["Error"]]] }],
+          "meta": { "line": 84, "file": "Client.js", "path": "app/twitchlib/client" }
+        },
+        {
+          "name": "debug",
+          "description": "Emitted for general debugging information.",
+          "params": [{ "name": "info", "description": "The debug information", "type": [[["string"]]] }],
+          "meta": { "line": 49, "file": "BaseClient.js", "path": "app/twitchlib/client" }
+        }
+      ],
+      "meta": { "line": 17, "file": "Client.js", "path": "app/twitchlib/client" }
     },
     {
       "name": "TwitchBaseManager",
@@ -4085,10 +4049,18 @@
       "abstract": true,
       "props": [
         {
+          "name": "_cache",
+          "description": "The cache of itmes for this manager.",
+          "access": "private",
+          "type": [[["Collection"]]],
+          "meta": { "line": 20, "file": "CachedManager.js", "path": "app/twitchlib/managers" }
+        },
+        {
           "name": "cache",
           "description": "The cache of itmes for this manager.",
+          "readonly": true,
           "type": [[["Collection"]]],
-          "meta": { "line": 19, "file": "CachedManager.js", "path": "app/twitchlib/managers" }
+          "meta": { "line": 34, "file": "CachedManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "holds",
@@ -4144,6 +4116,13 @@
             ]
           ],
           "meta": { "line": 17, "file": "CategoryManager.js", "path": "app/twitchlib/managers" }
+        },
+        {
+          "name": "_cache",
+          "description": "The cache of itmes for this manager.",
+          "access": "private",
+          "type": [[["Collection"]]],
+          "meta": { "line": 20, "file": "CachedManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "holds",
@@ -4248,7 +4227,7 @@
               ["CategoryData", ")>"]
             ]
           ],
-          "meta": { "line": 97, "file": "CategoryManager.js", "path": "app/twitchlib/managers" }
+          "meta": { "line": 98, "file": "CategoryManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "search",
@@ -4278,7 +4257,7 @@
               ["CategoryData", ")>"]
             ]
           ],
-          "meta": { "line": 116, "file": "CategoryManager.js", "path": "app/twitchlib/managers" }
+          "meta": { "line": 117, "file": "CategoryManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "resolve",
@@ -4317,6 +4296,13 @@
             ]
           ],
           "meta": { "line": 25, "file": "ChannelManager.js", "path": "app/twitchlib/managers" }
+        },
+        {
+          "name": "_cache",
+          "description": "The cache of itmes for this manager.",
+          "access": "private",
+          "type": [[["Collection"]]],
+          "meta": { "line": 20, "file": "CachedManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "holds",
@@ -4400,7 +4386,7 @@
         },
         {
           "name": "search",
-          "description": "Obtains the list of categories matching the search query partially or entirely from Twitch",
+          "description": "Obtains the list of channels matching the search query partially or entirely from Twitch",
           "params": [
             { "name": "query", "description": "the search query", "type": [[["string"]]] },
             { "name": "options.live", "description": "whether to only search live channels", "optional": true, "type": [[["boolean"]]] },
@@ -4527,6 +4513,13 @@
           "meta": { "line": 23, "file": "StreamManager.js", "path": "app/twitchlib/managers" }
         },
         {
+          "name": "_cache",
+          "description": "The cache of itmes for this manager.",
+          "access": "private",
+          "type": [[["Collection"]]],
+          "meta": { "line": 20, "file": "CachedManager.js", "path": "app/twitchlib/managers" }
+        },
+        {
           "name": "holds",
           "description": "The data structure belonging to this manager.",
           "access": "private",
@@ -4610,7 +4603,7 @@
         },
         {
           "name": "fetch",
-          "description": "Obtains one or multiple users from Twitch, or the cache if they're already available",
+          "description": "Obtains one or multiple streams from Twitch, or the cache if they're already available",
           "params": [
             {
               "name": "options.userIds",
@@ -4700,21 +4693,21 @@
               ["TwitchStreamData", ">"]
             ]
           ],
-          "meta": { "line": 219, "file": "StreamManager.js", "path": "app/twitchlib/managers" }
+          "meta": { "line": 220, "file": "StreamManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "resolve",
           "description": "Resolves a {@link TwitchStreamResolvable} to a {@link TwitchStream} object",
           "params": [{ "name": "stream", "description": "The TwitchStreamResolvable to identify", "type": [[["TwitchStreamResolvable"]]] }],
           "returns": { "types": [[["TwitchStream"]]], "nullable": true },
-          "meta": { "line": 242, "file": "StreamManager.js", "path": "app/twitchlib/managers" }
+          "meta": { "line": 243, "file": "StreamManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "resolveId",
           "description": "Resolves a {@link TwitchStreamResolvable} to a {@link TwitchStream} id",
           "params": [{ "name": "stream", "description": "The TwitchStreamResolvable to identify", "type": [[["TwitchStreamResolvable"]]] }],
           "returns": { "types": [[["string"]]], "nullable": true },
-          "meta": { "line": 252, "file": "StreamManager.js", "path": "app/twitchlib/managers" }
+          "meta": { "line": 253, "file": "StreamManager.js", "path": "app/twitchlib/managers" }
         }
       ],
       "meta": { "line": 14, "file": "StreamManager.js", "path": "app/twitchlib/managers" }
@@ -4851,6 +4844,13 @@
           "meta": { "line": 21, "file": "TagManager.js", "path": "app/twitchlib/managers" }
         },
         {
+          "name": "_cache",
+          "description": "The cache of itmes for this manager.",
+          "access": "private",
+          "type": [[["Collection"]]],
+          "meta": { "line": 20, "file": "CachedManager.js", "path": "app/twitchlib/managers" }
+        },
+        {
           "name": "holds",
           "description": "The data structure belonging to this manager.",
           "access": "private",
@@ -4951,6 +4951,13 @@
             ]
           ],
           "meta": { "line": 16, "file": "TeamManager.js", "path": "app/twitchlib/managers" }
+        },
+        {
+          "name": "_cache",
+          "description": "The cache of itmes for this manager.",
+          "access": "private",
+          "type": [[["Collection"]]],
+          "meta": { "line": 20, "file": "CachedManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "holds",
@@ -5061,6 +5068,13 @@
             ]
           ],
           "meta": { "line": 25, "file": "UserManager.js", "path": "app/twitchlib/managers" }
+        },
+        {
+          "name": "_cache",
+          "description": "The cache of itmes for this manager.",
+          "access": "private",
+          "type": [[["Collection"]]],
+          "meta": { "line": 20, "file": "CachedManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "holds",
@@ -5186,24 +5200,94 @@
               ["TwitchUser", ">"]
             ]
           ],
-          "meta": { "line": 161, "file": "UserManager.js", "path": "app/twitchlib/managers" }
+          "meta": { "line": 162, "file": "UserManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "resolve",
           "description": "Resolves a {@link TwitchUserResolvable} to a {@link TwitchUser} object",
           "params": [{ "name": "user", "description": "The TwitchUserResolvable to identify", "type": [[["TwitchUserResolvable"]]] }],
           "returns": { "types": [[["TwitchUser"]]], "nullable": true },
-          "meta": { "line": 178, "file": "UserManager.js", "path": "app/twitchlib/managers" }
+          "meta": { "line": 179, "file": "UserManager.js", "path": "app/twitchlib/managers" }
         },
         {
           "name": "resolveId",
           "description": "Resolves a {@link TwitchUserResolvable} to a {@link TwitchUser} id",
           "params": [{ "name": "user", "description": "The TwitchUserResolvable to identify", "type": [[["TwitchUserResolvable"]]] }],
           "returns": { "types": [[["string"]]], "nullable": true },
-          "meta": { "line": 188, "file": "UserManager.js", "path": "app/twitchlib/managers" }
+          "meta": { "line": 189, "file": "UserManager.js", "path": "app/twitchlib/managers" }
         }
       ],
       "meta": { "line": 16, "file": "UserManager.js", "path": "app/twitchlib/managers" }
+    },
+    {
+      "name": "HTTPError",
+      "description": "Represents an HTTP error from a request.",
+      "extends": [[["Error"]]],
+      "props": [
+        {
+          "name": "name",
+          "description": "The name of the error",
+          "type": [[["string"]]],
+          "meta": { "line": 15, "file": "HTTPError.js", "path": "app/twitchlib/rest" }
+        },
+        {
+          "name": "status",
+          "description": "HTTP error code returned from the request",
+          "type": [[["number"]]],
+          "meta": { "line": 21, "file": "HTTPError.js", "path": "app/twitchlib/rest" }
+        },
+        {
+          "name": "method",
+          "description": "The HTTP method used for the request",
+          "type": [[["string"]]],
+          "meta": { "line": 27, "file": "HTTPError.js", "path": "app/twitchlib/rest" }
+        },
+        {
+          "name": "url",
+          "description": "The url of the request that errored",
+          "type": [[["string"]]],
+          "meta": { "line": 33, "file": "HTTPError.js", "path": "app/twitchlib/rest" }
+        },
+        {
+          "name": "body",
+          "description": "The data associated with the request that caused this error",
+          "type": [["*"]],
+          "meta": { "line": 39, "file": "HTTPError.js", "path": "app/twitchlib/rest" }
+        }
+      ],
+      "meta": { "line": 7, "file": "HTTPError.js", "path": "app/twitchlib/rest" }
+    },
+    {
+      "name": "TwitchAPIError",
+      "description": "Represents an error from the Discord API.",
+      "extends": [[["Error"]]],
+      "props": [
+        {
+          "name": "method",
+          "description": "The HTTP method used for the request",
+          "type": [[["string"]]],
+          "meta": { "line": 18, "file": "TwitchAPIError.js", "path": "app/twitchlib/rest" }
+        },
+        {
+          "name": "url",
+          "description": "The url of the request that errored",
+          "type": [[["string"]]],
+          "meta": { "line": 24, "file": "TwitchAPIError.js", "path": "app/twitchlib/rest" }
+        },
+        {
+          "name": "status",
+          "description": "The status code of the response",
+          "type": [[["number"]]],
+          "meta": { "line": 30, "file": "TwitchAPIError.js", "path": "app/twitchlib/rest" }
+        },
+        {
+          "name": "body",
+          "description": "The data associated with the request that caused this error",
+          "type": [["*"]],
+          "meta": { "line": 36, "file": "TwitchAPIError.js", "path": "app/twitchlib/rest" }
+        }
+      ],
+      "meta": { "line": 7, "file": "TwitchAPIError.js", "path": "app/twitchlib/rest" }
     },
     {
       "name": "TwitchBase",
@@ -5325,12 +5409,20 @@
           "meta": { "line": 89, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
+          "name": "name",
+          "description": "The login name of the user assciated with this channel",
+          "readonly": true,
+          "nullable": true,
+          "type": [[["string"]]],
+          "meta": { "line": 110, "file": "Channel.js", "path": "app/twitchlib/structures" }
+        },
+        {
           "name": "user",
           "description": "The user associated with this channel",
           "readonly": true,
           "nullable": true,
           "type": [[["TwitchUser"]]],
-          "meta": { "line": 110, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 119, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "category",
@@ -5338,7 +5430,7 @@
           "readonly": true,
           "nullable": true,
           "type": [[["TwitchCategory"]]],
-          "meta": { "line": 119, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 128, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "stream",
@@ -5346,7 +5438,7 @@
           "readonly": true,
           "nullable": true,
           "type": [[["TwitchStream"]]],
-          "meta": { "line": 128, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 137, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "client",
@@ -5367,7 +5459,7 @@
               ["TwitchChannel", ">"]
             ]
           ],
-          "meta": { "line": 137, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 146, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "setCategory",
@@ -5379,7 +5471,7 @@
               ["TwitchChannel", ">"]
             ]
           ],
-          "meta": { "line": 146, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 155, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "setLanguage",
@@ -5391,7 +5483,7 @@
               ["TwitchChannel", ">"]
             ]
           ],
-          "meta": { "line": 155, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 164, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "setTitle",
@@ -5403,7 +5495,7 @@
               ["TwitchChannel", ">"]
             ]
           ],
-          "meta": { "line": 164, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 173, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "setDelay",
@@ -5415,7 +5507,7 @@
               ["TwitchChannel", ">"]
             ]
           ],
-          "meta": { "line": 174, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 183, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetch",
@@ -5435,7 +5527,7 @@
               ["TwitchChannel", ">"]
             ]
           ],
-          "meta": { "line": 183, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 192, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetchSubscriptions",
@@ -5447,7 +5539,7 @@
               ["ChannelSubscriptionData", ">"]
             ]
           ],
-          "meta": { "line": 192, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 201, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetchEditors",
@@ -5459,7 +5551,7 @@
               ["TwitchChannelEditor", ">>"]
             ]
           ],
-          "meta": { "line": 200, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 209, "file": "Channel.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetchTeams",
@@ -5481,7 +5573,7 @@
               ["TwitchTeam", ">>"]
             ]
           ],
-          "meta": { "line": 209, "file": "Channel.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 218, "file": "Channel.js", "path": "app/twitchlib/structures" }
         }
       ],
       "meta": { "line": 9, "file": "Channel.js", "path": "app/twitchlib/structures" }
@@ -5662,11 +5754,19 @@
           "meta": { "line": 144, "file": "Stream.js", "path": "app/twitchlib/structures" }
         },
         {
+          "name": "uptime",
+          "description": "The amount of time the stream has been ongoing",
+          "readonly": true,
+          "nullable": true,
+          "type": [[["number"]]],
+          "meta": { "line": 153, "file": "Stream.js", "path": "app/twitchlib/structures" }
+        },
+        {
           "name": "tags",
           "description": "A manager for the tags belonging to this stream",
           "readonly": true,
           "type": [[["TwitchStreamTagManager"]]],
-          "meta": { "line": 153, "file": "Stream.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 162, "file": "Stream.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "client",
@@ -5687,7 +5787,7 @@
               ["CommercialReturnData", ">"]
             ]
           ],
-          "meta": { "line": 162, "file": "Stream.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 171, "file": "Stream.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetch",
@@ -5707,7 +5807,7 @@
               ["TwitchStream", ">"]
             ]
           ],
-          "meta": { "line": 171, "file": "Stream.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 180, "file": "Stream.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetchViewers",
@@ -5719,7 +5819,7 @@
               ["number", ">"]
             ]
           ],
-          "meta": { "line": 179, "file": "Stream.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 188, "file": "Stream.js", "path": "app/twitchlib/structures" }
         }
       ],
       "meta": { "line": 10, "file": "Stream.js", "path": "app/twitchlib/structures" }
@@ -6038,76 +6138,78 @@
         {
           "name": "createdTimestamp",
           "description": "The timestamp the user was created at",
+          "nullable": true,
           "type": [[["number"]]],
-          "meta": { "line": 23, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 28, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "login",
           "description": "The user's login name",
           "nullable": true,
           "type": [[["string"]]],
-          "meta": { "line": 34, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 38, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "displayName",
           "description": "The user's name as it appears in chat",
           "nullable": true,
           "type": [[["string"]]],
-          "meta": { "line": 44, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 48, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "type",
           "description": "The type of user, one of:\n* `staff`\n* `admin`\n* `global_mod`\n* An empty string",
           "nullable": true,
           "type": [[["string"]]],
-          "meta": { "line": 58, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 62, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "broadcasterType",
           "description": "The user's broadcaster type, one of:\n* `partner`\n* `affiliate`\n* An empty strin",
           "nullable": true,
           "type": [[["string"]]],
-          "meta": { "line": 71, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 75, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "description",
           "description": "The user's channel descriptionm",
           "nullable": true,
           "type": [[["string"]]],
-          "meta": { "line": 81, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 85, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "profileImageURL",
           "description": "The URL of the user's profile image",
           "nullable": true,
           "type": [[["string"]]],
-          "meta": { "line": 91, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 95, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "offlineImageURL",
           "description": "The URL of the user's offline image",
           "type": [[["string"]]],
-          "meta": { "line": 101, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 105, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "viewCount",
           "description": "The total number of views of this user.\n<warn>This is not updated regularly and is only provided to prevent calling the API twice\nwhen fetching for more than the view count</warn>",
           "nullable": true,
           "type": [[["number"]]],
-          "meta": { "line": 113, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 117, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "email",
           "description": "The user's verified email address, if adequate access is granted",
           "type": [[["string"]]],
-          "meta": { "line": 123, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 127, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "createdAt",
           "description": "The time the user was created at",
           "readonly": true,
+          "nullable": true,
           "type": [[["Date"]]],
-          "meta": { "line": 134, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 138, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "channel",
@@ -6115,7 +6217,7 @@
           "readonly": true,
           "nullable": true,
           "type": [[["TwitchChannel"]]],
-          "meta": { "line": 143, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 147, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "client",
@@ -6136,7 +6238,7 @@
               ["TwitchFollow", ">"]
             ]
           ],
-          "meta": { "line": 152, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 156, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetchFollowers",
@@ -6156,7 +6258,7 @@
               ["UserFollowData", ">"]
             ]
           ],
-          "meta": { "line": 162, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 166, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetchFollowing",
@@ -6176,7 +6278,7 @@
               ["UserFollowData", ">"]
             ]
           ],
-          "meta": { "line": 172, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 176, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetchSubscription",
@@ -6188,7 +6290,7 @@
               ["TwitchSubscription", ">"]
             ]
           ],
-          "meta": { "line": 181, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 185, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetchViewCount",
@@ -6200,7 +6302,7 @@
               ["number", ">"]
             ]
           ],
-          "meta": { "line": 189, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 193, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "edit",
@@ -6212,7 +6314,7 @@
               ["TwitchUser", ">"]
             ]
           ],
-          "meta": { "line": 199, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 203, "file": "User.js", "path": "app/twitchlib/structures" }
         },
         {
           "name": "fetch",
@@ -6232,7 +6334,7 @@
               ["TwitchUser", ">"]
             ]
           ],
-          "meta": { "line": 208, "file": "User.js", "path": "app/twitchlib/structures" }
+          "meta": { "line": 212, "file": "User.js", "path": "app/twitchlib/structures" }
         }
       ],
       "meta": { "line": 9, "file": "User.js", "path": "app/twitchlib/structures" }
@@ -6581,7 +6683,7 @@
           "scope": "static",
           "params": [
             { "name": "template", "description": "the message to format with additional information", "type": [[["string"]]] },
-            { "name": "values", "description": "an object containing key value pairs of what to replace and what it is replaced with", "type": [[["Object"]]] }
+            { "name": "values", "description": "an object containing key value pairs of what to replace and what it is replaced with", "type": [[["Map"]]] }
           ],
           "returns": [[["string"]]],
           "meta": { "line": 86, "file": "UtilManager.js", "path": "app/util" }
@@ -6651,11 +6753,12 @@
           "scope": "static",
           "params": [
             { "name": "then", "description": "the time to get the difference from now as", "type": [[["Moment"]], [["string"]], [["number"]], [["Date"]]] },
-            { "name": "specificity", "description": "the maximum units to display", "default": 2, "type": [[["number"]]] },
-            { "name": "preferHours", "description": "whether to use hours instead of days", "default": false, "type": [[["boolean"]]] }
+            { "name": "specificity", "description": "the maximum units to display", "optional": true, "default": 2, "type": [[["number"]]] },
+            { "name": "preferHours", "description": "whether to use hours instead of days", "optional": true, "default": false, "type": [[["boolean"]]] },
+            { "name": "isDuration", "description": "whether the then is already a duration", "optional": true, "default": false, "type": [[["boolean"]]] }
           ],
           "returns": [[["string"]]],
-          "meta": { "line": 177, "file": "UtilManager.js", "path": "app/util" }
+          "meta": { "line": 178, "file": "UtilManager.js", "path": "app/util" }
         },
         {
           "name": "usage",
@@ -6677,7 +6780,7 @@
             { "name": "command", "description": "the command name", "type": [[["string"]]] }
           ],
           "returns": [[["string"]]],
-          "meta": { "line": 198, "file": "UtilManager.js", "path": "app/util" }
+          "meta": { "line": 199, "file": "UtilManager.js", "path": "app/util" }
         },
         {
           "name": "variableInterval",
@@ -6694,7 +6797,7 @@
             }
           ],
           "returns": [[["self"]]],
-          "meta": { "line": 211, "file": "UtilManager.js", "path": "app/util" }
+          "meta": { "line": 212, "file": "UtilManager.js", "path": "app/util" }
         }
       ],
       "meta": { "line": 10, "file": "UtilManager.js", "path": "app/util" }
@@ -6999,6 +7102,12 @@
       "meta": { "line": 8, "file": "TwitchCommand.js", "path": "app/irc/commands" }
     },
     {
+      "name": "TableName",
+      "description": "The name of a table from the TableManager",
+      "type": [[["string"]]],
+      "meta": { "line": 40, "file": "IrcManager.js", "path": "app/managers" }
+    },
+    {
       "name": "TwitchAuthData",
       "type": [[["Object"]]],
       "props": [
@@ -7007,46 +7116,113 @@
         { "name": "refreshToken", "description": "The refresh token for this user", "type": [[["string"]]] },
         { "name": "scopes", "description": "The scopes that are authorized for this user", "type": [[["Object"]], [["Array"]]] }
       ],
-      "meta": { "line": 30, "file": "AuthManager.js", "path": "app/managers" }
+      "meta": { "line": 21, "file": "AuthClient.js", "path": "app/twitchlib/client" }
     },
     {
-      "name": "TableName",
-      "description": "The name of a table from the TableManager",
-      "type": [[["string"]]],
-      "meta": { "line": 40, "file": "IrcManager.js", "path": "app/managers" }
-    },
-    {
-      "name": "RatelimitData",
-      "description": "The data for a ratelimit on any route",
-      "type": [[["Object"]]],
-      "props": [
-        { "name": "limit", "description": "The average number of requests per minute that can be made", "type": [[["number"]]] },
-        { "name": "remaining", "description": "The number of points left in this minute", "type": [[["number"]]] },
-        { "name": "reset", "description": "The timestamp at which the points are reset to full", "type": [[["number"]]] }
+      "name": "DeleteDatabaseAccessor",
+      "description": "Removes a user that is no longer authenticated",
+      "type": [[["function"]]],
+      "params": [{ "name": "id", "description": "the id of the user whos token to remove", "type": [[["string"]]] }],
+      "returns": [
+        [
+          ["Promise", "<"],
+          ["void", ">"]
+        ],
+        [["void"]]
       ],
-      "meta": { "line": 38, "file": "TwitchManager.js", "path": "app/managers" }
+      "meta": { "line": 35, "file": "AuthClient.js", "path": "app/twitchlib/client" }
     },
     {
-      "name": "RatelimitedRequestData",
-      "description": "Data for queueing and ratelimiting requests for the keyed token",
-      "type": [[["Object"]]],
-      "props": [
+      "name": "GetDatabaseAccessor",
+      "description": "Get all authenticated users",
+      "type": [[["function"]]],
+      "returns": [
+        [
+          ["Promise", "<"],
+          ["Array", "<"],
+          ["TwitchAuthData", ">>"]
+        ],
+        [
+          ["Array", "<"],
+          ["TwitchAuthData", ">"]
+        ]
+      ],
+      "meta": { "line": 42, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+    },
+    {
+      "name": "GetSingleDatabaseAccessor",
+      "description": "Get a single authenticated users",
+      "type": [[["function"]]],
+      "params": [{ "name": "id", "description": "the id of the user whos authentication data to retrieve", "type": [[["string"]]] }],
+      "returns": [
+        [
+          ["Promise", "<"],
+          ["TwitchAuthData", ">"]
+        ],
+        [["TwitchAuthData"]]
+      ],
+      "meta": { "line": 48, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+    },
+    {
+      "name": "UpsertDatabaseAccessor",
+      "description": "Add or update an authenticated user",
+      "type": [[["function"]]],
+      "params": [
+        { "name": "id", "description": "The id of the user this token belongs to", "type": [[["string"]]] },
+        { "name": "access", "description": "The access token for this user", "type": [[["string"]]] },
+        { "name": "refresh", "description": "The refresh token for this user", "type": [[["string"]]] },
+        { "name": "scopes", "description": "The scopes that are authorized for this user", "type": [[["Object"]], [["Array"]]] }
+      ],
+      "returns": [
+        [
+          ["Promise", "<"],
+          ["void", ">"]
+        ],
+        [["void"]]
+      ],
+      "meta": { "line": 55, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+    },
+    {
+      "name": "UpsertMultipleDatabaseAccessor",
+      "description": "Add or update multiple authenticated users",
+      "type": [[["function"]]],
+      "params": [
         {
-          "name": "promises",
-          "description": "The promise queue for this key",
+          "name": "data",
+          "description": "the data for all the users to upsert",
           "type": [
             [
-              ["Array", "<{"],
-              ["promise", ": "],
-              ["Promise", ", "],
-              ["resolve", ": "],
-              ["function", "()}>"]
+              ["Array", "<"],
+              ["TwitchAuthData", ">"]
             ]
           ]
-        },
-        { "name": "ratelimit", "description": "The ratelimit data for this key", "type": [[["RatelimitData"]]] }
+        }
       ],
-      "meta": { "line": 46, "file": "TwitchManager.js", "path": "app/managers" }
+      "returns": [
+        [
+          ["Promise", "<"],
+          ["void", ">"]
+        ],
+        [["void"]]
+      ],
+      "meta": { "line": 65, "file": "AuthClient.js", "path": "app/twitchlib/client" }
+    },
+    {
+      "name": "TwitchAuthDatabaseAccessor",
+      "description": "An object / class used to manipulate the database from within the auth client",
+      "type": [[["Object"]]],
+      "props": [
+        { "name": "delete", "description": "function called to delete a single entry from the database", "type": [[["DeleteDatabaseAccessor"]]] },
+        { "name": "get", "description": "function called when a list of the entire database is desired", "type": [[["GetDatabaseAccessor"]]] },
+        { "name": "getSingle", "description": "function called to get a single entry from the database", "type": [[["GetSingleDatabaseAccessor"]]] },
+        { "name": "upsert", "description": "function called when an upsert to the database is desired", "type": [[["UpsertDatabaseAccessor"]]] },
+        {
+          "name": "upsertMultiple",
+          "description": "function called when an upsert of a large number of entries to the database is desired",
+          "type": [[["UpsertMultipleDatabaseAccessor"]]]
+        }
+      ],
+      "meta": { "line": 72, "file": "AuthClient.js", "path": "app/twitchlib/client" }
     },
     {
       "name": "TwitchCategoryResolvable",
@@ -7072,7 +7248,7 @@
         },
         { "name": "cursor", "description": "the pagination cursor to get more categories", "nullable": true, "type": [[["string"]]] }
       ],
-      "meta": { "line": 82, "file": "CategoryManager.js", "path": "app/twitchlib/managers" }
+      "meta": { "line": 83, "file": "CategoryManager.js", "path": "app/twitchlib/managers" }
     },
     {
       "name": "TwitchChannelResolvable",
@@ -7261,6 +7437,83 @@
       "meta": { "line": 40, "file": "UserManager.js", "path": "app/twitchlib/managers" }
     },
     {
+      "name": "AuthRequestOptions",
+      "description": "Possible data to be given to an endpoint",
+      "type": [[["Object"]]],
+      "props": [
+        { "name": "body", "description": "json data to serialize into the body", "optional": true, "type": [[["Object"]]] },
+        {
+          "name": "headers",
+          "description": "additional headers to add",
+          "optional": true,
+          "type": [
+            [
+              ["Record", "<"],
+              ["string", ", "],
+              ["string", ">"]
+            ]
+          ]
+        },
+        { "name": "passThroughBody", "description": "whether to pass the body directly through to fetch", "optional": true, "type": [[["boolean"]]] },
+        { "name": "query", "description": "query string parameters to append to the endpoint", "optional": true, "type": [[["boolean"]]] }
+      ],
+      "meta": { "line": 28, "file": "AuthREST.js", "path": "app/twitchlib/rest" }
+    },
+    {
+      "name": "AuthInternalRequest",
+      "description": "Possible data to be given to an endpoint, including method and uri",
+      "access": "private",
+      "type": [[["AuthRequestOptions"]]],
+      "props": [
+        { "name": "fullRoute", "description": "full uri to append", "type": [[["string"]]] },
+        { "name": "method", "description": "request method", "type": [[["string"]]] }
+      ],
+      "meta": { "line": 37, "file": "AuthREST.js", "path": "app/twitchlib/rest" }
+    },
+    {
+      "name": "RequestOptions",
+      "description": "Possible data to be given to an endpoint",
+      "type": [[["Object"]]],
+      "props": [
+        { "name": "auth", "description": "whether to set authorization for this request", "optional": true, "default": true, "type": [[["boolean"]]] },
+        { "name": "authId", "description": "the id of a user to attempt to authorize as", "optional": true, "type": [[["string"]]] },
+        {
+          "name": "allowApp",
+          "description": "whether to allow using an app access token for this request",
+          "optional": true,
+          "default": true,
+          "type": [[["boolean"]]]
+        },
+        { "name": "body", "description": "json data to serialize into the body", "optional": true, "type": [[["Object"]]] },
+        {
+          "name": "headers",
+          "description": "additional headers to add",
+          "optional": true,
+          "type": [
+            [
+              ["Record", "<"],
+              ["string", ", "],
+              ["string", ">"]
+            ]
+          ]
+        },
+        { "name": "passThroughBody", "description": "whether to pass the body directly through to fetch", "optional": true, "type": [[["boolean"]]] },
+        { "name": "query", "description": "query string parameters to append to the endpoint", "optional": true, "type": [[["boolean"]]] }
+      ],
+      "meta": { "line": 11, "file": "REST.js", "path": "app/twitchlib/rest" }
+    },
+    {
+      "name": "InternalRequest",
+      "description": "Possible data to be given to an endpoint, including method and uri",
+      "access": "private",
+      "type": [[["RequestOptions"]]],
+      "props": [
+        { "name": "fullRoute", "description": "full uri to append", "type": [[["string"]]] },
+        { "name": "method", "description": "request method", "type": [[["string"]]] }
+      ],
+      "meta": { "line": 23, "file": "REST.js", "path": "app/twitchlib/rest" }
+    },
+    {
       "name": "HTTPMethod",
       "description": "An HTTP fetch method, one of:\n* get\n* patch\n* post\n* put\n* delete",
       "type": [[["string"]]],
@@ -7312,12 +7565,6 @@
           "optional": true,
           "default": "https://www.corncierge.com",
           "type": [[["string"]]]
-        },
-        {
-          "name": "youtubeToken",
-          "description": "the token used for connecting to youtubes API (for music bot) (YOUTUBE_TOKEN in env if not provided)",
-          "optional": true,
-          "type": [[["string"]]]
         }
       ],
       "meta": { "line": 5, "file": "Constants.js", "path": "app/util" }
@@ -7334,13 +7581,13 @@
         { "name": "timezone", "description": "the timezone to use", "optional": true, "default": "Z", "type": [[["string"]]] },
         { "name": "user", "description": "the user to log in as (DATABASE_USER in env if not provided)", "type": [[["string"]]] }
       ],
-      "meta": { "line": 33, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 32, "file": "Constants.js", "path": "app/util" }
     },
     {
       "name": "DisableableCommands",
-      "description": "A disableable discord command, the top level is groups which disable the items within as well\n* `all` - disables all built in commands\n* `gaming`\n * `random`\n * `room`\n* `general`\n * `help`\n* `management`\n * `eval`\n * `setstatus`\n* `moderation`\n * `clear`\n * `moveall`\n * `muteall`\n * `nuke`\n * `randommove`\n * `unmuteall`\n* `music` - some sub items are not shown as they should not be disabled without disabling the whole group\n * `loop`\n * `nowplaying`\n * `remove`\n * `shuffle`\n * `skip`\n * `skipall`\n * `skipto`\n * `volume`\n* `roles`\n * `autorole`\n * `color`\n * `colormanager`\n * `makeme`\n * `makemenot`\n * `reactionroles`\n * `rolemanager`\n * `voceroles`\n* `twitch`\n * `commandlist`\n * `commands`",
+      "description": "A disableable discord command, the top level is groups which disable the items within as well\n* `all` - disables all built in commands\n* `gaming`\n * `random`\n * `room`\n* `general`\n * `help`\n* `management`\n * `eval`\n * `setstatus`\n* `moderation`\n * `clear`\n * `moveall`\n * `muteall`\n * `nuke`\n * `randommove`\n * `unmuteall`\n* `roles`\n * `autorole`\n * `color`\n * `colormanager`\n * `makeme`\n * `makemenot`\n * `reactionroles`\n * `rolemanager`\n * `voceroles`\n* `twitch`\n * `commandlist`\n * `commands`",
       "type": [[["string"]]],
-      "meta": { "line": 49, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 48, "file": "Constants.js", "path": "app/util" }
     },
     {
       "name": "DiscordOptions",
@@ -7361,7 +7608,7 @@
         },
         { "name": "token", "description": "the token used to login to the bot application (DISCORD_TOKEN in env if not provided)", "type": [[["string"]]] }
       ],
-      "meta": { "line": 91, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 81, "file": "Constants.js", "path": "app/util" }
     },
     {
       "name": "HTTPOptions",
@@ -7379,7 +7626,7 @@
         { "name": "httpsOptions.keyLocation", "description": "the location of the private key for https in PEM format", "type": [[["string"]]] },
         { "name": "httpsOptions.certLocation", "description": "the location of the certificate chains for https in PEM format", "type": [[["string"]]] }
       ],
-      "meta": { "line": 115, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 105, "file": "Constants.js", "path": "app/util" }
     },
     {
       "name": "LogOptions",
@@ -7397,7 +7644,7 @@
         { "name": "verbose", "description": "whether to log verbose to the console", "optional": true, "default": false, "type": [[["boolean"]]] },
         { "name": "webhookToken", "description": "the token for the logging webhook (LOG_WEBHOOK_TOKEN in env if not provided)", "type": [[["string"]]] }
       ],
-      "meta": { "line": 129, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 119, "file": "Constants.js", "path": "app/util" }
     },
     {
       "name": "TwitchOptions",
@@ -7425,7 +7672,7 @@
         { "name": "headers", "description": "extra headers to pass to the twitch api on every request", "optional": true, "type": [[["Object"]]] },
         { "name": "redirectUri", "description": "a registered redirect URI for your application", "type": [[["string"]]] }
       ],
-      "meta": { "line": 142, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 132, "file": "Constants.js", "path": "app/util" }
     },
     {
       "name": "IRCConnectionOptions",
@@ -7448,7 +7695,7 @@
         { "name": "secure", "description": "Use SSL/HTTPS (overrides prt to 443)", "optional": true, "default": false, "type": [[["boolean"]]] },
         { "name": "timeout", "description": "how long to wait for response from server", "optional": true, "default": 9999, "type": [[["number"]]] }
       ],
-      "meta": { "line": 160, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 150, "file": "Constants.js", "path": "app/util" }
     },
     {
       "name": "IRCOptions",
@@ -7499,7 +7746,7 @@
           "type": [[["number"]], [["boolean"]]]
         }
       ],
-      "meta": { "line": 174, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 164, "file": "Constants.js", "path": "app/util" }
     },
     {
       "name": "ThrottleOptions",
@@ -7516,19 +7763,19 @@
           "type": [[["Object"]]]
         }
       ],
-      "meta": { "line": 194, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 184, "file": "Constants.js", "path": "app/util" }
     },
     {
       "name": "Colors",
       "description": "Predefined custom colors for use anywhere\n* `BRIGHT_GREEN`\n* `BRIGHT_PINK`\n* `BRIGHT_PURPLE`\n* `CYAN`\n* `DEEP_GOLD`\n* `SALMON`\n* `TWITCH`",
       "type": [[["Object"]]],
-      "meta": { "line": 210, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 200, "file": "Constants.js", "path": "app/util" }
     },
     {
       "name": "LogLevel",
       "description": "A level of logging based on the following:\n* fatal - a critical error that ends the application\n* critical - potentially breaking issue\n* error - high priority non-breaking issue\n* warn - non-breaking issue\n* info - general information\n* debug - highly detailed debug information\n* verbose - clutters the log",
       "type": [[["string"]]],
-      "meta": { "line": 304, "file": "Constants.js", "path": "app/util" }
+      "meta": { "line": 294, "file": "Constants.js", "path": "app/util" }
     }
   ],
   "externals": []

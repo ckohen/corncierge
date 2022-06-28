@@ -29,11 +29,6 @@ module.exports = comp =>
         'If you have any ideas for more features or if you feel like a basic feature is missing, feel free to join the discord: <https://discord.gg/vNEXNYt>!',
     )
     .addField(
-      'Music',
-      'At this time, due to a lack of network bandwidth, music commands are not available. ' +
-        'In the future, early adopters will get free access to the music commands.',
-    )
-    .addField(
       'Donations',
       'If you like this bot and want to help make it more robust, donations would be greatly appreciated. ' +
         'You can donate here: <https://www.paypal.me/corncierge>. ' +

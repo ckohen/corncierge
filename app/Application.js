@@ -224,13 +224,6 @@ class Application {
           throw new TypeError('The discord bot token must be a string');
         }
       }
-      if (!merged.discord.disabledCommands.includes('music') && !merged.discord.disabledCommands.includes('all') && typeof merged.youtubeToken !== 'string') {
-        if ('YOUTUBE_TOKEN' in process.env) {
-          merged.youtubeToken = process.env.YOUTUBE_TOKEN;
-        } else {
-          throw new TypeError('The Youtube token must be a string if music commands are enabled');
-        }
-      }
     }
     if (!merged.disableServer && typeof merged.http !== 'object') {
       throw new TypeError('The http option must be an object when server is not disabled');
@@ -352,9 +345,6 @@ class Application {
         formatted.twitch.irc = options.twitch.irc;
         formatted.twitch.throttle = options.twitch.ircThrottle;
       }
-    }
-    if (options.youtubeToken) {
-      formatted.youtube = { token: options.youtubeToken };
     }
     return formatted;
   }

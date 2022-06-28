@@ -18,7 +18,6 @@ const { Intents } = require('discord.js');
  * @property {string} [name=Corncierge] the name of the bot (used in help command)
  * @property {TwitchOptions} twitch options for twitch (does not need to be present if disableTwitch is true)
  * @property {string} [website=https://www.corncierge.com] the website to link to for more information on your bot
- * @property {string} [youtubeToken] the token used for connecting to youtubes API (for music bot) (YOUTUBE_TOKEN in env if not provided)
  */
 exports.DefaultOptions = {
   debug: false,
@@ -64,15 +63,6 @@ exports.DefaultOptions = {
    *  * `nuke`
    *  * `randommove`
    *  * `unmuteall`
-   * * `music` - some sub items are not shown as they should not be disabled without disabling the whole group
-   *  * `loop`
-   *  * `nowplaying`
-   *  * `remove`
-   *  * `shuffle`
-   *  * `skip`
-   *  * `skipall`
-   *  * `skipto`
-   *  * `volume`
    * * `roles`
    *  * `autorole`
    *  * `color`
