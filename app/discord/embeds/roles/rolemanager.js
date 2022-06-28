@@ -10,4 +10,4 @@ module.exports = (comp, member, prefix) =>
       'This is a list of roles that users can add and remove from themselves, ' +
         `use \`${prefix}help rolemanager\` to see instructions for how to edit the role manager`,
     )
-    .setFooter(`Requested by ${member.user.username}`);
+    .setFooter({ text: `Requested by ${member.user.username}` });

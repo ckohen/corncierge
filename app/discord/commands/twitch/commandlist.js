@@ -1,8 +1,24 @@
 'use strict';
 
-const { Collection, Util } = require('discord.js');
+const { Collection } = require('discord.js');
 const { usage } = require('../../../util/UtilManager');
 const BaseCommand = require('../BaseCommand');
+
+function splitMessage(text) {
+  if (text.length <= 2_000) return [text];
+  const splitText = text.split('\n');
+  if (splitText.some(elem => elem.length > 2_000)) throw new RangeError('Cannot effectively split');
+  const messages = [];
+  let msg = '';
+  for (const chunk of splitText) {
+    if (msg && `${msg}\n${chunk}`.length > 2_000) {
+      messages.push(msg);
+      msg = '';
+    }
+    msg += `${msg ? '\n' : ''}${chunk}`;
+  }
+  return messages.concat(msg).filter(m => m);
+}
 
 class CommandListCommand extends BaseCommand {
   constructor(socket) {
@@ -61,7 +77,7 @@ class CommandListCommand extends BaseCommand {
 
     paginated.join('\n\n');
 
-    const split = Util.splitMessage(`\`\`\`${paginated.join('\n\n')}\`\`\``);
+    const split = splitMessage(`\`\`\`${paginated.join('\n\n')}\`\`\``);
     for await (const content of split) {
       await message.channel.send(content).catch(err => {
         this.socket.app.log.warn(module, err);

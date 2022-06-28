@@ -1,7 +1,6 @@
 'use strict';
 
 const { Client, Collection, MessageEmbed } = require('discord.js');
-const lodash = require('lodash');
 
 const EventManager = require('./EventManager');
 const CommandManager = require('../discord/commands/CommandManager');
@@ -112,18 +111,11 @@ class DiscordManager extends EventManager {
         global.set(command.name, command);
       }
     }
-    function isEqual(obj1, obj2) {
-      if (obj1 === obj2) return true;
-      if (typeof obj1 !== 'object' || typeof obj2 !== 'object') return false;
-      if (obj1.description !== obj2.description) return false;
-      if (!!obj1.default_permission !== !!obj2.default_permission) return false;
-      return lodash.isEqual(obj1.options, obj2.options);
-    }
     this.interactions.applicationCommands.forEach(interaction => {
       if (guildId) {
         if (Array.isArray(interaction.guilds) && !interaction.guilds.includes(guildId)) return;
         if (typeof interaction.guilds === 'string' && interaction.guilds !== guildId) return;
-        if (isEqual(global.get(interaction.name), interaction.definition)) return;
+        if (global.get(interaction.name)?.equals(interaction.definition)) return;
         data.push(interaction.definition);
         return;
       }

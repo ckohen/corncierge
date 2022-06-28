@@ -230,7 +230,7 @@ class ReactionRolesCommand extends BaseCommand {
     let msg = socket.getEmbed('reactionRoles', [message.member, commandPrefix]);
     if (create) {
       msg.setDescription('React to this message with one of the emotes specified below to recieve all the roles listed below it');
-      msg.setFooter('');
+      msg.setFooter({ text: '' });
     }
     if (emojis.length < 1) {
       message.channel.send({ content: '**No reactions specified yet**', embeds: [msg] });
@@ -265,7 +265,7 @@ class ReactionRolesCommand extends BaseCommand {
             if (create) {
               msg.setDescription('');
               msg.setTitle('');
-              msg.setFooter('');
+              msg.setFooter({ text: '' });
             }
           }
         }
@@ -325,7 +325,7 @@ async function getEmote(sock, initiator, roleList, emojis = false, add = true) {
       for (let i = 1; i <= Math.ceil(roleList.length / 40); i++) {
         if (fieldNum < 24) {
           embed.addField('Roles', roleList.slice((i - 1) * 40, i * 40).join('\n'), true);
-          embed.setFooter('');
+          embed.setFooter({ text: '' });
           fieldNum += 1;
         } else {
           fieldNum = 0;

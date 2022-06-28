@@ -134,7 +134,7 @@ class LogManager extends BaseManager {
 
     const embed = new MessageEmbed()
       .setDescription(formatted)
-      .setFooter(process.env.DEBUG_LOG_NAME ?? 'Production')
+      .setFooter({ text: process.env.DEBUG_LOG_NAME ?? 'Production' })
       .setTimestamp(Date.now())
       .setTitle(`${level} \u00B7 ${path}`)
       .setColor(Constants.Colors[levels[level] || 'CYAN']);
