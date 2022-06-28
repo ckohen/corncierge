@@ -443,7 +443,7 @@ class RoomCommand extends BaseCommand {
       embed.addField(`Players (${playing.length}/${room.playerCount})`, playing.join('\n'), true);
       embed.addField(`Waiting Room (${len})`, waiting.join('\n'), true);
       // Change footer from default to room owner
-      embed.setFooter(`Room Owner: ${owner.user.username}`, owner.user.displayAvatarURL());
+      embed.setFooter({ text: `Room Owner: ${owner.user.username}`, iconURL: owner.user.displayAvatarURL() });
     } else {
       // Delete old master room information if it exists
       if (masterRoom && masterRoom.lastChannelId && masterRoom.lastMessageId) {

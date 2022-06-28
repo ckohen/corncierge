@@ -11,4 +11,4 @@ module.exports = (comp, member, prefix = '!') =>
         `Use \`${prefix}help reactions\` to see instructions for how to edit the reactions.\n` +
         `Use \`${prefix}reactions create\` to create the message for users to react to.`,
     )
-    .setFooter(`Requested by ${member.user.username}`);
+    .setFooter({ text: `Requested by ${member.user.username}` });
