@@ -39,7 +39,6 @@ class ReloadCommand extends BaseCommand {
         md('filters', ircDisabled ? 'N/A' : twitch.irc.cache.filters.size),
         md('commands', ircDisabled ? 'N/A' : twitch.irc.cache.commands.size),
         md('jokes', ircDisabled ? 'N/A' : twitch.irc.cache.jokes.length),
-        md('music guilds', settings.get('discord_channel_music').split(',').length),
         md('total guilds', discord.cache.prefixes.size),
       ];
 
