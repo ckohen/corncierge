@@ -3,6 +3,7 @@
   "version": "3.0.0",
   "description": "A moderation and command bot for Twitch and a fully integrated Discord bot.",
   "main": "./app/index.js",
+  "type": "commonjs",
   "exports": {
     ".": [
       {
